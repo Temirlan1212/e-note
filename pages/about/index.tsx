@@ -3,19 +3,17 @@ import { Container } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { GetStaticPropsContext } from 'next';
 
-export default function Home() {
+export default function About() {
   const t = useTranslations();
 
   return (
     <>
       <Head>
-        <title>{t('E-notariat')}</title>
-        <meta name="keywords" content="e-notariat, E-notariat, E-Notariat" />
-        <meta name="description" content="E-notariat" />
+        <title>{t('About us')}</title>
       </Head>
 
       <Container>
-        <h1>{t('E-notariat')}</h1>
+        <h1>{t('About us')}</h1>
       </Container>
     </>
   );
