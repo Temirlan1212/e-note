@@ -18,6 +18,7 @@ import { Container } from "@mui/material";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { useRouteStore } from "@/store/route-store";
+import ActiveLink from "./ActiveLink";
 
 export default function TopNavbar() {
   const router = useRouter();
@@ -49,14 +50,14 @@ export default function TopNavbar() {
 
             <Box sx={{ display: { xs: "none", md: "flex" }, gap: "15px" }}>
               {routes.items.map((route) => (
-                <Link
+                <ActiveLink
                   key={route.link}
                   href={route.link}
                   locale={router.locale}
-                  className={route.link === router.pathname ? "active" : ""}
+                  isActive={route.link === router.pathname}
                 >
                   {t(route.title)}
-                </Link>
+                </ActiveLink>
               ))}
             </Box>
 

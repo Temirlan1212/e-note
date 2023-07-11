@@ -1,7 +1,3 @@
-:root {
-  --color-primary: #1baa75;
-}
-
 * {
   box-sizing: border-box;
   padding: 0;
@@ -12,13 +8,4 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-a.active {
-  color: var(--color-primary);
 }

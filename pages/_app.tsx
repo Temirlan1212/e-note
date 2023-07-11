@@ -4,16 +4,16 @@ import { NextIntlClientProvider } from "next-intl";
 import PublicLayout from "@/layouts/Public";
 import PrivateLayout from "@/layouts/Private";
 import { ThemeProvider } from "@mui/material";
-import theme from "./globalTheme";
+import theme from "@/theme/default";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider theme={theme}>
-      <NextIntlClientProvider messages={pageProps.messages}>
+    <NextIntlClientProvider messages={pageProps.messages}>
+      <ThemeProvider theme={theme}>
         <PublicLayout>
           <Component {...pageProps} />
         </PublicLayout>
-      </NextIntlClientProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </NextIntlClientProvider>
   );
 }
