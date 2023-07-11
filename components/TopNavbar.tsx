@@ -1,6 +1,5 @@
 import * as React from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import AppBar from "@mui/material/AppBar";
@@ -18,6 +17,7 @@ import { Container } from "@mui/material";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { useRouteStore } from "@/store/route-store";
+import Link from "./Link";
 
 export default function TopNavbar() {
   const router = useRouter();
@@ -42,19 +42,14 @@ export default function TopNavbar() {
                 <MenuIcon />
               </IconButton>
 
-              <Link href="/" locale={router.locale}>
+              <Link href="/">
                 <Image src="/images/logo.png" alt="E-notariat" width={160} height={44} />
               </Link>
             </Box>
 
             <Box sx={{ display: { xs: "none", md: "flex" }, gap: "15px" }}>
               {routes.items.map((route) => (
-                <Link
-                  key={route.link}
-                  href={route.link}
-                  locale={router.locale}
-                  className={route.link === router.pathname ? "active" : ""}
-                >
+                <Link key={route.link} href={route.link} isActive={route.link === router.pathname}>
                   {t(route.title)}
                 </Link>
               ))}
@@ -95,12 +90,7 @@ export default function TopNavbar() {
               {routes.items.map((route) => (
                 <ListItem key={route.link} disablePadding>
                   <ListItemButton sx={{ textAlign: "center" }}>
-                    <Link
-                      key={route.link}
-                      href={route.link}
-                      locale={router.locale}
-                      className={route.link === router.pathname ? "active" : ""}
-                    >
+                    <Link key={route.link} href={route.link} isActive={route.link === router.pathname}>
                       {t(route.title)}
                     </Link>
                   </ListItemButton>
