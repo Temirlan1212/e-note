@@ -13,7 +13,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { useRouteStore } from "@/store/route-store";
@@ -42,8 +42,9 @@ export default function TopNavbar() {
                 <MenuIcon />
               </IconButton>
 
-              <Link href="/">
-                <Image src="/images/logo.png" alt="E-notariat" width={160} height={44} />
+              <Link href="/" sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
+                <Typography sx={{ fontWeight: 600, fontSize: "16px" }}>E-NOTARIAT</Typography>
               </Link>
             </Box>
 

@@ -1,8 +1,7 @@
 import { NextRouter, useRouter } from "next/router";
-import { styled, Link as MuiLink } from "@mui/material";
-import { HTMLAttributes } from "react";
+import { styled, Link as MuiLink, LinkProps } from "@mui/material";
 
-interface ILinkProps extends HTMLAttributes<HTMLElement> {
+interface ILinkProps extends LinkProps {
   href: string;
   isActive?: boolean;
 }
