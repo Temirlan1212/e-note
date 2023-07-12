@@ -62,7 +62,7 @@ export default function TopNavbar() {
             <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
               <Button
                 color="inherit"
-                sx={{ textTransform: "none", display: { xs: "none", lg: "flex" }, fontWeight: 500 }}
+                sx={{ textTransform: "none", display: { xs: "none", lg: "flex" } }}
                 startIcon={<PersonOutlineIcon />}
               >
                 Личный кабинет
