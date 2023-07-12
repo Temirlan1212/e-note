@@ -1,27 +1,47 @@
 import * as React from "react";
 import { Box, Container, List, ListItem, Typography } from "@mui/material";
-import Link from "./Link";
 import Image from "next/image";
+import Link from "@/ui/Link";
+
+interface IFooterDataItem {
+  content: string;
+  route: string;
+}
 
 interface IFooterSection {
-  title?: string;
-  items?: Map<string | React.ReactElement, string>;
+  title: string;
+  items: IFooterDataItem[];
 }
 
 export default function Footer() {
-  const footerData = {
-    Community: new Map([]),
-    Sample: new Map([]),
-    Resource: new Map([]),
+  const footerData: Record<string, IFooterDataItem[]> = {
+    Community: [
+      { content: "About Us", route: "/about-us" },
+      { content: "Guidelines and how to", route: "/" },
+      { content: "Quote from the best", route: "/" },
+      { content: "How to start a blog", route: "/" },
+    ],
+    Sample: [
+      { content: "About Us", route: "/" },
+      { content: "Guidelines and how to", route: "/" },
+      { content: "Quote from the best", route: "/" },
+      { content: "How to start a blog", route: "/" },
+    ],
+    Resource: [
+      { content: "Accessibility", route: "/" },
+      { content: "Usability", route: "/" },
+      { content: "Marketplace", route: "/" },
+      { content: "Design & Dev", route: "/" },
+    ],
   };
 
   return (
     <Box
       sx={({ breakpoints: { down } }) => ({
         bgcolor: "success.main",
-        padding: "48px",
+        padding: "48px 0",
         [down("md")]: {
-          padding: "30px",
+          padding: "30px 0",
         },
       })}
     >
@@ -43,10 +63,19 @@ export default function Footer() {
             </Link>
           </Box>
 
-          <Box sx={{ display: "flex", gap: "50px" }}>
-            <FooterSection />
-            <FooterSection />
-            <FooterSection />
+          <Box
+            sx={({ breakpoints: { down } }) => ({
+              display: "flex",
+              gap: "60px",
+              [down("sm")]: {
+                flexDirection: "column",
+                gap: "30px",
+              },
+            })}
+          >
+            {Object.entries(footerData).map((section, idx) => (
+              <FooterSection title={section[0]} items={section[1]} key={idx} />
+            ))}
           </Box>
         </Box>
       </Container>
@@ -56,7 +85,7 @@ export default function Footer() {
 
 const FooterSection: React.FC<IFooterSection> = ({ title, items }) => {
   return (
-    <Box>
+    <section>
       <Typography
         sx={({ breakpoints: { down } }) => ({
           color: "white",
@@ -70,32 +99,22 @@ const FooterSection: React.FC<IFooterSection> = ({ title, items }) => {
           },
         })}
       >
-        Общество
+        {title}
       </Typography>
 
       <List>
-        <ListItem sx={{ padding: "0 0 24px 0" }}>
-          <Link href="/">
-            <Typography sx={{ fontSize: "16px", color: "white" }}>About Us</Typography>
-          </Link>
-        </ListItem>
-
-        <ListItem sx={{ padding: "0 0 24px 0" }}>
-          <Link href="/">
-            <Typography sx={{ fontSize: "16px", color: "white" }}>About Us</Typography>
-          </Link>
-        </ListItem>
-        <ListItem sx={{ padding: "0 0 24px 0" }}>
-          <Link href="/">
-            <Typography sx={{ fontSize: "16px", color: "white" }}>About Us</Typography>
-          </Link>
-        </ListItem>
-        <ListItem sx={{ padding: "0 0 24px 0" }}>
-          <Link href="/">
-            <Typography sx={{ fontSize: "16px", color: "white" }}>About Us</Typography>
-          </Link>
-        </ListItem>
+        {items.map((item, idx) => {
+          return item?.content ? (
+            <ListItem sx={{ padding: "0 0 24px 0" }} key={idx}>
+              <Link href={item.route}>
+                <Typography sx={{ fontSize: "16px", color: "white" }}>{item.content}</Typography>
+              </Link>
+            </ListItem>
+          ) : (
+            ""
+          );
+        })}
       </List>
-    </Box>
+    </section>
   );
 };
