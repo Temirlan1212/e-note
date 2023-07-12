@@ -40,7 +40,7 @@ export default function TopNavbar() {
             <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
               <Link href="/" sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
-                <Typography variant="h6" color="text.primary">
+                <Typography variant="h6" color="text.primary" fontWeight={600}>
                   E-NOTARIAT
                 </Typography>
               </Link>
@@ -52,7 +52,6 @@ export default function TopNavbar() {
                   key={route.link}
                   href={route.link}
                   isActive={route.link === router.pathname}
-                  fontWeight={500}
                   color={"text.primary"}
                 >
                   {t(route.title)}
@@ -103,7 +102,6 @@ export default function TopNavbar() {
                       key={route.link}
                       href={route.link}
                       isActive={route.link === router.pathname}
-                      fontWeight={500}
                       color="text.primary"
                     >
                       {t(route.title)}

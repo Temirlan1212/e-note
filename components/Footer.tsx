@@ -3,10 +3,11 @@ import Image from "next/image";
 import Link from "@/components/ui/Link";
 import { WhatsApp, Instagram, Facebook } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/router";
 
 interface IFooterDataItem {
-  content: string;
-  route: string;
+  title: string;
+  link: string;
 }
 
 interface IFooterSection {
@@ -16,22 +17,22 @@ interface IFooterSection {
 
 const footerData: Record<string, IFooterDataItem[]> = {
   Community: [
-    { content: "About us", route: "/about" },
-    { content: "Usability", route: "/" },
-    { content: "Marketplace", route: "/" },
-    { content: "Design & Dev", route: "/" },
+    { title: "About us", link: "/about" },
+    { title: "Usability", link: "/usability" },
+    { title: "Marketplace", link: "/marketplace" },
+    { title: "Design & Dev", link: "/design" },
   ],
   Sample: [
-    { content: "About us", route: "/about" },
-    { content: "Usability", route: "/" },
-    { content: "Marketplace", route: "/" },
-    { content: "Design & Dev", route: "/" },
+    { title: "Usability", link: "/usability" },
+    { title: "Usability", link: "/usability" },
+    { title: "Marketplace", link: "/marketplace" },
+    { title: "Design & Dev", link: "/design" },
   ],
   Resource: [
-    { content: "Accessibility", route: "/" },
-    { content: "Usability", route: "/" },
-    { content: "Marketplace", route: "/" },
-    { content: "Design & Dev", route: "/" },
+    { title: "Accessibility", link: "/accessibility" },
+    { title: "Usability", link: "/usability" },
+    { title: "Usability", link: "/usability" },
+    { title: "Design & Dev", link: "/design" },
   ],
 };
 
@@ -58,7 +59,7 @@ const Footer: React.FC = () => {
           <Box>
             <Link href="/" sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
-              <Typography variant="h6" color="text.secondary">
+              <Typography variant="h6" color="text.secondary" fontWeight={600}>
                 E-NOTARIAT
               </Typography>
             </Link>
@@ -112,6 +113,7 @@ const Footer: React.FC = () => {
 
 const FooterSection: React.FC<IFooterSection> = ({ title, items }) => {
   const t = useTranslations();
+  const router = useRouter();
 
   return (
     <section>
@@ -120,11 +122,11 @@ const FooterSection: React.FC<IFooterSection> = ({ title, items }) => {
       </Typography>
 
       <List>
-        {items.map((item) =>
-          item.content ? (
-            <ListItem sx={{ padding: "0 0 24px 0" }} key={item.content}>
-              <Link href={item.route}>
-                <Typography color="text.secondary">{t(item.content)}</Typography>
+        {items.map(({ title, link }, index) =>
+          title ? (
+            <ListItem sx={{ padding: "0 0 24px 0" }} key={index}>
+              <Link href={link} color="text.secondary" activeColor="text.primary" isActive={router.route === link}>
+                {t(title)}
               </Link>
             </ListItem>
           ) : null
