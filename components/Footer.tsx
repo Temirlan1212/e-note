@@ -1,4 +1,4 @@
-import { Box, Container, List, ListItem, Typography } from "@mui/material";
+import { Box, Container, List, ListItem, Tooltip, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "@/ui/Link";
 import { WhatsApp, Instagram, Facebook } from "@mui/icons-material";
@@ -93,11 +93,13 @@ const Footer: React.FC = () => {
 
           <List sx={{ display: "flex", width: "fit-content", gap: "25.5px" }}>
             {footerIconsData.map(({ icon: Icon, link }) => (
-              <ListItem key={link} disablePadding>
-                <Link href={link}>
-                  <Icon sx={{ fill: "#fff" }} />
-                </Link>
-              </ListItem>
+              <Tooltip title={link} placement="top">
+                <ListItem key={link} disablePadding>
+                  <Link href={link}>
+                    <Icon sx={{ fill: "#fff" }} />
+                  </Link>
+                </ListItem>
+              </Tooltip>
             ))}
           </List>
         </Box>
