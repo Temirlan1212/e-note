@@ -40,7 +40,7 @@ export default function TopNavbar() {
             <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
               <Link href="/" sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
-                <Typography sx={{ fontWeight: 600, fontSize: "16px" }} color="text.primary">
+                <Typography variant="h6" color="text.primary">
                   E-NOTARIAT
                 </Typography>
               </Link>

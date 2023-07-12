@@ -58,7 +58,9 @@ const Footer: React.FC = () => {
           <Box>
             <Link href="/" sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
-              <Typography sx={{ fontWeight: 600, fontSize: "16px", color: "text.secondary" }}>E-NOTARIAT</Typography>
+              <Typography variant="h6" color="text.secondary">
+                E-NOTARIAT
+              </Typography>
             </Link>
           </Box>
 
@@ -113,14 +115,7 @@ const FooterSection: React.FC<IFooterSection> = ({ title, items }) => {
 
   return (
     <section>
-      <Typography
-        sx={{
-          color: "text.secondary",
-          fontWeight: 500,
-          fontSize: "20px",
-          padding: { xs: "0 0 16px 0", md: "0 0 26px 0" },
-        }}
-      >
+      <Typography variant="h5" padding="0 0 20px 0" color="text.secondary">
         {t(title)}
       </Typography>
 
@@ -129,7 +124,7 @@ const FooterSection: React.FC<IFooterSection> = ({ title, items }) => {
           item.content ? (
             <ListItem sx={{ padding: "0 0 24px 0" }} key={item.content}>
               <Link href={item.route}>
-                <Typography sx={{ fontSize: "16px", color: "text.secondary" }}>{t(item.content)}</Typography>
+                <Typography color="text.secondary">{t(item.content)}</Typography>
               </Link>
             </ListItem>
           ) : null

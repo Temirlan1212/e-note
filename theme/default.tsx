@@ -18,8 +18,33 @@ const theme = createTheme({
       secondary: "#fff",
     },
   },
+
   typography: {
     fontFamily: montserrat.style.fontFamily,
+    h1: {
+      fontSize: "36px",
+      fontWeight: "900",
+    },
+    h2: {
+      fontSize: "32px",
+      fontWeight: "800",
+    },
+    h3: {
+      fontSize: "28px",
+      fontWeight: "700",
+    },
+    h4: {
+      fontSize: "24px",
+      fontWeight: "600",
+    },
+    h5: {
+      fontSize: "20px",
+      fontWeight: "500",
+    },
+    h6: {
+      fontSize: "16px",
+      fontWeight: "400",
+    },
   },
 });
 
