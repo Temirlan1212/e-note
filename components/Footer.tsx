@@ -16,13 +16,13 @@ interface IFooterSection {
 
 const footerData: Record<string, IFooterDataItem[]> = {
   Community: [
-    { content: "About us", route: "/about-us" },
+    { content: "About us", route: "/about" },
     { content: "Usability", route: "/" },
     { content: "Marketplace", route: "/" },
     { content: "Design & Dev", route: "/" },
   ],
   Sample: [
-    { content: "About us", route: "/about-us" },
+    { content: "About us", route: "/about" },
     { content: "Usability", route: "/" },
     { content: "Marketplace", route: "/" },
     { content: "Design & Dev", route: "/" },
