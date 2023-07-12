@@ -36,9 +36,9 @@ const footerData: Record<string, IFooterDataItem[]> = {
 };
 
 const footerIconsData = [
-  { icon: WhatsApp, link: "https://whatsapp.com" },
-  { icon: Facebook, link: "https://ru-ru.facebook.com" },
-  { icon: Instagram, link: "https://www.instagram.com" },
+  { icon: WhatsApp, url: "https://whatsapp.com" },
+  { icon: Facebook, url: "https://ru-ru.facebook.com" },
+  { icon: Instagram, url: "https://www.instagram.com" },
 ];
 
 const Footer: React.FC = () => {
@@ -92,10 +92,10 @@ const Footer: React.FC = () => {
           </Box>
 
           <List sx={{ display: "flex", width: "fit-content", gap: "25.5px" }}>
-            {footerIconsData.map(({ icon: Icon, link }) => (
-              <Tooltip title={link} placement="top">
-                <ListItem key={link} disablePadding>
-                  <Link href={link}>
+            {footerIconsData.map(({ icon: Icon, url }) => (
+              <Tooltip title={url} placement="top">
+                <ListItem key={url} disablePadding>
+                  <Link href={url}>
                     <Icon sx={{ fill: "#fff" }} />
                   </Link>
                 </ListItem>
