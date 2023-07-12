@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
           <Box>
             <Link href="/" sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
-              <Typography sx={{ fontWeight: 600, fontSize: "16px", color: "white" }}>E-NOTARIAT</Typography>
+              <Typography sx={{ fontWeight: 600, fontSize: "16px", color: "text.secondary" }}>E-NOTARIAT</Typography>
             </Link>
           </Box>
 
@@ -88,14 +88,14 @@ const Footer: React.FC = () => {
             }}
           >
             <Image src="/images/website-analytics.png" alt="website-analytics" width={107} height={38} />
-            <Typography color="white">{t("2023 E-Notariat All rights Reserved")}</Typography>
+            <Typography color="text.secondary">{t("2023 E-Notariat All rights Reserved")}</Typography>
           </Box>
 
           <List sx={{ display: "flex", width: "fit-content", gap: "25.5px" }}>
             {footerIconsData.map(({ icon: Icon, link }) => (
               <ListItem key={link} disablePadding>
                 <Link href={link}>
-                  <Icon sx={{ fill: "white" }} />
+                  <Icon sx={{ fill: "#fff" }} />
                 </Link>
               </ListItem>
             ))}
@@ -112,7 +112,12 @@ const FooterSection: React.FC<IFooterSection> = ({ title, items }) => {
   return (
     <section>
       <Typography
-        sx={{ color: "white", fontWeight: 500, fontSize: "20px", padding: { xs: "0 0 16px 0", md: "0 0 26px 0" } }}
+        sx={{
+          color: "text.secondary",
+          fontWeight: 500,
+          fontSize: "20px",
+          padding: { xs: "0 0 16px 0", md: "0 0 26px 0" },
+        }}
       >
         {t(title)}
       </Typography>
@@ -122,7 +127,7 @@ const FooterSection: React.FC<IFooterSection> = ({ title, items }) => {
           item.content ? (
             <ListItem sx={{ padding: "0 0 24px 0" }} key={item.content}>
               <Link href={item.route}>
-                <Typography sx={{ fontSize: "16px", color: "white" }}>{t(item.content)}</Typography>
+                <Typography sx={{ fontSize: "16px", color: "text.secondary" }}>{t(item.content)}</Typography>
               </Link>
             </ListItem>
           ) : null

@@ -38,19 +38,23 @@ export default function TopNavbar() {
         <Container>
           <Toolbar sx={{ gap: "15px", justifyContent: "space-between", padding: "0px !important" }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
-              <IconButton color="inherit" onClick={handleDrawerToggle} sx={{ display: { md: "none" } }}>
-                <MenuIcon />
-              </IconButton>
-
               <Link href="/" sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
-                <Typography sx={{ fontWeight: 600, fontSize: "16px" }}>E-NOTARIAT</Typography>
+                <Typography sx={{ fontWeight: 600, fontSize: "16px" }} color="text.primary">
+                  E-NOTARIAT
+                </Typography>
               </Link>
             </Box>
 
             <Box sx={{ display: { xs: "none", md: "flex" }, gap: "15px" }}>
               {routes.items.map((route) => (
-                <Link key={route.link} href={route.link} isActive={route.link === router.pathname}>
+                <Link
+                  key={route.link}
+                  href={route.link}
+                  isActive={route.link === router.pathname}
+                  fontWeight={500}
+                  color={"text.primary"}
+                >
                   {t(route.title)}
                 </Link>
               ))}
@@ -59,7 +63,7 @@ export default function TopNavbar() {
             <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
               <Button
                 color="inherit"
-                sx={{ textTransform: "none", display: { xs: "none", lg: "flex" } }}
+                sx={{ textTransform: "none", display: { xs: "none", lg: "flex" }, fontWeight: 500 }}
                 startIcon={<PersonOutlineIcon />}
               >
                 Личный кабинет
@@ -69,6 +73,10 @@ export default function TopNavbar() {
                 <PersonOutlineIcon />
               </IconButton>
               <LocaleSwitcher />
+
+              <IconButton color="inherit" onClick={handleDrawerToggle} sx={{ display: { md: "none" } }}>
+                <MenuIcon />
+              </IconButton>
             </Box>
           </Toolbar>
         </Container>
@@ -91,7 +99,13 @@ export default function TopNavbar() {
               {routes.items.map((route) => (
                 <ListItem key={route.link} disablePadding>
                   <ListItemButton sx={{ textAlign: "center" }}>
-                    <Link key={route.link} href={route.link} isActive={route.link === router.pathname}>
+                    <Link
+                      key={route.link}
+                      href={route.link}
+                      isActive={route.link === router.pathname}
+                      fontWeight={500}
+                      color="text.primary"
+                    >
                       {t(route.title)}
                     </Link>
                   </ListItemButton>

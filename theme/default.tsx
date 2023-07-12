@@ -13,6 +13,10 @@ const theme = createTheme({
     success: {
       main: "#1BAA75",
     },
+    text: {
+      primary: "#24334B",
+      secondary: "#fff",
+    },
   },
   typography: {
     fontFamily: montserrat.style.fontFamily,
