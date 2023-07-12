@@ -1,6 +1,6 @@
 import { Box, Container, List, ListItem, Tooltip, Typography } from "@mui/material";
 import Image from "next/image";
-import Link from "@/ui/Link";
+import Link from "@/components/ui/Link";
 import { WhatsApp, Instagram, Facebook } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
 
