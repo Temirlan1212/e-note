@@ -93,8 +93,8 @@ const Footer: React.FC = () => {
 
           <List sx={{ display: "flex", width: "fit-content", gap: "25.5px" }}>
             {footerIconsData.map(({ icon: Icon, url }) => (
-              <Tooltip title={url} placement="top">
-                <ListItem key={url} disablePadding>
+              <Tooltip title={url} placement="top" key={url}>
+                <ListItem disablePadding>
                   <Link href={url}>
                     <Icon sx={{ fill: "#fff" }} />
                   </Link>
