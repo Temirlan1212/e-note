@@ -76,6 +76,7 @@ const Footer: React.FC = () => {
             flexDirection: { xs: "column", md: "row" },
             alignItems: { md: "flex-start" },
             gap: { xs: "22px", md: "32px" },
+            marginTop: { xl: "45px", lg: "45px" },
           }}
         >
           <Box
