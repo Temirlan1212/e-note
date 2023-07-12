@@ -17,32 +17,39 @@ const theme = createTheme({
       primary: "#24334B",
       secondary: "#fff",
     },
+    info: {
+      main: "#24334B",
+      light: "#3F5984",
+    },
+    grey: {
+      300: "#CDCDCD",
+    },
   },
 
   typography: {
     fontFamily: montserrat.style.fontFamily,
     h1: {
-      fontSize: "36px",
+      fontSize: "clamp(24px, 3vw, 36px)",
       fontWeight: "900",
     },
     h2: {
-      fontSize: "32px",
+      fontSize: "clamp(22px, 3vw, 32px)",
       fontWeight: "800",
     },
     h3: {
-      fontSize: "28px",
+      fontSize: "clamp(20px, 3vw, 28px)",
       fontWeight: "700",
     },
     h4: {
-      fontSize: "24px",
+      fontSize: "clamp(18px, 3vw, 24px)",
       fontWeight: "600",
     },
     h5: {
-      fontSize: "20px",
+      fontSize: "clamp(16px, 3vw, 20px)",
       fontWeight: "500",
     },
     h6: {
-      fontSize: "16px",
+      fontSize: "clamp(14px, 3vw, 16px)",
       fontWeight: "400",
     },
   },
