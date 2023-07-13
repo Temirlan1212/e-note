@@ -16,7 +16,16 @@ const CustomButton: React.ForwardRefRenderFunction<HTMLButtonElement, CustomButt
       ? { backgroundColor: primaryColor, color: theme.palette.text.secondary }
       : { borderColor: primaryColor, color: primaryColor };
 
-  return <Button {...rest} ref={ref} sx={{ borderRadius: 0 }} style={buttonStyles} fullWidth variant={variant} />;
+  return (
+    <Button
+      {...rest}
+      ref={ref}
+      sx={{ borderRadius: 0, fontSize: "16px", fontWeight: "600", padding: "10px 0" }}
+      style={buttonStyles}
+      fullWidth
+      variant={variant}
+    />
+  );
 };
 
 export default forwardRef<HTMLButtonElement, CustomButtonProps>(CustomButton);
