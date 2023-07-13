@@ -55,4 +55,36 @@ const theme = createTheme({
   },
 });
 
+theme.components = {
+  MuiOutlinedInput: {
+    styleOverrides: {
+      root: {
+        color: theme.palette.text.primary,
+        borderRadius: 0,
+        ".MuiOutlinedInput-notchedOutline": {
+          borderColor: theme.palette.grey[300],
+        },
+      },
+    },
+  },
+
+  MuiInputLabel: {
+    styleOverrides: {
+      root: {
+        color: theme.palette.text.primary,
+      },
+    },
+  },
+
+  MuiButton: {
+    styleOverrides: {
+      root: {
+        background: theme.palette.success.main,
+        color: theme.palette.text.secondary,
+        borderRadius: 0,
+      },
+    },
+  },
+};
+
 export default theme;

@@ -3,6 +3,7 @@ import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import ServicesSection from "@/components/home-page/ServicesSection";
+import HeroSection from "@/components/home-page/HeroSection";
 
 export default function Home() {
   const t = useTranslations();
@@ -16,6 +17,7 @@ export default function Home() {
       </Head>
 
       <Container>
+        <HeroSection />
         <ServicesSection />
       </Container>
     </>
