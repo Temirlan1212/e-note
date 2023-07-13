@@ -1,11 +1,10 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { FormContainer, TextFieldElement, useForm } from "react-hook-form-mui";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { login as loginSchema } from "@/validator-schemas/login";
 import Link from "@/components/ui/Link";
-import { useEffect, useMemo } from "react";
 
 interface IFormValues {
   username: string;
@@ -14,16 +13,14 @@ interface IFormValues {
 
 const HeroSection: React.FC = () => {
   const t = useTranslations();
-  const translatedLoginSchema = useMemo(() => loginSchema(t), [t]);
-
-  useEffect(() => {
-    loginSchema(t);
-    form.trigger();
-  }, [t]);
 
   const form = useForm<IFormValues>({
-    resolver: yupResolver(translatedLoginSchema),
+    resolver: yupResolver(loginSchema),
   });
+
+  const {
+    formState: { errors },
+  } = form;
 
   const onSubmit = (data: IFormValues) => console.log(data);
 
@@ -43,13 +40,13 @@ const HeroSection: React.FC = () => {
           </Typography>
         </Typography>
 
-        <FormContainer onSuccess={onSubmit} formContext={form}>
+        <Box component="form" onSubmit={form.handleSubmit(onSubmit)}>
           <Box display="flex" flexDirection="column" gap="20px">
             <Typography variant="h6" component="span" fontWeight={600} color="text.primary">
               {t("Login to your personal account")}
             </Typography>
 
-            <TextFieldElement
+            <TextField
               label={t("Username")}
               variant="outlined"
               color="success"
@@ -57,10 +54,12 @@ const HeroSection: React.FC = () => {
               InputLabelProps={{
                 shrink: true,
               }}
-              name="username"
+              error={!!errors.username?.message ?? false}
+              helperText={errors.username?.message && t(errors.username?.message)}
+              {...form.register("username")}
             />
 
-            <TextFieldElement
+            <TextField
               label={t("Password")}
               variant="outlined"
               color="success"
@@ -68,7 +67,9 @@ const HeroSection: React.FC = () => {
               InputLabelProps={{
                 shrink: true,
               }}
-              name="password"
+              error={!!errors.password?.message ?? false}
+              helperText={errors.password?.message && t(errors.password?.message)}
+              {...form.register("password")}
             />
           </Box>
 
@@ -83,7 +84,7 @@ const HeroSection: React.FC = () => {
               </Link>
             </Button>
           </Box>
-        </FormContainer>
+        </Box>
       </Box>
 
       <Box sx={{ display: { xs: "none", md: "block" } }}>
