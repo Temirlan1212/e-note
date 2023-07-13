@@ -1,10 +1,10 @@
 import { List, ListItem, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
-import CheckDocIcon from "@/public/checkDoc.svg";
-import CarIcon from "@/public/car.svg";
-import SearchHeirs from "@/public/searchHeirs.svg";
-import HereditaryAffairs from "@/public/hereditaryAffairs.svg";
-import Register from "@/public/register.svg";
+import CheckDocIcon from "@/public/icons/checkDoc.svg";
+import CarIcon from "@/public/icons/car.svg";
+import SearchHeirs from "@/public/icons/searchHeirs.svg";
+import HereditaryAffairs from "@/public/icons/hereditaryAffairs.svg";
+import Register from "@/public/icons/register.svg";
 import Link from "@/components/ui/Link";
 
 const ServicesSection: React.FC = () => {
@@ -21,7 +21,7 @@ const ServicesSection: React.FC = () => {
   return (
     <section>
       <Typography variant="h1" fontWeight={600} sx={{ marginBottom: { md: "50px", xs: "30px" } }}>
-        Сервисы и публичные реестры
+        {t("Services and public registries")}
       </Typography>
 
       <List
