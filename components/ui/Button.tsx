@@ -1,28 +1,31 @@
 import { forwardRef } from "react";
 
 import Button, { ButtonProps } from "@mui/material/Button";
-import { useTheme } from "@mui/material/styles";
-
-export enum BackgroundColor {
-  Primary,
-  Secondary,
-}
 
 interface PrimaryButtonProps extends ButtonProps {
-  bgColor?: BackgroundColor;
+  buttonType?: string;
 }
 
 const PrimaryButton: React.ForwardRefRenderFunction<HTMLButtonElement, PrimaryButtonProps> = (props, ref) => {
-  const { variant = "contained", bgColor = BackgroundColor.Primary, ...rest } = props;
+  const { variant = "contained", buttonType = "primary", ...rest } = props;
 
-  const theme = useTheme();
-
-  const primaryColor = bgColor === BackgroundColor.Primary ? theme.palette.success.main : theme.palette.info.light;
+  const renderSwitch = (param: string) => {
+    switch (param) {
+      case "primary":
+        return "#1BAA75";
+      case "secondary":
+        return "#3F5984";
+      case "danger":
+        return "#687C9B";
+      default:
+        return "#1BAA75";
+    }
+  };
 
   const buttonStyles =
     variant === "contained"
-      ? { backgroundColor: primaryColor, color: theme.palette.text.secondary }
-      : { borderColor: primaryColor, color: primaryColor };
+      ? { backgroundColor: renderSwitch(buttonType), color: "#fff" }
+      : { borderColor: renderSwitch(buttonType), color: renderSwitch(buttonType) };
 
   return (
     <Button
