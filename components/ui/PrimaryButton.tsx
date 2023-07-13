@@ -1,10 +1,11 @@
 import { forwardRef } from "react";
+
 import Button, { ButtonProps } from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 
 interface PrimaryButtonProps extends ButtonProps {}
 
-const CustomButton: React.ForwardRefRenderFunction<HTMLButtonElement, PrimaryButtonProps> = (props, ref) => {
+const PrimaryButton: React.ForwardRefRenderFunction<HTMLButtonElement, PrimaryButtonProps> = (props, ref) => {
   const { variant = "contained", ...rest } = props;
 
   const theme = useTheme();
@@ -28,4 +29,4 @@ const CustomButton: React.ForwardRefRenderFunction<HTMLButtonElement, PrimaryBut
   );
 };
 
-export default forwardRef<HTMLButtonElement, PrimaryButtonProps>(CustomButton);
+export default forwardRef<HTMLButtonElement, PrimaryButtonProps>(PrimaryButton);
