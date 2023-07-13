@@ -1,7 +1,8 @@
-import Head from 'next/head';
-import { Container } from '@mui/material';
-import { useTranslations } from 'next-intl';
-import { GetStaticPropsContext } from 'next';
+import Head from "next/head";
+import { Container } from "@mui/material";
+import { useTranslations } from "next-intl";
+import { GetStaticPropsContext } from "next";
+import ServicesSection from "@/components/home-page/ServicesSection";
 
 export default function Home() {
   const t = useTranslations();
@@ -9,13 +10,13 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>{t('E-notariat')}</title>
+        <title>{t("E-notariat")}</title>
         <meta name="keywords" content="e-notariat, E-notariat, E-Notariat" />
         <meta name="description" content="E-notariat" />
       </Head>
 
       <Container>
-        <h1>{t('E-notariat')}</h1>
+        <ServicesSection />
       </Container>
     </>
   );
