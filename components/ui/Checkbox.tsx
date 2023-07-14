@@ -8,12 +8,12 @@ import CheckBoxSharpIcon from "@mui/icons-material/CheckBoxSharp";
 import CheckBoxOutlineBlankSharpIcon from "@mui/icons-material/CheckBoxOutlineBlankSharp";
 import RadioButtonUncheckedSharpIcon from "@mui/icons-material/RadioButtonUncheckedSharp";
 
-interface CustomCheckboxProps extends Omit<CheckboxProps, "ref"> {
+interface ICheckboxProps extends Omit<CheckboxProps, "ref"> {
   label?: string;
   checkboxType?: "primary" | "secondary";
 }
 
-const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, CustomCheckboxProps> = (
+const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, ICheckboxProps> = (
   { label, checkboxType = "primary", ...props },
   ref
 ) => {
@@ -38,4 +38,4 @@ const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, CustomCheckboxP
   );
 };
 
-export default forwardRef<HTMLInputElement, CustomCheckboxProps>(Checkbox);
+export default forwardRef<HTMLInputElement, ICheckboxProps>(Checkbox);
