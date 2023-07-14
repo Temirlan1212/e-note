@@ -27,7 +27,7 @@ const HeroSection: React.FC = () => {
 
   return (
     <Box component="section" padding="80px 0 40px 0" display="flex" justifyContent="space-between">
-      <Box>
+      <Box margin={{ xs: "auto", md: "0" }}>
         <Typography variant="h2" fontWeight={600} sx={{ maxWidth: { xs: 400, md: 510 }, marginBottom: "40px" }}>
           {t("Welcome to a single platform")}{" "}
           <Typography
@@ -76,8 +76,15 @@ const HeroSection: React.FC = () => {
             />
           </Box>
 
-          <Box>
-            <Button type="submit" sx={{ padding: "10px 0", width: 250 }} fullWidth color="success">
+          <Box
+            display="flex"
+            gap="10px"
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ flexDirection: { xs: "column", md: "row" } }}
+            marginTop="40px"
+          >
+            <Button type="submit" sx={{ padding: "10px 0", width: { xs: "100%", md: 250 } }} fullWidth color="success">
               {t("Enter")}
             </Button>
 
@@ -87,6 +94,15 @@ const HeroSection: React.FC = () => {
               </Link>
             </Button>
           </Box>
+
+          <Link
+            href={"/"}
+            color="text.primary"
+            marginTop={{ xs: 0, md: "20px" }}
+            sx={{ textDecoration: "underline", textAlign: { xs: "center", md: "start" }, display: "block" }}
+          >
+            {t("Forgot your password?")}
+          </Link>
         </Box>
       </Box>
 

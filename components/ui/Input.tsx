@@ -4,27 +4,30 @@ import { UseFormRegister } from "react-hook-form";
 
 type InputProps = TextFieldProps & {
   variant?: "filled" | "outlined" | "standard";
-  register: UseFormRegister<any>;
+  register?: UseFormRegister<any>;
   name?: string;
 };
 
 const Input: FC<InputProps> = ({ color = "success", variant = "outlined", register, name = "name", ...props }) => {
   const inputStyles = {
     "& .MuiInputBase-root": {
-      color: "#000000",
+      color: "text.primary",
       borderRadius: 0,
     },
     "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#999999",
+      borderColor: "grey[300]",
     },
     "& .MuiFormLabel-root:not(.Mui-focused)": {
-      color: "#000000",
+      color: "text.primary",
+    },
+    "& .MuiFormLabel-root(.Mui-focused)": {
+      color: "success",
     },
   };
 
   const mergedStyles = { ...props.sx, ...inputStyles };
 
-  return <TextField variant={variant} color={color} {...props} {...register(name)} sx={mergedStyles} />;
+  return <TextField variant={variant} color={color} {...props} sx={mergedStyles} {...(register && register(name))} />;
 };
 
 export default Input;
