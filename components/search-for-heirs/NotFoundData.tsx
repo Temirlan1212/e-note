@@ -1,10 +1,13 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 import React from "react";
 import NotFoundImage from "../../public/icons/NotFoundImage.svg";
+import NotFoundImageMobile from "../../public/icons/NotFoundImageMobile.svg";
 
 type NotFoundDataProps = {};
 
 const NotFoundData = (props: NotFoundDataProps) => {
+  const matches = useMediaQuery("(min-width:500px)");
+
   return (
     <Box
       sx={{
@@ -24,7 +27,7 @@ const NotFoundData = (props: NotFoundDataProps) => {
       >
         Пока ничего не найдено
       </Typography>
-      <NotFoundImage />
+      {matches ? <NotFoundImage /> : <NotFoundImageMobile />}
     </Box>
   );
 };

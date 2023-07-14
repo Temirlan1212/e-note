@@ -1,7 +1,10 @@
 import FoundedData from "@/components/search-for-heirs/FoundedData";
 import NotFoundData from "@/components/search-for-heirs/NotFoundData";
-import Select from "@/components/ui/Select";
-import { Box, Container, Typography } from "@mui/material";
+// import NotFoundData from "@/components/search-for-heirs/NotFoundData";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import { SearchOutlined } from "@mui/icons-material";
+import { Box, Container, FormControl, InputLabel, Typography, useMediaQuery } from "@mui/material";
 import { GetStaticPropsContext } from "next";
 import { useTranslations } from "next-intl";
 import Head from "next/head";
@@ -11,20 +14,17 @@ type SearchForHeirsProps = {};
 const SearchForHeirs = (props: SearchForHeirsProps) => {
   const t = useTranslations();
 
-  const data = [];
+  const matches = useMediaQuery("(min-width:900px)");
 
-  const sdata = [
-    { value: 10, label: "В алфавитном порядке" },
-    { value: 20, label: "Option 2" },
-    { value: 30, label: "Option 3" },
-  ];
+  const data = ["asd"];
+
   return (
     <>
       <Head>
         <title>{t("Search for heirs")}</title>
       </Head>
 
-      <Container sx={{ minHeight: "100vh", paddingTop: "80px" }}>
+      <Container sx={{ padding: "80px 15px" }}>
         <Typography
           sx={{
             fontSize: {
@@ -37,8 +37,39 @@ const SearchForHeirs = (props: SearchForHeirsProps) => {
         >
           {t("Search for heirs")}
         </Typography>
-        <FoundedData />
-        <Select data={sdata} selectType={"primary"} />
+        <Box sx={{ marginTop: "50px" }}>
+          <form
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              flexDirection: matches ? "row" : "column",
+              gap: matches ? "40px" : "30px",
+            }}
+          >
+            <FormControl sx={{ width: "100%" }}>
+              <InputLabel
+                sx={{ color: "#24334B", fontSize: "18px", top: "-16px", left: "-14px", fontWeight: "500" }}
+                shrink
+              >
+                ФИО наследодателя (обязателен)
+              </InputLabel>
+              <Input placeholder="Введите ФИО" helperText="не введено ФИО наследодателя" />
+            </FormControl>
+            <FormControl sx={{ width: "100%" }}>
+              <InputLabel
+                sx={{ color: "#24334B", fontSize: "18px", top: "-16px", left: "-14px", fontWeight: "500" }}
+                shrink
+              >
+                ИНН наследодателя
+              </InputLabel>
+              <Input placeholder="Введите ИНН" />
+            </FormControl>
+            <Button startIcon={<SearchOutlined />} sx={{ width: "100%", height: "56px" }}>
+              Найти
+            </Button>
+          </form>
+        </Box>
+        {data.length ? <FoundedData /> : <NotFoundData />}
       </Container>
     </>
   );

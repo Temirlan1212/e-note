@@ -1,8 +1,8 @@
 import { Box, Typography } from "@mui/material";
 import React, { useState } from "react";
 import SortSelect from "../ui/Select";
-import { SearchOutlined } from "@mui/icons-material";
 
+const heirCount = 4;
 type FoundedDataProps = {};
 
 const FoundedData = (props: FoundedDataProps) => {
@@ -23,7 +23,7 @@ const FoundedData = (props: FoundedDataProps) => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "20px", marginTop: "80px" }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Typography
           sx={{
             color: "#24334B",
@@ -31,7 +31,7 @@ const FoundedData = (props: FoundedDataProps) => {
             fontWeight: 600,
           }}
         >
-          По вашему запросу найдено <span style={{ color: "#1BAA75" }}>2</span> наследователя
+          По вашему запросу найдено <span style={{ color: "#1BAA75" }}>{heirCount}</span> наследователя
         </Typography>
 
         <Box sx={{ display: "flex", gap: "15px", alignItems: "center" }}>
@@ -44,7 +44,7 @@ const FoundedData = (props: FoundedDataProps) => {
           >
             Сортировка:
           </Typography>
-          <SortSelect data={data} defaultValue={state} onChange={handleChange} selectType={"primary"} />
+          <SortSelect data={data} defaultValue={state} onChange={handleChange} selectType="secondary" />
         </Box>
       </Box>
       <Box>Список наследников</Box>

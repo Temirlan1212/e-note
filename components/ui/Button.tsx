@@ -7,7 +7,7 @@ interface IButtonProps extends ButtonProps {
 }
 
 const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = (props, ref) => {
-  const { variant = "contained", buttonType = "primary", ...rest } = props;
+  const { variant = "contained", buttonType = "primary", sx, ...rest } = props;
 
   const renderSwitch = (param: string) => {
     switch (param) {
@@ -31,7 +31,7 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = 
     <MUIButton
       {...rest}
       ref={ref}
-      sx={{ borderRadius: 0, fontSize: "16px", fontWeight: "600", padding: "10px 0" }}
+      sx={{ borderRadius: 0, fontSize: "16px", fontWeight: "600", ...sx }}
       style={buttonStyles}
       fullWidth
       variant={variant}
