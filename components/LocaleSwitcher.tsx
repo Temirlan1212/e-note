@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { useLocale } from 'next-intl';
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { useRouter } from 'next/router';
+import * as React from "react";
+import { useLocale } from "next-intl";
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { useRouter } from "next/router";
 
 export default function LocaleSwitcher() {
   const router = useRouter();
@@ -28,7 +28,7 @@ export default function LocaleSwitcher() {
   return (
     <div>
       <Button onClick={handleClick} endIcon={<KeyboardArrowDownIcon />} color="inherit">
-        {useLocale()}
+        {useLocale().toUpperCase()}
       </Button>
 
       <Menu anchorEl={localeSwitcherMenu} open={open} onClose={handleClose}>
