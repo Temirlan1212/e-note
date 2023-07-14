@@ -2,11 +2,11 @@ import { forwardRef } from "react";
 
 import { Button as MUIButton, ButtonProps } from "@mui/material";
 
-interface MUIButtonProps extends ButtonProps {
+interface IButtonProps extends ButtonProps {
   buttonType?: string;
 }
 
-const Button: React.ForwardRefRenderFunction<HTMLButtonElement, MUIButtonProps> = (props, ref) => {
+const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = (props, ref) => {
   const { variant = "contained", buttonType = "primary", ...rest } = props;
 
   const renderSwitch = (param: string) => {
@@ -39,4 +39,4 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, MUIButtonProps> 
   );
 };
 
-export default forwardRef<HTMLButtonElement, MUIButtonProps>(Button);
+export default forwardRef<HTMLButtonElement, IButtonProps>(Button);
