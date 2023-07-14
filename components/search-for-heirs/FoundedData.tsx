@@ -44,7 +44,7 @@ const FoundedData = (props: FoundedDataProps) => {
           >
             Сортировка:
           </Typography>
-          <SortSelect data={data} defaultValue={state} onChange={handleChange} />
+          <SortSelect data={data} defaultValue={state} onChange={handleChange} selectType={"primary"} />
         </Box>
       </Box>
       <Box>Список наследников</Box>

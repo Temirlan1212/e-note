@@ -1,5 +1,6 @@
 import FoundedData from "@/components/search-for-heirs/FoundedData";
 import NotFoundData from "@/components/search-for-heirs/NotFoundData";
+import Select from "@/components/ui/Select";
 import { Box, Container, Typography } from "@mui/material";
 import { GetStaticPropsContext } from "next";
 import { useTranslations } from "next-intl";
@@ -12,6 +13,11 @@ const SearchForHeirs = (props: SearchForHeirsProps) => {
 
   const data = [];
 
+  const sdata = [
+    { value: 10, label: "В алфавитном порядке" },
+    { value: 20, label: "Option 2" },
+    { value: 30, label: "Option 3" },
+  ];
   return (
     <>
       <Head>
@@ -32,6 +38,7 @@ const SearchForHeirs = (props: SearchForHeirsProps) => {
           {t("Search for heirs")}
         </Typography>
         <FoundedData />
+        <Select data={sdata} selectType={"primary"} />
       </Container>
     </>
   );
