@@ -1,15 +1,17 @@
+import FoundedData from "@/components/search-for-heirs/FoundedData";
+import NotFoundData from "@/components/search-for-heirs/NotFoundData";
 import { Box, Container, Typography } from "@mui/material";
 import { GetStaticPropsContext } from "next";
 import { useTranslations } from "next-intl";
 import Head from "next/head";
-import Image from "next/image";
-
-import NotFoundImage from "../../public/images/NotFoundImage.svg";
 
 type SearchForHeirsProps = {};
 
 const SearchForHeirs = (props: SearchForHeirsProps) => {
   const t = useTranslations();
+
+  const data = [];
+
   return (
     <>
       <Head>
@@ -17,20 +19,19 @@ const SearchForHeirs = (props: SearchForHeirsProps) => {
       </Head>
 
       <Container sx={{ minHeight: "100vh", paddingTop: "80px" }}>
-        <h1>{t("Search for heirs")}</h1>
-        <Box
+        <Typography
           sx={{
-            margin: "50px auto 0 auto",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            textAlign: "center",
-            gap: "12px",
+            fontSize: {
+              md: 36,
+              sm: 24,
+            },
+            fontWeight: 600,
+            color: "#24334B",
           }}
         >
-          <Typography sx={{ color: "#9A9A9A", fontSize: "24px", fontWeight: 600 }}>Пока ничего не найдено</Typography>
-          <NotFoundImage />
-        </Box>
+          {t("Search for heirs")}
+        </Typography>
+        <FoundedData />
       </Container>
     </>
   );
