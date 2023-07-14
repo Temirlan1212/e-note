@@ -2,6 +2,10 @@ import { create } from "zustand";
 
 export const GuestRouteList = [
   {
+    title: "Home page",
+    link: "/",
+  },
+  {
     title: "About us",
     link: "/about",
   },
