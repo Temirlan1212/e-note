@@ -43,7 +43,7 @@ const ServicesSection: React.FC = () => {
               display: "flex",
               width: { xs: "100%", sm: "auto" },
               padding: "40px 20px 20px 20px",
-              "&:hover": { color: "text.secondary", bgcolor: "info.light", transition: "all 0.2s ease" },
+              "&:hover": { color: "white", bgcolor: "info.light", transition: "all 0.2s ease" },
               cursor: "pointer",
               flexGrow: 1,
               height: "242px",
