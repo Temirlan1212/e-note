@@ -52,6 +52,9 @@ const theme = createTheme({
       fontSize: "clamp(14px, 3vw, 16px)",
       fontWeight: "400",
     },
+    button: {
+      textTransform: "none",
+    },
   },
 });
 
