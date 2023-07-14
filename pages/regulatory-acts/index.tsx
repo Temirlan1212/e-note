@@ -37,7 +37,7 @@ const RegulatoryActs: React.FC = () => {
           alignItems={{ xs: "center", md: "end" }}
           flexDirection={{ xs: "column-reverse", md: "row" }}
           padding="50px 0"
-          gap="100px"
+          gap={{ xs: "40px", sm: "80px", md: "100px" }}
         >
           <Box display="flex" flexDirection="column" gap="50px">
             <Typography variant="h1" fontWeight={600}>
@@ -72,7 +72,7 @@ const RegulatoryActs: React.FC = () => {
             </List>
           </Box>
 
-          <Box>
+          <Box width={{ xs: 280, sm: 400, md: 500 }}>
             <Image src="/images/legal-framework.png" alt="E-notariat" width={500} height={398} layout="responsive" />
           </Box>
         </Box>
