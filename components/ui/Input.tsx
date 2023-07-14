@@ -18,16 +18,19 @@ const Input: FC<InputProps> = ({ color = "success", variant = "outlined", regist
       borderColor: "grey[300]",
     },
     "& .MuiFormLabel-root:not(.Mui-focused)": {
-      color: "text.primary",
+      color: props.error ? "danger" : "text.primary",
     },
     "& .MuiFormLabel-root(.Mui-focused)": {
       color: "success",
+    },
+    "& .MuiFormHelperText-root": {
+      color: props.error ? "danger" : "text.primary",
     },
   };
 
   const mergedStyles = { ...inputStyles, ...props.sx };
 
-  return <TextField variant={variant} color={color} {...props} sx={mergedStyles} {...(register && register(name))} />;
+  return <TextField variant={variant} color={color} sx={mergedStyles} {...(register && register(name))} {...props} />;
 };
 
 export default Input;

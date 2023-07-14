@@ -28,5 +28,6 @@
   "Enter": "Кирүү",
   "Username": "Логин",
   "Password": "Сырсөз",
-  "Forgot your password?": "Сырсөздү унутуп калдыңызбы?"
+  "Forgot your password?": "Сырсөздү унутуп калдыңызбы?",
+  "Incorrect password or username": "Туура эмес сырсөз же колдонуучунун аты"
 }

@@ -28,5 +28,6 @@
   "Enter": "Войти",
   "Username": "Логин",
   "Password": "Пароль",
-  "Forgot your password?": "Забыли пароль?"
+  "Forgot your password?": "Забыли пароль?",
+  "Incorrect password or username": "Неправильный пароль или логин"
 }

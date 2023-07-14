@@ -63,11 +63,11 @@ export const useProfileStore = create<IProfileState>()(
           body: JSON.stringify(user),
         });
 
-        const userData: IUserData | null = await response.json();
+        const userData: { data: IUserData[] } | null = await response.json();
 
-        if (!response.ok || userData == null) return;
+        if (!response.ok || userData == null || userData.data == null) return;
 
-        set(() => ({ userData }));
+        set(() => ({ userData: userData.data[0] }));
       },
     }),
     {

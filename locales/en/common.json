@@ -28,5 +28,6 @@
   "Enter": "Enter",
   "Username": "Username",
   "Password": "Password",
-  "Forgot your password?": "Forgot your password?"
+  "Forgot your password?": "Forgot your password?",
+  "Incorrect password or username": "Incorrect password or username"
 }
