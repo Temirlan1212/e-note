@@ -6,7 +6,7 @@ import InsertDriveFileOutlinedIcon from "@mui/icons-material/InsertDriveFileOutl
 import { Box } from "@mui/material";
 import Accordion from "../ui/Accordion";
 import LoginAndPasswordForm from "./LoginAndPasswordForm";
-import LoginWithESI from "./LoginWithESI";
+import LoginWithESI from "./LoginWithESI/LoginWithESI";
 import LoginWithECP from "./LoginWithECP";
 
 const loginTypesData = [

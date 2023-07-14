@@ -1,17 +1,24 @@
 import React, { useState } from "react";
-import { Box, ToggleButtonGroup } from "@mui/material";
-import Hint from "../ui/Hint";
-import Link from "../ui/Link";
+import { Box, IconButton, InputAdornment, ToggleButtonGroup } from "@mui/material";
+import Hint from "../../ui/Hint";
+import Link from "../../ui/Link";
 import { useTranslations } from "next-intl";
-import ToggleButton from "../ui/ToggleButton";
+import ToggleButton from "../../ui/ToggleButton";
+import Input from "../../ui/Input";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import Button from "../../ui/Button";
+import LoginWithINN from "./LoginWithINN";
+import LoginWithID from "./LoginWithID";
 
 const LoginWithESI: React.FC = () => {
   const t = useTranslations();
+
   const [loginType, setLoginType] = useState<string | null>("INN");
 
   const handleLoginType = (event: React.MouseEvent<HTMLElement>, loginType: string | null) => {
     loginType && setLoginType(loginType);
   };
+
   return (
     <Box>
       {loginType === "INN" && (
@@ -37,16 +44,7 @@ const LoginWithESI: React.FC = () => {
         <ToggleButton value="ID">{t("Login with ID")}</ToggleButton>
       </ToggleButtonGroup>
 
-      {loginType === "ID" && (
-        <>
-          <Link href="#" color="success.main" sx={{ textDecoration: "underline", marginTop: "20px" }}>
-            {t("Instructions for connecting to e-ID card")}
-          </Link>
-          <Hint sx={{ mt: "30px" }} type="hint">
-            {t("ID-card is an internal passport (id card) of a citizen of the Kyrgyz Republic,")}
-          </Hint>
-        </>
-      )}
+      {loginType === "INN" ? <LoginWithINN /> : <LoginWithID />}
     </Box>
   );
 };
