@@ -36,5 +36,13 @@
   "Available Devices": "Available Devices",
   "Choose a device": "Choose a device",
   "Certificates on the device": "Certificates on the device",
-  "Choose a certificate": "Choose a certificate"
+  "Choose a certificate": "Choose a certificate",
+  "Login to the personal account of the Notary": "Login to the personal account of the Notary",
+  "Fingerprint Login": "Fingerprint Login",
+  "You need to verify your fingerprint to sign in": "You need to verify your fingerprint to sign in",
+  "Confirm": "Confirm",
+  "Fingerprint verification": "Fingerprint verification",
+  "Unsuccessful login attempt": "Unsuccessful login attempt",
+  "Unable to identify fingerprint, Place your finger on the scanner again": "Unable to identify fingerprint. Place your finger on the scanner again",
+  "Fingerprint verification successful": "Fingerprint verification successful"
 }
