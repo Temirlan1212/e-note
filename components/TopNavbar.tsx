@@ -16,8 +16,9 @@ import Button from "@mui/material/Button";
 import { Container } from "@mui/material";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import { useRouteStore } from "@/store/route-store";
-import Link from "./Link";
+import { useRouteStore } from "@/store/route";
+import Link from "./ui/Link";
+import ProfileDropdownButton from "./profile/ProfileDropdownButton";
 
 export default function TopNavbar() {
   const router = useRouter();
@@ -56,13 +57,7 @@ export default function TopNavbar() {
             </Box>
 
             <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
-              <Button
-                color="inherit"
-                sx={{ textTransform: "none", display: { xs: "none", lg: "flex" } }}
-                startIcon={<PersonOutlineIcon />}
-              >
-                Личный кабинет
-              </Button>
+              <ProfileDropdownButton />
 
               <IconButton color="inherit" sx={{ display: { lg: "none" } }}>
                 <PersonOutlineIcon />
