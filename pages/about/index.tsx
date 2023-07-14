@@ -12,7 +12,7 @@ export default function About() {
         <title>{t("About us")}</title>
       </Head>
 
-      <Container sx={{ minHeight: "100vh" }}>
+      <Container>
         <h1>{t("About us")}</h1>
       </Container>
     </>
