@@ -58,16 +58,4 @@ const theme = createTheme({
   },
 });
 
-theme.components = {
-  MuiButton: {
-    styleOverrides: {
-      root: {
-        background: theme.palette.success.main,
-        color: theme.palette.text.secondary,
-        borderRadius: 0,
-      },
-    },
-  },
-};
-
 export default theme;

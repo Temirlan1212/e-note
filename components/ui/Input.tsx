@@ -25,7 +25,7 @@ const Input: FC<InputProps> = ({ color = "success", variant = "outlined", regist
     },
   };
 
-  const mergedStyles = { ...props.sx, ...inputStyles };
+  const mergedStyles = { ...inputStyles, ...props.sx };
 
   return <TextField variant={variant} color={color} {...props} sx={mergedStyles} {...(register && register(name))} />;
 };

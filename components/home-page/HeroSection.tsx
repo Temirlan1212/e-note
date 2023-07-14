@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -6,6 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { login as loginSchema } from "@/validator-schemas/login";
 import Link from "@/components/ui/Link";
 import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 
 interface IFormValues {
   username: string;
@@ -88,17 +89,15 @@ const HeroSection: React.FC = () => {
               {t("Enter")}
             </Button>
 
-            <Button type="submit" sx={{ padding: "10px 0", width: 250, background: "transparent" }} fullWidth>
-              <Link href={"/"} color="text.primary" sx={{ textDecoration: "underline" }} fontWeight={600}>
-                {t("Other ways to log in")}
-              </Link>
-            </Button>
+            <Link href={"/"} color="text.primary" sx={{ textDecoration: "underline" }} fontWeight={600}>
+              {t("Other ways to log in")}
+            </Link>
           </Box>
 
           <Link
             href={"/"}
             color="text.primary"
-            marginTop={{ xs: 0, md: "20px" }}
+            marginTop={{ xs: "10px", md: "20px" }}
             sx={{ textDecoration: "underline", textAlign: { xs: "center", md: "start" }, display: "block" }}
           >
             {t("Forgot your password?")}
