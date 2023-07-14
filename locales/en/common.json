@@ -14,8 +14,21 @@
   "Design & Dev": "Design & Dev",
   "Verification of the power of attorney": "Прокурордун ыйгарым укуктарын текшерүү",
   "Checking of mortgaged movable property": "Ипотекага алынган көчмө мүлктү текшерүү",
-  "Search for heirs": "Мураскорлорду издөө",
+  "Search for heirs": "Search for heirs",
   "Hereditary affairs": "Тукум кууп өткөн иштер",
   "Register of Notaries of the KR": "КР нотариустарынын реестри",
-  "Services and public registries": "Services and public registries"
+  "Services and public registries": "Services and public registries",
+  "This field is required!": "This field is required!",
+  "The password must be at least 6 characters long": "The password must be at least 6 characters long",
+  "The password must be no more than 40 characters": "The password must be no more than 40 characters",
+  "Welcome to a single platform": "Welcome to a single platform",
+  "Electronic Notary of the KR": "Electronic Notary of the KR",
+  "Login to your personal account": "Login to your personal account",
+  "Other ways to log in": "Other ways to log in",
+  "Enter": "Enter",
+  "Username": "Username",
+  "Password": "Password",
+  "Forgot your password?": "Forgot your password?",
+  "Incorrect password or username": "Incorrect password or username",
+  "Nothing has been found yet": "Nothing has been found yet"
 }

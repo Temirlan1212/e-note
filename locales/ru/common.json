@@ -17,5 +17,18 @@
   "Search for heirs": "Розыск наследников",
   "Hereditary affairs": "Наследственные дела",
   "Register of Notaries of the KR": "Реестр нотариусов КР",
-  "Services and public registries": "Сервисы и публичные реестры"
+  "Services and public registries": "Сервисы и публичные реестры",
+  "This field is required!": "Это поле обязательно!",
+  "The password must be at least 6 characters long": "Пароль должен содержать не менее 6 символов",
+  "The password must be no more than 40 characters": "Пароль должен содержать не более 40 символов",
+  "Welcome to a single platform": "Добро пожаловать на единую платформу",
+  "Electronic Notary of the KR": "Электронного нотариата КР",
+  "Login to your personal account": "Вход в личный кабинет",
+  "Other ways to log in": "Другие способы входа",
+  "Enter": "Войти",
+  "Username": "Логин",
+  "Password": "Пароль",
+  "Forgot your password?": "Забыли пароль?",
+  "Incorrect password or username": "Неправильный пароль или логин",
+  "Nothing has been found yet": "Пока ничего не найдено"
 }

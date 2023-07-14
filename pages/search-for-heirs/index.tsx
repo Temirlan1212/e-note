@@ -69,7 +69,7 @@ const SearchForHeirs = (props: SearchForHeirsProps) => {
             </Button>
           </form>
         </Box>
-        {data.length ? <FoundedData /> : <NotFoundData />}
+        {data.length < 0 ? <FoundedData /> : <NotFoundData />}
       </Container>
     </>
   );

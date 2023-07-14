@@ -25,13 +25,13 @@ export default function ProfileDropdownButton() {
     };
     await profile.logIn(data);
     setUser(profile.getUser());
-    console.log(profile.getUser());
+    // console.log(profile.getUser());
   };
 
   const handleLogout = () => {
     profile.logOut();
     setUser(profile.getUser());
-    console.log(profile.getUser());
+    // console.log(profile.getUser());
   };
 
   if (user) {

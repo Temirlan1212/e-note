@@ -22,21 +22,27 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = 
     }
   };
 
+  const buttonDefaultStyles = {
+    borderRadius: 0,
+    fontSize: "16px",
+    fontWeight: "600",
+    padding: "10px 0",
+  };
+
   const buttonStyles =
     variant === "contained"
-      ? { backgroundColor: renderSwitch(buttonType), color: "#fff" }
-      : { borderColor: renderSwitch(buttonType), color: renderSwitch(buttonType) };
+      ? {
+          backgroundColor: renderSwitch(buttonType),
+          color: "#fff",
+        }
+      : {
+          borderColor: renderSwitch(buttonType),
+          color: renderSwitch(buttonType),
+        };
 
-  return (
-    <MUIButton
-      {...rest}
-      ref={ref}
-      sx={{ borderRadius: 0, fontSize: "16px", fontWeight: "600", ...sx }}
-      style={buttonStyles}
-      fullWidth
-      variant={variant}
-    />
-  );
+  const mergedStyles = { ...buttonDefaultStyles, ...buttonStyles, ...sx };
+
+  return <MUIButton {...rest} ref={ref} sx={mergedStyles} fullWidth variant={variant} />;
 };
 
 export default forwardRef<HTMLButtonElement, IButtonProps>(Button);
