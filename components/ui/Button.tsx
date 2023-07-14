@@ -1,12 +1,12 @@
 import { forwardRef } from "react";
 
-import Button, { ButtonProps } from "@mui/material/Button";
+import { Button as MUIButton, ButtonProps } from "@mui/material";
 
-interface PrimaryButtonProps extends ButtonProps {
+interface MUIButtonProps extends ButtonProps {
   buttonType?: string;
 }
 
-const PrimaryButton: React.ForwardRefRenderFunction<HTMLButtonElement, PrimaryButtonProps> = (props, ref) => {
+const Button: React.ForwardRefRenderFunction<HTMLButtonElement, MUIButtonProps> = (props, ref) => {
   const { variant = "contained", buttonType = "primary", ...rest } = props;
 
   const renderSwitch = (param: string) => {
@@ -28,7 +28,7 @@ const PrimaryButton: React.ForwardRefRenderFunction<HTMLButtonElement, PrimaryBu
       : { borderColor: renderSwitch(buttonType), color: renderSwitch(buttonType) };
 
   return (
-    <Button
+    <MUIButton
       {...rest}
       ref={ref}
       sx={{ borderRadius: 0, fontSize: "16px", fontWeight: "600", padding: "10px 0" }}
@@ -39,4 +39,4 @@ const PrimaryButton: React.ForwardRefRenderFunction<HTMLButtonElement, PrimaryBu
   );
 };
 
-export default forwardRef<HTMLButtonElement, PrimaryButtonProps>(PrimaryButton);
+export default forwardRef<HTMLButtonElement, MUIButtonProps>(Button);
