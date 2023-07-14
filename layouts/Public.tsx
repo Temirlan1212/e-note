@@ -1,3 +1,4 @@
+import Footer from "@/components/Footer";
 import TopNavbar from "@/components/TopNavbar";
 
 export default function PublicLayout({ children }: { children: JSX.Element }) {
@@ -7,6 +8,9 @@ export default function PublicLayout({ children }: { children: JSX.Element }) {
         <TopNavbar></TopNavbar>
       </header>
       <main>{children}</main>
+      <footer>
+        <Footer />
+      </footer>
     </>
   );
 }

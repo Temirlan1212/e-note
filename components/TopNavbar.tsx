@@ -13,12 +13,12 @@ import ListItemButton from "@mui/material/ListItemButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { useRouteStore } from "@/store/route";
-import Link from "./ui/Link";
 import ProfileDropdownButton from "./profile/ProfileDropdownButton";
+import Link from "@/components/ui/Link";
 
 export default function TopNavbar() {
   const router = useRouter();
@@ -39,18 +39,22 @@ export default function TopNavbar() {
         <Container>
           <Toolbar sx={{ gap: "15px", justifyContent: "space-between", padding: "0px !important" }}>
             <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
-              <IconButton color="inherit" onClick={handleDrawerToggle} sx={{ display: { md: "none" } }}>
-                <MenuIcon />
-              </IconButton>
-
-              <Link href="/">
-                <Image src="/images/logo.png" alt="E-notariat" width={160} height={44} />
+              <Link href="/" sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
+                <Typography variant="h6" color="text.primary" fontWeight={600} whiteSpace="nowrap">
+                  E-NOTARIAT
+                </Typography>
               </Link>
             </Box>
 
             <Box sx={{ display: { xs: "none", md: "flex" }, gap: "15px" }}>
               {routes.items.map((route) => (
-                <Link key={route.link} href={route.link} isActive={route.link === router.pathname}>
+                <Link
+                  key={route.link}
+                  href={route.link}
+                  isActive={route.link === router.pathname}
+                  color={"text.primary"}
+                >
                   {t(route.title)}
                 </Link>
               ))}
@@ -63,6 +67,10 @@ export default function TopNavbar() {
                 <PersonOutlineIcon />
               </IconButton>
               <LocaleSwitcher />
+
+              <IconButton color="inherit" onClick={handleDrawerToggle} sx={{ display: { md: "none" } }}>
+                <MenuIcon />
+              </IconButton>
             </Box>
           </Toolbar>
         </Container>
@@ -85,7 +93,12 @@ export default function TopNavbar() {
               {routes.items.map((route) => (
                 <ListItem key={route.link} disablePadding>
                   <ListItemButton sx={{ textAlign: "center" }}>
-                    <Link key={route.link} href={route.link} isActive={route.link === router.pathname}>
+                    <Link
+                      key={route.link}
+                      href={route.link}
+                      isActive={route.link === router.pathname}
+                      color="text.primary"
+                    >
                       {t(route.title)}
                     </Link>
                   </ListItemButton>

@@ -1,15 +1,15 @@
 import { NextRouter, useRouter } from "next/router";
-import { styled, Link as MuiLink } from "@mui/material";
-import { HTMLAttributes } from "react";
+import { Link as MuiLink, LinkProps, styled } from "@mui/material";
 
-interface ILinkProps extends HTMLAttributes<HTMLElement> {
+interface ILinkProps extends LinkProps {
   href: string;
   isActive?: boolean;
+  activeColor?: string;
+  color?: string;
 }
 
-function Link({ children, href, isActive, ...props }: ILinkProps) {
-  const StyledLink = styled(MuiLink)(({ theme: { palette } }) => ({
-    color: isActive ? palette.success.main : "inherit",
+function Link({ children, href, isActive, activeColor, color, ...props }: ILinkProps) {
+  const StyledLink = styled(MuiLink)(() => ({
     textDecoration: "none",
   }));
 
@@ -20,7 +20,12 @@ function Link({ children, href, isActive, ...props }: ILinkProps) {
   };
 
   return (
-    <StyledLink {...props} href={href} onClick={handleClick}>
+    <StyledLink
+      href={href}
+      onClick={handleClick}
+      color={isActive ? activeColor ?? "success.main" : color ?? "inherit"}
+      {...props}
+    >
       {children}
     </StyledLink>
   );
