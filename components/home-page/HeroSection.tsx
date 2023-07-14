@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { login as loginSchema } from "@/validator-schemas/login";
 import Link from "@/components/ui/Link";
+import Input from "@/components/ui/Input";
 
 interface IFormValues {
   username: string;
@@ -46,7 +47,7 @@ const HeroSection: React.FC = () => {
               {t("Login to your personal account")}
             </Typography>
 
-            <TextField
+            <Input
               label={t("Username")}
               variant="outlined"
               color="success"
@@ -56,10 +57,11 @@ const HeroSection: React.FC = () => {
               }}
               error={!!errors.username?.message ?? false}
               helperText={errors.username?.message && t(errors.username?.message)}
-              {...form.register("username")}
+              register={form.register}
+              name="username"
             />
 
-            <TextField
+            <Input
               label={t("Password")}
               variant="outlined"
               color="success"
@@ -69,7 +71,8 @@ const HeroSection: React.FC = () => {
               }}
               error={!!errors.password?.message ?? false}
               helperText={errors.password?.message && t(errors.password?.message)}
-              {...form.register("password")}
+              register={form.register}
+              name="password"
             />
           </Box>
 
