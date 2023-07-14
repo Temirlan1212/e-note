@@ -27,10 +27,7 @@ export default function ResetPassword() {
               boxShadow: "0px 5px 20px 0px #E9E9E9",
             }}
           >
-            <Hint
-              type="hint"
-              text="Для изменения пароля введите ваш E-mail. На него будет отправлена ссылка для сброса."
-            />
+            <Hint type="hint">{t("To change your password, enter your E-mail, A reset link will be sent to it,")}</Hint>
           </Box>
         </Box>
       </Container>
@@ -41,7 +38,10 @@ export default function ResetPassword() {
 export async function getStaticProps(context: GetStaticPropsContext) {
   return {
     props: {
-      messages: (await import(`locales/${context.locale}/common.json`)).default,
+      messages: {
+        ...(await import(`locales/${context.locale}/common.json`)).default,
+        ...(await import(`locales/${context.locale}/login.json`)).default,
+      },
     },
   };
 }
