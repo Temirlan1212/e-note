@@ -1,4 +1,4 @@
-import { Box, FormHelperText, Typography } from "@mui/material";
+import { Box, CircularProgress, FormHelperText, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -15,6 +15,7 @@ const HeroSection: React.FC = () => {
   const t = useTranslations();
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
+  const isLoading = useProfileStore((state) => state.loading);
 
   const form = useForm<IUserCredentials>({
     resolver: yupResolver(loginSchema),
@@ -26,10 +27,12 @@ const HeroSection: React.FC = () => {
   } = form;
 
   const onSubmit = async (data: IUserCredentials) => {
-    const res = await profile.logIn(data);
-    setUser(profile.getUser());
+    await profile.logIn(data);
+    const user = profile.getUser();
+    setUser(user);
+    form.reset();
 
-    if (res == null) {
+    if (user == null) {
       setError("root.serverError", { type: "custom", message: "Incorrect password or username" });
     }
   };
@@ -109,11 +112,16 @@ const HeroSection: React.FC = () => {
             >
               <Button
                 type="submit"
-                sx={{ padding: "10px 0", width: { xs: "100%", md: 250 } }}
+                sx={{
+                  padding: "10px 0",
+                  width: { xs: "100%", md: 250 },
+                  display: "flex",
+                  gap: "30px",
+                }}
                 fullWidth
                 color="success"
               >
-                {t("Enter")}
+                {!isLoading ? t("Enter") : <CircularProgress color="inherit" size={25} />}
               </Button>
 
               <Link
