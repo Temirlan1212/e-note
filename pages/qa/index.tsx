@@ -48,7 +48,14 @@ export default function QA() {
       </Head>
 
       <Container>
-        <Box py={5} display="flex" justifyContent="space-between" gap={{ xs: "20px", lg: "110px" }} alignItems="center">
+        <Box
+          component="section"
+          py={5}
+          display="flex"
+          justifyContent="space-between"
+          gap={{ xs: "20px", lg: "110px" }}
+          alignItems="center"
+        >
           <Box width={340} height={600} display={{ xs: "none", md: "flex" }} alignItems="center">
             <Image src="/images/qa.png" alt="E-notariat" width={340} height={600} layout="responsive" />
           </Box>
