@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import React, { useState } from "react";
-import SortSelect from "../ui/SortSelect";
+import SortSelect from "../ui/Select";
+import { SearchOutlined } from "@mui/icons-material";
 
 type FoundedDataProps = {};
 

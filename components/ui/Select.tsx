@@ -1,5 +1,6 @@
 import React from "react";
-import Select, { SelectProps } from "@mui/material/Select";
+import { Select as MUISelect, SelectProps } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { MenuItem } from "@mui/material";
 
 interface CustomSelectProps extends SelectProps {
@@ -7,16 +8,18 @@ interface CustomSelectProps extends SelectProps {
   onChange: any;
 }
 
-const SortSelect: React.FC<CustomSelectProps> = ({ children, data, ...rest }) => {
+const Select: React.FC<CustomSelectProps> = ({ children, data, ...rest }) => {
   return (
-    <Select
+    <MUISelect
       sx={{
-        color: "#1BAA75",
+        color: "#24334B",
+        minWidth: "250px",
+        width: "100%",
         "& .MuiInputBase-input": {
           padding: "12px 14px",
         },
         ".MuiOutlinedInput-notchedOutline": {
-          borderColor: "#1BAA75",
+          borderColor: "#CDCDCD",
         },
         "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
           borderColor: "#1BAA75",
@@ -32,24 +35,34 @@ const SortSelect: React.FC<CustomSelectProps> = ({ children, data, ...rest }) =>
       }}
       {...rest}
       autoWidth
+      MenuProps={{
+        sx: {
+          "&& .Mui-selected": {
+            backgroundColor: "#EFEFEF",
+          },
+        },
+      }}
     >
       {data.map((item: { value: any; label: any }) => (
         <MenuItem
           sx={{
-            color: "#1BAA75",
+            color: "#24334B",
             fontSize: "16px",
-            "&.Mui-selected": {
-              backgroundColor: "#1baa751a",
+            minWidth: "250px",
+            width: "100%",
+            "& .MuiList-padding .MuiMenu-list": {
+              padding: 0,
             },
           }}
+          classes={{ root: "MenuItem", selected: "selected", focusVisible: "focusVisible" }}
           key={item.value}
           value={item.value}
         >
           {item.label}
         </MenuItem>
       ))}
-    </Select>
+    </MUISelect>
   );
 };
 
-export default SortSelect;
+export default Select;
