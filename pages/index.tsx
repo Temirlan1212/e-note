@@ -3,7 +3,6 @@ import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import ServicesSection from "@/components/home-page/ServicesSection";
-import Input from "@/components/ui/Input";
 
 export default function Home() {
   const t = useTranslations();
@@ -18,7 +17,6 @@ export default function Home() {
 
       <Container>
         <ServicesSection />
-        <Input sx={{ margin: "20px" }} label="Tima" />
       </Container>
     </>
   );
