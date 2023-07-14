@@ -4,9 +4,7 @@ import HelpOutlinedIcon from "@mui/icons-material/HelpOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { styled } from "@mui/material/styles";
-
 import React from "react";
-import Link from "./Link";
 import { useTranslations } from "next-intl";
 
 interface ILink {
@@ -29,29 +27,12 @@ const Box = styled((props: BoxProps) => <MuiBox {...props} />)(({ theme }) => ({
   boxShadow: "0px 10px 20px 0px #E9E9E9",
 }));
 
-export default function Hint({ title, text, links, type, ...props }: IHintProps) {
+export default function Hint({ title, text, links, type, children, ...props }: IHintProps) {
   const t = useTranslations();
   const [isActive, setIsActive] = React.useState(true);
 
   const Icon = type === "hint" ? HelpOutlinedIcon : type === "success" ? CheckCircleIcon : ErrorOutlineIcon;
 
-  let description: Array<string | JSX.Element> | string | undefined = text;
-
-  if (links && text) {
-    let stack = [...links].reverse();
-    let textArr = text.split("");
-    description = textArr.map((item) => {
-      if (item === "*") {
-        let link = stack.pop();
-        return (
-          <Link sx={{ textDecoration: "underline" }} color="success.main" key={link?.title} href={link!.href}>
-            {t(link?.title)}
-          </Link>
-        );
-      }
-      return t(item);
-    });
-  }
   const handleClick = () => {
     type === "hint" && setIsActive((prev) => !prev);
   };
@@ -76,7 +57,7 @@ export default function Hint({ title, text, links, type, ...props }: IHintProps)
         )}
 
         <Typography fontSize={14} color={"#687C9B"} variant="h6">
-          {description}
+          {children}
         </Typography>
       </MuiBox>
       <IconButton sx={{ height: "min-content" }} onClick={handleClick}>
