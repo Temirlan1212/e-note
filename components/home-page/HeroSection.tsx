@@ -7,16 +7,12 @@ import { login as loginSchema } from "@/validator-schemas/login";
 import Link from "@/components/ui/Link";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-
-interface IFormValues {
-  username: string;
-  password: string;
-}
+import { IUserCredentials } from "@/models/profile/user";
 
 const HeroSection: React.FC = () => {
   const t = useTranslations();
 
-  const form = useForm<IFormValues>({
+  const form = useForm<IUserCredentials>({
     resolver: yupResolver(loginSchema),
   });
 
@@ -24,7 +20,7 @@ const HeroSection: React.FC = () => {
     formState: { errors },
   } = form;
 
-  const onSubmit = (data: IFormValues) => console.log(data);
+  const onSubmit = (data: IUserCredentials) => console.log(data);
 
   return (
     <Box component="section" padding="80px 0 40px 0" display="flex" justifyContent="space-between">
