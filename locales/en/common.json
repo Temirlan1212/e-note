@@ -29,5 +29,14 @@
   "Username": "Username",
   "Password": "Password",
   "Forgot your password?": "Forgot your password?",
-  "Incorrect password or username": "Incorrect password or username"
+  "Incorrect password or username": "Incorrect password or username",
+  "Questions and answers": "Questions and answers",
+  "What is a power of attorney?": "What is a power of attorney?",
+  "What is needed to provide proof?": "What is needed to provide proof?",
+  "For how long and when is the Certificate of Inheritance issued?": "For how long and when is the Certificate of Inheritance issued?",
+  "For how long can I make a Power of Attorney for the management and disposal of property?": "For how long can I make a Power of Attorney for the management and disposal of property?",
+  "QA-text-1": "A power of attorney is a written authorization issued by one person to another person for representation before third parties in legal relations. The parties to the power of attorney are the principal ('represented') and the proxy ('representative', 'attorney').",
+  "QA-text-2": "At the request of interested persons, notaries provide the evidence necessary in the event of a case in judicial or administrative bodies, if there are grounds to believe that the presentation of evidence will subsequently become impossible or difficult. Notaries do not provide evidence in cases that, at the time of the appeal of interested persons to the notary, are in the proceedings of a court or an administrative body. If the necessary evidence is required to conduct business in the bodies of foreign states, the provision of evidence is carried out by state notaries, regardless of the fact that the case is already in the proceedings of the bodies of foreign states at the time of the appeal of the interested person. The person interested in providing evidence (the future plaintiff, the alleged defendant) submits an application to the notary, whose signature or his representative can be attested by a notary. In order to provide evidence, notaries interrogate witnesses, inspect written and material evidence, and appoint an expert examination. When performing procedural actions to provide evidence, notaries are guided by the relevant rules Civil Procedure Code Of the Kyrgyz Republic.",
+  "QA-text-3": "A certificate of inheritance is issued to heirs at any time after six months from the date of the opening of the inheritance, if there is irrefutable evidence confirming the ownership of the property to the deceased. These rules, as you can see, are not complicated and have not changed for a very long time. However, life has formed several stable stereotypes in society, which sometimes throw people very unpleasant surprises and still cause controversy.",
+  "QA-text-4": "The power of attorney is issued for a period of no more than three years. If the term is not specified in the power of attorney, it remains valid for one year from the date of its issuance."
 }

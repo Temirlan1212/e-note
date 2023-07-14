@@ -9,6 +9,10 @@ export const GuestRouteList = [
     title: "Notaries",
     link: "/notaries",
   },
+  {
+    title: "Questions and answers",
+    link: "/qa",
+  },
 ];
 
 export const UserRouteList = [];
