@@ -59,7 +59,7 @@ const Footer: React.FC = () => {
           <Box>
             <Link href="/" sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
-              <Typography variant="h6" color="text.secondary" fontWeight={600} whiteSpace="nowrap">
+              <Typography variant="h6" color="white" fontWeight={600} whiteSpace="nowrap">
                 E-NOTARIAT
               </Typography>
             </Link>
@@ -91,7 +91,7 @@ const Footer: React.FC = () => {
             }}
           >
             <Image src="/images/website-analytics.png" alt="website-analytics" width={107} height={38} />
-            <Typography color="text.secondary">{t("2023 E-Notariat All rights Reserved")}</Typography>
+            <Typography color="white">{t("2023 E-Notariat All rights Reserved")}</Typography>
           </Box>
 
           <List sx={{ display: "flex", width: "fit-content", gap: "25.5px" }}>
@@ -117,7 +117,7 @@ const FooterSection: React.FC<IFooterSection> = ({ title, items }) => {
 
   return (
     <section>
-      <Typography variant="h5" padding="0 0 20px 0" color="text.secondary">
+      <Typography variant="h5" padding="0 0 20px 0" color="white">
         {t(title)}
       </Typography>
 
@@ -125,7 +125,7 @@ const FooterSection: React.FC<IFooterSection> = ({ title, items }) => {
         {items.map(({ title, link }, index) =>
           title ? (
             <ListItem sx={{ padding: "0 0 24px 0" }} key={index}>
-              <Link href={link} color="text.secondary" activeColor="text.primary" isActive={router.route === link}>
+              <Link href={link} color="#fff" activeColor="text.primary" isActive={router.route === link}>
                 {t(title)}
               </Link>
             </ListItem>

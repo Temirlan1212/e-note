@@ -15,7 +15,6 @@ const theme = createTheme({
     },
     text: {
       primary: "#24334B",
-      secondary: "#fff",
     },
     info: {
       main: "#24334B",
@@ -51,6 +50,9 @@ const theme = createTheme({
     h6: {
       fontSize: "clamp(14px, 3vw, 16px)",
       fontWeight: "400",
+    },
+    button: {
+      textTransform: "none",
     },
   },
 });

@@ -2,6 +2,8 @@
   "E-notariat": "E-notariat",
   "About us": "Биз жөнүндө",
   "Notaries": "Нотариустар",
+  "Login": "Кирүү",
+  "Logout": "Чыгуу",
   "Community": "Жамаат",
   "Sample": "Үлгү",
   "Resource": "Ресурс",
@@ -18,5 +20,17 @@
   "Services and public registries": "Кызматтар жана коомдук реестрлер",
   "The page is not available": "Барак жеткиликтүү эмес",
   "Unfortunately, we cannot find the requested page": "Тилекке каршы, биз суралган баракты таба албайбыз",
-  "Go back to the main page": "Башкы бетке кайтуу"
+  "Go back to the main page": "Башкы бетке кайтуу",
+  "This field is required!": "Бул талаа талап кылынат!",
+  "The password must be at least 6 characters long": "Сырсөз кеминде 6 тамгадан турушу керек",
+  "The password must be no more than 40 characters": "Сырсөз 40тан ашпашы керек",
+  "Welcome to a single platform": "Бир платформага кош келиңиздер",
+  "Electronic Notary of the KR": "КР электрондук нотариусу",
+  "Login to your personal account": "Жеке Каттоо эсебиңизге кирүү",
+  "Other ways to log in": "Кирүүнүн башка жолдору",
+  "Enter": "Кирүү",
+  "Username": "Логин",
+  "Password": "Сырсөз",
+  "Forgot your password?": "Сырсөздү унутуп калдыңызбы?",
+  "Incorrect password or username": "Туура эмес сырсөз же колдонуучунун аты"
 }
