@@ -52,27 +52,19 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
   padding: "30px 20px",
 }));
 
-interface IDefaultAccordionProps extends AccordionProps {
+interface IAccordionProps extends AccordionProps {
   title: string;
   type: string;
-  handleChange: (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => void;
+  handleChange: (event: React.SyntheticEvent, isExpanded: boolean) => void;
   icon?: OverridableComponent<SvgIconTypeMap<{}, "svg">> & {
     muiName: string;
   };
 }
 
-export default function Accordion({
-  title,
-  expanded,
-  type,
-  children,
-  handleChange,
-  icon: Icon,
-  ...props
-}: IDefaultAccordionProps) {
+export default function Accordion({ title, expanded, children, handleChange, icon: Icon, ...props }: IAccordionProps) {
   const t = useTranslations();
   return (
-    <AccordionMui expanded={expanded} onChange={handleChange(type)} {...props}>
+    <AccordionMui expanded={expanded} onChange={handleChange} {...props}>
       <AccordionSummary expandIcon={expanded ? <RemoveIcon /> : <AddIcon />}>
         {Icon && <Icon color={expanded ? "inherit" : "success"} />}
         <Typography variant="h6" ml={2}>
