@@ -22,5 +22,19 @@
   "To log in with a username and password, you need to register with the ESI": "To log in with a username and password, you need to register with the ESI",
   "In order to receive an ESI, you need to contact the nearest": "In order to receive an ESI, you need to contact the nearest",
   "in registry": "in registry",
-  "to get a login": "to get a login"
+  "to get a login": "to get a login",
+  "Type a new password to enter your personal account, We advise you to adhere to the following rules when compiling a password: The password must contain at least 8 characters The presence of numbers and letters of the upper jean of lower registers The presence of special characters - «@», «$», «&» etc,": "Type a new password to enter your personal account. We advise you to adhere to the following rules when compiling a password: The password must contain at least 8 characters The presence of numbers and letters of the upper jean of lower registers The presence of special characters - «@», «$», «&» etc.",
+  "New Password": "New Password",
+  "Password confirmation": "Password confirmation",
+  "Your password has been successfully changed": "Your password has been successfully changed",
+  "Now you can enter your personal account": "Now you can enter your personal account",
+  "Personal number (TIN)": "Personal number (TIN)",
+  "Passport password": "Passport password",
+  "Pin": "Pin",
+  "Refresh device list": "Refresh device list",
+  "Update list of certificates": "Update list of certificates",
+  "Available Devices": "Available Devices",
+  "Choose a device": "Choose a device",
+  "Certificates on the device": "Certificates on the device",
+  "Choose a certificate": "Choose a certificate"
 }
