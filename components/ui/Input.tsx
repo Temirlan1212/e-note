@@ -1,25 +1,33 @@
-import { TextField, TextFieldProps, styled } from "@mui/material";
+import { TextField, TextFieldProps } from "@mui/material";
 import { FC } from "react";
+import { UseFormRegister } from "react-hook-form";
 
 type InputProps = TextFieldProps & {
   variant?: "filled" | "outlined" | "standard";
+  register?: UseFormRegister<any>;
+  name?: string;
 };
 
-const Input: FC<InputProps> = ({ color = "success", variant = "outlined", ...props }) => {
-  const StyledComponent = styled(TextField)(({ theme: { palette } }) => ({
+const Input: FC<InputProps> = ({ color = "success", variant = "outlined", register, name = "name", ...props }) => {
+  const inputStyles = {
     "& .MuiInputBase-root": {
-      color: palette.text.primary,
+      color: "text.primary",
       borderRadius: 0,
     },
     "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: palette.grey[300],
+      borderColor: "grey[300]",
     },
     "& .MuiFormLabel-root:not(.Mui-focused)": {
-      color: palette.text.primary,
+      color: "text.primary",
     },
-  }));
+    "& .MuiFormLabel-root(.Mui-focused)": {
+      color: "success",
+    },
+  };
 
-  return <StyledComponent variant={variant} color={color} {...props} />;
+  const mergedStyles = { ...props.sx, ...inputStyles };
+
+  return <TextField variant={variant} color={color} {...props} sx={mergedStyles} {...(register && register(name))} />;
 };
 
 export default Input;
