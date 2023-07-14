@@ -24,6 +24,7 @@ const Box = styled((props: BoxProps) => <MuiBox {...props} />)(({ theme }) => ({
   padding: theme.spacing(2),
   display: "flex",
   columnGap: "5px",
+  justifyContent: "space-between",
   boxShadow: "0px 10px 20px 0px #E9E9E9",
 }));
 
@@ -60,7 +61,7 @@ export default function Hint({ title, text, links, type, children, ...props }: I
           {children}
         </Typography>
       </MuiBox>
-      <IconButton sx={{ height: "min-content" }} onClick={handleClick}>
+      <IconButton sx={{ height: "min-content", padding: 0 }} onClick={handleClick}>
         <Icon sx={{ color: type === "error" ? "#EB5757" : "success.main" }} />
       </IconButton>
     </Box>
