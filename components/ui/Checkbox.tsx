@@ -1,6 +1,8 @@
 import React, { forwardRef } from "react";
+
 import { CheckboxProps, Checkbox as MUICheckbox } from "@mui/material";
 import FormControlLabel from "@mui/material/FormControlLabel";
+
 interface ICheckboxProps extends Omit<CheckboxProps, "ref"> {
   label?: string;
 }
