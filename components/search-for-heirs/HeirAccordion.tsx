@@ -6,6 +6,8 @@ import Accordion from "../ui/Accordion";
 import Link from "../ui/Link";
 import { useTranslations } from "next-intl";
 
+type IHeirAccordionProps = {};
+
 const heirTypesData = [
   {
     title: "Нурмырзаев Баккелди Бекмолдоевич",
@@ -25,13 +27,13 @@ const heirTypesData = [
   },
 ];
 
-export default function LoginAccordion() {
+const HeirAccordion = (props: IHeirAccordionProps) => {
   const t = useTranslations();
 
-  const [expanded, setExpanded] = React.useState<string | false>();
+  const [heirExpanded, setHeirExpanded] = React.useState<string | false>();
 
   const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpanded(isExpanded ? panel : false);
+    setHeirExpanded(isExpanded ? panel : false);
   };
 
   return (
@@ -39,7 +41,7 @@ export default function LoginAccordion() {
       {heirTypesData.map(({ title, type }) => (
         <Accordion
           key={type}
-          expanded={expanded === type}
+          expanded={heirExpanded === type}
           title={title}
           handleChange={handleChange(type)}
           baseSx={{
@@ -78,4 +80,6 @@ export default function LoginAccordion() {
       ))}
     </Box>
   );
-}
+};
+
+export default HeirAccordion;
