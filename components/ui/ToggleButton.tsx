@@ -6,14 +6,16 @@ const ToggleButton = styled((props: ToggleButtonProps) => <MuiToggleButton {...p
   fontSize: "16px",
   width: "100%",
   borderRadius: "0",
+  transition: "0.5s",
 
   "&:hover": {
-    backgroundColor: theme.palette.text.secondary,
+    backgroundColor: "white",
+    boxShadow: "0px 5px 10px 0px #99DBAF",
   },
 
   "&.Mui-selected": {
     backgroundColor: theme.palette.success.main,
-    color: theme.palette.text.secondary,
+    color: "white",
     boxShadow: "0px 10px 20px 0px #99DBAF",
   },
   "&.Mui-selected:hover": {

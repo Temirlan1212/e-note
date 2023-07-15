@@ -29,5 +29,6 @@
   "Username": "Логин",
   "Password": "Пароль",
   "Forgot your password?": "Забыли пароль?",
-  "Incorrect password or username": "Неправильный пароль или логин"
+  "Incorrect password or username": "Неправильный пароль или логин",
+  "Send": "Отправить"
 }

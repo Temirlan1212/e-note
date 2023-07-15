@@ -14,12 +14,7 @@ export default function Login() {
       </Head>
 
       <Container>
-        <Box py={5}>
-          <Typography variant="h1" fontWeight={600} my={6} textAlign={"center"}>
-            {t("Login to your personal account")}
-          </Typography>
-          <LoginAccordion />
-        </Box>
+        <LoginAccordion role={"notary"} />
       </Container>
     </>
   );
