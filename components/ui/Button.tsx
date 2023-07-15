@@ -1,13 +1,23 @@
 import { forwardRef } from "react";
 
-import { Button as MUIButton, ButtonProps } from "@mui/material";
+import { Button as MUIButton, ButtonProps, CircularProgress } from "@mui/material";
 
 interface IButtonProps extends ButtonProps {
-  buttonType?: string;
+  buttonType?: "primary" | "secondary" | "danger";
+  loading?: boolean;
+  progressStyles?: any;
 }
 
 const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = (props, ref) => {
-  const { variant = "contained", buttonType = "primary", sx, ...rest } = props;
+  const {
+    variant = "contained",
+    buttonType = "primary",
+    sx,
+    loading = false,
+    progressStyles,
+    children,
+    ...rest
+  } = props;
 
   const renderSwitch = (param: string) => {
     switch (param) {
@@ -42,7 +52,15 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = 
 
   const mergedStyles = { ...buttonDefaultStyles, ...buttonStyles, ...sx };
 
-  return <MUIButton {...rest} ref={ref} sx={mergedStyles} fullWidth variant={variant} />;
+  return (
+    <MUIButton {...rest} ref={ref} sx={mergedStyles} fullWidth variant={variant}>
+      {loading ? (
+        <CircularProgress color="inherit" style={{ width: "28px", height: "28px", ...progressStyles }} />
+      ) : (
+        children
+      )}
+    </MUIButton>
+  );
 };
 
 export default forwardRef<HTMLButtonElement, IButtonProps>(Button);
