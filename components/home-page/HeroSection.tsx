@@ -26,10 +26,11 @@ const HeroSection: React.FC = () => {
   } = form;
 
   const onSubmit = async (data: IUserCredentials) => {
-    const res = await profile.logIn(data);
-    setUser(profile.getUser());
-
-    if (res == null) {
+    await profile.logIn(data);
+    const user = profile.getUser();
+    setUser(user);
+    form.reset();
+    if (user == null) {
       setError("root.serverError", { type: "custom", message: "Incorrect password or username" });
     }
   };
