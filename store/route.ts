@@ -13,6 +13,10 @@ export const GuestRouteList = [
     title: "Regulatory acts",
     link: "/regulatory-acts",
   },
+  {
+    title: "Questions and answers",
+    link: "/qa",
+  },
 ];
 
 export const UserRouteList = [];

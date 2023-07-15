@@ -15,6 +15,7 @@ const HeroSection: React.FC = () => {
   const t = useTranslations();
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
+  const isLoading = useProfileStore((state) => state.loading);
 
   const form = useForm<IUserCredentials>({
     resolver: yupResolver(loginSchema),
@@ -29,9 +30,11 @@ const HeroSection: React.FC = () => {
     await profile.logIn(data);
     const user = profile.getUser();
     setUser(user);
-    form.reset();
+
     if (user == null) {
       setError("root.serverError", { type: "custom", message: "Incorrect password or username" });
+    } else {
+      form.reset();
     }
   };
 
@@ -110,9 +113,15 @@ const HeroSection: React.FC = () => {
             >
               <Button
                 type="submit"
-                sx={{ padding: "10px 0", width: { xs: "100%", md: 250 } }}
+                sx={{
+                  padding: "10px 0",
+                  width: { xs: "100%", md: 250 },
+                  display: "flex",
+                  gap: "30px",
+                }}
                 fullWidth
                 color="success"
+                loading={isLoading}
               >
                 {t("Enter")}
               </Button>
