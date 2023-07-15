@@ -1,5 +1,5 @@
 import { NextRouter, useRouter } from "next/router";
-import { Link as MuiLink, LinkProps, styled } from "@mui/material";
+import { Link as MuiLink, LinkProps } from "@mui/material";
 
 interface ILinkProps extends LinkProps {
   href: string;
@@ -9,25 +9,26 @@ interface ILinkProps extends LinkProps {
 }
 
 function Link({ children, href, isActive, activeColor, color, ...props }: ILinkProps) {
-  const StyledLink = styled(MuiLink)(() => ({
-    textDecoration: "none",
-  }));
-
   const router: NextRouter = useRouter();
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
-    router.push(href);
+    if (props.target === "_blank") {
+      window.open(href, "_blank");
+    } else {
+      router.push(href);
+    }
   };
 
   return (
-    <StyledLink
+    <MuiLink
       href={href}
       onClick={handleClick}
       color={isActive ? activeColor ?? "success.main" : color ?? "inherit"}
+      underline="none"
       {...props}
     >
       {children}
-    </StyledLink>
+    </MuiLink>
   );
 }
 
