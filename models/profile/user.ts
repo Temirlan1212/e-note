@@ -13,8 +13,3 @@ export interface IUserData extends IUser {
   "partner.mobilePhone": string;
   version: number;
 }
-
-export interface IHeir {
-  username: string;
-  innNumber: string;
-}

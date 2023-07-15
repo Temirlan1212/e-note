@@ -6,10 +6,10 @@ import { useTranslations } from "next-intl";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 
-import { IHeir } from "@/models/profile/user";
+import { IHeir } from "@/models/heirs/user";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { heir as heirSchema } from "@/validator-schemas/schemas";
+import { heir as heirSchema } from "@/validator-schemas/heir";
 
 type ISearchFormProps = {};
 
