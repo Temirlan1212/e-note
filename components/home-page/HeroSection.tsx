@@ -30,9 +30,11 @@ const HeroSection: React.FC = () => {
     await profile.logIn(data);
     const user = profile.getUser();
     setUser(user);
-    form.reset();
+
     if (user == null) {
       setError("root.serverError", { type: "custom", message: "Incorrect password or username" });
+    } else {
+      form.reset();
     }
   };
 
