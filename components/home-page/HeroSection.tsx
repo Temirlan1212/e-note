@@ -91,6 +91,7 @@ const HeroSection: React.FC = () => {
                 helperText={errors.password?.message && t(errors.password?.message)}
                 register={form.register}
                 name="password"
+                type="password"
               />
             </Box>
             <FormHelperText sx={{ color: "red" }}>
