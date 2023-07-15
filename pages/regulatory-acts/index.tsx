@@ -86,7 +86,10 @@ export default RegulatoryActs;
 export async function getStaticProps(context: GetStaticPropsContext) {
   return {
     props: {
-      messages: (await import(`locales/${context.locale}/common.json`)).default,
+      messages: {
+        ...(await import(`locales/${context.locale}/common.json`)).default,
+        ...(await import(`locales/${context.locale}/regulatory-acts.json`)).default,
+      },
     },
   };
 }
