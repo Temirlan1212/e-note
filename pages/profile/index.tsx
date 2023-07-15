@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Box } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 
@@ -12,9 +12,7 @@ export default function Home() {
         <title>{t("Profile")}</title>
       </Head>
 
-      <Box p={3} minHeight={"100vh"}>
-        {t("Profile")}
-      </Box>
+      <Container maxWidth="xl">{t("Profile")}</Container>
     </>
   );
 }

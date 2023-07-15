@@ -16,8 +16,8 @@ import Button from "@mui/material/Button";
 import { Container, Typography } from "@mui/material";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import { useRouteStore } from "@/store/route";
-import ProfileDropdownButton from "./profile/ProfileDropdownButton";
+import { useRouteStore } from "@/stores/route";
+import ProfileDropdownButton from "./ProfileDropdownButton";
 import Link from "@/components/ui/Link";
 
 export default function TopNavbar() {

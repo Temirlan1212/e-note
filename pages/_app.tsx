@@ -4,12 +4,12 @@ import { NextIntlClientProvider } from "next-intl";
 import PublicLayout from "@/layouts/Public";
 import PrivateLayout from "@/layouts/Private";
 import { ThemeProvider } from "@mui/material";
-import theme from "@/theme/default";
-import { useProfileStore } from "@/store/profile";
+import theme from "@/themes/default";
+import { useProfileStore } from "@/stores/profile";
 import { IUser } from "@/models/profile/user";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { GuestRouteList } from "@/store/route";
+import { GuestRouteList } from "@/stores/route";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
