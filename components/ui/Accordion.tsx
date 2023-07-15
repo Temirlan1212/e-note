@@ -54,7 +54,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 interface IAccordionProps extends AccordionProps {
   title: string;
-  type: string;
+  type?: string;
   handleChange: (event: React.SyntheticEvent, isExpanded: boolean) => void;
   icon?: OverridableComponent<SvgIconTypeMap<{}, "svg">> & {
     muiName: string;

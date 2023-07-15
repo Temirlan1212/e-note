@@ -38,10 +38,9 @@ export default function LoginAccordion() {
     <Box sx={{ display: "flex", flexDirection: "column", gap: "3px", margin: "0 auto" }}>
       {heirTypesData.map(({ title, type }) => (
         <Accordion
-          key={title}
+          key={type}
           expanded={expanded === type}
           title={title}
-          type={type}
           handleChange={handleChange(type)}
           baseSx={{
             "&": {

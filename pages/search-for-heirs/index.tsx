@@ -3,16 +3,16 @@ import { GetStaticPropsContext } from "next";
 import { useTranslations } from "next-intl";
 import Head from "next/head";
 
-import FoundedData from "@/components/search-for-heirs/FoundedData";
-import NotFoundData from "@/components/search-for-heirs/NotFoundData";
-import SearchForm from "@/components/search-for-heirs/SearchForm";
+import SearchForm from "@/components/search-for-heirs/HeirSearchForm";
+import HeirNotFoundData from "@/components/search-for-heirs/HeirNotFoundData";
+import HeirFoundedData from "@/components/search-for-heirs/HeirFoundedData";
 
-type SearchForHeirsProps = {};
+type ISearchForHeirsProps = {};
 
-const SearchForHeirs = (props: SearchForHeirsProps) => {
+const SearchForHeirs = (props: ISearchForHeirsProps) => {
   const t = useTranslations();
 
-  const data = ["asdas"];
+  const data = [2];
 
   return (
     <>
@@ -34,7 +34,7 @@ const SearchForHeirs = (props: SearchForHeirsProps) => {
           {t("Search for heirs")}
         </Typography>
         <SearchForm />
-        {data.length ? <FoundedData /> : <NotFoundData />}
+        {data.length ? <HeirFoundedData /> : <HeirNotFoundData />}
       </Container>
     </>
   );
@@ -45,7 +45,10 @@ export default SearchForHeirs;
 export async function getStaticProps(context: GetStaticPropsContext) {
   return {
     props: {
-      messages: (await import(`locales/${context.locale}/common.json`)).default,
+      messages: {
+        ...(await import(`locales/${context.locale}/common.json`)).default,
+        ...(await import(`locales/${context.locale}/search-for-heirs.json`)).default,
+      },
     },
   };
 }

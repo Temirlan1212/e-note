@@ -1,24 +1,24 @@
 import { SearchOutlined } from "@mui/icons-material";
-import { Box, Container, FormControl, InputLabel, Typography, useMediaQuery } from "@mui/material";
+import { Box, FormControl, InputLabel } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslations } from "next-intl";
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+
 import { IHeir } from "@/models/profile/user";
+
 import { yupResolver } from "@hookform/resolvers/yup";
 import { heir as heirSchema } from "@/validator-schemas/schemas";
 
-type Props = {};
+type ISearchFormProps = {};
 
-const SearchForm = (props: Props) => {
+const SearchForm = (props: ISearchFormProps) => {
   const t = useTranslations();
 
   const form = useForm<IHeir>({
     resolver: yupResolver(heirSchema),
   });
-
-  const matches = useMediaQuery("(min-width:900px)");
 
   const {
     formState: { errors },
@@ -26,6 +26,7 @@ const SearchForm = (props: Props) => {
   } = form;
 
   const ErrorMessageUser = t("The name of the testator has not been entered");
+
   const ErrorMessageINN = t("The testator's INN has not been entered");
 
   const onSubmit = async (data: IHeir) => {
@@ -34,13 +35,20 @@ const SearchForm = (props: Props) => {
   };
   return (
     <Box sx={{ marginTop: "50px" }}>
-      <form
+      <Box
+        component="form"
         onSubmit={form.handleSubmit(onSubmit)}
-        style={{
+        sx={{
           display: "flex",
           justifyContent: "space-between",
-          flexDirection: matches ? "row" : "column",
-          gap: matches ? "40px" : "30px",
+          flexDirection: {
+            xs: "column",
+            md: "row",
+          },
+          gap: {
+            xs: "30px",
+            md: "40px",
+          },
         }}
       >
         <FormControl sx={{ width: "100%" }}>
@@ -78,7 +86,7 @@ const SearchForm = (props: Props) => {
         <Button startIcon={<SearchOutlined />} type="submit" sx={{ width: "100%", height: "56px" }}>
           {t("Search")}
         </Button>
-      </form>
+      </Box>
     </Box>
   );
 };
