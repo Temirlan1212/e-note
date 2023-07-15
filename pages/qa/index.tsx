@@ -29,7 +29,7 @@ export default function QA() {
   const t = useTranslations();
   const [expanded, setExpanded] = React.useState<number | false>(0);
 
-  const handleChange = (panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+  const handleQAExpanding = (panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     if (expanded === panel) {
       setExpanded(false);
     } else {
@@ -67,7 +67,7 @@ export default function QA() {
                 expanded={expanded === index}
                 title={title}
                 type={title}
-                handleChange={handleChange(index)}
+                handleChange={handleQAExpanding(index)}
                 sx={{ bgcolor: "transparent" }}
               >
                 {t(text)}
