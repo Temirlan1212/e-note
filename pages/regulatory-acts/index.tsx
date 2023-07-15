@@ -25,8 +25,8 @@ const RegulatoryActs: React.FC = () => {
     <>
       <Head>
         <title>{t("Regulatory acts")}</title>
-        <meta name="keywords" content={"Regulatory acts"} />
-        <meta name="description" content={"Regulatory acts"} />
+        <meta name="keywords" content={t("Regulatory acts")} />
+        <meta name="description" content={t("Regulatory acts")} />
       </Head>
 
       <Container>
