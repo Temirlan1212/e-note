@@ -10,6 +10,10 @@ export const GuestRouteList = [
     link: "/notaries",
   },
   {
+    title: "Regulatory acts",
+    link: "/regulatory-acts",
+  },
+  {
     title: "Questions and answers",
     link: "/qa",
   },

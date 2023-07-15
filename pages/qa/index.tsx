@@ -8,22 +8,18 @@ import Image from "next/image";
 
 const qaTypesData = [
   {
-    type: "1",
     title: "What is a power of attorney?",
     text: "QA-text-1",
   },
   {
-    type: "2",
     title: "What is needed to provide proof?",
     text: "QA-text-2",
   },
   {
-    type: "3",
     title: "For how long and when is the Certificate of Inheritance issued?",
     text: "QA-text-3",
   },
   {
-    type: "4",
     title: "For how long can I make a Power of Attorney for the management and disposal of property?",
     text: "QA-text-4",
   },
@@ -31,11 +27,11 @@ const qaTypesData = [
 
 export default function QA() {
   const t = useTranslations();
-  const [expanded, setExpanded] = React.useState<string | false>(qaTypesData[0].type);
+  const [expanded, setExpanded] = React.useState<number | false>(0);
 
-  const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+  const handleChange = (panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     if (expanded === panel) {
-      setExpanded("");
+      setExpanded(false);
     } else {
       setExpanded(panel);
     }
@@ -65,13 +61,13 @@ export default function QA() {
               {t("Questions and answers")}
             </Typography>
 
-            {qaTypesData.map(({ title, text, type }) => (
+            {qaTypesData.map(({ title, text }, index) => (
               <Accordion
                 key={title}
-                expanded={expanded === type}
+                expanded={expanded === index}
                 title={title}
-                type={type}
-                handleChange={handleChange(type)}
+                type={title}
+                handleChange={handleChange(index)}
                 sx={{ bgcolor: "transparent" }}
               >
                 {t(text)}
@@ -89,7 +85,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     props: {
       messages: {
         ...(await import(`locales/${context.locale}/common.json`)).default,
-        ...(await import(`locales/${context.locale}/login.json`)).default,
+        ...(await import(`locales/${context.locale}/qa.json`)).default,
       },
     },
   };

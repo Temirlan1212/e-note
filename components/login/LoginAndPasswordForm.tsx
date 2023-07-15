@@ -1,10 +1,18 @@
-import { Box } from "@mui/material";
+import { Box, IconButton, InputAdornment } from "@mui/material";
 import { useTranslations } from "next-intl";
 import Hint from "../ui/Hint";
 import Link from "../ui/Link";
+import Button from "../ui/Button";
+import Input from "../ui/Input";
+import { useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const LoginAndPasswordForm: React.FC = () => {
   const t = useTranslations();
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
   return (
     <Box>
       <Hint type="hint" sx={{ mb: "20px" }}>
@@ -21,13 +29,48 @@ const LoginAndPasswordForm: React.FC = () => {
         {t("to get a login")}.
       </Hint>
 
-      <Link sx={{ textDecoration: "underline" }} color="#24334B" href="/reset-password">
-        {t("Forgot password")}
-      </Link>
+      <Box component="form" onSubmit={(e) => e.preventDefault()}>
+        <Box display="flex" flexDirection="column" gap="20px">
+          <Input
+            label={t("Username")}
+            variant="outlined"
+            color="success"
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+            name="username"
+          />
 
-      {/* <form>
+          <Input
+            type={showPassword ? "text" : "password"}
+            label={t("Password")}
+            variant="outlined"
+            color="success"
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} edge="end">
+                    {showPassword ? <VisibilityOff color="success" /> : <Visibility color="success" />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            name="password"
+          />
+          <Link sx={{ textDecoration: "underline" }} color="#24334B" href="/reset-password">
+            {t("Forgot password")}
+          </Link>
 
-      </form> */}
+          <Button type="submit" sx={{ padding: "10px 0", width: "100%", mt: "10px" }} fullWidth color="success">
+            {t("Enter")}
+          </Button>
+        </Box>
+      </Box>
     </Box>
   );
 };
