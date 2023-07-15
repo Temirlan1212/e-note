@@ -43,13 +43,7 @@ const HeroSection: React.FC = () => {
   }, [profile.user]);
 
   return (
-    <Box
-      component="section"
-      padding="80px 0 40px 0"
-      display="flex"
-      justifyContent="space-between"
-      alignItems={"center"}
-    >
+    <Box component="section" display="flex" justifyContent="space-between" alignItems={"center"}>
       <Box margin={{ xs: "auto", md: "0" }}>
         <Typography variant="h2" fontWeight={600} sx={{ maxWidth: { xs: 400, md: 510 }, marginBottom: "40px" }}>
           {t("Welcome to a single platform")}{" "}
