@@ -4,7 +4,7 @@ import { Box, Typography } from "@mui/material";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 
-import HeirNotFoundImage from "../../public/images/HeirNotFoundImage.png";
+// import HeirNotFoundImage from ;
 
 type IHeirNotFoundDataProps = {};
 
@@ -38,14 +38,14 @@ const HeirNotFoundData = (props: IHeirNotFoundDataProps) => {
           },
         }}
       >
-        <Image
-          src={HeirNotFoundImage}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "contain",
+        <Box
+          component="img"
+          sx={{
+            height: { xs: "200px", sm: "390px" },
+            width: { xs: "170px", sm: "330px" },
           }}
-          alt="HeirNotFoundImage"
+          alt="Heir Not Found"
+          src="/images/HeirNotFoundImage.svg"
         />
       </Box>
     </Box>
