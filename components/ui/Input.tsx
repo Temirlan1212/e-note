@@ -37,7 +37,16 @@ const Input: FC<InputProps> = ({
 
   const mergedStyles = { ...inputStyles, ...props.sx };
 
-  return <TextField variant={variant} color={color} sx={mergedStyles} {...(register && register(name))} {...props} />;
+  return (
+    <TextField
+      variant={variant}
+      color={color}
+      sx={mergedStyles}
+      helperText={helperText}
+      {...(register && register(name))}
+      {...props}
+    />
+  );
 };
 
 export default Input;

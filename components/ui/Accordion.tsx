@@ -59,19 +59,32 @@ interface IAccordionProps extends AccordionProps {
   icon?: OverridableComponent<SvgIconTypeMap<{}, "svg">> & {
     muiName: string;
   };
+  summarySx?: any;
+  detailsSx?: any;
+  baseSx?: any;
 }
 
-export default function Accordion({ title, expanded, children, handleChange, icon: Icon, ...props }: IAccordionProps) {
+export default function Accordion({
+  title,
+  expanded,
+  children,
+  handleChange,
+  icon: Icon,
+  summarySx,
+  detailsSx,
+  baseSx,
+  ...props
+}: IAccordionProps) {
   const t = useTranslations();
   return (
-    <AccordionMui expanded={expanded} onChange={handleChange} {...props}>
-      <AccordionSummary expandIcon={expanded ? <RemoveIcon /> : <AddIcon />}>
+    <AccordionMui expanded={expanded} onChange={handleChange} sx={...baseSx} {...props}>
+      <AccordionSummary sx={...summarySx} expandIcon={expanded ? <RemoveIcon /> : <AddIcon />}>
         {Icon && <Icon color={expanded ? "inherit" : "success"} />}
         <Typography variant="h6" ml={2}>
           {t(title)}
         </Typography>
       </AccordionSummary>
-      <AccordionDetails>{children}</AccordionDetails>
+      <AccordionDetails sx={...detailsSx}>{children}</AccordionDetails>
     </AccordionMui>
   );
 }

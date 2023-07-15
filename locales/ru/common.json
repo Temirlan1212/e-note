@@ -30,5 +30,19 @@
   "Password": "Пароль",
   "Forgot your password?": "Забыли пароль?",
   "Incorrect password or username": "Неправильный пароль или логин",
-  "Nothing has been found yet": "Пока ничего не найдено"
+  "Nothing has been found yet": "Пока ничего не найдено",
+  "Full name of the testator (required)": "ФИО наследодателя (обязателен)",
+  "Testator's INN": "ИНН наследодателя",
+  "Search": "Найти",
+  "The name of the testator has not been entered": "Не введено ФИО наследодателя",
+  "The testator's INN has not been entered": "Не введено ИНН наследодателя",
+  "Testator": "Наследодатель",
+  "Heir": "Наследник",
+  "Notary": "Нотариус",
+  "Enter your full name": "Введите ФИО",
+  "Enter INN": "Введите ИНН",
+  "Sort": "Сортировка",
+  "According to your query,": "По вашему запросу найдено",
+  "inheritors were found": "наследодателя",
+  "1 inheritors were found": "наследодатель"
 }
