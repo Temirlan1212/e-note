@@ -20,7 +20,7 @@ export default function Error404() {
                 width: { xs: "240px", sm: "320px", md: "500px" },
               }}
               alt="Not found"
-              src="/icons/notFound.svg"
+              src="/images/notFound.svg"
             />
           </Typography>
         </Grid>
