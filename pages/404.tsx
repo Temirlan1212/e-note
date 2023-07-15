@@ -2,7 +2,6 @@ import { Container, useMediaQuery, Typography } from "@mui/material";
 import { GetStaticPropsContext } from "next";
 import { useTranslations } from "next-intl";
 import Grid from "@mui/material/Unstable_Grid2";
-import Item from "@mui/material/Unstable_Grid2";
 import Button from "../components/ui/Button";
 import Image from "next/image";
 
