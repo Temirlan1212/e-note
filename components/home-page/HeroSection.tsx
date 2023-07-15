@@ -1,4 +1,4 @@
-import { Box, CircularProgress, FormHelperText, Typography } from "@mui/material";
+import { Box, FormHelperText, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -119,8 +119,9 @@ const HeroSection: React.FC = () => {
                 }}
                 fullWidth
                 color="success"
+                loading={isLoading}
               >
-                {!isLoading ? t("Enter") : <CircularProgress color="inherit" size={25} />}
+                {t("Enter")}
               </Button>
 
               <Link
