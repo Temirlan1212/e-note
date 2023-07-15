@@ -14,6 +14,7 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = 
     buttonType = "primary",
     sx,
     loading = false,
+    disabled = false,
     progressStyles,
     children,
     ...rest
@@ -53,7 +54,7 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = 
   const mergedStyles = { ...buttonDefaultStyles, ...buttonStyles, ...sx };
 
   return (
-    <MUIButton {...rest} ref={ref} sx={mergedStyles} fullWidth variant={variant}>
+    <MUIButton {...rest} ref={ref} sx={mergedStyles} disabled={loading || disabled} fullWidth variant={variant}>
       {loading ? (
         <CircularProgress color="inherit" style={{ width: "28px", height: "28px", ...progressStyles }} />
       ) : (
