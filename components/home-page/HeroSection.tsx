@@ -122,7 +122,7 @@ const HeroSection: React.FC = () => {
               </Button>
 
               <Link
-                href={"/"}
+                href="login"
                 color="text.primary"
                 sx={{
                   textDecoration: "underline",
