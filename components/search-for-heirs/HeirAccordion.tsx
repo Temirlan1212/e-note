@@ -32,7 +32,7 @@ const HeirAccordion = (props: IHeirAccordionProps) => {
 
   const [heirExpanded, setHeirExpanded] = React.useState<string | false>();
 
-  const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+  const handleHeirExpanding = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setHeirExpanded(isExpanded ? panel : false);
   };
 
@@ -43,7 +43,7 @@ const HeirAccordion = (props: IHeirAccordionProps) => {
           key={type}
           expanded={heirExpanded === type}
           title={title}
-          handleChange={handleChange(type)}
+          handleChange={handleHeirExpanding(type)}
           baseSx={{
             "&": {
               boxShadow: "0px 4px 8px 0px #E9E9E9",
