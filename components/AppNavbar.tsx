@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useRouteStore } from "@/stores/route";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
-import { styled, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import Image from "next/image";
 import Box from "@mui/material/Box";
-import MuiDrawer, { DrawerProps } from "@mui/material/Drawer";
+import Drawer, { DrawerProps } from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -25,47 +25,6 @@ import ProfileDropdownButton from "./ProfileDropdownButton";
 import LocaleSwitcher from "./LocaleSwitcher";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 
-const drawerWidth = 280;
-let drawerType: "private" | "public" = "public";
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-}));
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== "open" })(({ theme, open }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  whiteSpace: "nowrap",
-  "& .MuiDrawer-paper": {
-    overflowX: "hidden",
-  },
-  ...(open && {
-    "& .MuiDrawer-paper": {
-      width: drawerWidth,
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-    },
-  }),
-  ...(!open && {
-    "& .MuiDrawer-paper": {
-      transition: theme.transitions.create("width", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
-      width: drawerType === "private" ? `calc(${theme.spacing(8)} + 1px)` : 0,
-      [theme.breakpoints.down("md")]: {
-        width: 0,
-      },
-    },
-  }),
-}));
-
 interface IAppNavbarProps extends DrawerProps {
   type: "private" | "public";
 }
@@ -76,8 +35,6 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
   const t = useTranslations();
   const routes = useRouteStore((state) => state);
   const [open, setOpen] = useState(false);
-
-  drawerType = type;
 
   const handleDrawerToggle = () => {
     setOpen((open) => !open);
@@ -92,7 +49,7 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
           sx={{
             gap: "15px",
             justifyContent: "space-between",
-            pl: { xs: 2, sm: 3, md: drawerType === "private" ? "88px !important" : 3 },
+            pl: { xs: 2, sm: 3, md: type === "private" ? 10 : 3 },
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
@@ -104,7 +61,7 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
             </Link>
           </Box>
 
-          <Box sx={{ display: drawerType === "private" ? "none" : { xs: "none", md: "flex" }, gap: "15px" }}>
+          <Box sx={{ display: type === "private" ? "none" : { xs: "none", md: "flex" }, gap: "15px" }}>
             {routes.items.map((route) => (
               <Link key={route.link} href={route.link} isActive={route.link === router.pathname} color={"text.primary"}>
                 {t(route.title)}
@@ -127,9 +84,41 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
         open={open}
         onClose={handleDrawerToggle}
         variant="permanent"
-        PaperProps={{ sx: { backgroundColor: "success.main" } }}
+        PaperProps={{ sx: { backgroundColor: "success.main", overflowX: "hidden" } }}
+        sx={{
+          whiteSpace: "nowrap",
+          ...(open && {
+            "& .MuiDrawer-paper": {
+              width: 280,
+              transition: theme.transitions.create("width", {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+            },
+          }),
+          ...(!open && {
+            "& .MuiDrawer-paper": {
+              transition: theme.transitions.create("width", {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.leavingScreen,
+              }),
+              width: type === "private" ? `calc(${theme.spacing(7)} + 1px)` : 0,
+              [theme.breakpoints.down("md")]: {
+                width: 0,
+              },
+            },
+          }),
+        }}
       >
-        <DrawerHeader>
+        <Box
+          sx={(theme) => ({
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            padding: theme.spacing(0, 1),
+            ...theme.mixins.toolbar,
+          })}
+        >
           <IconButton
             onClick={handleDrawerToggle}
             sx={{ color: "#fff", display: { xs: "none", md: open ? "none" : "flex" } }}
@@ -142,7 +131,7 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
           >
             {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
-        </DrawerHeader>
+        </Box>
 
         <Divider sx={{ backgroundColor: "#33d599" }} />
 
@@ -153,10 +142,9 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
                 <ListItemButton
                   sx={{
                     justifyContent: open ? "initial" : "center",
-                    px: 2.5,
                   }}
                 >
-                  <ListItemIcon sx={{ color: "#fff" }}>
+                  <ListItemIcon sx={{ color: "#fff", minWidth: open ? "36px" : "auto" }}>
                     <InboxIcon />
                   </ListItemIcon>
                   <ListItemText sx={{ opacity: open ? 1 : 0, color: "#fff" }}>{t(route.title)}</ListItemText>
@@ -167,7 +155,7 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
         </List>
       </Drawer>
 
-      <Box component="main" sx={{ pl: { xs: 0, md: drawerType === "private" ? 8 : 0 } }}>
+      <Box component="main" sx={{ pl: { xs: 0, md: type === "private" ? 7 : 0 } }}>
         {children}
       </Box>
     </Box>
