@@ -12,17 +12,10 @@
   "Usability": "Колдонуу Жөндөмдүүлүгү",
   "Marketplace": "Базар",
   "Design & Dev": "Дизайн & Дев",
-  "Verification of the power of attorney": "Проверка доверенности",
-  "Checking of mortgaged movable property": "Проверка заложенного движимого имущества",
-  "Search for heirs": "Розыск наследников",
-  "Hereditary affairs": "Наследственные дела",
-  "Register of Notaries of the KR": "Реестр нотариусов КР",
   "Services and public registries": "Кызматтар жана коомдук реестрлер",
   "This field is required!": "Бул талаа талап кылынат!",
   "The password must be at least 6 characters long": "Сырсөз кеминде 6 тамгадан турушу керек",
   "The password must be no more than 40 characters": "Сырсөз 40тан ашпашы керек",
-  "Welcome to a single platform": "Бир платформага кош келиңиздер",
-  "Electronic Notary of the KR": "КР электрондук нотариусу",
   "Login to your personal account": "Жеке Каттоо эсебиңизге кирүү",
   "Other ways to log in": "Кирүүнүн башка жолдору",
   "Enter": "Кирүү",
@@ -33,5 +26,6 @@
   "Questions and answers": "Суроолор жана жооптор",
   "Send": "Жөнөтүү",
   "Regulatory acts": "Нормативдик актылар",
-  "Search": "Издөө"
+  "Search": "Издөө",
+  "More": "Кененирээк"
 }

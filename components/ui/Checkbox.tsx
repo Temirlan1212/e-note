@@ -2,17 +2,23 @@ import React, { forwardRef } from "react";
 
 import { CheckboxProps, Checkbox as MUICheckbox } from "@mui/material";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import { UseFormRegister } from "react-hook-form";
 
 interface ICheckboxProps extends Omit<CheckboxProps, "ref"> {
   label?: string;
+  register?: UseFormRegister<any>;
 }
 
-const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, ICheckboxProps> = ({ label, ...props }, ref) => {
+const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, ICheckboxProps> = (
+  { label, register, name, ...props },
+  ref
+) => {
   return (
     <FormControlLabel
       control={
         <MUICheckbox
           {...props}
+          {...(register && name && register(name))}
           sx={{
             color: "#1baa75",
             "&.Mui-checked": {

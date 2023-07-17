@@ -28,7 +28,7 @@ const SearchBar: React.FC<ISearchBarProps> = (props) => {
         fullWidth
         name={name}
         placeholder={t("Search")}
-        register={register}
+        {...(register && name && register(name))}
         error={error}
         helperText={helperText}
       />

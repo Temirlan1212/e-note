@@ -12,17 +12,10 @@
   "Usability": "Удобство использования",
   "Marketplace": "Торговая площадка",
   "Design & Dev": "Дизайн & разработка",
-  "Verification of the power of attorney": "Проверка доверенности",
-  "Checking of mortgaged movable property": "Проверка заложенного движимого имущества",
-  "Search for heirs": "Розыск наследников",
-  "Hereditary affairs": "Наследственные дела",
-  "Register of Notaries of the KR": "Реестр нотариусов КР",
   "Services and public registries": "Сервисы и публичные реестры",
   "This field is required!": "Это поле обязательно!",
   "The password must be at least 6 characters long": "Пароль должен содержать не менее 6 символов",
   "The password must be no more than 40 characters": "Пароль должен содержать не более 40 символов",
-  "Welcome to a single platform": "Добро пожаловать на единую платформу",
-  "Electronic Notary of the KR": "Электронного нотариата КР",
   "Login to your personal account": "Вход в личный кабинет",
   "Other ways to log in": "Другие способы входа",
   "Enter": "Войти",
@@ -33,5 +26,6 @@
   "Questions and answers": "Вопросы и ответы",
   "Send": "Отправить",
   "Regulatory acts": "Нормативные акты",
-  "Search": "Поиск по ключевому слову"
+  "Search": "Поиск по ключевому слову",
+  "More": "Подробнее"
 }
