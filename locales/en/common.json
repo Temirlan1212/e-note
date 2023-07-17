@@ -1,7 +1,9 @@
 {
   "E-notariat": "E-notariat",
+  "Home page": "Home page",
   "About us": "About us",
   "Notaries": "Notaries",
+  "Profile": "Profile",
   "Login": "Login",
   "Logout": "Logout",
   "Community": "Community",
@@ -21,8 +23,6 @@
   "This field is required!": "This field is required!",
   "The password must be at least 6 characters long": "The password must be at least 6 characters long",
   "The password must be no more than 40 characters": "The password must be no more than 40 characters",
-  "Welcome to a single platform": "Welcome to a single platform",
-  "Electronic Notary of the KR": "Electronic Notary of the KR",
   "Login to your personal account": "Login to your personal account",
   "Other ways to log in": "Other ways to log in",
   "Enter": "Enter",
@@ -34,5 +34,7 @@
   "Send": "Send",
   "Regulatory acts": "Regulatory acts",
   "Search": "Search",
-  "Sort": "Sorting"
+  "SearchHeir": "Search",
+  "Sort": "Sorting",
+  "More": "More"
 }

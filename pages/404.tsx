@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import Grid from "@mui/material/Unstable_Grid2";
 import Button from "../components/ui/Button";
 import Box from "@mui/material/Box";
+import Link from "@/components/ui/Link";
 
 export default function Error404() {
   const t = useTranslations();
@@ -41,14 +42,15 @@ export default function Error404() {
         </Grid>
         <Grid xs={12}>
           <Typography display="flex" justifyContent="center">
-            <Button
-              href="/"
-              variant="contained"
-              color="success"
-              sx={{ padding: "14px 65px 14px 65px", marginTop: "30px", width: "unset" }}
-            >
-              {t("Go back to the main page")}
-            </Button>
+            <Link href="/">
+              <Button
+                variant="contained"
+                color="success"
+                sx={{ padding: "14px 65px 14px 65px", marginTop: "30px", width: "unset" }}
+              >
+                {t("Go back to the main page")}
+              </Button>
+            </Link>
           </Typography>
         </Grid>
       </Grid>

@@ -84,7 +84,7 @@ const SearchForm = (props: ISearchFormProps) => {
           />
         </FormControl>
         <Button startIcon={<SearchOutlined />} type="submit" sx={{ width: "100%", height: "56px" }}>
-          {t("Search")}
+          {t("SearchHeir")}
         </Button>
       </Box>
     </Box>
