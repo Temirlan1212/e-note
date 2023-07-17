@@ -1,6 +1,6 @@
-import { Pagination, PaginationProps, styled } from "@mui/material";
+import { Pagination as MUIPagination, PaginationProps, styled } from "@mui/material";
 
-const StyledPagination = styled(Pagination)(({ theme }) => ({
+const StyledPagination = styled(MUIPagination)(({ theme }) => ({
   display: "flex",
   ".MuiPagination-ul": {
     border: " 1px solid #CDCDCD",
@@ -32,18 +32,13 @@ const StyledPagination = styled(Pagination)(({ theme }) => ({
   },
 }));
 
-interface PaginationComponentProps extends PaginationProps {
+interface IPaginationComponentProps extends PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
 
-const PaginationComponent: React.FC<PaginationComponentProps> = ({
-  currentPage,
-  totalPages,
-  onPageChange,
-  ...props
-}) => {
+const Pagination: React.FC<IPaginationComponentProps> = ({ currentPage, totalPages, onPageChange, ...props }) => {
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     onPageChange(page);
   };
@@ -51,4 +46,4 @@ const PaginationComponent: React.FC<PaginationComponentProps> = ({
   return <StyledPagination count={totalPages} onChange={handlePageChange} page={currentPage} {...props} />;
 };
 
-export default PaginationComponent;
+export default Pagination;
