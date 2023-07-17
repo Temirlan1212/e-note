@@ -39,32 +39,10 @@ const HeirAccordion = (props: IHeirAccordionProps) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "3px", margin: "0 auto" }}>
       {heirTypesData.map(({ title, type }) => (
-        <Accordion
-          key={type}
-          expanded={heirExpanded === type}
-          title={title}
-          handleChange={handleHeirExpanding(type)}
-          baseSx={{
-            "&": {
-              boxShadow: "0px 4px 8px 0px #E9E9E9",
-            },
-          }}
-          summarySx={{
-            background: "white",
-            padding: "15px",
-
-            "& .Mui-expanded h6": {
-              color: "white",
-            },
-            "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-              color: "white",
-            },
-          }}
-          detailsSx={{ padding: "20px 15px" }}
-        >
+        <Accordion key={type} expanded={heirExpanded === type} title={title} handleChange={handleHeirExpanding(type)}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: "10px" }}>
             <Typography>
-              <b>{t("Testator")}:</b> Нурмырзаев Баккелди Бекмолдоевич
+              <b>{t("Testator")}:</b> {title}
             </Typography>
             <Typography>
               <b>{t("Heir")}:</b> Бекмолдоев Акбар Баккелдиевич
