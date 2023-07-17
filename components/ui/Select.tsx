@@ -8,7 +8,7 @@ interface ISelectProps extends SelectProps {
   selectType?: "primary" | "secondary";
 }
 
-const Select: React.FC<ISelectProps> = ({ children, data, selectType = "secondary", ...props }) => {
+const Select: React.FC<ISelectProps> = ({ children, data, selectType = "primary", ...props }) => {
   const inputStyles = {
     color: selectType === "primary" ? "#24334B" : "#1BAA75",
     minWidth: "226px",
