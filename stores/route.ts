@@ -2,6 +2,10 @@ import { create } from "zustand";
 
 export const GuestRouteList = [
   {
+    title: "Home page",
+    link: "/",
+  },
+  {
     title: "About us",
     link: "/about",
   },
@@ -24,27 +28,13 @@ export const UserRouteList = [];
 export const NotaryRouteList = [];
 
 export interface IRouteState {
-  items: typeof GuestRouteList | typeof UserRouteList | typeof NotaryRouteList;
-  setItems: (type: "guest" | "user" | "notary") => void;
+  guestRoutes: typeof GuestRouteList;
+  userRoutes: typeof UserRouteList;
+  notaryRoutes: typeof NotaryRouteList;
 }
 
 export const useRouteStore = create<IRouteState>()((set) => ({
-  items: GuestRouteList,
-  setItems: (type) =>
-    set((state) => {
-      let items = GuestRouteList;
-      switch (type) {
-        case "user":
-          items = UserRouteList;
-          break;
-        case "notary":
-          items = NotaryRouteList;
-          break;
-      }
-
-      return {
-        ...state,
-        items,
-      };
-    }),
+  guestRoutes: GuestRouteList,
+  userRoutes: UserRouteList,
+  notaryRoutes: NotaryRouteList,
 }));

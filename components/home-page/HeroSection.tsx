@@ -8,7 +8,7 @@ import Link from "@/components/ui/Link";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { IUser, IUserCredentials } from "@/models/profile/user";
-import { useProfileStore } from "@/store/profile";
+import { useProfileStore } from "@/stores/profile";
 import { useEffect, useState } from "react";
 
 const HeroSection: React.FC = () => {
