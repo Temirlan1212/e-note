@@ -1,13 +1,24 @@
 import { forwardRef } from "react";
 
-import { Button as MUIButton, ButtonProps } from "@mui/material";
+import { Button as MUIButton, ButtonProps, CircularProgress } from "@mui/material";
 
 interface IButtonProps extends ButtonProps {
-  buttonType?: string;
+  buttonType?: "primary" | "secondary" | "danger";
+  loading?: boolean;
+  progressStyles?: any;
 }
 
 const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = (props, ref) => {
-  const { variant = "contained", buttonType = "primary", ...rest } = props;
+  const {
+    variant = "contained",
+    buttonType = "primary",
+    sx,
+    loading = false,
+    disabled = false,
+    progressStyles,
+    children,
+    ...rest
+  } = props;
 
   const renderSwitch = (param: string) => {
     switch (param) {
@@ -22,20 +33,34 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = 
     }
   };
 
+  const buttonDefaultStyles = {
+    borderRadius: 0,
+    fontSize: "16px",
+    fontWeight: "600",
+    padding: "10px 0",
+  };
+
   const buttonStyles =
     variant === "contained"
-      ? { backgroundColor: renderSwitch(buttonType), color: "#fff" }
-      : { borderColor: renderSwitch(buttonType), color: renderSwitch(buttonType) };
+      ? {
+          backgroundColor: renderSwitch(buttonType),
+          color: "#fff",
+        }
+      : {
+          borderColor: renderSwitch(buttonType),
+          color: renderSwitch(buttonType),
+        };
+
+  const mergedStyles = { ...buttonDefaultStyles, ...buttonStyles, ...sx };
 
   return (
-    <MUIButton
-      {...rest}
-      ref={ref}
-      sx={{ borderRadius: 0, fontSize: "16px", fontWeight: "600", padding: "10px 0" }}
-      style={buttonStyles}
-      fullWidth
-      variant={variant}
-    />
+    <MUIButton {...rest} ref={ref} sx={mergedStyles} disabled={loading || disabled} fullWidth variant={variant}>
+      {loading ? (
+        <CircularProgress color="inherit" style={{ width: "28px", height: "28px", ...progressStyles }} />
+      ) : (
+        children
+      )}
+    </MUIButton>
   );
 };
 

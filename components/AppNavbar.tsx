@@ -62,7 +62,7 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
           </Box>
 
           <Box sx={{ display: type === "private" ? "none" : { xs: "none", md: "flex" }, gap: "15px" }}>
-            {routes.items.map((route) => (
+            {routes.guestRoutes.map((route) => (
               <Link key={route.link} href={route.link} isActive={route.link === router.pathname} color={"text.primary"}>
                 {t(route.title)}
               </Link>
@@ -136,22 +136,24 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
         <Divider sx={{ backgroundColor: "#33d599" }} />
 
         <List>
-          {routes.items.map((route) => (
-            <ListItem key={route.link} disablePadding>
-              <Link key={route.link} href={route.link} isActive={route.link === router.pathname} width="100%">
-                <ListItemButton
-                  sx={{
-                    justifyContent: open ? "initial" : "center",
-                  }}
-                >
-                  <ListItemIcon sx={{ color: "#fff", minWidth: open ? "36px" : "auto" }}>
-                    <InboxIcon />
-                  </ListItemIcon>
-                  <ListItemText sx={{ opacity: open ? 1 : 0, color: "#fff" }}>{t(route.title)}</ListItemText>
-                </ListItemButton>
-              </Link>
-            </ListItem>
-          ))}
+          {type === "public" &&
+            routes.guestRoutes.map((route) => (
+              <ListItem key={route.link} disablePadding>
+                <Link key={route.link} href={route.link} isActive={route.link === router.pathname} width="100%">
+                  <ListItemButton
+                    sx={{
+                      justifyContent: open ? "initial" : "center",
+                    }}
+                  >
+                    <ListItemIcon sx={{ color: "#fff", minWidth: open ? "36px" : "auto" }}>
+                      <InboxIcon />
+                    </ListItemIcon>
+                    <ListItemText sx={{ opacity: open ? 1 : 0, color: "#fff" }}>{t(route.title)}</ListItemText>
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+            ))}
+          {type === "private" && routes.userRoutes.map((route) => <></>)}
         </List>
       </Drawer>
 

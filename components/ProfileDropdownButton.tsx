@@ -31,8 +31,7 @@ export default function ProfileDropdownButton() {
   }, [profile.user]);
 
   const handleLogin = () => {
-    profile.logIn({ username: "admin", password: "admin" });
-    // router.push("/login");
+    router.push("/login");
   };
 
   const handleLogout = () => {

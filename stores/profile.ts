@@ -6,8 +6,10 @@ export interface IProfileState {
   cookie: string | null;
   user: IUser | null;
   userData: IUserData | null;
+  loading: boolean;
   getCookie: () => string | null;
   getUser: () => IUser | null;
+  getUserData: () => IUserData | null;
   logIn: (credentials: IUserCredentials) => Promise<void>;
   logOut: () => void;
   loadUserData: (user: IUser) => Promise<void>;
@@ -19,6 +21,7 @@ export const useProfileStore = create<IProfileState>()(
       cookie: null,
       user: null,
       userData: null,
+      loading: false,
       getCookie: () => {
         return get().cookie;
       },
@@ -31,12 +34,13 @@ export const useProfileStore = create<IProfileState>()(
       logIn: async (credentials) => {
         let cookie: string | null = null;
         let user: IUser | null = null;
-
+        set({ loading: true });
         const response = await fetch("/api/profile/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(credentials),
         });
+        set({ loading: false });
 
         if (!response.ok) return;
 
@@ -63,11 +67,11 @@ export const useProfileStore = create<IProfileState>()(
           body: JSON.stringify(user),
         });
 
-        const userData: IUserData | null = await response.json();
+        const userData: { data: IUserData[] } | null = await response.json();
 
-        if (!response.ok || userData == null) return;
+        if (!response.ok || userData == null || userData.data == null) return;
 
-        set(() => ({ userData }));
+        set(() => ({ userData: userData.data[0] }));
       },
     }),
     {
