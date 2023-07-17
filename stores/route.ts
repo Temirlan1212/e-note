@@ -4,22 +4,32 @@ export const GuestRouteList = [
   {
     title: "Home page",
     link: "/",
+    type: "link",
+  },
+  {
+    title: "Login",
+    link: "/login",
+    type: "link",
   },
   {
     title: "About us",
     link: "/about",
+    type: "menu",
   },
   {
     title: "Notaries",
     link: "/notaries",
+    type: "menu",
   },
   {
     title: "Regulatory acts",
     link: "/regulatory-acts",
+    type: "menu",
   },
   {
     title: "Questions and answers",
     link: "/qa",
+    type: "menu",
   },
 ];
 

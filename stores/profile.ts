@@ -6,7 +6,6 @@ export interface IProfileState {
   cookie: string | null;
   user: IUser | null;
   userData: IUserData | null;
-  loading: boolean;
   getCookie: () => string | null;
   getUser: () => IUser | null;
   getUserData: () => IUserData | null;
@@ -21,7 +20,6 @@ export const useProfileStore = create<IProfileState>()(
       cookie: null,
       user: null,
       userData: null,
-      loading: false,
       getCookie: () => {
         return get().cookie;
       },
@@ -34,13 +32,12 @@ export const useProfileStore = create<IProfileState>()(
       logIn: async (credentials) => {
         let cookie: string | null = null;
         let user: IUser | null = null;
-        set({ loading: true });
+
         const response = await fetch("/api/profile/login", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(credentials),
         });
-        set({ loading: false });
 
         if (!response.ok) return;
 

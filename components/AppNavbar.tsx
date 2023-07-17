@@ -33,7 +33,8 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
   const theme = useTheme();
   const router = useRouter();
   const t = useTranslations();
-  const routes = useRouteStore((state) => state);
+  const guestRoutes = useRouteStore((state) => state.guestRoutes).filter((r) => r.type === "menu");
+  const userRoutes = useRouteStore((state) => state.userRoutes);
   const [open, setOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -62,7 +63,7 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
           </Box>
 
           <Box sx={{ display: type === "private" ? "none" : { xs: "none", md: "flex" }, gap: "15px" }}>
-            {routes.guestRoutes.map((route) => (
+            {guestRoutes.map((route) => (
               <Link key={route.link} href={route.link} isActive={route.link === router.pathname} color={"text.primary"}>
                 {t(route.title)}
               </Link>
@@ -137,9 +138,9 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
 
         <List>
           {type === "public" &&
-            routes.guestRoutes.map((route) => (
+            guestRoutes.map((route) => (
               <ListItem key={route.link} disablePadding>
-                <Link key={route.link} href={route.link} isActive={route.link === router.pathname} width="100%">
+                <Link href={route.link} isActive={route.link === router.pathname} width="100%">
                   <ListItemButton
                     sx={{
                       justifyContent: open ? "initial" : "center",
@@ -153,7 +154,7 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
                 </Link>
               </ListItem>
             ))}
-          {type === "private" && routes.userRoutes.map((route) => <></>)}
+          {type === "private" && userRoutes.map((route) => <></>)}
         </List>
       </Drawer>
 
