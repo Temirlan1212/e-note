@@ -1,10 +1,7 @@
 import React from "react";
 
 import { Box, Typography } from "@mui/material";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
-
-// import HeirNotFoundImage from ;
 
 type IHeirNotFoundDataProps = {};
 

@@ -2,7 +2,6 @@
   "Nothing has been found yet": "Nothing has been found yet",
   "Full name of the testator (required)": "Full name of the testator (required)",
   "Testator's INN": "Testator's INN",
-  "Search": "Search",
   "The name of the testator has not been entered": "The name of the testator has not been entered",
   "The testator's INN has not been entered": "The testator's INN has not been entered",
   "Testator": "Testator",
@@ -10,7 +9,6 @@
   "Notary": "Notary",
   "Enter your full name": "Enter your full name",
   "Enter INN": "Enter INN",
-  "Sort": "Sorting",
   "According to your query,": "According to your query,",
   "inheritors": "{count, plural, =0 {No followers yet} =1 {inheritor was found} other {inheritors were found} }"
 }
