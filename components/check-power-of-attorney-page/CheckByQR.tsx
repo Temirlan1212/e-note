@@ -123,7 +123,6 @@ export default function CheckByQR() {
             }}
           >
             <video ref={videoRef} width="618px" height="296px" style={{ objectFit: "none" }} />
-            {/* <button onClick={startScanner}>Start Scanner</button> */}
           </Box>
           <Grid container spacing={3}>
             <Grid item xs={6}>
