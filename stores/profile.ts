@@ -8,6 +8,7 @@ export interface IProfileState {
   userData: IUserData | null;
   getCookie: () => string | null;
   getUser: () => IUser | null;
+  getUserData: () => IUserData | null;
   logIn: (credentials: IUserCredentials) => Promise<void>;
   logOut: () => void;
   loadUserData: (user: IUser) => Promise<void>;

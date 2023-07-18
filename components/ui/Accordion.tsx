@@ -25,23 +25,23 @@ const AccordionMui = styled((props: AccordionProps) => <MuiAccordion disableGutt
 
 const AccordionSummary = styled((props: AccordionSummaryProps) => <MuiAccordionSummary {...props} />)(({ theme }) => ({
   padding: "20px",
-  backgroundColor: theme.palette.text.secondary,
+  backgroundColor: "white",
   color: theme.palette.text.primary,
   "&.Mui-expanded": {
     backgroundColor: "#3F5984",
-    color: theme.palette.text.secondary,
+    color: "white",
   },
   "& .MuiAccordionSummary-expandIconWrapper": {
     color: theme.palette.text.primary,
   },
   "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-    color: theme.palette.text.secondary,
+    color: "white",
   },
   "& .MuiAccordionSummary-content": {
     margin: 0,
   },
   "& .MuiAccordionSummary-content.Mui-expanded": {
-    color: theme.palette.text.secondary,
+    color: "white",
   },
   "& .MuiAccordionSummary-content .MuiTypography-root": {
     fontWeight: 600,
@@ -54,7 +54,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 interface IAccordionProps extends AccordionProps {
   title: string;
-  type: string;
+  type?: string;
   handleChange: (event: React.SyntheticEvent, isExpanded: boolean) => void;
   icon?: OverridableComponent<SvgIconTypeMap<{}, "svg">> & {
     muiName: string;

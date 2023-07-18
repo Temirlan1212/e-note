@@ -8,13 +8,14 @@ import Link from "@/components/ui/Link";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { IUser, IUserCredentials } from "@/models/profile/user";
-import { useProfileStore } from "@/store/profile";
+import { useProfileStore } from "@/stores/profile";
 import { useEffect, useState } from "react";
 
 const HeroSection: React.FC = () => {
   const t = useTranslations();
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<IUserCredentials>({
     resolver: yupResolver(loginSchema),
@@ -26,11 +27,16 @@ const HeroSection: React.FC = () => {
   } = form;
 
   const onSubmit = async (data: IUserCredentials) => {
-    const res = await profile.logIn(data);
-    setUser(profile.getUser());
+    setLoading(true);
+    await profile.logIn(data);
+    const user = profile.getUser();
+    setLoading(false);
+    setUser(user);
 
-    if (res == null) {
+    if (user == null) {
       setError("root.serverError", { type: "custom", message: "Incorrect password or username" });
+    } else {
+      form.reset();
     }
   };
 
@@ -39,13 +45,7 @@ const HeroSection: React.FC = () => {
   }, [profile.user]);
 
   return (
-    <Box
-      component="section"
-      padding="80px 0 40px 0"
-      display="flex"
-      justifyContent="space-between"
-      alignItems={"center"}
-    >
+    <Box component="section" display="flex" justifyContent="space-between" alignItems={"center"}>
       <Box margin={{ xs: "auto", md: "0" }}>
         <Typography variant="h2" fontWeight={600} sx={{ maxWidth: { xs: 400, md: 510 }, marginBottom: "40px" }}>
           {t("Welcome to a single platform")}{" "}
@@ -93,6 +93,7 @@ const HeroSection: React.FC = () => {
                 helperText={errors.password?.message && t(errors.password?.message)}
                 register={form.register}
                 name="password"
+                type="password"
               />
             </Box>
             <FormHelperText sx={{ color: "red" }}>
@@ -109,15 +110,21 @@ const HeroSection: React.FC = () => {
             >
               <Button
                 type="submit"
-                sx={{ padding: "10px 0", width: { xs: "100%", md: 250 } }}
+                sx={{
+                  padding: "10px 0",
+                  width: { xs: "100%", md: 250 },
+                  display: "flex",
+                  gap: "30px",
+                }}
                 fullWidth
                 color="success"
+                loading={loading}
               >
                 {t("Enter")}
               </Button>
 
               <Link
-                href={"/"}
+                href="login"
                 color="text.primary"
                 sx={{
                   textDecoration: "underline",
