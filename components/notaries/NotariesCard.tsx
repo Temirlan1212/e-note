@@ -8,7 +8,7 @@ const NotariesCard: FC<NotaryCardProps> = ({ notary }) => {
   return (
     <Card
       sx={{
-        width: "17.8rem",
+        width: { xs: "100%", md: "17.8rem" },
         borderRadius: 0,
         boxShadow: 0,
         backgroundColor: "inherit",
@@ -19,17 +19,64 @@ const NotariesCard: FC<NotaryCardProps> = ({ notary }) => {
       <CardHeader
         sx={{
           display: "flex",
-          flexDirection: "column",
+          flexDirection: {
+            xs: "row",
+            md: "column",
+          },
           ".MuiCardHeader-avatar": {
             marginRight: 0,
           },
+          gap: {
+            xs: "10px",
+            md: 0,
+          },
         }}
         avatar={
-          <Avatar sizes="100" sx={{ bgcolor: "success.main", width: "100px", height: "100px" }} aria-label="recipe">
-            <PermIdentityIcon sx={{ width: "50px", height: "50px" }} />
+          <Avatar
+            sizes="100"
+            sx={{
+              bgcolor: "success.main",
+              width: {
+                xs: "50px",
+                md: "100px",
+              },
+              height: {
+                xs: "50px",
+                md: "100px",
+              },
+              marginBottom: {
+                xs: 0,
+                md: "20px",
+              },
+            }}
+            aria-label="recipe"
+          >
+            <PermIdentityIcon
+              sx={{
+                width: {
+                  xs: "25px",
+                  md: "50px",
+                },
+                height: {
+                  xs: "25px",
+                  md: "50px",
+                },
+              }}
+            />
           </Avatar>
         }
-        titleTypographyProps={{ fontSize: "18px", fontWeight: 500, textAlign: "center", marginTop: "20px" }}
+        titleTypographyProps={{
+          fontSize: {
+            xs: "16px",
+            md: "18px",
+          },
+          fontWeight: 500,
+          textAlign: "center",
+          whiteSpace: {
+            xs: "nowrap",
+            md: "normal",
+          },
+        }}
         title={notary.name}
       />
       <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "start" }}>
@@ -53,7 +100,16 @@ const NotariesCard: FC<NotaryCardProps> = ({ notary }) => {
             45 оцен.
           </Typography>
         </Box>
-        <Box sx={{ width: "100%", marginTop: "20px" }}>
+        <Box
+          sx={{
+            display: {
+              xs: "none",
+              md: "block",
+            },
+            width: "100%",
+            marginTop: "20px",
+          }}
+        >
           <Typography>{notary.region},</Typography>
           <Typography>{notary.area}.</Typography>
           <Typography>{notary.location}</Typography>

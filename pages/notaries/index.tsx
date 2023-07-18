@@ -11,7 +11,7 @@ import NotariesList from "@/components/notaries/NotariesList";
 
 const center: [number, number] = [42.882004, 74.582748];
 
-export default function About() {
+export default function Notaries() {
   const t = useTranslations();
 
   const NotariesMap = dynamic(
@@ -36,7 +36,7 @@ export default function About() {
               fontWeight: 600,
             }}
           >
-            Реестр нотариусов Кыргызской Республики
+            {t("Register of Notaries of the Kyrgyz Republic")}
           </Typography>
 
           <NotariesFiltration />
@@ -52,7 +52,7 @@ export default function About() {
               fontWeight: 600,
             }}
           >
-            Поиск нотариуса на карте
+            {t("Search for a notary on the map")}
           </Typography>
           <NotariesMap center={center} zoom={12} />
         </Box>

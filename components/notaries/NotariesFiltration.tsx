@@ -11,6 +11,7 @@ import EraserIcon from "@/public/icons/EraserIcon.svg";
 import NotariesMultipleSelects from "./NotariesMultipleSelects";
 import Radio from "../ui/Radio";
 import { optionSelectData } from "../../data";
+import { useTranslations } from "next-intl";
 
 interface INotariesFiltrationProps {}
 
@@ -20,6 +21,8 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
   };
+
+  const t = useTranslations();
 
   const notariesSortOptionsData = [
     { value: 10, label: "В алфавитном порядке" },
@@ -41,24 +44,41 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
       display="flex"
       sx={{
         gap: {
-          sx: "25px",
+          xs: "25px",
           md: "40px",
         },
       }}
       flexDirection="column"
     >
       <SearchBar />
-      <Box display="flex" justifyContent="space-between">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        sx={{
+          gap: "20px",
+          flexDirection: {
+            xs: "column",
+            md: "row",
+          },
+          alignItems: {
+            xs: "start",
+            md: "center",
+          },
+        }}
+      >
         <Button
           startIcon={<FilterAltOffOutlinedIcon />}
           onClick={toggleVisibility}
-          color="success"
+          buttonType="secondary"
           sx={{
             width: {
               sx: "100%",
               md: "320px",
             },
             padding: "10px 0",
+            ":hover": {
+              backgroundColor: "#3F5984",
+            },
           }}
         >
           Свернуть фильтр
@@ -85,7 +105,7 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
               fontSize: 16,
             }}
           >
-            Сортировка:
+            {t("Sorting")}:
           </Typography>
           <Select
             data={notariesSortOptionsData}
@@ -99,7 +119,10 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
         sx={{
           display: "flex",
           flexDirection: "column",
-          gap: "40px",
+          gap: {
+            xs: "25px",
+            md: "40px",
+          },
           maxHeight: isVisible ? "1000px" : 0,
           overflow: "hidden",
           transition: "max-height 0.3s ease-out",
@@ -108,10 +131,22 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gridTemplateRows: "repeat(2, 1fr)",
-            gridColumnGap: "40px",
-            gridRowGap: "30px",
+            gridTemplateColumns: {
+              xs: "1fr",
+              md: "repeat(3, 1fr)",
+            },
+            gridTemplateRows: {
+              xs: "1fr",
+              md: "repeat(2, 1fr)",
+            },
+            gridColumnGap: {
+              xs: "20px",
+              md: "40px",
+            },
+            gridRowGap: {
+              xs: "20px",
+              md: "30px",
+            },
           }}
         >
           <NotariesMultipleSelects option={optionSelectData} setCharacters={setCharacters} />
@@ -125,7 +160,16 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
           <Radio label="Круглосуточно" value="krug" />
           <Radio label="Выездной" value="vyesd" />
         </RadioGroup>
-        <Box display="flex" gap="30px">
+        <Box
+          display="flex"
+          gap="30px"
+          sx={{
+            flexDirection: {
+              xs: "column",
+              md: "row",
+            },
+          }}
+        >
           <Button
             startIcon={<EraserIcon />}
             buttonType="secondary"

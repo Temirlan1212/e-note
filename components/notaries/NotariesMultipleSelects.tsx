@@ -27,8 +27,10 @@ const NotariesMultipleSelects = ({ setCharacters, option }: INotariesMultipleSel
     <div key={data.id}>
       <InputLabel
         sx={{
+          fontSize: "14px",
           marginBottom: "5px",
           fontWeight: 500,
+          color: "#24334B",
         }}
       >
         {data.label}

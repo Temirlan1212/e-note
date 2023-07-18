@@ -1,13 +1,12 @@
-import React from "react";
-import { Rating, Icon } from "@mui/material";
+import { Rating as MUIRating } from "@mui/material";
 
-interface RatingComponentProps {
+interface IRatingProps {
   value: number;
   readOnly?: boolean;
   onChange?: (newValue: number) => void;
 }
 
-const RatingComponent: React.FC<RatingComponentProps> = ({ value, readOnly = false, onChange }) => {
+const Rating: React.FC<IRatingProps> = ({ value, readOnly = false, onChange }) => {
   const handleRatingChange = (event: React.ChangeEvent<{}>, newValue: number | null) => {
     if (!readOnly && newValue !== null && onChange) {
       onChange(newValue);
@@ -15,8 +14,7 @@ const RatingComponent: React.FC<RatingComponentProps> = ({ value, readOnly = fal
   };
 
   return (
-    <Rating
-      name="rating"
+    <MUIRating
       value={value}
       onChange={handleRatingChange}
       defaultValue={0}
@@ -28,4 +26,4 @@ const RatingComponent: React.FC<RatingComponentProps> = ({ value, readOnly = fal
   );
 };
 
-export default RatingComponent;
+export default Rating;

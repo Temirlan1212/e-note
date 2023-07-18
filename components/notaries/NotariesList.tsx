@@ -75,10 +75,24 @@ export const notariesArr: INotary[] = [
 const NotariesList = () => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "50px", alignItems: "center" }}>
-      <Grid sx={{ justifyContent: "space-between", alignItems: "center" }} container spacing={2}>
+      <Grid
+        sx={{
+          justifyContent: "center",
+          alignItems: "flex-start",
+          flexDirection: {
+            xs: "column",
+            md: "row",
+          },
+          gridRowGap: {
+            xs: "15px",
+            md: 0,
+          },
+        }}
+        container
+      >
         {notariesArr.map((notary) => (
           <Link href={`/notaries/${encodeURIComponent(notary.id)}`} style={{ textDecoration: "none" }} key={notary.id}>
-            <Grid item key={notary.id} xs={4} sm={2} md={3}>
+            <Grid item key={notary.id} xs={12} sm={12} md={3}>
               <NotariesCard notary={notary} />
             </Grid>
           </Link>
