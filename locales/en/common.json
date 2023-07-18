@@ -14,6 +14,11 @@
   "Usability": "Usability",
   "Marketplace": "Marketplace",
   "Design & Dev": "Design & Dev",
+  "Verification of the power of attorney": "Прокурордун ыйгарым укуктарын текшерүү",
+  "Checking of mortgaged movable property": "Ипотекага алынган көчмө мүлктү текшерүү",
+  "Search for heirs": "Search for heirs",
+  "Hereditary affairs": "Тукум кууп өткөн иштер",
+  "Register of Notaries of the KR": "КР нотариустарынын реестри",
   "Services and public registries": "Services and public registries",
   "This field is required!": "This field is required!",
   "The password must be at least 6 characters long": "The password must be at least 6 characters long",
@@ -29,5 +34,7 @@
   "Send": "Send",
   "Regulatory acts": "Regulatory acts",
   "Search": "Search",
+  "SearchHeir": "Search",
+  "Sort": "Sorting",
   "More": "More"
 }
