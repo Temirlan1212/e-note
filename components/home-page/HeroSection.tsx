@@ -8,14 +8,14 @@ import Link from "@/components/ui/Link";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { IUser, IUserCredentials } from "@/models/profile/user";
-import { useProfileStore } from "@/store/profile";
+import { useProfileStore } from "@/stores/profile";
 import { useEffect, useState } from "react";
 
 const HeroSection: React.FC = () => {
   const t = useTranslations();
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
-  const isLoading = useProfileStore((state) => state.loading);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<IUserCredentials>({
     resolver: yupResolver(loginSchema),
@@ -27,8 +27,10 @@ const HeroSection: React.FC = () => {
   } = form;
 
   const onSubmit = async (data: IUserCredentials) => {
+    setLoading(true);
     await profile.logIn(data);
     const user = profile.getUser();
+    setLoading(false);
     setUser(user);
 
     if (user == null) {
@@ -116,7 +118,7 @@ const HeroSection: React.FC = () => {
                 }}
                 fullWidth
                 color="success"
-                loading={isLoading}
+                loading={loading}
               >
                 {t("Enter")}
               </Button>

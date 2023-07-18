@@ -1,14 +1,24 @@
 import React from "react";
 import { Select as MUISelect, SelectProps } from "@mui/material";
 import { MenuItem } from "@mui/material";
+import { UseFormRegister } from "react-hook-form";
 
 interface ISelectProps extends SelectProps {
   data: any;
   onChange?: any;
   selectType?: "primary" | "secondary";
+  register?: UseFormRegister<any>;
 }
 
-const Select: React.FC<ISelectProps> = ({ children, data, selectType = "primary", ...props }) => {
+const Select: React.FC<ISelectProps> = ({
+  children,
+  data,
+  register,
+  name,
+  defaultValue,
+  selectType = "secondary",
+  ...props
+}) => {
   const inputStyles = {
     color: selectType === "primary" ? "#24334B" : "#1BAA75",
     minWidth: "226px",
@@ -34,7 +44,12 @@ const Select: React.FC<ISelectProps> = ({ children, data, selectType = "primary"
 
   const combineStyles = { ...props.sx, ...inputStyles };
   return (
-    <MUISelect sx={combineStyles} {...props}>
+    <MUISelect
+      sx={combineStyles}
+      {...props}
+      {...(register && name && register(name))}
+      defaultValue={defaultValue ?? ""}
+    >
       {data.map((item: { value: any; label: any }) => (
         <MenuItem
           sx={{

@@ -8,7 +8,14 @@ type InputProps = TextFieldProps & {
   name?: string;
 };
 
-const Input: FC<InputProps> = ({ color = "success", variant = "outlined", register, name = "name", ...props }) => {
+const Input: FC<InputProps> = ({
+  color = "success",
+  variant = "outlined",
+  helperText,
+  register,
+  name = "name",
+  ...props
+}) => {
   const inputStyles = {
     "& .MuiInputBase-root": {
       color: "text.primary",
@@ -30,7 +37,16 @@ const Input: FC<InputProps> = ({ color = "success", variant = "outlined", regist
 
   const mergedStyles = { ...inputStyles, ...props.sx };
 
-  return <TextField variant={variant} color={color} sx={mergedStyles} {...(register && register(name))} {...props} />;
+  return (
+    <TextField
+      variant={variant}
+      color={color}
+      sx={mergedStyles}
+      helperText={helperText}
+      {...(register && register(name))}
+      {...props}
+    />
+  );
 };
 
 export default Input;

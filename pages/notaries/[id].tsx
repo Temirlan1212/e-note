@@ -8,9 +8,11 @@ import { useRouter } from "next/router";
 
 import NotariesInfoContent from "@/components/notaries/NotariesInfoContent";
 
+interface NotariesDetailPageProps {}
+
 const center: [number, number] = [42.882004, 74.582748];
 
-const NotariesDetailPage: React.FC = () => {
+const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
   const router = useRouter();
   const { id } = router.query;
 
@@ -32,13 +34,13 @@ const NotariesDetailPage: React.FC = () => {
       <Container>
         <Box
           component="section"
-          py={10}
           display="flex"
           flexDirection="column"
           sx={{
-            gap: {
-              xs: "50px",
-              md: "80px",
+            gap: "40px",
+            py: {
+              xs: 5,
+              md: 10,
             },
           }}
           marginBottom="40px"

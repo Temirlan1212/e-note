@@ -10,19 +10,183 @@ import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import EraserIcon from "@/public/icons/EraserIcon.svg";
 import NotariesMultipleSelects from "./NotariesMultipleSelects";
 import Radio from "../ui/Radio";
-import { optionSelectData } from "../../data";
 import { useTranslations } from "next-intl";
 
 interface INotariesFiltrationProps {}
 
 const NotariesFiltration = (props: INotariesFiltrationProps) => {
+  const t = useTranslations();
+
+  const optionSelectData: any = [
+    {
+      id: 1,
+      label: t("Area"),
+      options: [
+        {
+          name: "area",
+          value: "all",
+          label: "Все",
+        },
+        {
+          name: "area",
+          value: "osh",
+          label: "Ош",
+        },
+        {
+          name: "area",
+          value: "chui",
+          label: "Чуй",
+        },
+        {
+          name: "area",
+          value: "talas",
+          label: "Талас",
+        },
+        {
+          name: "area",
+          value: "batken",
+          label: "Баткен",
+        },
+      ],
+    },
+    {
+      id: 2,
+      label: t("Region"),
+      options: [
+        {
+          name: "region",
+          value: "all",
+          label: "Все",
+        },
+        {
+          name: "region",
+          value: "chui",
+          label: "Чуй",
+        },
+        {
+          name: "region",
+          value: "talas",
+          label: "Талас",
+        },
+        {
+          name: "region",
+          value: "batken",
+          label: "Баткен",
+        },
+      ],
+    },
+    {
+      id: 3,
+      label: t("City"),
+
+      options: [
+        {
+          name: "city",
+          value: "all",
+          label: "Все",
+        },
+        {
+          name: "city",
+          value: "chui",
+          label: "Чуй",
+        },
+        {
+          name: "city",
+          value: "talas",
+          label: "Талас",
+        },
+        {
+          name: "city",
+          value: "batken",
+          label: "Баткен",
+        },
+      ],
+    },
+    {
+      id: 4,
+      label: t("Type of notary"),
+      options: [
+        {
+          name: "type",
+          value: "all",
+          label: "Все",
+        },
+        {
+          name: "type",
+          value: "chui",
+          label: "Чуй",
+        },
+        {
+          name: "type",
+          value: "talas",
+          label: "Талас",
+        },
+        {
+          name: "type",
+          value: "batken",
+          label: "Баткен",
+        },
+      ],
+    },
+    {
+      id: 5,
+      label: t("Working days"),
+      options: [
+        {
+          name: "days",
+          value: "all",
+          label: "Все",
+        },
+        {
+          name: "days",
+          value: "chui",
+          label: "Чуй",
+        },
+        {
+          name: "days",
+          value: "talas",
+          label: "Талас",
+        },
+        {
+          name: "days",
+          value: "batken",
+          label: "Баткен",
+        },
+      ],
+    },
+    {
+      id: 6,
+      label: t("Notary District"),
+      options: [
+        {
+          name: "notary",
+          value: "all",
+          label: "Все",
+        },
+        {
+          name: "notary",
+          value: "chui",
+          label: "Чуй",
+        },
+        {
+          name: "notary",
+          value: "talas",
+          label: "Талас",
+        },
+        {
+          name: "notary",
+          value: "batken",
+          label: "Баткен",
+        },
+      ],
+    },
+  ];
+
   const [isVisible, setIsVisible] = useState(true);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
   };
-
-  const t = useTranslations();
 
   const notariesSortOptionsData = [
     { value: 10, label: "В алфавитном порядке" },
@@ -81,7 +245,7 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
             },
           }}
         >
-          Свернуть фильтр
+          {t("Collapse the filter")}
         </Button>
 
         <Box
@@ -105,7 +269,7 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
               fontSize: 16,
             }}
           >
-            {t("Sorting")}:
+            {t("Sort")}:
           </Typography>
           <Select
             data={notariesSortOptionsData}
@@ -157,8 +321,8 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
           defaultValue="krug"
           name="radio-buttons-group"
         >
-          <Radio label="Круглосуточно" value="krug" />
-          <Radio label="Выездной" value="vyesd" />
+          <Radio label={t("Around the clock")} value="krug" />
+          <Radio label={t("Visiting notary")} value="vyesd" />
         </RadioGroup>
         <Box
           display="flex"
@@ -170,6 +334,20 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
             },
           }}
         >
+          <Button
+            startIcon={<FilterAltOutlinedIcon />}
+            color="success"
+            buttonType="primary"
+            sx={{
+              width: {
+                sx: "100%",
+                md: "320px",
+              },
+              padding: "10px 0",
+            }}
+          >
+            {t("Apply a filter")}
+          </Button>
           <Button
             startIcon={<EraserIcon />}
             buttonType="secondary"
@@ -184,21 +362,7 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
               },
             }}
           >
-            Очистить фильтр
-          </Button>
-          <Button
-            startIcon={<FilterAltOutlinedIcon />}
-            color="success"
-            buttonType="primary"
-            sx={{
-              width: {
-                sx: "100%",
-                md: "320px",
-              },
-              padding: "10px 0",
-            }}
-          >
-            Применить фильтр
+            {t("Clear the filter")}
           </Button>
         </Box>
       </Box>

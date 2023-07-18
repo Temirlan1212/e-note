@@ -72,7 +72,7 @@ export const notariesArr: INotary[] = [
   },
 ];
 
-const NotariesList = () => {
+const NotariesList: React.FC = () => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "50px", alignItems: "center" }}>
       <Grid
