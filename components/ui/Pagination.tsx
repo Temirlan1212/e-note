@@ -32,13 +32,13 @@ const StyledPagination = styled(MUIPagination)(({ theme }) => ({
   },
 }));
 
-interface IPaginationComponentProps extends PaginationProps {
+interface IPaginationProps extends PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
 
-const Pagination: React.FC<IPaginationComponentProps> = ({ currentPage, totalPages, onPageChange, ...props }) => {
+const Pagination: React.FC<IPaginationProps> = ({ currentPage, totalPages, onPageChange, ...props }) => {
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     onPageChange(page);
   };
