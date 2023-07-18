@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, InputLabel } from "@mui/material";
 import React from "react";
 import Select from "../ui/Select";
 
@@ -25,7 +25,15 @@ const NotariesMultipleSelects = ({ setCharacters, option }: INotariesMultipleSel
   };
   return option?.map((data: { id: React.Key | null | undefined; options: any; placeholder: any; label: any }) => (
     <div key={data.id}>
-      <Select selectType="primary" data={data.options} value={data.options[0]?.value} onChange={selectChange} />
+      <InputLabel
+        sx={{
+          marginBottom: "5px",
+          fontWeight: 500,
+        }}
+      >
+        {data.label}
+      </InputLabel>
+      <Select selectType="primary" data={data.options} defaultValue={data.options[0]?.value} onChange={selectChange} />
     </div>
   ));
 };

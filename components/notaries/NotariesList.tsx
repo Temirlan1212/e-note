@@ -1,8 +1,9 @@
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import React from "react";
 import NotariesCard from "./NotariesCard";
 import { INotary } from "@/models/notaries/notary";
 import Link from "next/link";
+import Pagination from "../ui/Pagination";
 
 export const notariesArr: INotary[] = [
   {
@@ -73,15 +74,24 @@ export const notariesArr: INotary[] = [
 
 const NotariesList = () => {
   return (
-    <Grid sx={{ justifyContent: "space-between" }} container spacing={2}>
-      {notariesArr.map((notary) => (
-        <Link href={`/notaries/${encodeURIComponent(notary.id)}`} style={{ textDecoration: "none" }} key={notary.id}>
-          <Grid item key={notary.id} xs={4} sm={2} md={3}>
-            <NotariesCard notary={notary} />
-          </Grid>
-        </Link>
-      ))}
-    </Grid>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "50px", alignItems: "center" }}>
+      <Grid sx={{ justifyContent: "space-between", alignItems: "center" }} container spacing={2}>
+        {notariesArr.map((notary) => (
+          <Link href={`/notaries/${encodeURIComponent(notary.id)}`} style={{ textDecoration: "none" }} key={notary.id}>
+            <Grid item key={notary.id} xs={4} sm={2} md={3}>
+              <NotariesCard notary={notary} />
+            </Grid>
+          </Link>
+        ))}
+      </Grid>
+      <Pagination
+        currentPage={2}
+        totalPages={15}
+        onPageChange={function (page: number): void {
+          throw new Error("Function not implemented.");
+        }}
+      />
+    </Box>
   );
 };
 
