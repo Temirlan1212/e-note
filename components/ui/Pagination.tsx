@@ -1,11 +1,5 @@
 import { Pagination as MUIPagination, PaginationProps, styled } from "@mui/material";
 
-interface IPaginationComponentProps extends PaginationProps {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-}
-
 const StyledPagination = styled(MUIPagination)(({ theme }) => ({
   display: "flex",
   ".MuiPagination-ul": {
@@ -38,7 +32,13 @@ const StyledPagination = styled(MUIPagination)(({ theme }) => ({
   },
 }));
 
-const Pagination: React.FC<IPaginationComponentProps> = ({ currentPage, totalPages, onPageChange, ...props }) => {
+interface IPaginationProps extends PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+const Pagination: React.FC<IPaginationProps> = ({ currentPage, totalPages, onPageChange, ...props }) => {
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     onPageChange(page);
   };
