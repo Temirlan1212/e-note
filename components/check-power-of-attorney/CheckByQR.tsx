@@ -1,7 +1,10 @@
 import React, { useState, useRef } from "react";
 import { Typography, Box } from "@mui/material";
 import { useTranslations } from "next-intl";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
+import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
+import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
+import jsQR from "jsqr";
 
 import ShowRemind from "./ShowRemind";
 import NothingFound from "./NothingFound";
@@ -11,10 +14,10 @@ export default function CheckByQR() {
   const [documentFound, setDocumentFound] = useState(false);
   const [documentData, setDocumentData] = useState({});
   const [cameraOpened, setCameraOpened] = useState(false);
-  const t = useTranslations();
+  const [scannedData, setScannedData] = useState("");
 
   const videoRef = useRef(null);
-  const [scannedData, setScannedData] = useState("");
+  const t = useTranslations();
 
   const startScanner = async () => {
     try {
@@ -30,12 +33,13 @@ export default function CheckByQR() {
     startScanner();
   }
 
-  const stopScanner = () => {
-    setCameraOpened(false);
-    const stream = videoRef.current.srcObject;
-    const tracks = stream.getTracks();
-    tracks.forEach((track) => track.stop());
-    videoRef.current.srcObject = null;
+  const decodeQRCode = (imageData) => {
+    const code = jsQR(imageData.data, imageData.width, imageData.height);
+    if (code) {
+      return code.data;
+    } else {
+      return null;
+    }
   };
 
   const handleScan = () => {
@@ -69,8 +73,15 @@ export default function CheckByQR() {
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
     const qrData = decodeQRCode(imageData);
-
     setScannedData(qrData);
+  };
+
+  const stopScanner = () => {
+    setCameraOpened(false);
+    const stream = videoRef.current.srcObject;
+    const tracks = stream.getTracks();
+    tracks.forEach((track) => track.stop());
+    videoRef.current.srcObject = null;
   };
 
   const handleOpenCamera = (e) => {
@@ -80,7 +91,6 @@ export default function CheckByQR() {
 
   const handleOpenDocument = (e) => {
     e.preventDefault();
-    alert("OPEN DOCUMENT");
   };
 
   return (
@@ -107,7 +117,7 @@ export default function CheckByQR() {
               padding: "13px 22px",
             }}
           >
-            <Box component="img" alt="#" src="/icons/camera.svg" height="100%" />
+            <PhotoCameraOutlinedIcon />
             <Typography fontWeight={600}>{t("Turn on camera")}</Typography>
           </Button>
         </Box>
@@ -138,7 +148,7 @@ export default function CheckByQR() {
           </Grid>
         </>
       )}
-      {documentFound ? (
+      {scannedData ? (
         <Box
           sx={{
             display: "flex",
@@ -154,8 +164,8 @@ export default function CheckByQR() {
             documentFound={documentFound}
             remindTitle="Document Found"
             remindText="Click on the button for details to view information about the notary document"
-            iconUrl="/icons/check-mark.svg"
           />
+
           <Box
             sx={{
               display: "flex",
@@ -167,10 +177,11 @@ export default function CheckByQR() {
           >
             <Typography fontWeight={600}>{t(`${documentData.name}`)}</Typography>
             <Box sx={{ display: "grid", gap: "10px" }}>
-              <Box component="img" src="/icons/qrcode.svg" alt="QR code" />
-              <Typography align="center">{documentData.address.zipcode}</Typography>
+              <QrCodeScannerIcon />
+              <Typography align="center">{scannedData}</Typography>
             </Box>
           </Box>
+
           <Button
             href="/"
             variant="contained"

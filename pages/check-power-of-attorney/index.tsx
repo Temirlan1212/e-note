@@ -6,8 +6,8 @@ import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 
 import Button from "@/components/ui/Button";
-import CheckByID from "../../components/check-power-of-attorney-page/CheckByID";
-import CheckByQR from "../../components/check-power-of-attorney-page/CheckByQR";
+import CheckByID from "../../components/check-power-of-attorney/CheckByID";
+import CheckByQR from "../../components/check-power-of-attorney/CheckByQR";
 
 export default function index() {
   const [isVariantClicked, setIsVariantClicked] = useState(false);
