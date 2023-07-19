@@ -36,5 +36,10 @@
   "Search": "Search",
   "SearchHeir": "Search",
   "Sort": "Sorting",
-  "More": "More"
+  "More": "More",
+  "Export": "Export",
+  "Download as CVS": "Download as CVS",
+  "Print": "Print",
+  "Done": "Done",
+  "No data": "No data"
 }
