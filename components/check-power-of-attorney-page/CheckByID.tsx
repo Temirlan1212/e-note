@@ -5,6 +5,7 @@ import { TextField, Typography, InputAdornment, Box, InputLabel } from "@mui/mat
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import NothingFound from "./NothingFound";
+import SearchBar from "@/components/ui/SearchBar";
 
 export default function CheckByID({ showRemind, closeRemind }) {
   const [textValue, setTextValue] = useState("");
@@ -62,23 +63,10 @@ export default function CheckByID({ showRemind, closeRemind }) {
             gap: "15px",
           }}
         >
-          <InputLabel htmlFor="search-field" sx={{ whiteSpace: "normal" }}>
+          <InputLabel htmlFor="search-bar" sx={{ whiteSpace: "normal" }}>
             {t("Enter a unique number (ID) of the document to search:")}
           </InputLabel>
-          <TextField
-            id="search-field"
-            value={textValue}
-            onChange={handleTextChange}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment>
-                  <Button href="/" variant="contained" color="success" onClick={handleButtonClick}>
-                    <Box component="img" alt="#" src="/icons/searchLoupe.svg" height="100%" />
-                  </Button>
-                </InputAdornment>
-              ),
-            }}
-          />
+          <SearchBar id="search-bar" />
         </Box>
         {!documentFound && (
           <Box
