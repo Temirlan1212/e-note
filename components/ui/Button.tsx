@@ -38,6 +38,9 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = 
     fontSize: "16px",
     fontWeight: "600",
     padding: "10px 0",
+    ":hover": {
+      bgcolor: "#1BAA75",
+    },
   };
 
   const buttonStyles =
