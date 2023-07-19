@@ -98,7 +98,7 @@ export const GridTable: React.FC<IGridTableProps> = ({ columns, rows, filterData
       }))}
       localeText={{
         toolbarExport: t("Export"),
-        toolbarExportCSV: t("Download as CVS"),
+        toolbarExportCSV: t("Download as CSV"),
         toolbarExportPrint: t("Print"),
         noRowsLabel: t("No data"),
       }}
@@ -160,12 +160,12 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, fi
     formState: { isSubmitted },
   } = useForm();
 
-  const menuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     setFilterMenu(event.currentTarget);
   };
 
-  const menuClose = () => {
+  const handleMenuClose = () => {
     setFilterMenu(null);
 
     if (formValues != null && !isSubmitted) {
@@ -201,7 +201,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, fi
       {filterData && (
         <>
           <Box
-            onClick={(e: any) => menuOpen(e)}
+            onClick={(e: any) => handleMenuOpen(e)}
             color={!open ? "white" : "success.main"}
             height="fit-content"
             display="flex"
@@ -215,7 +215,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, fi
             <Funnel />
           </Box>
 
-          <Menu anchorEl={filterMenu} open={open} onClose={menuClose}>
+          <Menu anchorEl={filterMenu} open={open} onClose={handleMenuClose}>
             <Box component="form" onSubmit={handleSubmit(onSubmit)} px="10px" minWidth={250}>
               <FormGroup>
                 {filterData.map(({ outputField, label }, index) => (
