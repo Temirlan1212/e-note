@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useRouteStore } from "@/stores/route";
+import { useEffect, useState } from "react";
+import { IRoute } from "@/stores/route";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { useTheme } from "@mui/material/styles";
@@ -11,30 +11,111 @@ import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import AppBar from "@mui/material/AppBar";
+import Collapse from "@mui/material/Collapse";
+import DynamicIcon from "./DynamicIcon";
+import { darken, lighten } from "@mui/material/styles";
+import MenuIcon from "@mui/icons-material/Menu";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 import Link from "./ui/Link";
 import ProfileDropdownButton from "./ProfileDropdownButton";
 import LocaleSwitcher from "./LocaleSwitcher";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
+import Tooltip from "@mui/material/Tooltip";
+
+const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) => {
+  const router = useRouter();
+  const t = useTranslations();
+
+  const [openedGroup, setOpenedGroup] = useState<string | null>(null);
+
+  const existOpenedGroup = routes.find(
+    (route) => route.type === "group" && route?.children?.some((subRoute) => subRoute.link === router.route)
+  );
+
+  useEffect(() => {
+    if (existOpenedGroup != null) {
+      setOpenedGroup(existOpenedGroup.title);
+    }
+  }, [existOpenedGroup]);
+
+  const handleGroupToggle = (group: string) => {
+    setOpenedGroup(group === openedGroup ? null : group);
+  };
+
+  return (
+    <>
+      {routes.map((route) => {
+        return (
+          <Box
+            key={route.title}
+            sx={{
+              backgroundColor: (theme) =>
+                openedGroup === route.title ? darken(theme.palette.success.main, 0.1) : "success",
+            }}
+          >
+            {route.type !== "link" && (
+              <Tooltip title={route.title} placement="right" arrow>
+                <ListItem disablePadding onClick={() => route.type === "group" && handleGroupToggle(route.title)}>
+                  <Link href={route.link !== router.route ? route.link : ""} width="100%">
+                    <ListItemButton
+                      sx={{
+                        justifyContent: open ? "initial" : "center",
+                        color: "#fff",
+                        backgroundColor: (theme) =>
+                          route.link === router.route ? darken(theme.palette.success.main, 0.15) : "success",
+                      }}
+                    >
+                      {route.icon && (
+                        <ListItemIcon sx={{ color: "inherit", minWidth: open ? "36px" : "auto" }}>
+                          <DynamicIcon name={route.icon} />
+                        </ListItemIcon>
+                      )}
+                      <ListItemText sx={{ opacity: open ? 1 : 0, color: "inherit" }}>{t(route.title)}</ListItemText>
+                      {route.type === "group" &&
+                        open &&
+                        (openedGroup === route.title ? <ExpandLess color="inherit" /> : <ExpandMore color="inherit" />)}
+                    </ListItemButton>
+                  </Link>
+                </ListItem>
+              </Tooltip>
+            )}
+
+            {route.type !== "link" && route.bottomDivider && (
+              <Divider sx={{ backgroundColor: (theme) => lighten(theme.palette.success.main, 0.5) }} />
+            )}
+
+            {route.type === "group" && route.children != null && (
+              <Collapse in={openedGroup === route.title} timeout="auto" unmountOnExit>
+                <List>
+                  <DrawerListItems routes={route.children} open={open} />
+                </List>
+              </Collapse>
+            )}
+          </Box>
+        );
+      })}
+    </>
+  );
+};
 
 interface IAppNavbarProps extends DrawerProps {
   type: "private" | "public";
+  routes: IRoute[];
 }
 
-export default function AppNavbar({ children, type }: IAppNavbarProps) {
+export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
   const theme = useTheme();
   const router = useRouter();
   const t = useTranslations();
-  const guestRoutes = useRouteStore((state) => state.guestRoutes).filter((r) => r.type === "menu");
-  const userRoutes = useRouteStore((state) => state.userRoutes);
+
   const [open, setOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -62,13 +143,21 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
             </Link>
           </Box>
 
-          <Box sx={{ display: type === "private" ? "none" : { xs: "none", md: "flex" }, gap: "15px" }}>
-            {guestRoutes.map((route) => (
-              <Link key={route.link} href={route.link} isActive={route.link === router.pathname} color={"text.primary"}>
-                {t(route.title)}
-              </Link>
-            ))}
-          </Box>
+          {type === "public" && (
+            <Box
+              sx={{
+                display: { xs: "none", md: "flex" },
+                alignItems: "center",
+                gap: "15px",
+              }}
+            >
+              {routes.map((route) => (
+                <Link key={route.link} href={route.link} isActive={route.link === router.route} color={"text.primary"}>
+                  {t(route.title)}
+                </Link>
+              ))}
+            </Box>
+          )}
 
           <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
             <ProfileDropdownButton />
@@ -90,11 +179,12 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
           whiteSpace: "nowrap",
           ...(open && {
             "& .MuiDrawer-paper": {
-              width: 280,
               transition: theme.transitions.create("width", {
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.enteringScreen,
               }),
+              boxShadow: 10,
+              width: 280,
             },
           }),
           ...(!open && {
@@ -103,6 +193,7 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.leavingScreen,
               }),
+              boxShadow: 1,
               width: type === "private" ? `calc(${theme.spacing(7)} + 1px)` : 0,
               [theme.breakpoints.down("md")]: {
                 width: 0,
@@ -134,27 +225,10 @@ export default function AppNavbar({ children, type }: IAppNavbarProps) {
           </IconButton>
         </Box>
 
-        <Divider sx={{ backgroundColor: "#33d599" }} />
+        <Divider sx={{ backgroundColor: (theme) => lighten(theme.palette.success.main, 0.5) }} />
 
         <List>
-          {type === "public" &&
-            guestRoutes.map((route) => (
-              <ListItem key={route.link} disablePadding>
-                <Link href={route.link} isActive={route.link === router.pathname} width="100%">
-                  <ListItemButton
-                    sx={{
-                      justifyContent: open ? "initial" : "center",
-                    }}
-                  >
-                    <ListItemIcon sx={{ color: "#fff", minWidth: open ? "36px" : "auto" }}>
-                      <InboxIcon />
-                    </ListItemIcon>
-                    <ListItemText sx={{ opacity: open ? 1 : 0, color: "#fff" }}>{t(route.title)}</ListItemText>
-                  </ListItemButton>
-                </Link>
-              </ListItem>
-            ))}
-          {type === "private" && userRoutes.map((route) => <></>)}
+          <DrawerListItems routes={routes} open={open} />
         </List>
       </Drawer>
 

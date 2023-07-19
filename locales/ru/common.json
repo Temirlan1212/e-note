@@ -42,5 +42,10 @@
   "Working days": "Жумуш күндөрү",
   "Notary District": "Нотариалдык округ",
   "Around the clock": "Круглосуточно",
-  "Visiting notary": "Выездной"
+  "Visiting notary": "Выездной",
+  "Export": "Экспортировать",
+  "Download as CSV": "Загрузить как CSV",
+  "Print": "Распечатать",
+  "Done": "Готово",
+  "No data": "Данных нет"
 }
