@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import ShowRemind from "./ShowRemind";
-import Button from "@/components/ui/Button";
-import { TextField, Typography, InputAdornment, Box, InputLabel } from "@mui/material";
+import { Typography, Box, InputLabel } from "@mui/material";
 import { useTranslations } from "next-intl";
-import { GetStaticPropsContext } from "next";
+import { SearchOutlined } from "@mui/icons-material";
+
+import ShowRemind from "./ShowRemind";
 import NothingFound from "./NothingFound";
+import Button from "@/components/ui/Button";
+import Input from "../ui/Input";
 
 export default function CheckByID({ showRemind, closeRemind }) {
   const [textValue, setTextValue] = useState("");
@@ -65,20 +67,18 @@ export default function CheckByID({ showRemind, closeRemind }) {
           <InputLabel htmlFor="search-field" sx={{ whiteSpace: "normal" }}>
             {t("Enter a unique number (ID) of the document to search:")}
           </InputLabel>
-          <TextField
-            id="search-field"
-            value={textValue}
-            onChange={handleTextChange}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment>
-                  <Button href="/" variant="contained" color="success" onClick={handleButtonClick}>
-                    <Box component="img" alt="#" src="/icons/searchLoupe.svg" height="100%" />
-                  </Button>
-                </InputAdornment>
-              ),
-            }}
-          />
+          <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+            <Input
+              id="search-field"
+              value={textValue}
+              placeholder={t("Search")}
+              onChange={handleTextChange}
+              fullWidth
+            />
+            <Button sx={{ width: "80px", height: "56px" }} type="submit" color="success" onClick={handleButtonClick}>
+              <SearchOutlined />
+            </Button>
+          </Box>
         </Box>
         {!documentFound && (
           <Box
@@ -196,15 +196,4 @@ export default function CheckByID({ showRemind, closeRemind }) {
       </Box>
     </>
   );
-}
-
-export async function getStaticProps(context: GetStaticPropsContext) {
-  return {
-    props: {
-      messages: {
-        ...(await import(`locales/${context.locale}/common.json`)).default,
-        ...(await import(`locales/${context.locale}/check-power-of-attorney.json`)).default,
-      },
-    },
-  };
 }

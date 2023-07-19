@@ -1,11 +1,11 @@
 import React, { useState, useRef } from "react";
+import { Typography, Box } from "@mui/material";
+import { useTranslations } from "next-intl";
+import Grid from "@mui/material/Unstable_Grid2";
+
 import ShowRemind from "./ShowRemind";
 import NothingFound from "./NothingFound";
 import Button from "@/components/ui/Button";
-import { Typography, Box } from "@mui/material";
-import { useTranslations } from "next-intl";
-import { GetStaticPropsContext } from "next";
-import Grid from "@mui/material/Unstable_Grid2";
 
 export default function CheckByQR() {
   const [documentFound, setDocumentFound] = useState(false);
@@ -190,15 +190,4 @@ export default function CheckByQR() {
       )}
     </>
   );
-}
-
-export async function getStaticProps(context: GetStaticPropsContext) {
-  return {
-    props: {
-      messages: {
-        ...(await import(`locales/${context.locale}/common.json`)).default,
-        ...(await import(`locales/${context.locale}/check-power-of-attorney.json`)).default,
-      },
-    },
-  };
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { Typography, Box, Link } from "@mui/material";
+import { Box, Link, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 
