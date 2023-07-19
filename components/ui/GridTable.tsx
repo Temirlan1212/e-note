@@ -10,11 +10,13 @@ import {
 } from "@mui/x-data-grid";
 import { Box, FormGroup, MenuItem, Typography } from "@mui/material";
 import Menu from "@mui/material/Menu";
-import Funnel from "@/public/icons/funnel.svg";
 import Checkbox from "./Checkbox";
 import { useForm } from "react-hook-form";
 import Button from "./Button";
 import { useTranslations } from "next-intl";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import Badge from "@mui/material/Badge";
 
 export interface IGridTableFilterItem {
   label: string;
@@ -73,6 +75,9 @@ export const GridTable: React.FC<IGridTableProps> = ({ columns, rows, filterData
     },
     ".MuiDataGrid-columnHeaderTitleContainerContent": {
       height: "100%",
+    },
+    ".MuiDataGrid-columnHeader:focus": {
+      outline: "none",
     },
     border: "none",
     background: "transparent",
@@ -181,6 +186,11 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, fi
     }
   };
 
+  const filterSelectionQuantity = (values: Record<string, any> | null): number => {
+    if (values != null) return Object.values(values).filter((v) => v).length;
+    return 0;
+  };
+
   const onSubmit = async (data: Record<string, any>) => {
     setSubmitFormValues(data);
     setFormValues(data);
@@ -194,7 +204,16 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, fi
   }, [watch]);
 
   return (
-    <Box display="flex" width="100%" gap="40px" height="100%" justifyContent="space-between" alignItems="center">
+    <Box
+      display="flex"
+      width="100%"
+      gap="40px"
+      height="100%"
+      justifyContent="space-between"
+      alignItems="center"
+      paddingLeft="10px"
+      paddingRight="15px"
+    >
       <Typography color="text.primary" fontWeight={600}>
         {rowParams?.colDef?.headerName}
       </Typography>
@@ -202,17 +221,33 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, fi
         <>
           <Box
             onClick={(e: any) => handleMenuOpen(e)}
-            color={!open ? "white" : "success.main"}
+            color="success.main"
             height="fit-content"
             display="flex"
             sx={{
               "&:hover": {
-                color: "success.main",
+                opacity: "0.7",
               },
               cursor: "pointer",
             }}
           >
-            <Funnel />
+            {open || filterSelectionQuantity(submitFormValues) > 0 ? (
+              <Badge
+                badgeContent={filterSelectionQuantity(submitFormValues)}
+                sx={{
+                  "& .MuiBadge-badge": {
+                    color: "success.main",
+                    border: "1px solid",
+                    background: "#fff",
+                  },
+                }}
+                max={9}
+              >
+                <FilterAltIcon color="success" />
+              </Badge>
+            ) : (
+              <FilterAltOutlinedIcon />
+            )}
           </Box>
 
           <Menu anchorEl={filterMenu} open={open} onClose={handleMenuClose}>
