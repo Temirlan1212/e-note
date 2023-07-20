@@ -40,5 +40,10 @@
   "Upload": "Upload",
   "Remove": "Remove",
   "Save": "Save",
-  "Cancel": "Cancel"
+  "Cancel": "Cancel",
+  "Export": "Export",
+  "Download as CSV": "Download as CSV",
+  "Print": "Print",
+  "Done": "Done",
+  "No data": "No data"
 }

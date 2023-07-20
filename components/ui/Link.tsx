@@ -12,6 +12,8 @@ function Link({ children, href, isActive, activeColor, color, ...props }: ILinkP
   const router: NextRouter = useRouter();
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
+    if (href === "") return;
+
     if (props.target === "_blank") {
       window.open(href, "_blank");
     } else {
@@ -25,6 +27,7 @@ function Link({ children, href, isActive, activeColor, color, ...props }: ILinkP
       onClick={handleClick}
       color={isActive ? activeColor ?? "success.main" : color ?? "inherit"}
       underline="none"
+      lineHeight="1.2"
       {...props}
     >
       {children}
