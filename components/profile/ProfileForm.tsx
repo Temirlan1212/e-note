@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 
+import { useTranslations } from "next-intl";
 import { PermIdentity, Visibility, VisibilityOff } from "@mui/icons-material";
 import { Avatar, Box, Divider, FormControl, IconButton, InputAdornment, InputLabel, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
@@ -10,9 +11,7 @@ import Input from "../ui/Input";
 import { IUserProfile } from "@/models/user/profile";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { userProfileSchema } from "@/validator-schemas/profile";
-import { useTranslations } from "next-intl";
 import { useProfileStore } from "@/stores/profile";
-import { IUserCredentials } from "@/models/profile/user";
 
 interface IProfileFormProps {}
 
@@ -64,12 +63,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   };
 
   const onSubmit = async (data: IUserProfile) => {
-    setLoading(true);
-    await setTimeout(() => {
-      console.log(data);
-    }, 1000);
-    setLoading(false);
-    reset();
+    console.log(data, selectedImage);
   };
 
   const handleButtonClick = () => {
