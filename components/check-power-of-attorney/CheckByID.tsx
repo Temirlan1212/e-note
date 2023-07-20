@@ -39,7 +39,6 @@ export default function CheckByID({ showRemind, closeRemind }: { showRemind: Boo
         }
       })
       .catch((error) => {
-        console.error("Error occurred during fetch:", error);
         setDocumentFound(false);
       });
   };

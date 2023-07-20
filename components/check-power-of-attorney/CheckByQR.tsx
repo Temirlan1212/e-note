@@ -52,7 +52,6 @@ export default function CheckByQR() {
         return response.json();
       })
       .then((json) => {
-        console.log(json);
         if (Object.keys(json).length === 0) {
           setDocumentFound(false);
         } else {
@@ -61,7 +60,6 @@ export default function CheckByQR() {
         }
       })
       .catch((error) => {
-        console.error("Error occurred during fetch:", error);
         setDocumentFound(false);
       });
 
