@@ -5,44 +5,40 @@ import CircleIcon from "@mui/icons-material/Circle";
 import { useTranslations } from "next-intl";
 
 import Button from "../ui/Button";
-
 export default function PopupNotifications() {
   const [notifications, setNotifications] = useState<{ time: string; text: string }[]>([]);
   const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
+
   const t = useTranslations();
 
   const sampleData = [
-    { time: new Date("20 Jule 2023 7:48 UTC").toISOString(), text: "Новое сообщение от пользователя Нурмырзаевой А." },
+    { time: new Date("20 Jule 2023 8:48 UTC").toISOString(), text: "Новое сообщение от пользователя Нурмырзаевой А." },
     {
-      time: new Date("20 Jule 2023 02:00 UTC").toISOString(),
+      time: new Date("20 Jule 2023 03:00 UTC").toISOString(),
       text: "Нотариальное действие ID 028-336 успешно внесено в реестр",
     },
     { time: new Date("19 Jule 2023 7:48 UTC").toISOString(), text: "Профиль пользователя изменен" },
     { time: new Date("17 Jule 2023 1:48 UTC").toISOString(), text: "Новый пользователь успешно добавлен" },
   ];
 
-  const handleNotificationsClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleNotificationsClose = () => {
-    setAnchorEl(null);
+  const handleNotificationPopupToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setAnchorEl(anchorEl == null ? event.currentTarget : null);
   };
 
   const getTimeAgo = (isoDate: string): string => {
     const timeDiff = Math.floor((Date.now() - new Date(isoDate).getTime()) / 1000);
 
     if (timeDiff < 60) {
-      return `${timeDiff} ${t("мин")}`;
+      return `${timeDiff} ${t("min")}`;
     } else if (timeDiff < 3600) {
       const minutes = Math.floor(timeDiff / 60);
-      return `${minutes} ${minutes === 1 ? t("мин") : minutes < 5 ? t("мин") : t("мин")}`;
+      return `${minutes} ${minutes === 1 ? t("min") : minutes < 5 ? t("min") : t("min")}`;
     } else if (timeDiff < 86400) {
       const hours = Math.floor(timeDiff / 3600);
-      return `${hours} ${hours === 1 ? t("час") : hours < 5 ? t("часа") : t("часов")}`;
+      return `${hours} ${hours === 1 ? t("hour") : hours < 5 ? t("hourGenitive") : t("hourAccusative")}`;
     } else {
       const days = Math.floor(timeDiff / 86400);
-      return `${days} ${days === 1 ? t("день") : days < 5 ? t("дня") : t("дней")}`;
+      return `${days} ${days === 1 ? t("day") : days < 5 ? t("dayGenitive") : t("dayAccusative")}`;
     }
   };
 
@@ -52,13 +48,13 @@ export default function PopupNotifications() {
 
   return (
     <>
-      <IconButton aria-label="notifications" onClick={handleNotificationsClick} sx={{ padding: 0 }}>
+      <IconButton aria-label="notifications" onClick={handleNotificationPopupToggle} sx={{ padding: 0 }}>
         <NotificationsIcon fontSize="medium" color="success" />
       </IconButton>
       <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
-        onClose={handleNotificationsClose}
+        onClose={handleNotificationPopupToggle}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "right",
@@ -137,7 +133,7 @@ export default function PopupNotifications() {
               <Typography fontSize={14}>{t("Все уведомления")}</Typography>
             </Button>
             <Button
-              onClick={handleNotificationsClose}
+              onClick={handleNotificationPopupToggle}
               variant="text"
               sx={{
                 "&:hover": { backgroundColor: "unset", color: "secondary" },
