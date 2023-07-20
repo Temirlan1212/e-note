@@ -1,6 +1,8 @@
-import { TextField, TextFieldProps } from "@mui/material";
-import { ChangeEventHandler, FC } from "react";
+import { FC, useState } from "react";
+
 import { UseFormRegister } from "react-hook-form";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { IconButton, InputAdornment, TextField, TextFieldProps } from "@mui/material";
 
 type InputProps = TextFieldProps & {
   variant?: "filled" | "outlined" | "standard";
@@ -11,6 +13,7 @@ type InputProps = TextFieldProps & {
 const Input: FC<InputProps> = ({
   color = "success",
   variant = "outlined",
+  type,
   helperText,
   register,
   name = "name",
@@ -35,6 +38,10 @@ const Input: FC<InputProps> = ({
     },
   };
 
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
   const mergedStyles = { ...inputStyles, ...props.sx };
 
   return (
@@ -45,6 +52,20 @@ const Input: FC<InputProps> = ({
       helperText={helperText}
       {...(register && register(name))}
       {...props}
+      type={showPassword ? "text" : type}
+      InputProps={
+        type === "password"
+          ? {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} edge="end">
+                    {showPassword ? <VisibilityOff color="success" /> : <Visibility color="success" />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }
+          : {}
+      }
     />
   );
 };
