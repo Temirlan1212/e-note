@@ -4,7 +4,14 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Box, Link, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 
-export default function ShowRemind({ closeRemind, documentFound, remindTitle, remindText }) {
+interface ShowRemindProps {
+  closeRemind?: Function;
+  documentFound: boolean;
+  remindTitle?: JSX.Element;
+  remindText?: JSX.Element;
+}
+
+export default function ShowRemind({ closeRemind, documentFound, remindTitle, remindText }: ShowRemindProps) {
   const t = useTranslations();
 
   return (
@@ -31,13 +38,18 @@ export default function ShowRemind({ closeRemind, documentFound, remindTitle, re
         </Typography>
       ) : (
         <Typography color="textSecondary" display="flex" flexDirection="column">
-          <Typography fontWeight={600}>{t(remindTitle)}</Typography>
-          <Typography fontWeight={400}>{t(remindText)}</Typography>
+          <Typography fontWeight={600}>{remindTitle}</Typography>
+          <Typography fontWeight={400}>{remindText}</Typography>
         </Typography>
       )}
 
       {!documentFound ? (
-        <CloseIcon onClick={closeRemind} width={24} height={24} style={{ cursor: "pointer", color: "green" }} />
+        <CloseIcon
+          onClick={(event) => closeRemind?.(event)}
+          width={24}
+          height={24}
+          style={{ cursor: "pointer", color: "green" }}
+        />
       ) : (
         <CheckCircleIcon width={24} height={24} style={{ cursor: "pointer", color: "green" }} />
       )}

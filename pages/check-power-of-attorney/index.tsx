@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import { Container, Typography } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2";
+import Grid from "@mui/material/Grid";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 
-import Button from "@/components/ui/Button";
+import Button from "../../components/ui/Button";
 import CheckByID from "../../components/check-power-of-attorney/CheckByID";
 import CheckByQR from "../../components/check-power-of-attorney/CheckByQR";
 
@@ -56,12 +56,12 @@ export default function index() {
           <Grid container spacing={3}>
             <Grid item xs={6}>
               <Button
-                variant={isVariantClicked ? "secondary" : "contained"}
+                variant={isVariantClicked ? "text" : "contained"}
                 sx={{
-                  boxShadow: !isVariantClicked ? "0px 10px 20px 0px #99DBAF" : "",
+                  boxShadow: isVariantClicked ? "" : "0px 10px 20px 0px #99DBAF",
                   background: isVariantClicked ? "#EFEFEF" : "",
                 }}
-                color={isVariantClicked ? "default" : "success"}
+                color={isVariantClicked ? "inherit" : "success"}
                 onClick={handleVariantClick}
               >
                 <Typography
@@ -75,12 +75,12 @@ export default function index() {
             </Grid>
             <Grid item xs={6}>
               <Button
-                variant={!isVariantClicked ? "secondary" : "contained"}
+                variant={!isVariantClicked ? "text" : "contained"}
                 sx={{
-                  boxShadow: isVariantClicked ? "0px 10px 20px 0px #99DBAF" : "",
+                  boxShadow: !isVariantClicked ? "" : "0px 10px 20px 0px #99DBAF",
                   background: !isVariantClicked ? "#EFEFEF" : "",
                 }}
-                color={!isVariantClicked ? "default" : "success"}
+                color={!isVariantClicked ? "inherit" : "success"}
                 onClick={handleVariantClick}
               >
                 <Typography

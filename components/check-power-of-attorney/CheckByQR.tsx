@@ -1,29 +1,29 @@
 import React, { useState, useRef } from "react";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Grid } from "@mui/material";
 import { useTranslations } from "next-intl";
-import Grid from "@mui/material/Grid";
 import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import jsQR from "jsqr";
 
 import ShowRemind from "./ShowRemind";
 import NothingFound from "./NothingFound";
-import Button from "@/components/ui/Button";
+import Button from "../ui/Button";
 
 export default function CheckByQR() {
   const [documentFound, setDocumentFound] = useState(false);
-  const [documentData, setDocumentData] = useState({});
+  const [documentData, setDocumentData] = useState<any>({});
   const [cameraOpened, setCameraOpened] = useState(false);
-  const [scannedData, setScannedData] = useState("");
-
-  const videoRef = useRef(null);
+  const [scannedData, setScannedData] = useState<string>("");
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const t = useTranslations();
 
   const startScanner = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      videoRef.current.srcObject = stream;
-      videoRef.current.play();
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
     } catch (error) {
       console.error("Error accessing camera:", error);
     }
@@ -33,7 +33,7 @@ export default function CheckByQR() {
     startScanner();
   }
 
-  const decodeQRCode = (imageData) => {
+  const decodeQRCode = (imageData: ImageData) => {
     const code = jsQR(imageData.data, imageData.width, imageData.height);
     if (code) {
       return code.data;
@@ -65,31 +65,36 @@ export default function CheckByQR() {
         setDocumentFound(false);
       });
 
-    const canvas = document.createElement("canvas");
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-    const qrData = decodeQRCode(imageData);
-    setScannedData(qrData);
+    if (videoRef.current) {
+      const canvas = document.createElement("canvas");
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext("2d");
+      if (ctx) {
+        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const qrData = decodeQRCode(imageData);
+        setScannedData(qrData || "");
+      }
+    }
   };
 
   const stopScanner = () => {
     setCameraOpened(false);
-    const stream = videoRef.current.srcObject;
-    const tracks = stream.getTracks();
-    tracks.forEach((track) => track.stop());
-    videoRef.current.srcObject = null;
+    if (videoRef.current) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      const tracks = stream?.getTracks() || [];
+      tracks.forEach((track: MediaStreamTrack) => track.stop());
+      videoRef.current.srcObject = null;
+    }
   };
 
-  const handleOpenCamera = (e) => {
+  const handleOpenCamera = (e: React.MouseEvent) => {
     e.preventDefault();
     setCameraOpened(true);
   };
 
-  const handleOpenDocument = (e) => {
+  const handleOpenDocument = (e: React.MouseEvent) => {
     e.preventDefault();
   };
 
@@ -162,8 +167,10 @@ export default function CheckByQR() {
         >
           <ShowRemind
             documentFound={documentFound}
-            remindTitle="Document Found"
-            remindText="Click on the button for details to view information about the notary document"
+            remindTitle={<Typography>Document Found</Typography>}
+            remindText={
+              <Typography>Click on the button for details to view information about the notarial document</Typography>
+            }
           />
 
           <Box

@@ -5,19 +5,23 @@ import { SearchOutlined } from "@mui/icons-material";
 
 import ShowRemind from "./ShowRemind";
 import NothingFound from "./NothingFound";
-import Button from "@/components/ui/Button";
+import Button from "../ui/Button";
 import Input from "../ui/Input";
 
-export default function CheckByID({ showRemind, closeRemind }) {
+export default function CheckByID({ showRemind, closeRemind }: { showRemind: Boolean; closeRemind: Function }) {
   const [textValue, setTextValue] = useState("");
-  const [documentData, setDocumentData] = useState([]);
+  const [documentData, setDocumentData] = useState({});
   const [documentFound, setDocumentFound] = useState(false);
   const t = useTranslations();
 
   const documentPadding = "0px 16px 24px 16px";
-  const handleSearchClick = (e) => {
+
+  const handleSearchClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    console.log(textValue);
+    if (textValue.trim() === "") {
+      setDocumentFound(false);
+      return;
+    }
     fetch(`https://jsonplaceholder.typicode.com/users/${textValue}`)
       .then((response) => {
         if (!response.ok) {
@@ -27,7 +31,6 @@ export default function CheckByID({ showRemind, closeRemind }) {
         return response.json();
       })
       .then((json) => {
-        console.log(json);
         if (Object.keys(json).length === 0) {
           setDocumentFound(false);
         } else {
@@ -75,8 +78,10 @@ export default function CheckByID({ showRemind, closeRemind }) {
         >
           <ShowRemind
             documentFound={documentFound}
-            remindTitle="Document Found"
-            remindText="Below you can see information about the notarial document"
+            remindTitle={<Typography fontWeight={600}>{t("Document Found")}</Typography>}
+            remindText={
+              <Typography fontWeight={400}>{t("Below you can see information about the notarial document")}</Typography>
+            }
           />
 
           <Box

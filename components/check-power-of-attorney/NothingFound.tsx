@@ -19,7 +19,7 @@ export default function NothingFound() {
       <Typography fontSize={{ xs: "18px", md: "24px" }} fontWeight={600}>
         {t("Nothing found yet")}
       </Typography>
-      <Image height={260} width={320} alt="Not found" src="/images/not-found-data.svg" />
+      <Image width={320} height={260} alt="Not found" src="/images/not-found-data.svg" />
     </Box>
   );
 }
