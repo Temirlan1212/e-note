@@ -1,8 +1,8 @@
-import { IActionType, IActionTypeQueryParams } from "@/models/dictionaries/action-type";
 import { create } from "zustand";
 import { useProfileStore } from "./profile";
 import { IStatus, IStatusQueryParams } from "@/models/dictionaries/status";
 import { IDocumentType, IDocumentTypeQueryParams } from "@/models/dictionaries/document-type";
+import { IActionType, IActionTypeQueryParams } from "@/models/dictionaries/action-type";
 
 export interface IProfileState {
   actionTypeData: IActionType[] | null;
