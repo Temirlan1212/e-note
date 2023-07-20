@@ -62,7 +62,7 @@ const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) 
             }}
           >
             {route.type !== "link" && (
-              <Tooltip title={route.title} placement="right" arrow>
+              <Tooltip title={t(route.title)} placement="right" arrow>
                 <ListItem disablePadding onClick={() => route.type === "group" && handleGroupToggle(route.title)}>
                   <Link href={route.link !== router.route ? route.link : ""} width="100%">
                     <ListItemButton
