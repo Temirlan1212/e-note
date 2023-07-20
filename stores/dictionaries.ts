@@ -1,19 +1,19 @@
-import { IActionType, IActionTypeQuery } from "@/models/dictionaries/action-type";
 import { create } from "zustand";
 import { useProfileStore } from "./profile";
-import { IStatus, IStatusQuery } from "@/models/dictionaries/status";
-import { IDocumentType, IDocumentTypeQuery } from "@/models/dictionaries/document-type";
+import { IStatus, IStatusQueryParams } from "@/models/dictionaries/status";
+import { IDocumentType, IDocumentTypeQueryParams } from "@/models/dictionaries/document-type";
+import { IActionType, IActionTypeQueryParams } from "@/models/dictionaries/action-type";
 
-export interface IProfileState {
+export interface IDictionariesState {
   actionTypeData: IActionType[] | null;
   statusData: IStatus[] | null;
   documentTypeData: IDocumentType[] | null;
-  getActionTypeData: (query?: Partial<IActionTypeQuery>) => Promise<void>;
-  getStatusData: (query?: Partial<IStatusQuery>) => Promise<void>;
-  getDocumentTypeData: (query?: Partial<IDocumentTypeQuery>) => Promise<void>;
+  getActionTypeData: (query?: Partial<IActionTypeQueryParams>) => Promise<void>;
+  getStatusData: (query?: Partial<IStatusQueryParams>) => Promise<void>;
+  getDocumentTypeData: (query?: Partial<IDocumentTypeQueryParams>) => Promise<void>;
 }
 
-export const useDictionaryStore = create<IProfileState>()((set, get) => ({
+export const useDictionaryStore = create<IDictionariesState>()((set, get) => ({
   actionTypeData: null,
   statusData: null,
   documentTypeData: null,
@@ -27,9 +27,12 @@ export const useDictionaryStore = create<IProfileState>()((set, get) => ({
       body: JSON.stringify(query),
     });
 
+    if (!response.ok) return;
+
     const actionTypeData: { data: IActionType[] } | null = await response.json();
 
-    if (!response.ok || actionTypeData == null || actionTypeData.data == null) return;
+    if (actionTypeData == null || actionTypeData.data == null) return;
+
     set(() => ({ actionTypeData: actionTypeData.data }));
   },
 
@@ -43,9 +46,12 @@ export const useDictionaryStore = create<IProfileState>()((set, get) => ({
       body: JSON.stringify(query),
     });
 
-    const statusData: { data: IActionType[] } | null = await response.json();
+    if (!response.ok) return;
 
-    if (!response.ok || statusData == null || statusData.data == null) return;
+    const statusData: { data: IStatus[] } | null = await response.json();
+
+    if (statusData == null || statusData.data == null) return;
+
     set(() => ({ statusData: statusData.data }));
   },
 
@@ -59,9 +65,12 @@ export const useDictionaryStore = create<IProfileState>()((set, get) => ({
       body: JSON.stringify(query),
     });
 
+    if (!response.ok) return;
+
     const documentTypeData: { data: IDocumentType[] } | null = await response.json();
 
-    if (!response.ok || documentTypeData == null || documentTypeData.data == null) return;
+    if (documentTypeData == null || documentTypeData.data == null) return;
+
     set(() => ({ documentTypeData: documentTypeData.data }));
   },
 }));
