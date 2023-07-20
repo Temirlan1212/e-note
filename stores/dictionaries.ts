@@ -4,7 +4,7 @@ import { IStatus, IStatusQueryParams } from "@/models/dictionaries/status";
 import { IDocumentType, IDocumentTypeQueryParams } from "@/models/dictionaries/document-type";
 import { IActionType, IActionTypeQueryParams } from "@/models/dictionaries/action-type";
 
-export interface IProfileState {
+export interface IDictionaryState {
   actionTypeData: IActionType[] | null;
   statusData: IStatus[] | null;
   documentTypeData: IDocumentType[] | null;
@@ -13,7 +13,7 @@ export interface IProfileState {
   getDocumentTypeData: (query?: Partial<IDocumentTypeQueryParams>) => Promise<void>;
 }
 
-export const useDictionaryStore = create<IProfileState>()((set, get) => ({
+export const useDictionaryStore = create<IDictionaryState>()((set, get) => ({
   actionTypeData: null,
   statusData: null,
   documentTypeData: null,
@@ -43,7 +43,7 @@ export const useDictionaryStore = create<IProfileState>()((set, get) => ({
       body: JSON.stringify(query),
     });
 
-    const statusData: { data: IActionType[] } | null = await response.json();
+    const statusData: { data: IStatus[] } | null = await response.json();
 
     if (!response.ok || statusData == null || statusData.data == null) return;
     set(() => ({ statusData: statusData.data }));
