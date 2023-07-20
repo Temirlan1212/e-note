@@ -27,9 +27,12 @@ export const useDictionaryStore = create<IDictionariesState>()((set, get) => ({
       body: JSON.stringify(query),
     });
 
+    if (!response.ok) return;
+
     const actionTypeData: { data: IActionType[] } | null = await response.json();
 
-    if (!response.ok || actionTypeData == null || actionTypeData.data == null) return;
+    if (actionTypeData == null || actionTypeData.data == null) return;
+
     set(() => ({ actionTypeData: actionTypeData.data }));
   },
 
@@ -43,9 +46,12 @@ export const useDictionaryStore = create<IDictionariesState>()((set, get) => ({
       body: JSON.stringify(query),
     });
 
+    if (!response.ok) return;
+
     const statusData: { data: IStatus[] } | null = await response.json();
 
-    if (!response.ok || statusData == null || statusData.data == null) return;
+    if (statusData == null || statusData.data == null) return;
+
     set(() => ({ statusData: statusData.data }));
   },
 
@@ -59,9 +65,12 @@ export const useDictionaryStore = create<IDictionariesState>()((set, get) => ({
       body: JSON.stringify(query),
     });
 
+    if (!response.ok) return;
+
     const documentTypeData: { data: IDocumentType[] } | null = await response.json();
 
-    if (!response.ok || documentTypeData == null || documentTypeData.data == null) return;
+    if (documentTypeData == null || documentTypeData.data == null) return;
+
     set(() => ({ documentTypeData: documentTypeData.data }));
   },
 }));
