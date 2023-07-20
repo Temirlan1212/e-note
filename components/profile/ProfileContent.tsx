@@ -1,6 +1,6 @@
 import { Box } from "@mui/material";
 
-import ProfileTabs from "./ProfileTabs";
+import ProfileForm from "./ProfileForm";
 
 interface IProfileContentProps {}
 
@@ -13,7 +13,7 @@ const ProfileContent = (props: IProfileContentProps) => {
         backgroundColor: "#fff",
       }}
     >
-      <ProfileTabs />
+      <ProfileForm />
     </Box>
   );
 };

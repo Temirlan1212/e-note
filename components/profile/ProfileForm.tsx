@@ -28,8 +28,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const userData = profile.getUserData();
 
-  console.log(profile);
-
   const form = useForm<IUserProfile>({
     resolver: yupResolver(userProfileSchema),
     defaultValues: {
@@ -189,7 +187,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 {t("Fullname")}
               </InputLabel>
               <Input
-                // placeholder={t("Enter INN")}
                 fullWidth
                 error={!!errors.username?.message ?? false}
                 helperText={errors.username?.message}
@@ -212,7 +209,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 {t("Username")}
               </InputLabel>
               <Input
-                //   placeholder={t("Enter INN")}
                 fullWidth
                 error={!!errors.login?.message ?? false}
                 helperText={errors.login?.message}
@@ -263,7 +259,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 E-mail
               </InputLabel>
               <Input
-                //   placeholder={t("Enter INN")}
                 fullWidth
                 error={!!errors.email?.message ?? false}
                 helperText={errors.email?.message}
@@ -287,7 +282,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 {t("Phone number")}
               </InputLabel>
               <Input
-                //   placeholder={t("Enter INN")}
                 fullWidth
                 error={!!errors.telephoneNumber?.message ?? false}
                 helperText={errors.telephoneNumber?.message}
@@ -343,7 +337,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 {t("Enter password")}
               </InputLabel>
               <Input
-                //   placeholder={t("Enter INN")}
                 fullWidth
                 error={!!errors.password?.message ?? false}
                 helperText={errors.password?.message}
@@ -376,7 +369,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 {t("Confirm password")}
               </InputLabel>
               <Input
-                //   placeholder={t("Enter INN")}
                 fullWidth
                 error={!!errors.cpassword?.message ?? false}
                 helperText={errors.cpassword?.message}
@@ -418,7 +410,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             loading={loading}
             type="submit"
           >
-            Сохранить
+            {t("Save")}
           </Button>
           <Button
             buttonType="secondary"
@@ -429,9 +421,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               },
             }}
             loading={loading}
-            type="submit"
           >
-            Отмена
+            {t("Cancel")}
           </Button>
         </Box>
       </Box>
