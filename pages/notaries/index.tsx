@@ -13,9 +13,9 @@ const center: [number, number] = [42.882004, 74.582748];
 export default function Notaries() {
   const t = useTranslations();
 
-  const NotariesMap = dynamic(
+  const LeafletMap = dynamic(
     () => {
-      return import("@/components/notaries/NotariesMap");
+      return import("@/components/ui/LeafletMap");
     },
     { loading: () => <p>Loading...</p>, ssr: false }
   );
@@ -53,7 +53,13 @@ export default function Notaries() {
           >
             {t("Search for a notary on the map")}
           </Typography>
-          <NotariesMap center={center} zoom={12} />
+          <LeafletMap
+            center={center}
+            zoom={12}
+            style={{
+              height: "600px",
+            }}
+          />
         </Box>
       </Container>
     </>

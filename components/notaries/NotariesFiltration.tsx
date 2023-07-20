@@ -194,7 +194,7 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
     { value: 30, label: "В алфавитном порядке" },
   ];
 
-  const [characters, setCharacters] = useState([]);
+  const [filters, setFilters] = useState([]);
 
   const [notariesSortOptions, setNotariesSortOptions] = useState(notariesSortOptionsData[0].value);
 
@@ -313,7 +313,7 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
             },
           }}
         >
-          <NotariesMultipleSelects option={optionSelectData} setCharacters={setCharacters} />
+          <NotariesMultipleSelects option={optionSelectData} setFilters={setFilters} />
         </Box>
         <RadioGroup
           sx={{ display: "flex", flexDirection: "row" }}
@@ -322,7 +322,7 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
           name="radio-buttons-group"
         >
           <Radio label={t("Around the clock")} value="krug" />
-          <Radio label={t("Visiting notary")} value="vyesd" />
+          <Radio label={t("Visiting")} value="vyesd" />
         </RadioGroup>
         <Box
           display="flex"

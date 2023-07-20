@@ -18,9 +18,9 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
 
   const t = useTranslations();
 
-  const NotariesMap = dynamic(
+  const LeafletMap = dynamic(
     () => {
-      return import("@/components/notaries/NotariesMap");
+      return import("@/components/ui/LeafletMap");
     },
     { loading: () => <p>Loading...</p>, ssr: false }
   );
@@ -46,7 +46,13 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
           marginBottom="40px"
         >
           <NotariesInfoContent />
-          <NotariesMap center={center} zoom={12} />
+          <LeafletMap
+            center={center}
+            zoom={12}
+            style={{
+              height: "600px",
+            }}
+          />
         </Box>
       </Container>
     </>

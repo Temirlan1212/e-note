@@ -15,6 +15,7 @@ import profileImage from "@/public/images/avatar.png";
 import LicenseIcon from "@/public/icons/license.svg";
 import ContentPlusIcon from "@/public/icons/ContentPlus.svg";
 import CloudMessageIcon from "@/public/icons/CloudMessageIcon.svg";
+import { useTranslations } from "next-intl";
 
 const infoArray = [
   {
@@ -71,6 +72,7 @@ const infoArray = [
 interface INotariesInfoContentProps {}
 
 const NotariesInfoContent = (props: INotariesInfoContentProps) => {
+  const t = useTranslations();
   return (
     <Box
       sx={{
@@ -213,7 +215,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
             padding: "10px 0",
           }}
         >
-          Оформить заявку
+          {t("Make an application")}
         </Button>
         <Button
           startIcon={<CloudMessageIcon />}
@@ -229,7 +231,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
             },
           }}
         >
-          Написать сообщение
+          {t("Write a message")}
         </Button>
       </Box>
     </Box>
