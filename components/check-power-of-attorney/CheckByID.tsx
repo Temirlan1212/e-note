@@ -47,7 +47,7 @@ export default function CheckByID({ showRemind, closeRemind }: { showRemind: Boo
   return (
     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", gap: "30px" }}>
       <Box sx={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
-        <InputLabel htmlFor="search-field" sx={{ whiteSpace: "normal" }}>
+        <InputLabel htmlFor="search-field" sx={{ whiteSpace: "normal", color: "#687C9B" }}>
           {t("Enter a unique number (ID) of the document to search:")}
         </InputLabel>
         <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
