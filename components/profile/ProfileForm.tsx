@@ -8,12 +8,21 @@ import { useForm } from "react-hook-form";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
 
-import { IUserProfile } from "@/models/user/profile";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { userProfileSchema } from "@/validator-schemas/profile";
 import { useProfileStore } from "@/stores/profile";
+import { IUserData } from "@/models/profile/user";
 
 interface IProfileFormProps {}
+
+interface IUserProfile {
+  name: string;
+  username: string;
+  email: string;
+  "partner.mobilePhone": string;
+  password: string;
+  cpassword: string;
+}
 
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -31,10 +40,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const form = useForm<IUserProfile>({
     resolver: yupResolver(userProfileSchema),
     defaultValues: {
-      username: userData?.name,
-      login: login?.username,
+      name: userData?.name,
+      username: login?.username,
       email: userData?.email,
-      telephoneNumber: userData?.["partner.mobilePhone"] || "996",
+      "partner.mobilePhone": userData?.["partner.mobilePhone"] || "996",
       password: "",
       cpassword: "",
     },
@@ -210,8 +219,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               </InputLabel>
               <Input
                 fullWidth
-                error={!!errors.login?.message ?? false}
-                helperText={errors.login?.message}
+                error={!!errors.name?.message ?? false}
+                helperText={errors.name?.message}
                 register={form.register}
                 name="login"
               />
@@ -283,8 +292,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               </InputLabel>
               <Input
                 fullWidth
-                error={!!errors.telephoneNumber?.message ?? false}
-                helperText={errors.telephoneNumber?.message}
+                error={!!errors["partner.mobilePhone"]?.message ?? false}
+                helperText={errors["partner.mobilePhone"]?.message}
                 register={form.register}
                 name="telephoneNumber"
               />
