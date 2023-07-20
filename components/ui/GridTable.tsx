@@ -218,16 +218,16 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
   }, [watch]);
 
   React.useEffect(() => {
-    console.log(formValues);
-
-    if (formValues != null && filterSelectAllOption) {
-      for (let field in formValues) {
-        setValue(field, selectAllForm.getValues("selectAll"));
-      }
+    if (filterData != null && filterField != null && filterSelectAllOption) {
+      filterData.map((item) => {
+        setValue(item[filterField.outputField], selectAllForm.getValues("selectAll"));
+      });
     }
   }, [selectAllForm.watch("selectAll")]);
 
   React.useEffect(() => {
+    console.log(filterData);
+
     if (filterData != null && filterField != null && filterSelectAllOption) {
       filterData.map((item) => {
         register(item[filterField.outputField]);
