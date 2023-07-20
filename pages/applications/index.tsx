@@ -2,9 +2,10 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import React from "react";
+import GridTableWitActions from "@/components/applications/GridTableWithActions";
+import { useEffect } from "react";
 
-export default function Login() {
+export default function Applications() {
   const t = useTranslations();
 
   return (
@@ -13,7 +14,9 @@ export default function Login() {
         <title>{t("Applications")}</title>
       </Head>
 
-      <Container>applications</Container>
+      <Container>
+        <GridTableWitActions />
+      </Container>
     </>
   );
 }

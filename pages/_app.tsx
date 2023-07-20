@@ -11,26 +11,14 @@ import { useProfileStore } from "@/stores/profile";
 import { IRoute, useRouteStore } from "@/stores/route";
 import { IUser } from "@/models/profile/user";
 import { useDictionaryStore } from "@/stores/dictionaries";
-import { shallow } from "zustand/shallow";
 
-export default function App({ Component, pageProps }: AppProps) {
+const Layout = ({ children }: { children: JSX.Element }) => {
   const router = useRouter();
   const profile = useProfileStore((state) => state);
   const routes = useRouteStore((state) => state);
-
-  const { getActionTypeData, getStatusData, getDocumentTypeData } = useDictionaryStore();
-
-  const { actionTypeData, statusData, documentTypeData } = useDictionaryStore(
-    ({ actionTypeData, statusData, documentTypeData }) => ({
-      actionTypeData,
-      statusData,
-      documentTypeData,
-    }),
-    shallow
-  );
-
   const [user, setUser]: [IUser | null, Function] = useState(null);
   const [guestRoutes, setGuestRoutes]: [IRoute[], Function] = useState([]);
+  const { getStatusData, getActionTypeData, getDocumentTypeData } = useDictionaryStore((state) => state);
 
   useEffect(() => {
     setUser(profile.user);
@@ -51,47 +39,25 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [routes.guestRoutes]);
 
   useEffect(() => {
-    getActionTypeData({ translate: true });
     getStatusData({ translate: true });
-    getDocumentTypeData({ translate: true, fields: ["fullName", "name"] });
+    getActionTypeData({ translate: true });
+    getDocumentTypeData({ translate: true });
   }, []);
 
-  useEffect(() => {
-    if (actionTypeData != null) {
-      console.log(actionTypeData);
-    }
-    // if (statusData != null) {
-    //   console.log(statusData);
-    // }
-    // if (statusData != null) {
-    //   console.log(documentTypeData);
-    // }
-  }, [
-    actionTypeData,
-    // statusData,
-    //  documentTypeData
-  ]);
+  if (user != null && !guestRoutes.map((r) => r.link).includes(router.route)) {
+    return <PrivateLayout>{children}</PrivateLayout>;
+  }
 
-  const Layout = () => {
-    if (user != null && !guestRoutes.map((r) => r.link).includes(router.route)) {
-      return (
-        <PrivateLayout>
-          <Component {...pageProps} />
-        </PrivateLayout>
-      );
-    }
+  return <PublicLayout>{children}</PublicLayout>;
+};
 
-    return (
-      <PublicLayout>
-        <Component {...pageProps} />
-      </PublicLayout>
-    );
-  };
-
+export default function App({ Component, pageProps }: AppProps) {
   return (
     <NextIntlClientProvider messages={pageProps.messages}>
       <ThemeProvider theme={theme}>
-        <Layout />
+        <Layout>
+          <Component pageProps={...pageProps} />
+        </Layout>
       </ThemeProvider>
     </NextIntlClientProvider>
   );
