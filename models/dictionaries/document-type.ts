@@ -2,12 +2,11 @@ export interface IDocumentType {
   name: string;
   id: number;
   version: number;
-  $wkfStatus: any;
 }
 
-export interface IDocumentTypeQuery {
-  offset: 0;
-  limit: 10;
+export interface IDocumentTypeQueryParams {
+  offset: number;
+  limit: number;
   fields: string[];
   translate: boolean;
 }

@@ -6,7 +6,7 @@ export interface IStatus {
   value: string;
 }
 
-export interface IStatusQuery {
+export interface IStatusQueryParams {
   offset: number;
   limit: number;
   translate: boolean;

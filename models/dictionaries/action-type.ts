@@ -6,7 +6,7 @@ export interface IActionType {
   value: string;
 }
 
-export interface IActionTypeQuery {
+export interface IActionTypeQueryParams {
   offset: number;
   limit: number;
   translate: boolean;

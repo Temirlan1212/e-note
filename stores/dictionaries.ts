@@ -1,16 +1,16 @@
-import { IActionType, IActionTypeQuery } from "@/models/dictionaries/action-type";
+import { IActionType, IActionTypeQueryParams } from "@/models/dictionaries/action-type";
 import { create } from "zustand";
 import { useProfileStore } from "./profile";
-import { IStatus, IStatusQuery } from "@/models/dictionaries/status";
-import { IDocumentType, IDocumentTypeQuery } from "@/models/dictionaries/document-type";
+import { IStatus, IStatusQueryParams } from "@/models/dictionaries/status";
+import { IDocumentType, IDocumentTypeQueryParams } from "@/models/dictionaries/document-type";
 
 export interface IProfileState {
   actionTypeData: IActionType[] | null;
   statusData: IStatus[] | null;
   documentTypeData: IDocumentType[] | null;
-  getActionTypeData: (query?: Partial<IActionTypeQuery>) => Promise<void>;
-  getStatusData: (query?: Partial<IStatusQuery>) => Promise<void>;
-  getDocumentTypeData: (query?: Partial<IDocumentTypeQuery>) => Promise<void>;
+  getActionTypeData: (query?: Partial<IActionTypeQueryParams>) => Promise<void>;
+  getStatusData: (query?: Partial<IStatusQueryParams>) => Promise<void>;
+  getDocumentTypeData: (query?: Partial<IDocumentTypeQueryParams>) => Promise<void>;
 }
 
 export const useDictionaryStore = create<IProfileState>()((set, get) => ({
