@@ -52,7 +52,7 @@ const Input: FC<InputProps> = ({
       helperText={helperText}
       {...(register && register(name))}
       {...props}
-      type={showPassword ? "text" : "password"}
+      type={showPassword ? "text" : type}
       InputProps={
         type === "password"
           ? {
