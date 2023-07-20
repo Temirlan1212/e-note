@@ -1,1 +1,10 @@
-{}
+{
+  "Avatar": "Аватар",
+  "Notifications": "Уведомления",
+  "Personal data": "Персональные данные",
+  "Contact details": "Контактные данные",
+  "Fullname": "ФИО",
+  "Phone number": "Номер телефона",
+  "Enter password": "Введите пароль",
+  "Confirm password": "Подтвердите пароль"
+}
