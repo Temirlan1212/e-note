@@ -8,7 +8,7 @@ import SearchBar from "../ui/SearchBar";
 import Button from "../ui/Button";
 import Select from "../ui/Select";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import EraserIcon from "@/public/icons/eraser-icon.svg";
+import EraserIcon from "@/public/icons/eraser.svg";
 import NotariesMultipleSelects from "./NotariesMultipleSelects";
 import Radio from "../ui/Radio";
 
