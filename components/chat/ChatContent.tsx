@@ -1,4 +1,5 @@
 import { FC, useEffect, useState } from "react";
+
 import { StaticImageData } from "next/image";
 
 import { Box, Button, Typography } from "@mui/material";
