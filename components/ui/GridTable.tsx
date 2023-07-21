@@ -8,7 +8,7 @@ import {
   GridValidRowModel,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { Box, FormGroup, MenuItem, Typography } from "@mui/material";
+import { Box, Divider, FormGroup, MenuItem, Typography } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import Checkbox from "./Checkbox";
 import { useForm } from "react-hook-form";
@@ -194,7 +194,8 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
     setSubmitFormValues(data);
     setFormValues(data);
     setFilterMenu(null);
-    onFilterSubmit && onFilterSubmit({ value: data, rowParams: rowParams });
+    const keysWithTrueValues = Object.keys(data).filter((key) => data[key] === true);
+    onFilterSubmit && onFilterSubmit({ value: keysWithTrueValues, rowParams: rowParams });
   };
 
   React.useEffect(() => {
@@ -251,18 +252,21 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
 
           <Menu anchorEl={filterMenu} open={open} onClose={handleMenuClose}>
             <Box component="form" onSubmit={handleSubmit(onSubmit)} px="10px" minWidth={250}>
-              <FormGroup>
+              <Box maxHeight={200} overflow="auto">
                 {filterData.map((item, index) => (
                   <MenuItem key={index} sx={{ padding: 0, margin: 0 }}>
                     <Checkbox
                       name={item[filterField.outputField]}
                       register={register}
                       label={item[filterField.field]}
-                      checked={!!formValues?.[item[filterField.outputField]] ?? false}
+                      checked={!!formValues?.[item[filterField.outputField]]}
+                      width={"100%"}
                     />
                   </MenuItem>
                 ))}
-              </FormGroup>
+
+                {filterData.length < 1 && <Typography textAlign="center">{t("No data")}</Typography>}
+              </Box>
               <Button
                 type="submit"
                 sx={{

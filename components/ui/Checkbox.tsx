@@ -7,14 +7,18 @@ import { UseFormRegister } from "react-hook-form";
 interface ICheckboxProps extends Omit<CheckboxProps, "ref"> {
   label?: string;
   register?: UseFormRegister<any>;
+  width?: string | number;
 }
 
 const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, ICheckboxProps> = (
-  { label, register, name, ...props },
+  { label, register, width, name, ...props },
   ref
 ) => {
   return (
     <FormControlLabel
+      sx={{
+        width,
+      }}
       control={
         <MUICheckbox
           {...props}
