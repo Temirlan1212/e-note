@@ -8,7 +8,7 @@ import {
   GridValidRowModel,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { Box, Divider, FormGroup, MenuItem, Typography } from "@mui/material";
+import { Box, MenuItem, Typography } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import Checkbox from "./Checkbox";
 import { useForm } from "react-hook-form";
@@ -29,7 +29,7 @@ export interface IFilterData {
 }
 
 export interface IFilterSubmitParams {
-  value: Record<string, any>;
+  value: (string | number)[];
   rowParams: GridColumnHeaderParams<GridValidRowModel, any, any>;
 }
 
@@ -38,7 +38,8 @@ export interface IGridTableProps extends DataGridProps {
   rows: GridRowsProp;
   columns: GridColDef[];
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
-  filterSelectAllOption?: boolean;
+  cellMaxHeight?: string | number;
+  headerCellMaxHeight?: string | number;
 }
 
 export interface IGridTableHeaderProps {
@@ -46,15 +47,15 @@ export interface IGridTableHeaderProps {
   filterData?: Record<string, any>[];
   filterField?: IGridTableFilterField;
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
-  filterSelectAllOption?: boolean;
 }
 
 export const GridTable: React.FC<IGridTableProps> = ({
   columns,
   rows,
   filterData,
-  filterSelectAllOption,
+  cellMaxHeight,
   onFilterSubmit,
+  headerCellMaxHeight,
   sx,
   ...rest
 }) => {
@@ -67,20 +68,48 @@ export const GridTable: React.FC<IGridTableProps> = ({
     },
     ".MuiDataGrid-row": {
       border: "1px solid transparent",
+      maxHeight: cellMaxHeight ? cellMaxHeight + " !important" : "fit-content !important",
+
       "&:hover": {
         backgroundColor: "#fff",
         border: "1px solid #CDCDCD",
       },
     },
+    ".css-yrdy0g-MuiDataGrid-columnHeaderRow": {
+      display: "flex",
+      alignItems: "center",
+    },
     ".MuiDataGrid-columnHeaders": {
+      maxHeight: (headerCellMaxHeight ? headerCellMaxHeight : "fit-content") + "  !important",
       border: "1px solid #CDCDCD",
+
+      ".MuiDataGrid-columnHeader": {
+        height: "100% !important",
+        ".MuiDataGrid-columnHeaderTitleContainer": {
+          textWrap: "wrap !important",
+        },
+
+        "&:focus": {
+          outline: "none",
+        },
+      },
     },
-    ".MuiDataGrid-columnHeader:focus": {
-      outline: "none",
-    },
+
     ".MuiDataGrid-cell:focus": {
       outline: "none",
     },
+    ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": {
+      whiteSpace: "normal",
+      maxHeight: "100% !important",
+      padding: "10px",
+      ".MuiDataGrid-cellContent": {
+        overflow: "auto",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+      },
+    },
+
     border: "none",
     background: "transparent",
   };
@@ -101,7 +130,6 @@ export const GridTable: React.FC<IGridTableProps> = ({
               filterData={specificFieldFilterData}
               onFilterSubmit={onFilterSubmit}
               filterField={filterData?.filterField}
-              filterSelectAllOption={filterSelectAllOption}
             />
           );
         },
@@ -159,7 +187,6 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
   filterData,
   onFilterSubmit,
   filterField,
-  filterSelectAllOption,
 }) => {
   const t = useTranslations();
   const [filterMenu, setFilterMenu] = React.useState<HTMLElement | null>(null);
@@ -175,8 +202,6 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
     setValue,
     formState: { isSubmitted },
   } = useForm();
-
-  const selectAllForm = useForm();
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -216,24 +241,6 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
     const subscription = watch((value) => setFormValues(value));
     return () => subscription.unsubscribe();
   }, [watch]);
-
-  React.useEffect(() => {
-    if (filterData != null && filterField != null && filterSelectAllOption) {
-      filterData.map((item) => {
-        setValue(item[filterField.outputField], selectAllForm.getValues("selectAll"));
-      });
-    }
-  }, [selectAllForm.watch("selectAll")]);
-
-  React.useEffect(() => {
-    console.log(filterData);
-
-    if (filterData != null && filterField != null && filterSelectAllOption) {
-      filterData.map((item) => {
-        register(item[filterField.outputField]);
-      });
-    }
-  }, []);
 
   return (
     <Box
@@ -284,24 +291,19 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
 
           <Menu anchorEl={filterMenu} open={open} onClose={handleMenuClose}>
             <Box component="form" onSubmit={handleSubmit(onSubmit)} px="10px" minWidth={250}>
-              <Box maxHeight={200} overflow="auto">
-                {filterSelectAllOption && (
-                  <>
-                    <MenuItem sx={{ padding: 0, margin: 0 }}>
-                      <Checkbox
-                        name={"selectAll"}
-                        register={selectAllForm.register}
-                        label={"selectAll"}
-                        checked={selectAllForm.getValues("selectAll")}
-                        width={"100%"}
-                      />
-                    </MenuItem>
-                    <Divider />
-                  </>
-                )}
-
+              <Box
+                maxHeight={190}
+                overflow="auto"
+                maxWidth={250}
+                sx={{
+                  "::-webkit-scrollbar": { width: "4px" },
+                  "::-webkit-scrollbar-thumb": {
+                    background: "#E0E0E0",
+                  },
+                }}
+              >
                 {filterData.map((item, index) => (
-                  <MenuItem key={index} sx={{ padding: 0, margin: 0 }}>
+                  <MenuItem key={index} sx={{ padding: 0, margin: "0 0 10px 0" }}>
                     <Checkbox
                       name={item[filterField.outputField]}
                       register={register}
@@ -311,6 +313,8 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
                     />
                   </MenuItem>
                 ))}
+
+                {filterData.length < 1 && <Typography textAlign="center">{t("No data")}</Typography>}
               </Box>
               <Button
                 type="submit"

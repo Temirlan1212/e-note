@@ -1,74 +1,166 @@
 import { useTranslations } from "next-intl";
-import { GridTable } from "../ui/GridTable";
-import { Box } from "@mui/material";
-import { GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import { GridTable, IFilterSubmitParams } from "../ui/GridTable";
+import { Box, LinearProgress } from "@mui/material";
+import {
+  GridColDef,
+  GridRenderCellParams,
+  GridSortModel,
+  GridTreeNodeWithRender,
+  GridValueGetterParams,
+} from "@mui/x-data-grid";
 import { useDictionaryStore } from "@/stores/dictionaries";
+import { useEffect, useState } from "react";
+import { useApplicationStore } from "@/stores/applications";
+import { SortType } from "@/models/applications/applications";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DetailsIcon from "@/public/icons/details-action.svg";
+import DownloadIcon from "@/public/icons/download-action.svg";
+import EditIcon from "@/public/icons/edit-action.svg";
 
 interface IGridTableWithActions {}
-const columns: GridColDef[] = [
-  { field: "id", headerName: "ID", width: 250 },
-  {
-    field: "firstName",
-    headerName: "First name",
-    width: 250,
-    editable: true,
-  },
-  {
-    field: "lastName",
-    headerName: "Last name",
-    width: 250,
-    editable: true,
-    sortable: true,
-  },
-  {
-    field: "age",
-    headerName: "Age",
-    type: "number",
-    width: 250,
-    editable: true,
-    sortable: false,
-  },
-  {
-    field: "fullName",
-    headerName: "Full name",
-    description: "This column has a value getter and is not sortable.",
-    sortable: false,
-    width: 250,
-    valueGetter: (params: GridValueGetterParams) => `${params.row.firstName || ""} ${params.row.lastName || ""}`,
-  },
-];
-
-const rows = [
-  { id: 1, lastName: "Snow", firstName: "Jon", age: 35 },
-  { id: 2, lastName: "Lannister", firstName: "Cersei", age: 42 },
-  { id: 3, lastName: "Lannister", firstName: "Jaime", age: 45 },
-  { id: 4, lastName: "Stark", firstName: "Arya", age: 16 },
-  { id: 5, lastName: "Targaryen", firstName: "Daenerys", age: null },
-  { id: 6, lastName: "Melisandre", firstName: null, age: 150 },
-  { id: 7, lastName: "Clifford", firstName: "Ferrara", age: 44 },
-  { id: 8, lastName: "Frances", firstName: "Rossini", age: 36 },
-  { id: 9, lastName: "Roxie", firstName: "Harvey", age: 65 },
-];
 
 export default function GridTableWitActions({}: IGridTableWithActions) {
   const t = useTranslations();
+  const getApplicationsData = useApplicationStore((state) => state.getApplicationsData);
+  const applicationsData = useApplicationStore((state) => state.applicationsData);
   const actionTypeData = useDictionaryStore((store) => store.actionTypeData);
-  console.log(actionTypeData);
+  const statusData = useDictionaryStore((store) => store.statusData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [filterSubmitValue, setFilterSubmitValue] = useState<(string | number)[]>([]);
+  const [sortValue, setSortValue] = useState<SortType>("asc");
+
+  const handleFilterSubmit = async ({ value }: IFilterSubmitParams) => {
+    setFilterSubmitValue(value);
+  };
+
+  const handleSortByDate = async (model: GridSortModel) => {
+    const gridSortItem = model[0];
+    if (gridSortItem?.sort != null) setSortValue(gridSortItem.sort);
+  };
+
+  const getApplications = async () => {
+    setIsLoading(true);
+    await getApplicationsData({});
+    setIsLoading(false);
+  };
+
+  const handleAppQueryParamsChange = async (filterValue: (string | number)[], sortValue: SortType) => {
+    setIsLoading(true);
+    await getApplicationsData({ filter: { field: "typeNotarialAction", value: filterValue }, sortBy: sortValue });
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    handleAppQueryParamsChange(filterSubmitValue, sortValue);
+  }, [filterSubmitValue, sortValue]);
+
+  useEffect(() => {
+    getApplications();
+  }, []);
+
+  const columns: GridColDef[] = [
+    {
+      field: "typeNotarialAction",
+      headerName: "Вид действия",
+      width: 200,
+      editable: false,
+      sortable: false,
+      valueGetter: (params: GridValueGetterParams) => {
+        if (actionTypeData != null) {
+          const matchedItem = actionTypeData?.find((item) => item.value == params.value);
+          return matchedItem?.title;
+        }
+
+        return params.value;
+      },
+    },
+    {
+      field: "product.fullName",
+      headerName: "Вид документа",
+      width: 250,
+      editable: false,
+      sortable: false,
+    },
+    {
+      field: "statusSelect",
+      headerName: "Статус",
+      width: 200,
+      editable: false,
+      sortable: false,
+      valueGetter: (params: GridValueGetterParams) => {
+        if (statusData != null) {
+          const matchedItem = statusData?.find((item) => item.value == String(1));
+          return matchedItem?.title;
+        }
+
+        return params.value;
+      },
+    },
+    {
+      field: "creationDate",
+      headerName: "Дата",
+      width: 170,
+      sortable: true,
+    },
+    {
+      field: "createdBy.fullName",
+      headerName: "Нотариус",
+      width: 200,
+      sortable: false,
+      cellClassName: "notaryColumn",
+    },
+    {
+      field: "actions",
+      headerName: "",
+      width: 200,
+      sortable: false,
+      type: "actions",
+      renderCell: (params) => <ActionsCell params={params} />,
+    },
+  ];
 
   return (
-    <Box>
-      dd
+    <Box height="500px">
       <GridTable
         columns={columns}
-        rows={rows}
+        rows={applicationsData ?? []}
         filterData={{
-          data: { fullName: actionTypeData ?? [] },
+          data: { typeNotarialAction: actionTypeData ?? [] },
           filterField: { field: "title", outputField: "value" },
         }}
-        onFilterSubmit={(data) => console.log(data)}
-        onSortModelChange={(data) => console.log(data)}
-        filterSelectAllOption={true}
+        onFilterSubmit={handleFilterSubmit}
+        onSortModelChange={handleSortByDate}
+        cellMaxHeight="200px"
+        loading={isLoading}
+        sx={{
+          height: "100%",
+          ".notaryColumn": {
+            color: "success.main",
+          },
+        }}
+        slots={{
+          loadingOverlay: () => <LinearProgress color="success" />,
+        }}
       />
     </Box>
   );
 }
+
+export const ActionsCell = ({ params }: { params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender> }) => {
+  return (
+    <Box display="flex" alignItems="center" gap="10px">
+      <Box>
+        <DetailsIcon />
+      </Box>
+      <Box>
+        <EditIcon />
+      </Box>
+      <Box>
+        <DownloadIcon />
+      </Box>
+      <Box>
+        <DeleteOutlineIcon />
+      </Box>
+    </Box>
+  );
+};

@@ -18,6 +18,9 @@ const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, ICheckboxProps>
     <FormControlLabel
       sx={{
         width,
+        ".MuiFormControlLabel-label": {
+          whiteSpace: "wrap",
+        },
       }}
       control={
         <MUICheckbox
