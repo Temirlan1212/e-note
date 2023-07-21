@@ -2,8 +2,9 @@ import Head from "next/head";
 import { Box, Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
+import ProfileContent from "@/components/profile/ProfileContent";
 
-export default function Home() {
+export default function Profile() {
   const t = useTranslations();
 
   return (
@@ -12,7 +13,15 @@ export default function Home() {
         <title>{t("Profile")}</title>
       </Head>
 
-      <Container maxWidth="xl">{t("Profile")}</Container>
+      <Container
+        maxWidth="xl"
+        sx={{
+          pt: "20px",
+          pb: "50px",
+        }}
+      >
+        <ProfileContent />
+      </Container>
     </>
   );
 }
