@@ -1,0 +1,23 @@
+{
+  "Power of Attorney verification": "Ишеним катты текшерүү",
+  "By document ID": "Документтин ID боюнча",
+  "By QR code": "Документтин QR коду боюнча",
+  "Enter a unique number (ID) of the document to search:": "Издөө үчүн документтин уникалдуу номерин (ID) киргизиңиз",
+  "Each notarial document has its unique number, consisting of n-characters. Click on the link to find out how to get it.": "Ар бир нотариалдык документтин n тамгадан турган уникалдуу номери болот. Аны кантип алуу керектигин билүү үчүн шилтемени басыңыз",
+  "Nothing found yet": "Азырынча эч нерсе табылган жок",
+  "Below you can see information about the notarial document": "Төмөндө нотариалдык документ тууралуу маалыматты көрө аласыз",
+  "Document Found": "Документ табылды",
+  "Name": "Аты",
+  "Type of notarial action": "Нотариалдык иш-аракеттин түрү",
+  "Status": "Статус",
+  "Date of action": "Иш-аракет датасы",
+  "Full name of the notary": "Нотариустун толук аты-жөнү",
+  "Unique registry number": "Уникалдуу реестр номери",
+  "Parties": "Тарап",
+  "Participant-1:": "Катышуучу-1:",
+  "Turn on camera": "Камераны күйгүзүңүз",
+  "More": "Кененирээк",
+  "Click on the button for details to view information about the notary document": "Нотариалдык документ тууралуу кененирээк маалымат билүү үчүн баскычты басыңыз",
+  "Stop Scanner": "Сканерди токтотуу",
+  "Scan QR code": "QR кодун скандоо"
+}

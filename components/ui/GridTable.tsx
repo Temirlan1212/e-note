@@ -8,7 +8,7 @@ import {
   GridValidRowModel,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { Box, FormGroup, MenuItem, Typography } from "@mui/material";
+import { Box, MenuItem, Typography } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import Checkbox from "./Checkbox";
 import { useForm } from "react-hook-form";
@@ -18,9 +18,14 @@ import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import Badge from "@mui/material/Badge";
 
-export interface IGridTableFilterItem {
-  label: string;
+export interface IGridTableFilterField {
+  field: string;
   outputField: string;
+}
+
+export interface IFilterData {
+  data: Record<string, Record<string, any>[]>;
+  filterField: IGridTableFilterField;
 }
 
 export interface IFilterSubmitParams {
@@ -29,19 +34,31 @@ export interface IFilterSubmitParams {
 }
 
 export interface IGridTableProps extends DataGridProps {
-  filterData?: Record<string, IGridTableFilterItem[]>;
+  filterData?: IFilterData;
   rows: GridRowsProp;
   columns: GridColDef[];
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
+  cellMaxHeight?: string | number;
+  headerCellMaxHeight?: string | number;
 }
 
 export interface IGridTableHeaderProps {
   rowParams: GridColumnHeaderParams;
-  filterData?: IGridTableFilterItem[];
+  filterData?: Record<string, any>[];
+  filterField?: IGridTableFilterField;
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
 }
 
-export const GridTable: React.FC<IGridTableProps> = ({ columns, rows, filterData, onFilterSubmit, sx, ...rest }) => {
+export const GridTable: React.FC<IGridTableProps> = ({
+  columns,
+  rows,
+  filterData,
+  cellMaxHeight,
+  onFilterSubmit,
+  headerCellMaxHeight,
+  sx,
+  ...rest
+}) => {
   const t = useTranslations();
   const rootStyles = {
     ".MuiDataGrid-cell": {
@@ -51,34 +68,48 @@ export const GridTable: React.FC<IGridTableProps> = ({ columns, rows, filterData
     },
     ".MuiDataGrid-row": {
       border: "1px solid transparent",
+      maxHeight: cellMaxHeight ? cellMaxHeight + " !important" : "fit-content !important",
+
       "&:hover": {
         backgroundColor: "#fff",
         border: "1px solid #CDCDCD",
       },
     },
-    ".MuiDataGrid-columnHeaders": {
-      border: "1px solid #CDCDCD",
-      padding: "0 10px",
-    },
     ".css-yrdy0g-MuiDataGrid-columnHeaderRow": {
-      justifyContent: "space-between",
-      width: "100%",
+      display: "flex",
+      alignItems: "center",
     },
-    ".MuiDataGrid-columnHeadersInner": {
-      width: "100%",
+    ".MuiDataGrid-columnHeaders": {
+      maxHeight: (headerCellMaxHeight ? headerCellMaxHeight : "fit-content") + "  !important",
+      border: "1px solid #CDCDCD",
+
+      ".MuiDataGrid-columnHeader": {
+        height: "100% !important",
+        ".MuiDataGrid-columnHeaderTitleContainer": {
+          textWrap: "wrap !important",
+        },
+
+        "&:focus": {
+          outline: "none",
+        },
+      },
     },
-    ".MuiDataGrid-columnHeaderDraggableContainer": {
-      width: "100%",
-    },
-    ".MuiDataGrid-columnHeaderTitleContainer": {
-      display: "block",
-    },
-    ".MuiDataGrid-columnHeaderTitleContainerContent": {
-      height: "100%",
-    },
-    ".MuiDataGrid-columnHeader:focus": {
+
+    ".MuiDataGrid-cell:focus": {
       outline: "none",
     },
+    ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": {
+      whiteSpace: "normal",
+      maxHeight: "100% !important",
+      padding: "10px",
+      ".MuiDataGrid-cellContent": {
+        overflow: "auto",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+      },
+    },
+
     border: "none",
     background: "transparent",
   };
@@ -88,15 +119,17 @@ export const GridTable: React.FC<IGridTableProps> = ({ columns, rows, filterData
   return (
     <DataGrid
       rows={rows}
-      columns={columns.map((col) => ({
+      columns={columns?.map((col) => ({
         ...col,
         renderHeader: (rowParams: GridColumnHeaderParams) => {
-          const specificFieldFilterData = filterData?.[rowParams?.field];
+          const specificFieldFilterData = filterData?.data?.[rowParams?.field];
+
           return (
             <GridTableHeader
               rowParams={rowParams}
               filterData={specificFieldFilterData}
               onFilterSubmit={onFilterSubmit}
+              filterField={filterData?.filterField}
             />
           );
         },
@@ -149,7 +182,12 @@ export const GridTable: React.FC<IGridTableProps> = ({ columns, rows, filterData
   );
 };
 
-export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, filterData, onFilterSubmit }) => {
+export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
+  rowParams,
+  filterData,
+  onFilterSubmit,
+  filterField,
+}) => {
   const t = useTranslations();
   const [filterMenu, setFilterMenu] = React.useState<HTMLElement | null>(null);
   const [formValues, setFormValues] = React.useState<Record<string, any> | null>(null);
@@ -195,7 +233,8 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, fi
     setSubmitFormValues(data);
     setFormValues(data);
     setFilterMenu(null);
-    onFilterSubmit && onFilterSubmit({ value: data, rowParams: rowParams });
+    const keysWithTrueValues = Object.keys(data).filter((key) => data[key] === true);
+    onFilterSubmit && onFilterSubmit({ value: keysWithTrueValues, rowParams: rowParams });
   };
 
   React.useEffect(() => {
@@ -206,18 +245,18 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, fi
   return (
     <Box
       display="flex"
-      width="100%"
-      gap="40px"
+      width={rowParams?.colDef?.width ?? "100%"}
       height="100%"
       justifyContent="space-between"
       alignItems="center"
-      paddingLeft="10px"
+      py="10px"
       paddingRight="15px"
+      gap="40px"
     >
       <Typography color="text.primary" fontWeight={600}>
         {rowParams?.colDef?.headerName}
       </Typography>
-      {filterData && (
+      {filterData && filterField && (
         <>
           <Box
             onClick={(e: any) => handleMenuOpen(e)}
@@ -252,18 +291,21 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, fi
 
           <Menu anchorEl={filterMenu} open={open} onClose={handleMenuClose}>
             <Box component="form" onSubmit={handleSubmit(onSubmit)} px="10px" minWidth={250}>
-              <FormGroup>
-                {filterData.map(({ outputField, label }, index) => (
+              <Box maxHeight={200} overflow="auto">
+                {filterData.map((item, index) => (
                   <MenuItem key={index} sx={{ padding: 0, margin: 0 }}>
                     <Checkbox
-                      name={outputField}
+                      name={item[filterField.outputField]}
                       register={register}
-                      label={label}
-                      checked={!!formValues?.[outputField] ?? false}
+                      label={item[filterField.field]}
+                      checked={!!formValues?.[item[filterField.outputField]]}
+                      width={"100%"}
                     />
                   </MenuItem>
                 ))}
-              </FormGroup>
+
+                {filterData.length < 1 && <Typography textAlign="center">{t("No data")}</Typography>}
+              </Box>
               <Button
                 type="submit"
                 sx={{
