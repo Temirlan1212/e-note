@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 
-import { Box, FormGroup, RadioGroup, Typography } from "@mui/material";
+import { useTranslations } from "next-intl";
+import { Box, RadioGroup, Typography } from "@mui/material";
 import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
 
 import SearchBar from "../ui/SearchBar";
 import Button from "../ui/Button";
 import Select from "../ui/Select";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
-import EraserIcon from "@/public/icons/EraserIcon.svg";
+import EraserIcon from "@/public/icons/eraser-icon.svg";
 import NotariesMultipleSelects from "./NotariesMultipleSelects";
 import Radio from "../ui/Radio";
-import { useTranslations } from "next-intl";
 
 interface INotariesFiltrationProps {}
 

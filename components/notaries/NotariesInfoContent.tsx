@@ -13,8 +13,8 @@ import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 
 import profileImage from "@/public/images/avatar.png";
 import LicenseIcon from "@/public/icons/license.svg";
-import ContentPlusIcon from "@/public/icons/ContentPlus.svg";
-import CloudMessageIcon from "@/public/icons/CloudMessageIcon.svg";
+import ContentPlusIcon from "@/public/icons/content-plus.svg";
+import CloudMessageIcon from "@/public/icons/cloud-message-icon.svg";
 import { useTranslations } from "next-intl";
 
 const infoArray = [
