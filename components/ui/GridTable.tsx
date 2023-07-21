@@ -8,7 +8,7 @@ import {
   GridValidRowModel,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { Box, Divider, FormGroup, MenuItem, Typography } from "@mui/material";
+import { Box, MenuItem, Typography } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import Checkbox from "./Checkbox";
 import { useForm } from "react-hook-form";
@@ -39,6 +39,7 @@ export interface IGridTableProps extends DataGridProps {
   columns: GridColDef[];
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
   cellMaxHeight?: string | number;
+  headerCellMaxHeight?: string | number;
 }
 
 export interface IGridTableHeaderProps {
@@ -54,6 +55,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
   filterData,
   cellMaxHeight,
   onFilterSubmit,
+  headerCellMaxHeight,
   sx,
   ...rest
 }) => {
@@ -66,19 +68,33 @@ export const GridTable: React.FC<IGridTableProps> = ({
     },
     ".MuiDataGrid-row": {
       border: "1px solid transparent",
-      maxHeight: cellMaxHeight + " !important" ?? "fit-content !important",
+      maxHeight: cellMaxHeight ? cellMaxHeight + " !important" : "fit-content !important",
 
       "&:hover": {
         backgroundColor: "#fff",
         border: "1px solid #CDCDCD",
       },
     },
+    ".css-yrdy0g-MuiDataGrid-columnHeaderRow": {
+      display: "flex",
+      alignItems: "center",
+    },
     ".MuiDataGrid-columnHeaders": {
+      maxHeight: (headerCellMaxHeight ? headerCellMaxHeight : "fit-content") + "  !important",
       border: "1px solid #CDCDCD",
+
+      ".MuiDataGrid-columnHeader": {
+        height: "100% !important",
+        ".MuiDataGrid-columnHeaderTitleContainer": {
+          textWrap: "wrap !important",
+        },
+
+        "&:focus": {
+          outline: "none",
+        },
+      },
     },
-    ".MuiDataGrid-columnHeader:focus": {
-      outline: "none",
-    },
+
     ".MuiDataGrid-cell:focus": {
       outline: "none",
     },
