@@ -1,5 +1,7 @@
 import { FC } from "react";
 
+import { useTranslations } from "next-intl";
+
 import { Box, Typography } from "@mui/material";
 import { Search } from "@mui/icons-material";
 
@@ -17,6 +19,8 @@ interface IChatListBoardProps {
 
 const ChatListBoard: FC<IChatListBoardProps> = (props) => {
   const { setSearchQuery, filteredContacts, handleContactClick, activeContact, searchQuery } = props;
+
+  const t = useTranslations();
 
   return (
     <Box
@@ -50,7 +54,7 @@ const ChatListBoard: FC<IChatListBoardProps> = (props) => {
             fontWeight: "600",
           }}
         >
-          Ваши сообщения
+          {t("Your messages")}
         </Typography>
       </Box>
       <Input
@@ -66,7 +70,7 @@ const ChatListBoard: FC<IChatListBoardProps> = (props) => {
         InputProps={{
           endAdornment: <Search />,
         }}
-        placeholder="Search"
+        placeholder={t("Search")}
       />
       <Box
         sx={{

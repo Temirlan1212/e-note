@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react";
 
 import { StaticImageData } from "next/image";
+import { useTranslations } from "next-intl";
 
 import { Box, Button, Typography } from "@mui/material";
 import KeyboardBackspaceOutlinedIcon from "@mui/icons-material/KeyboardBackspaceOutlined";
@@ -92,6 +93,8 @@ const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
   const [activeContactId, setActiveContactId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const t = useTranslations();
+
   const filteredContacts = contacts.filter((contact) => contact.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   const activeContact = contacts.find((contact) => contact.id === activeContactId) || null;
@@ -152,7 +155,7 @@ const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
         }}
         onClick={onBackToContacts}
       >
-        Назад
+        {t("Back")}
       </Button>
 
       <Box
@@ -191,7 +194,7 @@ const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
             border="2px solid #efefef"
             justifyContent="center"
           >
-            <Typography fontSize="24px">Выберите собеседника для начала общения</Typography>
+            <Typography fontSize="24px">{t("Choose an interlocutor")}</Typography>
           </Box>
         )}
       </Box>
