@@ -38,6 +38,7 @@ export interface IGridTableProps extends DataGridProps {
   rows: GridRowsProp;
   columns: GridColDef[];
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
+  cellMaxHeight?: string | number;
 }
 
 export interface IGridTableHeaderProps {
@@ -47,7 +48,15 @@ export interface IGridTableHeaderProps {
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
 }
 
-export const GridTable: React.FC<IGridTableProps> = ({ columns, rows, filterData, onFilterSubmit, sx, ...rest }) => {
+export const GridTable: React.FC<IGridTableProps> = ({
+  columns,
+  rows,
+  filterData,
+  cellMaxHeight,
+  onFilterSubmit,
+  sx,
+  ...rest
+}) => {
   const t = useTranslations();
   const rootStyles = {
     ".MuiDataGrid-cell": {
@@ -57,6 +66,8 @@ export const GridTable: React.FC<IGridTableProps> = ({ columns, rows, filterData
     },
     ".MuiDataGrid-row": {
       border: "1px solid transparent",
+      maxHeight: cellMaxHeight + " !important" ?? "fit-content !important",
+
       "&:hover": {
         backgroundColor: "#fff",
         border: "1px solid #CDCDCD",
@@ -71,6 +82,16 @@ export const GridTable: React.FC<IGridTableProps> = ({ columns, rows, filterData
     ".MuiDataGrid-cell:focus": {
       outline: "none",
     },
+    ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": {
+      whiteSpace: "normal",
+      maxHeight: "100% !important",
+      padding: "10px",
+      ".MuiDataGrid-cellContent": {
+        overflow: "auto",
+        height: "100%",
+      },
+    },
+
     border: "none",
     background: "transparent",
   };
