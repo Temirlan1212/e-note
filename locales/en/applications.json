@@ -1,1 +1,7 @@
-{}
+{
+  "Type of action": "Type of action",
+  "Type of document": "Type of document",
+  "Status": "Status",
+  "Notary": "Notary",
+  "Executor": "Executor"
+}

@@ -8,7 +8,7 @@ import {
   GridValidRowModel,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { Box, MenuItem, Typography } from "@mui/material";
+import { Box, MenuItem, Typography, lighten } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import Checkbox from "./Checkbox";
 import { useForm } from "react-hook-form";
@@ -25,7 +25,7 @@ export interface IGridTableFilterField {
 
 export interface IFilterData {
   data: Record<string, Record<string, any>[]>;
-  filterField: IGridTableFilterField;
+  filterField: Record<string, IGridTableFilterField>;
 }
 
 export interface IFilterSubmitParams {
@@ -71,8 +71,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
       maxHeight: cellMaxHeight ? cellMaxHeight + " !important" : "fit-content !important",
 
       "&:hover": {
-        backgroundColor: "#fff",
-        border: "1px solid #CDCDCD",
+        backgroundColor: lighten("#F6F6F6", 0.7),
       },
     },
     ".css-yrdy0g-MuiDataGrid-columnHeaderRow": {
@@ -82,6 +81,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
     ".MuiDataGrid-columnHeaders": {
       maxHeight: (headerCellMaxHeight ? headerCellMaxHeight : "fit-content") + "  !important",
       border: "1px solid #CDCDCD",
+      background: "#fff",
 
       ".MuiDataGrid-columnHeader": {
         height: "100% !important",
@@ -111,7 +111,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
     },
 
     border: "none",
-    background: "transparent",
+    background: "#F6F6F6",
   };
 
   const mergedStyles = { ...rootStyles, ...sx };
@@ -123,13 +123,14 @@ export const GridTable: React.FC<IGridTableProps> = ({
         ...col,
         renderHeader: (rowParams: GridColumnHeaderParams) => {
           const specificFieldFilterData = filterData?.data?.[rowParams?.field];
+          const filterField = filterData?.filterField?.[rowParams?.field];
 
           return (
             <GridTableHeader
               rowParams={rowParams}
               filterData={specificFieldFilterData}
               onFilterSubmit={onFilterSubmit}
-              filterField={filterData?.filterField}
+              filterField={filterField}
             />
           );
         },
@@ -146,7 +147,6 @@ export const GridTable: React.FC<IGridTableProps> = ({
       disableColumnFilter
       disableColumnMenu
       showColumnVerticalBorder={false}
-      showCellVerticalBorder={false}
       hideFooter
       rowSelection={false}
       density="comfortable"
@@ -191,6 +191,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
   const t = useTranslations();
   const [filterMenu, setFilterMenu] = React.useState<HTMLElement | null>(null);
   const [formValues, setFormValues] = React.useState<Record<string, any> | null>(null);
+  const [isClearDisabled, setIsClearDisabled] = React.useState<boolean>(false);
   const [submitFormValues, setSubmitFormValues] = React.useState<Record<string, any> | null>(null);
   const open = !!filterMenu;
 
@@ -212,15 +213,28 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
     setFilterMenu(null);
 
     if (formValues != null && !isSubmitted) {
-      for (let field in formValues) {
-        resetField(field);
-      }
+      resetFields();
     }
 
     if (submitFormValues != null) {
       for (let field in submitFormValues) {
         setValue(field, submitFormValues[field]);
       }
+    }
+  };
+
+  const resetFields = () => {
+    for (let field in formValues) {
+      resetField(field);
+    }
+  };
+
+  const resetForm = () => {
+    if (formValues != null) {
+      resetFields();
+      setSubmitFormValues(null);
+      setFilterMenu(null);
+      onFilterSubmit && onFilterSubmit({ value: [], rowParams: rowParams });
     }
   };
 
@@ -238,7 +252,11 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
   };
 
   React.useEffect(() => {
-    const subscription = watch((value) => setFormValues(value));
+    const subscription = watch((value) => {
+      setIsClearDisabled(Object.values(value).some((v) => v));
+      setFormValues(value);
+    });
+
     return () => subscription.unsubscribe();
   }, [watch]);
 
@@ -254,7 +272,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
       gap="40px"
     >
       <Typography color="text.primary" fontWeight={600}>
-        {rowParams?.colDef?.headerName}
+        {rowParams?.colDef?.headerName ? t(rowParams?.colDef?.headerName) : ""}
       </Typography>
       {filterData && filterField && (
         <>
@@ -289,12 +307,18 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
             )}
           </Box>
 
-          <Menu anchorEl={filterMenu} open={open} onClose={handleMenuClose}>
-            <Box component="form" onSubmit={handleSubmit(onSubmit)} px="10px" minWidth={250}>
+          <Menu
+            anchorEl={filterMenu}
+            open={open}
+            onClose={handleMenuClose}
+            sx={{ ".MuiList-padding": { padding: "0px" } }}
+          >
+            <Box component="form" onSubmit={handleSubmit(onSubmit)} paddingTop="10px" minWidth={250}>
               <Box
                 maxHeight={190}
                 overflow="auto"
                 maxWidth={250}
+                px="20px"
                 sx={{
                   "::-webkit-scrollbar": { width: "4px" },
                   "::-webkit-scrollbar-thumb": {
@@ -305,10 +329,10 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
                 {filterData.map((item, index) => (
                   <MenuItem key={index} sx={{ padding: 0, margin: "0 0 10px 0" }}>
                     <Checkbox
-                      name={item[filterField.outputField]}
+                      name={String(item[filterField.outputField])}
                       register={register}
                       label={item[filterField.field]}
-                      checked={!!formValues?.[item[filterField.outputField]]}
+                      checked={!!formValues?.[String(item[filterField.outputField])]}
                       width={"100%"}
                     />
                   </MenuItem>
@@ -316,20 +340,38 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
 
                 {filterData.length < 1 && <Typography textAlign="center">{t("No data")}</Typography>}
               </Box>
-              <Button
-                type="submit"
-                sx={{
-                  bgcolor: "transparent",
-                  color: "success.main",
-                  boxShadow: "none",
-                  "&:hover": {
-                    color: "white",
-                    bgcolor: "success.main",
-                  },
-                }}
-              >
-                {t("Done")}
-              </Button>
+              <Box display="flex" borderTop="1px solid #E0E0E0">
+                <Button
+                  type="submit"
+                  sx={{
+                    bgcolor: "transparent",
+                    color: "success.main",
+                    boxShadow: "none",
+                    "&:hover": {
+                      color: "white",
+                      bgcolor: "success.main",
+                    },
+                  }}
+                >
+                  {t("Apply")}
+                </Button>
+
+                <Button
+                  onClick={() => resetForm()}
+                  disabled={!isClearDisabled}
+                  sx={{
+                    bgcolor: "transparent",
+                    color: "success.main",
+                    boxShadow: "none",
+                    "&:hover": {
+                      color: "white",
+                      bgcolor: "error.main",
+                    },
+                  }}
+                >
+                  {t("Reset")}
+                </Button>
+              </Box>
             </Box>
           </Menu>
         </>

@@ -1,4 +1,4 @@
-import { IApplication } from "@/models/applications/applications";
+import { IApplication, IProduct } from "@/models/applications/applications";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<IApplication | null>) {
@@ -11,6 +11,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     "typeNotarialAction",
     "product.fullName",
     "product.id",
+    "product.name",
     "createdBy.id",
     "createdBy.fullName",
     "statusSelect",

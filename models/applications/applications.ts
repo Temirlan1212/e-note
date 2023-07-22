@@ -6,6 +6,7 @@ export type ICreatedBy = {
 export type IProduct = {
   "product.fullName": string;
   "product.id": number;
+  "product.name": number;
 };
 
 export interface IApplication extends IProduct, ICreatedBy {
@@ -15,7 +16,6 @@ export interface IApplication extends IProduct, ICreatedBy {
   creationDate: string;
   version: number;
   typeNotarialAction: number;
-  $invoicingState: number;
 }
 
 export interface IApplicationsQueryParamsData {

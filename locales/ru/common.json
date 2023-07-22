@@ -39,7 +39,9 @@
   "Export": "Экспортировать",
   "Download as CSV": "Загрузить как CSV",
   "Print": "Распечатать",
-  "Done": "Готово",
+  "Apply": "Применить",
   "No data": "Данных нет",
-  "Applications": "Заявки"
+  "Applications": "Заявки",
+  "Reset": "Сбросить",
+  "Date": "Дата"
 }
