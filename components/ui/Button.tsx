@@ -37,7 +37,6 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = 
     borderRadius: 0,
     fontSize: "16px",
     fontWeight: "600",
-    padding: "10px 0",
     ":hover": {
       bgcolor: "#1BAA75",
     },

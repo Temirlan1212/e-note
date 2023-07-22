@@ -1,12 +1,13 @@
-import { DependencyList, EffectCallback, useEffect } from "react";
+import { DependencyList, useEffect } from "react";
 
 let initial = true;
 
-export default function useEffectOnce(callback: EffectCallback, deps: DependencyList = []) {
+export default function useEffectOnce(callback: Function, deps: DependencyList = []) {
   useEffect(() => {
     if (initial) {
       callback();
-      initial = false;
+
+      if (deps.length === 0) initial = false;
     }
   }, deps);
 }

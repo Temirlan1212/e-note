@@ -46,5 +46,9 @@
   "Download as CSV": "Download as CSV",
   "Print": "Print",
   "Done": "Done",
-  "No data": "No data"
+  "No data": "No data",
+  "ID": "ID",
+  "Name": "Name",
+  "Size": "Size",
+  "Format": "Format"
 }
