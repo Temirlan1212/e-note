@@ -273,7 +273,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
       gap="40px"
     >
       <Typography color="text.primary" fontWeight={600}>
-        {rowParams?.colDef?.headerName}
+        {t(rowParams?.colDef?.headerName)}
       </Typography>
       {filterData && filterField && (
         <>
