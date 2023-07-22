@@ -17,14 +17,13 @@ export interface IGetApplicationsDataParams {
   filterValues?: Record<string, (string | number)[]>;
   sortBy?: SortType;
   query?: Partial<IApplicationQueryParams>;
-  offset?: number;
-  limit?: number;
+  page?: number;
 }
 
 export const useApplicationStore = create<IApplicationState>()((set, get) => ({
   applicationsData: null,
   applicationsTotal: null,
-  getApplicationsData: async ({ query, filterValues, sortBy, offset, limit }) => {
+  getApplicationsData: async ({ query, filterValues, sortBy, page }) => {
     const cookie = useProfileStore.getState().cookie;
     if (cookie == null) return;
 
@@ -46,8 +45,7 @@ export const useApplicationStore = create<IApplicationState>()((set, get) => ({
       method: "POST",
       headers: { "Content-Type": "application/json", "server-cookie": cookie },
       body: JSON.stringify({
-        offset: offset ?? 0,
-        limit: limit ?? 10,
+        page: page ?? 0,
         sortBy: [sortBy === "asc" ? "creationDate" : "-creationDate"],
         ...requestBody,
         ...query,

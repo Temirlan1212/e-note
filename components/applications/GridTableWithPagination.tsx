@@ -9,15 +9,12 @@ import { GridTableActionsCell } from "./GridTableActionsCell";
 import { useRouter } from "next/router";
 import { IActionType } from "@/models/dictionaries/action-type";
 import Pagination from "@/components/ui/Pagination";
+import useFetch from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
-interface IApplicationsGridTable {}
+export default function GridTableWithPagination() {
+  const url = "/api/applications/applications";
 
-enum ApplicationPagination {
-  LIMIT = 5,
-  FILTER_OFFSET = 0,
-}
-
-export default function ApplicationsGridTable({}: IApplicationsGridTable) {
   const { locale } = useRouter();
   const getApplicationsData = useApplicationStore((state) => state.getApplicationsData);
   const applicationsData = useApplicationStore((state) => state.applicationsData);
@@ -25,82 +22,107 @@ export default function ApplicationsGridTable({}: IApplicationsGridTable) {
   const actionTypeData = useDictionaryStore((store) => store.actionTypeData);
   const documentTypeData = useDictionaryStore((store) => store.documentTypeData);
   const statusData = useDictionaryStore((store) => store.statusData);
-  const [isLoading, setIsLoading] = useState(false);
   const [filterValues, setFilterValues] = useState<Record<string, (string | number)[]>>({});
   const [sortValue, setSortValue] = useState<SortType>("asc");
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const [pagination, setPagination] = useState<{ pageSize: number; page: number; sortBy: string[] }>({
+    pageSize: 5,
+    page: 1,
+    sortBy: [],
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const isFilterValueEmty = () => Object.keys(filterValues).length < 1;
+
+  const _domain = Object.keys(filterValues)
+    .map((key) => `self.${key} in :${key.replace(/[.\s]/g, "")}`)
+    .join(" and ");
+
+  const { data, loading, update } = useFetch(url, "POST", {
+    body: {
+      ...pagination,
+    },
+    useEffectOnce: false,
+    returnResponse: true,
+  });
+
+  useEffectOnce(async () => {
+    const reader = data?.data;
+    console.log(reader);
+
+    if (reader) {
+      const res = await reader.json();
+      console.log(res);
+    }
+  }, [data]);
 
   const handleFilterSubmit = async (value: IFilterSubmitParams) => {
-    const outPutFieldName = value.rowParams.colDef.description;
+    handleUpdateFilterValues(value);
+    update(url);
+  };
 
+  const handlePageChange = (page: number) => {
+    if (!isFilterValueEmty()) handleFilterAndSort(page - 1);
+    if (isFilterValueEmty()) getApplicationsData({ page: page - 1 });
+    setPagination({
+      ...pagination,
+      page,
+    });
+  };
+
+  const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
+    const outPutFieldName = value.rowParams.colDef.description;
     if (outPutFieldName) {
       if (value.value.length > 0) {
         setFilterValues((prev) => {
           return { ...prev, [outPutFieldName]: value.value };
         });
       } else {
-        const keyToDelete = outPutFieldName;
         const updatedFilterValues = { ...filterValues };
-        delete updatedFilterValues[keyToDelete];
+        delete updatedFilterValues[outPutFieldName];
         setFilterValues(updatedFilterValues);
       }
     }
   };
 
   const handleSortByDate = async (model: GridSortModel) => {
-    const gridSortItem = model[0];
-    if (gridSortItem?.sort != null) setSortValue(gridSortItem.sort);
+    const sortBy = model.map((s) => (s.sort === "asc" ? s.field : `-${s.field}`));
+    setPagination({
+      ...pagination,
+      sortBy,
+    });
+
+    if (model[0]?.sort != null) setSortValue(model[0].sort);
   };
 
-  // const handleChangeAppQueryParams = () => {}
-
-  const handleFilterAndSort = async (
-    filterValues: Record<string, (string | number)[]>,
-    sortValue: SortType,
-    offset: number
-  ) => {
+  const handleFilterAndSort = async (page: number) => {
     setIsLoading(true);
-    await getApplicationsData({
-      filterValues,
-      sortBy: sortValue,
-      limit: ApplicationPagination.LIMIT,
-      offset,
-    });
+    // await getApplicationsData({
+    //   filterValues,
+    //   sortBy: sortValue,
+    //   page,
+    // });
     setIsLoading(false);
   };
 
-  const handlePageChange = (page: number) => {
-    if (Object.keys(filterValues).length > 0) {
-      handleFilterAndSort(filterValues, sortValue, ApplicationPagination.LIMIT * (page - 1));
-    }
-    if (Object.keys(filterValues).length < 1) {
-      getApplicationsData({ limit: ApplicationPagination.LIMIT, offset: ApplicationPagination.LIMIT * (page - 1) });
-    }
-    setPage(page);
-  };
-
   useEffect(() => {
-    if (Object.keys(filterValues).length > 0) {
-      handleFilterAndSort(filterValues, sortValue, 0);
-      setPage(1);
-    }
-    if (Object.keys(filterValues).length < 1) {
-      getApplicationsData({ limit: ApplicationPagination.LIMIT, offset: ApplicationPagination.LIMIT * (page - 1) });
+    if (!isFilterValueEmty()) {
+      handleFilterAndSort(0);
+      setPagination({
+        ...pagination,
+        page: 1,
+      });
+    } else {
+      // getApplicationsData({ page: pagination.page - 1 });
     }
   }, [filterValues, sortValue]);
 
   useEffect(() => {
-    if (applicationsTotal != null) {
-      setTotalPages(Math.ceil(applicationsTotal / ApplicationPagination.LIMIT));
-    }
-  }, [applicationsTotal]);
+    // if (isFilterValueEmty()) getApplicationsData({ page: pagination.page - 1 });
+  }, []);
 
   useEffect(() => {
-    if (Object.keys(filterValues).length < 1) {
-      getApplicationsData({ limit: ApplicationPagination.LIMIT, offset: ApplicationPagination.LIMIT * (page - 1) });
-    }
-  }, []);
+    console.log(data);
+  }, [data]);
 
   const columns: GridColDef[] = [
     {
@@ -171,7 +193,7 @@ export default function ApplicationsGridTable({}: IApplicationsGridTable) {
       <Box height="500px">
         <GridTable
           columns={columns}
-          rows={applicationsData ?? []}
+          rows={data?.data ?? []}
           filterData={{
             data: {
               typeNotarialAction: actionTypeData ?? [],
@@ -199,7 +221,11 @@ export default function ApplicationsGridTable({}: IApplicationsGridTable) {
           }}
         />
       </Box>
-      <Pagination currentPage={page} totalPages={totalPages} onPageChange={handlePageChange} />
+      <Pagination
+        currentPage={pagination.page}
+        totalPages={applicationsTotal ? Math.ceil(applicationsTotal / pagination.pageSize) : 0}
+        onPageChange={handlePageChange}
+      />
     </Box>
   );
 }
