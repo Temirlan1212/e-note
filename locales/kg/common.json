@@ -45,7 +45,9 @@
   "Download as CSV": "CSV катары жүктөп алуу",
   "Print": "Басып чыгаруу",
   "Done": "Бүттү",
-  "No data": "Маалымат жок",
   "Back": "Артка",
-  "Correspondence": "Кат алышуу"
+  "Correspondence": "Кат алышуу",
+  "Apply": "Колдонуу",
+  "No data": "Маалымат жок",
+  "Reset": "Тазалоо"
 }

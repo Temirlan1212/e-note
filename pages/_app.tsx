@@ -11,7 +11,7 @@ import { useProfileStore } from "@/stores/profile";
 import { IRoute, useRouteStore } from "@/stores/route";
 import { IUser } from "@/models/profile/user";
 
-export default function App({ Component, pageProps }: AppProps) {
+function Layout({ children }: { children: JSX.Element }) {
   const router = useRouter();
   const profile = useProfileStore((state) => state);
   const routes = useRouteStore((state) => state);
@@ -37,26 +37,20 @@ export default function App({ Component, pageProps }: AppProps) {
     setGuestRoutes(routes.getRoutes(routes.guestRoutes, "all"));
   }, [routes.guestRoutes]);
 
-  const Layout = () => {
-    if (user != null && !guestRoutes.map((r) => r.link).includes(router.route)) {
-      return (
-        <PrivateLayout>
-          <Component {...pageProps} />
-        </PrivateLayout>
-      );
-    }
+  if (user != null && !guestRoutes.map((r) => r.link).includes(router.route)) {
+    return <PrivateLayout>{children}</PrivateLayout>;
+  }
 
-    return (
-      <PublicLayout>
-        <Component {...pageProps} />
-      </PublicLayout>
-    );
-  };
+  return <PublicLayout>{children}</PublicLayout>;
+}
 
+export default function App({ Component, pageProps }: AppProps) {
   return (
     <NextIntlClientProvider messages={pageProps.messages}>
       <ThemeProvider theme={theme}>
-        <Layout />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </ThemeProvider>
     </NextIntlClientProvider>
   );

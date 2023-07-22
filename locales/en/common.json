@@ -45,7 +45,9 @@
   "Download as CSV": "Download as CSV",
   "Print": "Print",
   "Done": "Done",
-  "No data": "No data",
   "Back": "Back",
-  "Correspondence": "Correspondence"
+  "Correspondence": "Correspondence",
+  "Apply": "Apply",
+  "No data": "No data",
+  "Reset": "Reset"
 }

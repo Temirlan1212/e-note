@@ -40,7 +40,9 @@
   "Download as CSV": "Загрузить как CSV",
   "Print": "Распечатать",
   "Done": "Готово",
-  "No data": "Данных нет",
   "Back": "Назад",
-  "Correspondence": "Переписка"
+  "Correspondence": "Переписка",
+  "Apply": "Применить",
+  "No data": "Данных нет",
+  "Reset": "Сбросить"
 }
