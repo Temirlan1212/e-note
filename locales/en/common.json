@@ -44,6 +44,7 @@
   "Export": "Export",
   "Download as CSV": "Download as CSV",
   "Print": "Print",
-  "Done": "Done",
-  "No data": "No data"
+  "Apply": "Apply",
+  "No data": "No data",
+  "Reset": "Reset"
 }
