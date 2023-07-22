@@ -197,10 +197,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               </InputLabel>
               <Input
                 fullWidth
-                error={!!errors.username?.message ?? false}
-                helperText={errors.username?.message}
+                error={!!errors.name?.message ?? false}
+                helperText={errors.name?.message}
                 register={form.register}
-                name="username"
+                name="name"
               />
             </FormControl>
             <FormControl sx={{ width: "100%" }}>
@@ -219,10 +219,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               </InputLabel>
               <Input
                 fullWidth
-                error={!!errors.name?.message ?? false}
-                helperText={errors.name?.message}
+                error={!!errors.username?.message ?? false}
+                helperText={errors.username?.message}
                 register={form.register}
-                name="login"
+                name="username"
               />
             </FormControl>
           </Box>
@@ -295,7 +295,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 error={!!errors["partner.mobilePhone"]?.message ?? false}
                 helperText={errors["partner.mobilePhone"]?.message}
                 register={form.register}
-                name="telephoneNumber"
+                name="partner.mobilePhone"
               />
             </FormControl>
           </Box>
