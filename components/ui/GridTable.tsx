@@ -25,11 +25,11 @@ export interface IGridTableFilterField {
 
 export interface IFilterData {
   data: Record<string, Record<string, any>[]>;
-  filterField: IGridTableFilterField;
+  filterField: Record<string, IGridTableFilterField>;
 }
 
 export interface IFilterSubmitParams {
-  value: Record<string, any>;
+  value: (string | number)[];
   rowParams: GridColumnHeaderParams<GridValidRowModel, any, any>;
 }
 
@@ -123,13 +123,14 @@ export const GridTable: React.FC<IGridTableProps> = ({
         ...col,
         renderHeader: (rowParams: GridColumnHeaderParams) => {
           const specificFieldFilterData = filterData?.data?.[rowParams?.field];
+          const filterField = filterData?.filterField?.[rowParams?.field];
 
           return (
             <GridTableHeader
               rowParams={rowParams}
               filterData={specificFieldFilterData}
               onFilterSubmit={onFilterSubmit}
-              filterField={filterData?.filterField}
+              filterField={filterField}
             />
           );
         },
@@ -291,14 +292,24 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
 
           <Menu anchorEl={filterMenu} open={open} onClose={handleMenuClose}>
             <Box component="form" onSubmit={handleSubmit(onSubmit)} px="10px" minWidth={250}>
-              <Box maxHeight={200} overflow="auto">
+              <Box
+                maxHeight={190}
+                overflow="auto"
+                maxWidth={250}
+                sx={{
+                  "::-webkit-scrollbar": { width: "4px" },
+                  "::-webkit-scrollbar-thumb": {
+                    background: "#E0E0E0",
+                  },
+                }}
+              >
                 {filterData.map((item, index) => (
-                  <MenuItem key={index} sx={{ padding: 0, margin: 0 }}>
+                  <MenuItem key={index} sx={{ padding: 0, margin: "0 0 10px 0" }}>
                     <Checkbox
-                      name={item[filterField.outputField]}
+                      name={String(item[filterField.outputField])}
                       register={register}
                       label={item[filterField.field]}
-                      checked={!!formValues?.[item[filterField.outputField]]}
+                      checked={!!formValues?.[String(item[filterField.outputField])]}
                       width={"100%"}
                     />
                   </MenuItem>
