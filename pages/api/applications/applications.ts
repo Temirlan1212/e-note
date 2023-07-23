@@ -1,4 +1,4 @@
-import { IApplication } from "@/models/applications/applications";
+import { IApplication, IApplicationsQueryParamsData } from "@/models/applications/applications";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<IApplication | null>) {
@@ -6,18 +6,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
-  const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 12;
+  const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
+  const filterValues = req.body["filterValues"];
+  const isFilterValueEmty = () => Object.keys(filterValues).length < 1;
 
-  const filterValues = req.body.data["filterValues"];
-  const _domain = Object.keys(filterValues)
-    .map((key) => `self.${key} in :${key.replace(/[.\s]/g, "")}`)
-    .join(" and ");
+  const requestBody: {
+    data?: IApplicationsQueryParamsData;
+  } = {};
 
-  const SQLRequest = {
-    _domain,
-    _domainContext: filterValues,
-  };
+  if (!isFilterValueEmty()) {
+    const _domain = Object.keys(filterValues)
+      .map((key) => `self.${key} in :${key.replace(/[.\s]/g, "")}`)
+      .join(" and ");
+    requestBody.data = {
+      _domain,
+      _domainContext: filterValues,
+    };
+  }
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.sale.db.SaleOrder/search", {
     method: "POST",
@@ -40,6 +46,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         "creationDate",
         "createdBy",
       ],
+      sortBy: req.body["sortBy"] ?? [],
+      ...requestBody,
       ...req.body,
     }),
   });
