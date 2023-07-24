@@ -1,4 +1,5 @@
 import Image, { StaticImageData } from "next/image";
+import { useTranslations } from "next-intl";
 
 import { Avatar, Box, Typography } from "@mui/material";
 
@@ -14,6 +15,8 @@ interface IChatListItemProps {
 
 const ChatListItem = (props: IChatListItemProps) => {
   const { activeContact, onContactClick, contactId, contactName, contactOnline, avatar, isRead } = props;
+
+  const t = useTranslations();
 
   return (
     <Box
@@ -89,7 +92,7 @@ const ChatListItem = (props: IChatListItemProps) => {
               fontSize: "14px",
             }}
           >
-            {contactOnline ? "онлайн" : "оффлайн"}
+            {contactOnline ? t("online") : t("offline")}
           </Typography>
         </Box>
       </Box>

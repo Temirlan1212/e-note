@@ -7,7 +7,7 @@ import { Box, Button, Typography } from "@mui/material";
 import KeyboardBackspaceOutlinedIcon from "@mui/icons-material/KeyboardBackspaceOutlined";
 
 import ChatListBoard from "./contact-list/ChatListBoard";
-import ChatRightPart from "./message/ChatRightPart";
+import ChatMessageBoard from "./message/ChatMessageBoard";
 
 import AvatarContact from "@/public/images/avatar-contact.png";
 
@@ -173,7 +173,7 @@ const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
         />
 
         {activeContact ? (
-          <ChatRightPart
+          <ChatMessageBoard
             activeContactId={activeContact?.id}
             avatar={activeContact?.avatar}
             contactOnline={activeContact?.online}

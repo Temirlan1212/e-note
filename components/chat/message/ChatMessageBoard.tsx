@@ -1,6 +1,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 
 import Image, { StaticImageData } from "next/image";
+import { useTranslations } from "next-intl";
 
 import { Avatar, Box, IconButton, Typography } from "@mui/material";
 import MoreVert from "@mui/icons-material/MoreVert";
@@ -20,10 +21,12 @@ interface IChatRightPartProps {
   activeContactId?: number;
 }
 
-const ChatRightPart: FC<IChatRightPartProps> = (props) => {
+const ChatMessageBoard: FC<IChatRightPartProps> = (props) => {
   const { avatar, contactOnline, name, onSend, messages, activeContactId } = props;
 
   const [messageText, setMessageText] = useState("");
+
+  const t = useTranslations();
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -117,7 +120,7 @@ const ChatRightPart: FC<IChatRightPartProps> = (props) => {
                 fontSize: "14px",
               }}
             >
-              {contactOnline ? "онлайн" : "оффлайн"}
+              {contactOnline ? t("online") : t("offline")}
             </Typography>
           </Box>
         </Box>
@@ -146,7 +149,7 @@ const ChatRightPart: FC<IChatRightPartProps> = (props) => {
         <Input
           fullWidth
           name={name}
-          placeholder="Ваше сообщение"
+          placeholder={t("Your messages")}
           value={messageText}
           onChange={(e) => setMessageText(e.target.value)}
           onKeyPress={(e) => {
@@ -173,4 +176,4 @@ const ChatRightPart: FC<IChatRightPartProps> = (props) => {
   );
 };
 
-export default ChatRightPart;
+export default ChatMessageBoard;
