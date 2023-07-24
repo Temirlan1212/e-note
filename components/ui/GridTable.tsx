@@ -8,7 +8,7 @@ import {
   GridValidRowModel,
   GridToolbarExport,
 } from "@mui/x-data-grid";
-import { Box, MenuItem, Typography } from "@mui/material";
+import { Box, MenuItem, Typography, lighten } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import Checkbox from "./Checkbox";
 import { useForm } from "react-hook-form";
@@ -71,8 +71,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
       maxHeight: cellMaxHeight ? cellMaxHeight + " !important" : "fit-content !important",
 
       "&:hover": {
-        backgroundColor: "#fff",
-        border: "1px solid #CDCDCD",
+        backgroundColor: lighten("#F6F6F6", 0.7),
       },
     },
     ".css-yrdy0g-MuiDataGrid-columnHeaderRow": {
@@ -82,6 +81,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
     ".MuiDataGrid-columnHeaders": {
       maxHeight: (headerCellMaxHeight ? headerCellMaxHeight : "fit-content") + "  !important",
       border: "1px solid #CDCDCD",
+      background: "#fff",
 
       ".MuiDataGrid-columnHeader": {
         height: "100% !important",
@@ -111,7 +111,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
     },
 
     border: "none",
-    background: "transparent",
+    background: "#F6F6F6",
   };
 
   const mergedStyles = { ...rootStyles, ...sx };
@@ -147,7 +147,6 @@ export const GridTable: React.FC<IGridTableProps> = ({
       disableColumnFilter
       disableColumnMenu
       showColumnVerticalBorder={false}
-      showCellVerticalBorder={false}
       hideFooter
       rowSelection={false}
       density="comfortable"
@@ -273,7 +272,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
       gap="40px"
     >
       <Typography color="text.primary" fontWeight={600}>
-        {rowParams?.colDef?.headerName}
+        {rowParams?.colDef?.headerName ? t(rowParams?.colDef?.headerName) : ""}
       </Typography>
       {filterData && filterField && (
         <>
