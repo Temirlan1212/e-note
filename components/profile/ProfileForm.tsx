@@ -37,6 +37,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const userData = profile.getUserData();
 
+  console.log(login);
+
   const form = useForm<IUserProfile>({
     resolver: yupResolver(userProfileSchema),
     defaultValues: {
@@ -222,7 +224,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 error={!!errors.name?.message ?? false}
                 helperText={errors.name?.message}
                 register={form.register}
-                name="login"
+                name="name"
               />
             </FormControl>
           </Box>
@@ -295,7 +297,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 error={!!errors["partner.mobilePhone"]?.message ?? false}
                 helperText={errors["partner.mobilePhone"]?.message}
                 register={form.register}
-                name="telephoneNumber"
+                name="partner.mobilePhone"
               />
             </FormControl>
           </Box>

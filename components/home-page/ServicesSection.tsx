@@ -1,9 +1,9 @@
 import { List, ListItem, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
-import CheckDocIcon from "@/public/icons/checkDoc.svg";
+import CheckDocIcon from "@/public/icons/check-doc.svg";
 import CarIcon from "@/public/icons/car.svg";
-import SearchHeirs from "@/public/icons/searchHeirs.svg";
-import HereditaryAffairs from "@/public/icons/hereditaryAffairs.svg";
+import SearchHeirs from "@/public/icons/search-heirs.svg";
+import HereditaryAffairs from "@/public/icons/hereditary-affairs.svg";
 import Register from "@/public/icons/register.svg";
 import Link from "@/components/ui/Link";
 
