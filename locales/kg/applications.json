@@ -3,5 +3,7 @@
   "Type of document": "Документтин түрү",
   "Status": "Статус",
   "Notary": "Нотариус",
-  "Executor": "Аткаруучу"
+  "Executor": "Аткаруучу",
+  "Deleting an application": "Өтүнмөнү алып салуу",
+  "Do you really want to remove the application from the platform?": "Колдонмоңузду платформадан алып салгыңыз келеби?"
 }

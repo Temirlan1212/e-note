@@ -48,5 +48,8 @@
   "No data": "No data",
   "Applications": "Applications",
   "Reset": "Reset",
-  "Date": "Date"
+  "Date": "Date",
+  "Yes": "Yes",
+  "No": "No",
+  "Do you really want to delete this entry?": "Do you really want to delete this entry?"
 }

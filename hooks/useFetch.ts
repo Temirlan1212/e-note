@@ -32,9 +32,9 @@ export default function useFetch<T = FetchResponseBody>(
   const [error, setError] = useState<FetchError | null>(null);
   const [data, setData] = useState<T | null>(null);
 
-  const handleFetching = (url: string) => {
+  const handleFetching = (fetchUrl: string = url) => {
     setLoading(true);
-    fetch(url, {
+    return fetch(fetchUrl, {
       headers: {
         "Content-Type": "application/json",
         "server-cookie": profile.cookie ?? "",

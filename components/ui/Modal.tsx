@@ -1,7 +1,6 @@
 import { SxProps, Theme } from "@mui/material";
 import Box from "@mui/material/Box";
 import MUIModal, { ModalProps } from "@mui/material/Modal";
-import { useState } from "react";
 
 const contentStyle: SxProps<Theme> = {
   position: "absolute" as "absolute",

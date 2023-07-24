@@ -45,6 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         "statusSelect",
         "creationDate",
         "createdBy",
+        "company.name",
       ],
       sortBy: req.body["sortBy"] ?? [],
       ...requestBody,

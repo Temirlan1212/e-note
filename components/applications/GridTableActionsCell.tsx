@@ -1,112 +1,60 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { GridRenderCellParams, GridTreeNodeWithRender } from "@mui/x-data-grid";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import DetailsIcon from "@/public/icons/details-action.svg";
 import DownloadIcon from "@/public/icons/download-action.svg";
 import EditIcon from "@/public/icons/edit-action.svg";
-import { useEffect, useState } from "react";
-import Modal from "../ui/Modal";
-import CloseIcon from "@mui/icons-material/Close";
-import Button from "../ui/Button";
-import { lighten } from "@mui/material/styles";
-import Hint from "../ui/Hint";
+
+import Link from "@/components/ui/Link";
+import { ConfirmationModal } from "../ui/ConfirmationModal";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import useFetch from "@/hooks/useFetch";
 
 export const GridTableActionsCell = ({
   params,
-  updateData,
+  updateList,
 }: {
   params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>;
-  updateData: () => void;
+  updateList: () => void;
 }) => {
-  return (
-    <Box display="flex" alignItems="center" gap="10px">
-      <IconButton sx={{ color: "text.primary" }}>
-        <DetailsIcon />
-      </IconButton>
-      <IconButton sx={{ color: "text.primary" }}>
-        <EditIcon />
-      </IconButton>
-      <IconButton sx={{ color: "text.primary" }}>
-        <DownloadIcon />
-      </IconButton>
-      <DeleteModal id={params.row.id} updateData={updateData} />
-    </Box>
-  );
-};
-
-export const DeleteModal = ({ id, updateData }: { id: null | number; updateData: () => void }) => {
-  const url = "/api/applications/deleteApplication?id=";
-
-  const { data, update } = useFetch<Response>(url, "DELETE", {
-    headers: { "Content-Type": "application/octet-stream" },
+  const { update } = useFetch<Response>("/api/applications/delete?id=", "DELETE", {
     useEffectOnce: false,
     returnResponse: true,
   });
 
-  const handleDeleteClick = () => {
-    if (id != null) update(url + id);
+  const handleDeleteClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
+    if (params.row.id != null) {
+      await update("/api/applications/delete?id=" + params.row.id);
+      callback(false);
+      updateList();
+    }
   };
-
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  useEffect(() => {
-    updateData();
-    handleClose();
-  }, [data]);
 
   return (
-    <Box>
-      <IconButton sx={{ color: "text.primary" }} onClick={handleOpen}>
-        <DeleteOutlineIcon />
-      </IconButton>
+    <Box display="flex" alignItems="center" gap="10px">
+      <Link href="/applications">
+        <IconButton sx={{ color: "text.primary" }}>
+          <DetailsIcon />
+        </IconButton>
+      </Link>
 
-      <Modal open={open} onClose={handleClose}>
-        <Box display="flex" flexDirection="column" gap="20px">
-          <Box component="header" display="flex" alignItems="center" justifyContent="space-between">
-            <Typography variant="h6" fontWeight={600}>
-              Удаление заявки
-            </Typography>
-            <Button
-              variant="text"
-              sx={{
-                display: "flex",
-                width: "fit-content",
-                "&:hover": { backgroundColor: lighten("#1BAA75", 0.9) },
-                px: "5px",
-                gap: "5px",
-              }}
-              onClick={handleClose}
-            >
-              <CloseIcon />
-              <Typography variant="h6">Отменить</Typography>
-            </Button>
-          </Box>
+      <Link href={`/applications/edit/${params.row.id}`}>
+        <IconButton sx={{ color: "text.primary" }}>
+          <EditIcon />
+        </IconButton>
+      </Link>
 
-          <Box>
-            <Hint type="error" sx={{ mb: "20px" }}>
-              <Typography fontSize={13} fontWeight={600} color="text.primary">
-                Вы действительно хотите удалить пользователя с платформы?
-              </Typography>
-            </Hint>
+      <Link href="/applications/">
+        <IconButton sx={{ color: "text.primary" }}>
+          <DownloadIcon />
+        </IconButton>
+      </Link>
 
-            <Box display="flex" gap="20px">
-              <Button buttonType="primary" onClick={handleDeleteClick}>
-                Да
-              </Button>
-              <Button buttonType="danger" onClick={handleClose}>
-                Нет
-              </Button>
-            </Box>
-          </Box>
-        </Box>
-      </Modal>
+      <ConfirmationModal onConfirm={(callback) => handleDeleteClick(callback)}>
+        <IconButton sx={{ color: "text.primary" }}>
+          <DeleteOutlineIcon />
+        </IconButton>
+      </ConfirmationModal>
     </Box>
   );
 };

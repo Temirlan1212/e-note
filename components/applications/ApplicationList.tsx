@@ -2,7 +2,7 @@ import { GridTable, IFilterSubmitParams } from "../ui/GridTable";
 import { Box, LinearProgress } from "@mui/material";
 import { GridColDef, GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import { useDictionaryStore } from "@/stores/dictionaries";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { GridTableActionsCell } from "./GridTableActionsCell";
 import { useRouter } from "next/router";
 import { IActionType } from "@/models/dictionaries/action-type";
@@ -24,8 +24,8 @@ const appQueryParamsInitState = {
   filterValues: {},
 };
 
-export default function GridTableWithPagination() {
-  const url = "/api/applications/applications";
+export default function ApplicationList() {
+  const url = "/api/applications/application-list";
   const { locale } = useRouter();
   const actionTypeData = useDictionaryStore((store) => store.actionTypeData);
   const documentTypeData = useDictionaryStore((store) => store.documentTypeData);
@@ -35,8 +35,6 @@ export default function GridTableWithPagination() {
   const { data, loading, update } = useFetch(url, "POST", {
     body: appQueryParams,
   });
-
-  const updateData = () => update(url);
 
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
     setAppQueryParams((prev) => {
@@ -121,7 +119,7 @@ export default function GridTableWithPagination() {
       sortable: true,
     },
     {
-      field: "createdBy.fullName",
+      field: "company.name",
       headerName: "Notary",
       width: 200,
       sortable: false,
@@ -133,7 +131,7 @@ export default function GridTableWithPagination() {
       width: 200,
       sortable: false,
       type: "actions",
-      renderCell: (params) => <GridTableActionsCell params={params} updateData={updateData} />,
+      renderCell: (params) => <GridTableActionsCell params={params} updateList={update} />,
     },
   ];
 

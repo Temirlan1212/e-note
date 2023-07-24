@@ -43,5 +43,8 @@
   "No data": "Данных нет",
   "Applications": "Заявки",
   "Reset": "Сбросить",
-  "Date": "Дата"
+  "Date": "Дата",
+  "Yes": "Да",
+  "No": "Нет",
+  "Do you really want to delete this entry?": "Вы действительно хотите удалить эту запись?"
 }

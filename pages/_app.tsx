@@ -11,6 +11,9 @@ import { useProfileStore } from "@/stores/profile";
 import { IRoute, useRouteStore } from "@/stores/route";
 import { IUser } from "@/models/profile/user";
 import { useDictionaryStore } from "@/stores/dictionaries";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { ru } from "date-fns/locale";
 
 const Layout = ({ children }: { children: JSX.Element }) => {
   const router = useRouter();
@@ -53,12 +56,14 @@ const Layout = ({ children }: { children: JSX.Element }) => {
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <NextIntlClientProvider messages={pageProps.messages}>
-      <ThemeProvider theme={theme}>
-        <Layout>
-          <Component pageProps={...pageProps} />
-        </Layout>
-      </ThemeProvider>
-    </NextIntlClientProvider>
+    <LocalizationProvider adapterLocale={ru} dateAdapter={AdapterDateFns}>
+      <NextIntlClientProvider messages={pageProps.messages}>
+        <ThemeProvider theme={theme}>
+          <Layout>
+            <Component pageProps={...pageProps} />
+          </Layout>
+        </ThemeProvider>
+      </NextIntlClientProvider>
+    </LocalizationProvider>
   );
 }

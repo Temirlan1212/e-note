@@ -3,5 +3,7 @@
   "Type of document": "Type of document",
   "Status": "Status",
   "Notary": "Notary",
-  "Executor": "Executor"
+  "Executor": "Executor",
+  "Deleting an application": "Deleting an application",
+  "Do you really want to remove the application from the platform?": "Do you really want to remove the application from the platform?"
 }

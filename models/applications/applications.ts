@@ -16,6 +16,7 @@ export interface IApplication extends IProduct, ICreatedBy {
   creationDate: string;
   version: number;
   typeNotarialAction: number;
+  "company.name": string;
 }
 
 export interface IApplicationsQueryParamsData {

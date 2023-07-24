@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import GridTableWithPagination from "@/components/applications/GridTableWithPagination";
+import ApplicationList from "@/components/applications/ApplicationList";
 
 export default function Applications() {
   const t = useTranslations();
@@ -14,7 +14,7 @@ export default function Applications() {
       </Head>
 
       <Container>
-        <GridTableWithPagination />
+        <ApplicationList />
       </Container>
     </>
   );
