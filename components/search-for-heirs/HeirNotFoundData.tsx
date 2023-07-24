@@ -42,7 +42,7 @@ const HeirNotFoundData = (props: IHeirNotFoundDataProps) => {
             width: { xs: "170px", sm: "330px" },
           }}
           alt="Heir Not Found"
-          src="/images/HeirNotFoundImage.svg"
+          src="/images/heir-not-found.svg"
         />
       </Box>
     </Box>
