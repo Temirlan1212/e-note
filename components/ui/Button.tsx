@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
-
 import { Button as MUIButton, ButtonProps, CircularProgress } from "@mui/material";
+import { lighten } from "@mui/material/styles";
 
 interface IButtonProps extends ButtonProps {
   buttonType?: "primary" | "secondary" | "danger";
@@ -27,7 +27,7 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = 
       case "secondary":
         return "#3F5984";
       case "danger":
-        return "#687C9B";
+        return "#ff5555";
       default:
         return "#1BAA75";
     }
@@ -48,10 +48,16 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = 
       ? {
           backgroundColor: renderSwitch(buttonType),
           color: "#fff",
+          "&:hover": {
+            backgroundColor: lighten(renderSwitch(buttonType), 0.15),
+          },
         }
       : {
           borderColor: renderSwitch(buttonType),
           color: renderSwitch(buttonType),
+          "&:hover": {
+            backgroundColor: lighten(renderSwitch(buttonType), 0.15),
+          },
         };
 
   const mergedStyles = { ...buttonDefaultStyles, ...buttonStyles, ...sx };

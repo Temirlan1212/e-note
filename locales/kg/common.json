@@ -60,5 +60,9 @@
   "Correspondence": "Кат алышуу",
   "Apply": "Колдонуу",
   "No data": "Маалымат жок",
-  "Reset": "Тазалоо"
+  "Reset": "Тазалоо",
+  "Yes": "Оа",
+  "No": "Жок",
+  "Do you really want to delete this entry?": "Сиз чындыгында жазууну жок кылгыңыз келеби?",
+  "Deleting an entry": "Жазууну өчүрүү"
 }

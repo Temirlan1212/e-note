@@ -55,5 +55,9 @@
   "Correspondence": "Переписка",
   "Apply": "Применить",
   "No data": "Данных нет",
-  "Reset": "Сбросить"
+  "Reset": "Сбросить",
+  "Yes": "Да",
+  "No": "Нет",
+  "Do you really want to delete this entry?": "Вы действительно хотите удалить эту запись?",
+  "Deleting an entry": "Удаление записи"
 }

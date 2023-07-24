@@ -60,5 +60,9 @@
   "Correspondence": "Correspondence",
   "Apply": "Apply",
   "No data": "No data",
-  "Reset": "Reset"
+  "Reset": "Reset",
+  "Yes": "Yes",
+  "No": "No",
+  "Do you really want to delete this entry?": "Do you really want to delete this entry?",
+  "Deleting an entry": "Deleting an entry"
 }
