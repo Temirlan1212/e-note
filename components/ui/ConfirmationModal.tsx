@@ -32,25 +32,19 @@ export const ConfirmationModal = ({
     onConfirm && onConfirm(setOpen);
   };
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const handleToggle = () => setOpen(!open);
 
   return (
     <Box>
-      <Box onClick={handleOpen}>{children}</Box>
+      <Box onClick={handleToggle}>{children}</Box>
 
-      <Modal open={open} onClose={handleClose} {...rest}>
+      <Modal open={open} onClose={handleToggle} {...rest}>
         <Box display="flex" flexDirection="column" gap="20px">
           <Box component="header" display="flex" alignItems="center" justifyContent="space-between">
             <Typography variant="h6" fontWeight={600}>
               {t(title)}
             </Typography>
-            <IconButton onClick={handleClose}>
+            <IconButton onClick={handleToggle}>
               <CloseIcon />
             </IconButton>
           </Box>
@@ -72,7 +66,7 @@ export const ConfirmationModal = ({
               <Button buttonType={type === "warning" ? "warning" : "danger"} onClick={handleConfirm}>
                 {t("Yes")}
               </Button>
-              <Button buttonType="secondary" onClick={handleClose}>
+              <Button buttonType="secondary" onClick={handleToggle}>
                 {t("No")}
               </Button>
             </Box>

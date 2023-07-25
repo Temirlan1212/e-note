@@ -14,7 +14,7 @@ interface ILink {
 
 enum types {
   hint = "success.main",
-  warning = "#ffc107",
+  warning = "warning.main",
   error = "error.main",
   success = "success.main",
 }
