@@ -3,42 +3,81 @@ import { useRouter } from "next/router";
 import useEffectOnce from "./useEffectOnce";
 import { useProfileStore } from "@/stores/profile";
 
-export default function useFetch<T = any>(
+export interface FetchError {
+  status: number;
+  message: string;
+}
+
+export interface FetchResponseBody {
+  status: number;
+  offset: number;
+  total: number;
+  data: any;
+}
+
+export default function useFetch<T = FetchResponseBody>(
   url: string,
   method: "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "OPTIONS",
-  initialData: T,
-  headers?: HeadersInit,
-  body?: BodyInit
+  options?: {
+    headers?: HeadersInit;
+    body?: FormData | Record<string, any> | null | undefined;
+    useEffectOnce?: boolean;
+    returnResponse?: boolean;
+  }
 ) {
   const router = useRouter();
   const profile = useProfileStore.getState();
 
-  const [data, setData] = useState<T>(initialData);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<FetchError | null>(null);
+  const [data, setData] = useState<T | null>(null);
 
-  useEffectOnce(async () => {
-    if (profile.cookie == null) {
-      return router.push("/login");
+  const handleFetching = (fetchUrl = url, fetchBody = options?.body) => {
+    const headers: HeadersInit = { "server-cookie": profile.cookie ?? "" };
+
+    if (!(fetchBody instanceof FormData)) {
+      headers["Content-Type"] = "application/json";
     }
 
-    const response = await fetch(url, {
+    setLoading(true);
+    return fetch(fetchUrl, {
+      headers: {
+        ...headers,
+        ...options?.headers,
+      },
       method,
-      headers: { "Content-Type": "application/json", "server-cookie": profile.cookie ?? "", ...headers },
-      body,
-    });
+      body: fetchBody instanceof FormData ? fetchBody : JSON.stringify(fetchBody),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          const error: FetchError = { status: res.status, message: res.statusText };
+          throw new Error(JSON.stringify(error));
+        }
 
-    if (response.status === 401) {
-      profile.logOut();
-      return router.push("/login");
-    }
+        return options?.returnResponse != null ? res : res.json();
+      })
+      .then((res) => {
+        setData(res);
+      })
+      .catch((e: Error) => {
+        const error: FetchError = JSON.parse(e.message);
+        setError(error);
 
-    if (!response.ok) return;
+        if (error.status === 401) {
+          profile.logOut();
+          return router.push("/login");
+        }
+      })
+      .finally(() => setLoading(false));
+  };
 
-    const responseData = await response.json();
+  if (options?.useEffectOnce !== false) {
+    useEffectOnce(() => {
+      if (url) {
+        handleFetching(url);
+      }
+    }, [url, options?.body, router.route]);
+  }
 
-    if (responseData == null || responseData.data == null) return;
-
-    setData(responseData.data);
-  }, [url, router.route]);
-
-  return data;
+  return { data, loading, error, update: handleFetching };
 }

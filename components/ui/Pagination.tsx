@@ -40,6 +40,7 @@ interface IPaginationProps extends PaginationProps {
 
 const Pagination: React.FC<IPaginationProps> = ({ currentPage, totalPages, onPageChange, ...props }) => {
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    if (currentPage === page) return;
     onPageChange(page);
   };
 
