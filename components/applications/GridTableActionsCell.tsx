@@ -32,19 +32,19 @@ export const GridTableActionsCell = ({
 
   return (
     <Box display="flex" alignItems="center" gap="10px">
-      <Link href="/applications">
+      <Link href="applications">
         <IconButton sx={{ color: "text.primary" }}>
           <DetailsIcon />
         </IconButton>
       </Link>
 
-      <Link href={`/applications/edit/${params.row.id}`}>
+      <Link href={"applications"}>
         <IconButton sx={{ color: "text.primary" }}>
           <EditIcon />
         </IconButton>
       </Link>
 
-      <Link href="/applications/">
+      <Link href="applications/">
         <IconButton sx={{ color: "text.primary" }}>
           <DownloadIcon />
         </IconButton>

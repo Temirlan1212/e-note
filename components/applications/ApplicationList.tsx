@@ -148,8 +148,8 @@ export default function ApplicationList() {
               "product.name": documentTypeData ?? [],
             },
             filterField: {
-              typeNotarialAction: { field: "title_ru", outputField: "value" },
-              statusSelect: { field: "title_ru", outputField: "value" },
+              typeNotarialAction: { field: "title_" + locale, outputField: "value" },
+              statusSelect: { field: "title_" + locale, outputField: "value" },
               "product.name": { field: "name", outputField: "id" },
             },
           }}

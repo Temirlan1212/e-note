@@ -13,7 +13,7 @@ export default function Applications() {
         <title>{t("Applications")}</title>
       </Head>
 
-      <Container>
+      <Container maxWidth="xl">
         <ApplicationList />
       </Container>
     </>
