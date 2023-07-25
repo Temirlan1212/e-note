@@ -14,12 +14,12 @@ const Radio: React.FC<IRadioProps> = ({ label, register, name, ...props }) => {
       {...(register && name && register(name))}
       control={
         <MUIRadio
-          {...props}
           sx={{
             "&, &.Mui-checked": {
               color: "#1BAA75",
             },
           }}
+          {...props}
         />
       }
       label={label}
