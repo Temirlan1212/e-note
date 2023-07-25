@@ -10,9 +10,7 @@ export interface IConfirmationModal extends ModalProps {
   onConfirm: (callback: Dispatch<SetStateAction<boolean>>) => void;
   hintTitle: string;
   hintText: string;
-  hintType: "success" | "error" | "hint";
-  confirmButtonType: "primary" | "secondary" | "danger";
-  cancelButtonType: "primary" | "secondary" | "danger";
+  type: "warning" | "error";
   title: string;
 }
 
@@ -21,10 +19,8 @@ export const ConfirmationModal = ({
   children,
   hintTitle = "Do you really want to delete this entry?",
   hintText = "",
-  hintType = "error",
-  confirmButtonType = "danger",
-  cancelButtonType = "secondary",
-  title = "Deleting an entry",
+  type = "error",
+  title = "Deleting the record",
   ...rest
 }: Partial<IConfirmationModal>) => {
   const t = useTranslations();
@@ -60,7 +56,7 @@ export const ConfirmationModal = ({
           </Box>
 
           <Box>
-            <Hint type={hintType} sx={{ mb: "20px" }}>
+            <Hint type={type === "warning" ? "warning" : "error"} sx={{ mb: "20px" }}>
               <Typography fontSize={16} fontWeight={600} color="text.primary">
                 {t(hintTitle)}
               </Typography>
@@ -73,10 +69,10 @@ export const ConfirmationModal = ({
             </Hint>
 
             <Box display="flex" gap="20px">
-              <Button buttonType={confirmButtonType} onClick={handleConfirm}>
+              <Button buttonType={type === "warning" ? "warning" : "danger"} onClick={handleConfirm}>
                 {t("Yes")}
               </Button>
-              <Button buttonType={cancelButtonType} onClick={handleClose}>
+              <Button buttonType="secondary" onClick={handleClose}>
                 {t("No")}
               </Button>
             </Box>

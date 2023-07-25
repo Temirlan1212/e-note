@@ -3,7 +3,7 @@ import { Button as MUIButton, ButtonProps, CircularProgress } from "@mui/materia
 import { lighten } from "@mui/material/styles";
 
 interface IButtonProps extends ButtonProps {
-  buttonType?: "primary" | "secondary" | "danger";
+  buttonType?: "primary" | "secondary" | "danger" | "warning";
   loading?: boolean;
   progressStyles?: any;
 }
@@ -28,6 +28,8 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = 
         return "#3F5984";
       case "danger":
         return "#ff5555";
+      case "warning":
+        return "#ffc107";
       default:
         return "#1BAA75";
     }
