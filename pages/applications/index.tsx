@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import ApplicationList from "@/components/applications/ApplicationList";
@@ -14,7 +14,9 @@ export default function Applications() {
       </Head>
 
       <Container maxWidth="xl">
-        <ApplicationList />
+        <Box marginTop="30px">
+          <ApplicationList />
+        </Box>
       </Container>
     </>
   );

@@ -70,5 +70,8 @@
   "Yes": "Yes",
   "No": "No",
   "Do you really want to delete this record?": "Do you really want to delete this record?",
-  "Deleting the record": "Deleting the record"
+  "Deleting the record": "Deleting the record",
+  "The table can be scrolled horizontally or you can use the buttons to move around the table": "The table can be scrolled horizontally or you can use the buttons to move around the table",
+  "Applications": "Applications",
+  "Date": "Date"
 }

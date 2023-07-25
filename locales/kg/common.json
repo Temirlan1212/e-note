@@ -70,5 +70,8 @@
   "Yes": "Ооба",
   "No": "Жок",
   "Do you really want to delete this record?": "Сиз чындыгында жазууну жок кылгыңыз келеби?",
-  "Deleting the record": "Жазууну өчүрүү"
+  "Deleting the record": "Жазууну өчүрүү",
+  "The table can be scrolled horizontally or you can use the buttons to move around the table": "Таблицаны туурасынан жылдырса болот же айланасында жылдыруу үчүн баскычтарды колдонсоңуз болот",
+  "Applications": "Билдирүүлөр",
+  "Date": "Дата"
 }

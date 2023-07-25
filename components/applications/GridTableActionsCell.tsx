@@ -7,7 +7,7 @@ import EditIcon from "@/public/icons/edit-action.svg";
 import Link from "@/components/ui/Link";
 import { ConfirmationModal } from "../ui/ConfirmationModal";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
 import useFetch from "@/hooks/useFetch";
 
 export const GridTableActionsCell = ({
@@ -50,7 +50,11 @@ export const GridTableActionsCell = ({
         </IconButton>
       </Link>
 
-      <ConfirmationModal onConfirm={(callback) => handleDeleteClick(callback)}>
+      <ConfirmationModal
+        hintTitle="Do you really want to remove the application from the platform?"
+        title="Deleting an application"
+        onConfirm={(callback) => handleDeleteClick(callback)}
+      >
         <IconButton sx={{ color: "text.primary" }}>
           <DeleteOutlineIcon />
         </IconButton>
