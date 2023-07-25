@@ -20,7 +20,7 @@ export default function useFetch<T = FetchResponseBody>(
   method: "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "OPTIONS",
   options?: {
     headers?: HeadersInit;
-    body?: Record<string, any>;
+    body?: FormData | Record<string, any> | null | undefined;
     useEffectOnce?: boolean;
     returnResponse?: boolean;
   }
@@ -32,16 +32,21 @@ export default function useFetch<T = FetchResponseBody>(
   const [error, setError] = useState<FetchError | null>(null);
   const [data, setData] = useState<T | null>(null);
 
-  const handleFetching = (fetchUrl: string = url) => {
+  const handleFetching = (fetchUrl = url, fetchBody = options?.body) => {
+    const headers: HeadersInit = { "server-cookie": profile.cookie ?? "" };
+
+    if (!(fetchBody instanceof FormData)) {
+      headers["Content-Type"] = "application/json";
+    }
+
     setLoading(true);
     return fetch(fetchUrl, {
       headers: {
-        "Content-Type": "application/json",
-        "server-cookie": profile.cookie ?? "",
+        ...headers,
         ...options?.headers,
       },
       method,
-      body: JSON.stringify(options?.body),
+      body: fetchBody instanceof FormData ? fetchBody : JSON.stringify(fetchBody),
     })
       .then((res) => {
         if (!res.ok) {
@@ -68,7 +73,9 @@ export default function useFetch<T = FetchResponseBody>(
 
   if (options?.useEffectOnce !== false) {
     useEffectOnce(() => {
-      handleFetching(url);
+      if (url) {
+        handleFetching(url);
+      }
     }, [url, options?.body, router.route]);
   }
 

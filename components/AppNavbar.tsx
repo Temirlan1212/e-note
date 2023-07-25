@@ -78,7 +78,15 @@ const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) 
                           <DynamicIcon name={route.icon} />
                         </ListItemIcon>
                       )}
-                      <ListItemText sx={{ opacity: open ? 1 : 0, color: "inherit" }}>{t(route.title)}</ListItemText>
+                      <ListItemText
+                        primaryTypographyProps={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}
+                        sx={{
+                          opacity: open ? 1 : 0,
+                          color: "inherit",
+                        }}
+                      >
+                        {t(route.title)}
+                      </ListItemText>
                       {route.type === "group" &&
                         open &&
                         (openedGroup === route.title ? <ExpandLess color="inherit" /> : <ExpandMore color="inherit" />)}
@@ -126,11 +134,12 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
     <Box>
       <CssBaseline />
 
-      <AppBar component="nav" position="sticky" color="transparent" sx={{ boxShadow: "none" }}>
+      <AppBar component="nav" position="static" color="transparent" sx={{ boxShadow: "none" }}>
         <Toolbar
           sx={{
             gap: "15px",
             justifyContent: "space-between",
+            backgroundColor: "white",
             pl: { xs: 2, sm: 3, md: type === "private" ? 10 : 3 },
           }}
         >

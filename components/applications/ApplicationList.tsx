@@ -1,6 +1,6 @@
 import { GridTable, IFilterSubmitParams } from "../ui/GridTable";
-import { Box, LinearProgress } from "@mui/material";
-import { GridColDef, GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
+import { Box } from "@mui/material";
+import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import { useDictionaryStore } from "@/stores/dictionaries";
 import { useState } from "react";
 import { GridTableActionsCell } from "./GridTableActionsCell";
@@ -71,75 +71,73 @@ export default function ApplicationList() {
     updateAppQueryParams("sortBy", sortBy);
   };
 
-  const columns: GridColDef[] = [
-    {
-      field: "typeNotarialAction",
-      headerName: "Type of action",
-      description: "typeNotarialAction",
-      width: 200,
-      editable: false,
-      sortable: false,
-      valueGetter: (params: GridValueGetterParams) => {
-        if (actionTypeData != null) {
-          const matchedItem = actionTypeData?.find((item) => item.value == params.value);
-          return matchedItem?.[("title_" + locale) as keyof IActionType];
-        }
-
-        return params.value;
-      },
-    },
-    {
-      field: "product.name",
-      description: "product.id",
-      headerName: "Type of document",
-      width: 250,
-      editable: false,
-      sortable: false,
-    },
-    {
-      field: "statusSelect",
-      headerName: "Status",
-      description: "statusSelect",
-      width: 200,
-      editable: false,
-      sortable: false,
-      valueGetter: (params: GridValueGetterParams) => {
-        if (statusData != null) {
-          const matchedItem = statusData?.find((item) => item.value == String(1));
-          return matchedItem?.[("title_" + locale) as keyof IActionType];
-        }
-
-        return params.value;
-      },
-    },
-    {
-      field: "creationDate",
-      headerName: "Date",
-      width: 170,
-      sortable: true,
-    },
-    {
-      field: "company.name",
-      headerName: "Notary",
-      width: 200,
-      sortable: false,
-      cellClassName: "notaryColumn",
-    },
-    {
-      field: "actions",
-      headerName: "",
-      width: 200,
-      sortable: false,
-      type: "actions",
-      renderCell: (params) => <GridTableActionsCell params={params} updateList={update} />,
-    },
-  ];
-
   return (
     <Box>
       <Box height="500px">
         <GridTable
-          columns={columns}
+          columns={[
+            {
+              field: "typeNotarialAction",
+              headerName: "Type of action",
+              description: "typeNotarialAction",
+              width: 200,
+              editable: false,
+              sortable: false,
+              valueGetter: (params: GridValueGetterParams) => {
+                if (actionTypeData != null) {
+                  const matchedItem = actionTypeData?.find((item) => item.value == params.value);
+                  return matchedItem?.[("title_" + locale) as keyof IActionType];
+                }
+
+                return params.value;
+              },
+            },
+            {
+              field: "product.name",
+              description: "product.id",
+              headerName: "Type of document",
+              width: 250,
+              editable: false,
+              sortable: false,
+            },
+            {
+              field: "statusSelect",
+              headerName: "Status",
+              description: "statusSelect",
+              width: 200,
+              editable: false,
+              sortable: false,
+              valueGetter: (params: GridValueGetterParams) => {
+                if (statusData != null) {
+                  const matchedItem = statusData?.find((item) => item.value == String(1));
+                  return matchedItem?.[("title_" + locale) as keyof IActionType];
+                }
+
+                return params.value;
+              },
+            },
+            {
+              field: "creationDate",
+              headerName: "Date",
+              width: 170,
+              sortable: true,
+            },
+            {
+              field: "company.name",
+              headerName: "Notary",
+              width: 200,
+              sortable: false,
+              cellClassName: "notaryColumn",
+            },
+            {
+              field: "actions",
+              headerName: "",
+              width: 200,
+              sortable: false,
+              type: "actions",
+              renderCell: (params) => <GridTableActionsCell params={params} updateList={update} />,
+            },
+          ]}
           rows={data?.data ?? []}
           filterData={{
             data: {
@@ -162,9 +160,6 @@ export default function ApplicationList() {
             ".notaryColumn": {
               color: "success.main",
             },
-          }}
-          slots={{
-            loadingOverlay: () => <LinearProgress color="success" />,
           }}
           rowHeight={62}
         />

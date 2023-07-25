@@ -18,23 +18,24 @@ export default function ProfileDropdownButton() {
   const [menu, setMenu] = useState<HTMLElement | null>(null);
   const open = !!menu;
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setMenu(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setMenu(null);
-  };
-
   useEffect(() => {
     setUser(profile.user);
   }, [profile.user]);
 
-  const handleLogin = () => {
+  const handleMenuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setMenu(menu == null ? event.currentTarget : null);
+  };
+
+  const handleProfileClick = () => {
+    router.push("/profile");
+    setMenu(null);
+  };
+
+  const handleLoginClick = () => {
     router.push("/login");
   };
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
     profile.logOut();
     setUser(profile.getUser());
   };
@@ -42,20 +43,20 @@ export default function ProfileDropdownButton() {
   if (user) {
     return (
       <>
-        <IconButton color="inherit" sx={{ display: { lg: "none" } }} onClick={handleMenuClick}>
+        <IconButton color="inherit" sx={{ display: { lg: "none" } }} onClick={handleMenuToggle}>
           <PersonOutlineIcon />
         </IconButton>
         <Button
           color="inherit"
           sx={{ textTransform: "none", display: { xs: "none", lg: "flex" } }}
           startIcon={<PersonOutlineIcon />}
-          onClick={handleMenuClick}
+          onClick={handleMenuToggle}
         >
           {user.username}
         </Button>
-        <Menu anchorEl={menu} open={open} onClose={handleMenuClose}>
-          <MenuItem onClick={() => router.push("/profile")}>{t("Profile")}</MenuItem>
-          <MenuItem onClick={() => handleLogout()}>{t("Logout")}</MenuItem>
+        <Menu anchorEl={menu} open={open} onClose={handleMenuToggle}>
+          <MenuItem onClick={handleProfileClick}>{t("Profile")}</MenuItem>
+          <MenuItem onClick={handleLogoutClick}>{t("Logout")}</MenuItem>
         </Menu>
       </>
     );
@@ -63,14 +64,14 @@ export default function ProfileDropdownButton() {
 
   return (
     <>
-      <IconButton color="inherit" sx={{ display: { lg: "none" } }} onClick={handleLogin}>
+      <IconButton color="inherit" sx={{ display: { lg: "none" } }} onClick={handleLoginClick}>
         <LoginIcon />
       </IconButton>
       <Button
         color="inherit"
         sx={{ display: { xs: "none", lg: "flex" } }}
         startIcon={<LoginIcon />}
-        onClick={handleLogin}
+        onClick={handleLoginClick}
       >
         {t("Login")}
       </Button>

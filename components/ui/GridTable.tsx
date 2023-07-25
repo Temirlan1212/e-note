@@ -6,7 +6,6 @@ import {
   GridColDef,
   DataGridProps,
   GridValidRowModel,
-  GridToolbarExport,
 } from "@mui/x-data-grid";
 import { Box, MenuItem, Typography, lighten } from "@mui/material";
 import Menu from "@mui/material/Menu";
@@ -109,7 +108,9 @@ export const GridTable: React.FC<IGridTableProps> = ({
         alignItems: "center",
       },
     },
-
+    ".MuiDataGrid-cell:focus-within": {
+      outline: "none",
+    },
     border: "none",
     background: "#F6F6F6",
   };
@@ -150,13 +151,6 @@ export const GridTable: React.FC<IGridTableProps> = ({
       hideFooter
       rowSelection={false}
       density="comfortable"
-      slots={{
-        toolbar: () => (
-          <Box padding="5px" display="flex" justifyContent="flex-end">
-            <GridToolbarExport sx={{ color: "text.primary" }} />
-          </Box>
-        ),
-      }}
       slotProps={{
         panel: {
           sx: {

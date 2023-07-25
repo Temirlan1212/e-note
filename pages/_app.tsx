@@ -12,7 +12,7 @@ import { IRoute, useRouteStore } from "@/stores/route";
 import { IUser } from "@/models/profile/user";
 import { useDictionaryStore } from "@/stores/dictionaries";
 
-const Layout = ({ children }: { children: JSX.Element }) => {
+function Layout({ children }: { children: JSX.Element }) {
   const router = useRouter();
   const profile = useProfileStore((state) => state);
   const routes = useRouteStore((state) => state);
@@ -39,9 +39,9 @@ const Layout = ({ children }: { children: JSX.Element }) => {
   }, [routes.guestRoutes]);
 
   useEffect(() => {
-    getStatusData({ translate: true });
-    getActionTypeData({ translate: true });
-    getDocumentTypeData({ translate: true });
+    getStatusData();
+    getActionTypeData();
+    getDocumentTypeData();
   }, []);
 
   if (user != null && !guestRoutes.map((r) => r.link).includes(router.route)) {
@@ -49,14 +49,14 @@ const Layout = ({ children }: { children: JSX.Element }) => {
   }
 
   return <PublicLayout>{children}</PublicLayout>;
-};
+}
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <NextIntlClientProvider messages={pageProps.messages}>
       <ThemeProvider theme={theme}>
         <Layout>
-          <Component pageProps={...pageProps} />
+          <Component {...pageProps} />
         </Layout>
       </ThemeProvider>
     </NextIntlClientProvider>

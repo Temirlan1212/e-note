@@ -1,37 +1,33 @@
-import * as React from "react";
+import { useState } from "react";
 import { useLocale } from "next-intl";
+import { useRouter } from "next/router";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { useRouter } from "next/router";
 
 export default function LocaleSwitcher() {
   const router = useRouter();
   const locales = router.locales ?? [];
-  const [localeSwitcherMenu, setLocaleSwitcherMenu] = React.useState<HTMLElement | null>(null);
-  const open = !!localeSwitcherMenu;
+  const [menu, setMenu] = useState<HTMLElement | null>(null);
+  const open = !!menu;
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setLocaleSwitcherMenu(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setLocaleSwitcherMenu(null);
+  const handlePopupToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setMenu(menu == null ? event.currentTarget : null);
   };
 
   const handleLocaleSwitch = (locale: string) => {
     router.push({ pathname: router.pathname, query: router.query }, router.asPath, { locale });
-    handleClose();
+    setMenu(null);
   };
 
   return (
     <div>
-      <Button onClick={handleClick} endIcon={<KeyboardArrowDownIcon />} color="inherit">
+      <Button onClick={handlePopupToggle} endIcon={<KeyboardArrowDownIcon />} color="inherit">
         {useLocale().toUpperCase()}
       </Button>
 
-      <Menu anchorEl={localeSwitcherMenu} open={open} onClose={handleClose}>
+      <Menu anchorEl={menu} open={open} onClose={handlePopupToggle}>
         {locales.map((locale) => {
           return (
             <MenuItem key={locale} onClick={() => handleLocaleSwitch(locale)}>

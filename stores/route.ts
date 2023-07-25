@@ -60,6 +60,12 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
       type: "menu",
       icon: "BorderColor",
     },
+    {
+      title: "Files",
+      link: "/files",
+      type: "menu",
+      icon: "Folder",
+    },
   ],
   notaryRoutes: [],
   getRoutes: (routeList, type, rootOnly = false) => {
