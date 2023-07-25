@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Box, Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import FilesList from "@/components/files/FileList";
+import FileList from "@/components/files/FileList";
 
 export default function Files() {
   const t = useTranslations();
@@ -14,7 +14,7 @@ export default function Files() {
       </Head>
 
       <Container maxWidth="xl">
-        <FilesList />
+        <FileList />
       </Container>
     </>
   );

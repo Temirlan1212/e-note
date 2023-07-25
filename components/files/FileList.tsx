@@ -63,7 +63,7 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
   );
 }
 
-export default function FilesList() {
+export default function FileList() {
   const t = useTranslations();
 
   const [pagination, setPagination] = useState<{ pageSize: number; page: number; sortBy: string[] }>({
