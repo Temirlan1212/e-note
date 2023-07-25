@@ -2,10 +2,11 @@ import { forwardRef } from "react";
 import { Button as MUIButton, ButtonProps, CircularProgress } from "@mui/material";
 import { lighten } from "@mui/material/styles";
 
-interface IButtonProps extends ButtonProps {
+interface IButtonProps extends Omit<ButtonProps, "component"> {
   buttonType?: "primary" | "secondary" | "danger" | "warning";
   loading?: boolean;
   progressStyles?: any;
+  component?: "button" | "label";
 }
 
 const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = (props, ref) => {
@@ -39,7 +40,6 @@ const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = 
     borderRadius: 0,
     fontSize: "16px",
     fontWeight: "600",
-    padding: "10px 0",
     ":hover": {
       bgcolor: "#1BAA75",
     },
