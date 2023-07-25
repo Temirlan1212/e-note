@@ -2,6 +2,7 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
+import UserRegistryContent from "@/components/user-registry/UserRegistryContent";
 
 export default function UserRegistry() {
   const t = useTranslations();
@@ -12,8 +13,15 @@ export default function UserRegistry() {
         <title>{t("User Registry")}</title>
       </Head>
 
-      <Container component="section" maxWidth="xl">
-        asdas
+      <Container
+        component="section"
+        maxWidth="xl"
+        sx={{
+          pt: "40px",
+          pb: "60px",
+        }}
+      >
+        <UserRegistryContent />
       </Container>
     </>
   );

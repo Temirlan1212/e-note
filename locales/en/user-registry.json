@@ -1,1 +1,15 @@
-{}
+{
+  "Add a new user": "Add a new user",
+  "Registration period": "Registration period",
+  "User role": "User role",
+  "Registered by whom": "Registered by whom",
+  "User's full name": "User's full name",
+  "Login": "Login",
+  "PIN": "PIN",
+  "Phone Number": "Mobile phone number",
+  "Date and time of registration": "Date and time of registration",
+  "Password Reset": "Password Reset",
+  "Delete a user": "Delete a user",
+  "Action": "Action",
+  "FromTo": "to"
+}

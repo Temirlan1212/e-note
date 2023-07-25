@@ -1,1 +1,15 @@
-{}
+{
+  "Add a new user": "Добавить нового пользователя",
+  "Registration period": "Период регистрации",
+  "User role": "Роль пользователя",
+  "Registered by whom": "Кем зарегистрировано",
+  "User's full name": "ФИО пользователя",
+  "Login": "Логин",
+  "PIN": "ПИН",
+  "Phone Number": "Мобильный телефон",
+  "Date and time of registration": "Дата и время регистрации",
+  "Password Reset": "Сброс пароля",
+  "Delete a user": "Удалить пользователя",
+  "Action": "Действие",
+  "FromTo": "по"
+}
