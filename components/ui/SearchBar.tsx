@@ -1,30 +1,33 @@
 import React from "react";
 
 import { UseFormRegister } from "react-hook-form";
-import { Box } from "@mui/material";
+import { Box, TextFieldProps } from "@mui/material";
 import { SearchOutlined } from "@mui/icons-material";
 
 import Input from "./Input";
 import Button from "./Button";
 import { useTranslations } from "next-intl";
 
-interface ISearchBarProps {
+type ISearchBarProps = TextFieldProps & {
   register?: UseFormRegister<any>;
   name?: string;
   sxBox?: any;
+  sx?: any;
   loading?: boolean;
   error?: any;
   helperText?: any;
-}
+  boxSx?: any;
+};
 
 const SearchBar: React.FC<ISearchBarProps> = (props) => {
   const t = useTranslations();
 
-  const { register, name, loading, error, helperText, ...rest } = props;
+  const { register, name, loading, error, boxSx, helperText, ...rest } = props;
 
   return (
-    <Box display="flex" {...rest}>
+    <Box display="flex" sx={boxSx}>
       <Input
+        {...rest}
         fullWidth
         name={name}
         placeholder={t("Search")}
