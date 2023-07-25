@@ -56,14 +56,6 @@
   "Export": "Экспорт",
   "Download as CSV": "CSV катары жүктөп алуу",
   "Print": "Басып чыгаруу",
-  "Apply": "Колдонуу",
-  "No data": "Маалымат жок",
-  "Applications": "Билдирүү",
-  "Reset": "Тазалоо",
-  "Date": "Дата",
-  "Yes": "Оа",
-  "No": "Жок",
-  "Do you really want to delete this entry?": "Сиз чындыгында жазууну жок кылгыңыз келеби?",
   "There are no changes in the form": "Формада эч кандай өзгөрүү жок",
   "Done": "Бүттү",
   "ID": "ID",
@@ -71,5 +63,12 @@
   "Size": "Көлөмү",
   "Format": "Түрү",
   "Back": "Артка",
-  "Correspondence": "Кат алышуу"
+  "Correspondence": "Кат алышуу",
+  "Apply": "Колдонуу",
+  "No data": "Маалымат жок",
+  "Reset": "Тазалоо",
+  "Yes": "Ооба",
+  "No": "Жок",
+  "Do you really want to delete this record?": "Сиз чындыгында жазууну жок кылгыңыз келеби?",
+  "Deleting the record": "Жазууну өчүрүү"
 }

@@ -51,14 +51,6 @@
   "Export": "Экспортировать",
   "Download as CSV": "Загрузить как CSV",
   "Print": "Распечатать",
-  "Apply": "Применить",
-  "No data": "Данных нет",
-  "Applications": "Заявки",
-  "Reset": "Сбросить",
-  "Date": "Дата",
-  "Yes": "Да",
-  "No": "Нет",
-  "Do you really want to delete this entry?": "Вы действительно хотите удалить эту запись?",
   "There are no changes in the form": "В форме нет никаких изменений",
   "Done": "Готово",
   "ID": "ID",
@@ -66,5 +58,12 @@
   "Size": "Размер",
   "Format": "Формат",
   "Back": "Назад",
-  "Correspondence": "Переписка"
+  "Correspondence": "Переписка",
+  "Apply": "Применить",
+  "No data": "Данных нет",
+  "Reset": "Сбросить",
+  "Yes": "Да",
+  "No": "Нет",
+  "Do you really want to delete this record?": "Вы действительно хотите удалить эту запись?",
+  "Deleting the record": "Удаление записи"
 }
