@@ -37,6 +37,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const userData = profile.getUserData();
 
+  console.log(login);
+
   const form = useForm<IUserProfile>({
     resolver: yupResolver(userProfileSchema),
     defaultValues: {
