@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Box, Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import FilesList from "@/components/files/FilesList";
+import FilesList from "@/components/files/FileList";
 
 export default function Files() {
   const t = useTranslations();

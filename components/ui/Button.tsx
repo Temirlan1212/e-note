@@ -2,10 +2,11 @@ import { forwardRef } from "react";
 
 import { Button as MUIButton, ButtonProps, CircularProgress } from "@mui/material";
 
-interface IButtonProps extends ButtonProps {
+interface IButtonProps extends Omit<ButtonProps, "component"> {
   buttonType?: "primary" | "secondary" | "danger";
   loading?: boolean;
   progressStyles?: any;
+  component?: "button" | "label";
 }
 
 const Button: React.ForwardRefRenderFunction<HTMLButtonElement, IButtonProps> = (props, ref) => {
