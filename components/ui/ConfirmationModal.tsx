@@ -17,7 +17,7 @@ export interface IConfirmationModal extends ModalProps {
 export const ConfirmationModal = ({
   onConfirm,
   children,
-  hintTitle = "Do you really want to delete this entry?",
+  hintTitle = "Do you really want to delete this record?",
   hintText = "",
   type = "error",
   title = "Deleting the record",
