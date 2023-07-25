@@ -12,10 +12,10 @@ import useFetch from "@/hooks/useFetch";
 
 export const GridTableActionsCell = ({
   params,
-  updateList,
+  onDelete,
 }: {
   params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>;
-  updateList: () => void;
+  onDelete: () => void;
 }) => {
   const { update } = useFetch<Response>("/api/applications/delete?id=", "DELETE", {
     useEffectOnce: false,
@@ -26,7 +26,7 @@ export const GridTableActionsCell = ({
     if (params.row.id != null) {
       await update("/api/applications/delete?id=" + params.row.id);
       callback(false);
-      updateList();
+      onDelete();
     }
   };
 

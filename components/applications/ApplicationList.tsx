@@ -21,13 +21,6 @@ interface IAppQueryParams {
   filterValues: Record<string, (string | number)[]>;
 }
 
-const appQueryParamsInitState = {
-  pageSize: 7,
-  page: 1,
-  sortBy: ["creationDate"],
-  filterValues: {},
-};
-
 export default function ApplicationList() {
   const t = useTranslations();
   const url = "/api/applications/application-list";
@@ -35,7 +28,12 @@ export default function ApplicationList() {
   const actionTypeData = useDictionaryStore((store) => store.actionTypeData);
   const documentTypeData = useDictionaryStore((store) => store.documentTypeData);
   const statusData = useDictionaryStore((store) => store.statusData);
-  const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>(appQueryParamsInitState);
+  const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
+    pageSize: 7,
+    page: 1,
+    sortBy: ["creationDate"],
+    filterValues: {},
+  });
 
   const { data, loading, update } = useFetch(url, "POST", {
     body: appQueryParams,
@@ -84,7 +82,7 @@ export default function ApplicationList() {
         </Typography>
         <Link href="applications">
           <Button sx={{ py: "10px", px: "20px" }} component="label" startIcon={<PostAddIcon />}>
-            {t("Make an application")}
+            {t("Create application")}
           </Button>
         </Link>
       </Box>
@@ -150,7 +148,7 @@ export default function ApplicationList() {
             width: 200,
             sortable: false,
             type: "actions",
-            renderCell: (params) => <GridTableActionsCell params={params} updateList={update} />,
+            renderCell: (params) => <GridTableActionsCell params={params} onDelete={update} />,
           },
         ]}
         rows={data?.data ?? []}
