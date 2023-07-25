@@ -56,7 +56,7 @@ export default function ApplicationForm() {
   return (
     <Box>
       <Box display="flex" justifyContent="center" my={2}>
-        <Stepper activeStep={step} connector={<StepConnector sx={{ flex: "0 0 45px" }} />} sx={{ flex: "1 1 auto" }}>
+        <Stepper activeStep={step} connector={<StepConnector sx={{ flex: "0 0 45px" }} />}>
           {steps.map((component, index) => {
             return (
               <Step
