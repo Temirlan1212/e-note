@@ -67,5 +67,9 @@
   "No data": "Маалымат жок",
   "Reset": "Тазалоо",
   "User Registry": "Колдонуучулардын реестри",
-  "Export to Excel": "Excelге экспорттоо"
+  "Export to Excel": "Excelге экспорттоо",
+  "Yes": "Ооба",
+  "No": "Жок",
+  "Do you really want to delete this record?": "Сиз чындыгында жазууну жок кылгыңыз келеби?",
+  "Deleting the record": "Жазууну өчүрүү"
 }

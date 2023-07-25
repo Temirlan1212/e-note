@@ -12,10 +12,17 @@ interface ILink {
   href: string;
 }
 
+enum types {
+  hint = "success.main",
+  warning = "warning.main",
+  error = "error.main",
+  success = "success.main",
+}
+
 interface IHintProps extends BoxProps {
   title?: string;
   text?: string;
-  type: "success" | "error" | "hint";
+  type: keyof typeof types;
   links?: ILink[];
 }
 
@@ -62,7 +69,7 @@ export default function Hint({ title, text, links, type, children, ...props }: I
         </Typography>
       </MuiBox>
       <IconButton sx={{ height: "min-content", padding: 0 }} onClick={handleClick}>
-        <Icon sx={{ color: type === "error" ? "#EB5757" : "success.main" }} />
+        <Icon sx={{ color: types[type] }} />
       </IconButton>
     </Box>
   );

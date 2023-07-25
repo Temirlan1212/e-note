@@ -11,6 +11,7 @@ const contentStyle: SxProps<Theme> = {
   bgcolor: "background.paper",
   boxShadow: 24,
   p: { xs: 1.5, sm: 4 },
+  outline: "none",
 };
 
 interface IModalProps extends ModalProps {}

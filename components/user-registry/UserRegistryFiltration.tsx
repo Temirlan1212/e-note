@@ -28,9 +28,9 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = (props) => {
 
   const t = useTranslations();
 
-  const handleFromDateChange = (start: string) => {
+  const handleFromDateChange = (from: string) => {
     // Try to parse the date manually
-    const parsedDate = parse(start, "yyyy-MM-dd", new Date());
+    const parsedDate = parse(from, "yyyy-MM-dd", new Date());
 
     if (!isNaN(parsedDate.getTime())) {
       // The parsing was successful
@@ -41,8 +41,8 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = (props) => {
     }
   };
 
-  const handleToDateChange = (finish: string) => {
-    const parsedDate = parse(finish, "yyyy-MM-dd", new Date());
+  const handleToDateChange = (to: string) => {
+    const parsedDate = parse(to, "yyyy-MM-dd", new Date());
 
     if (!isNaN(parsedDate.getTime())) {
       // The parsing was successful
