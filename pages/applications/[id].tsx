@@ -18,13 +18,13 @@ export default function Applications() {
   return (
     <>
       <Head>
-        <title>{t("Applications")}</title>
+        <title>{t("Create application")}</title>
       </Head>
 
       <Container maxWidth="xl">
         <Box display="flex" alignItems="center" justifyContent="space-between" my={2}>
           <Typography variant="h4" color="success.main">
-            {t("Applications")}
+            {t("Create application")}
           </Typography>
           <Box>
             <Button buttonType="secondary" startIcon={<CloseIcon />} onClick={handleCancelClick}>
