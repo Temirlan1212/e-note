@@ -56,6 +56,7 @@
   "Export": "Export",
   "Download as CSV": "Download as CSV",
   "Print": "Print",
+  "There are no changes in the form": "There are no changes in the form",
   "Done": "Done",
   "ID": "ID",
   "Name": "Name",
@@ -79,5 +80,12 @@
   "Institution": "Institution",
   "Order": "Order",
   "Criminal record": "Criminal record",
-  "Export to Excel": "Export to Excel"
+  "Export to Excel": "Export to Excel",
+  "The table can be scrolled horizontally or you can use the buttons to move around the table": "The table can be scrolled horizontally or you can use the buttons to move around the table",
+  "Applications": "Applications",
+  "Date": "Date",
+  "Download": "Download",
+  "Delete": "Delete",
+  "More detailed": "More detailed",
+  "Edit": "Edit"
 }

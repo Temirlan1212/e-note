@@ -215,7 +215,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
             padding: "10px 0",
           }}
         >
-          {t("Make an application")}
+          {t("Create application")}
         </Button>
         <Button
           startIcon={<CloudMessageIcon />}

@@ -56,6 +56,7 @@
   "Export": "Экспорт",
   "Download as CSV": "CSV катары жүктөп алуу",
   "Print": "Басып чыгаруу",
+  "There are no changes in the form": "Формада эч кандай өзгөрүү жок",
   "Done": "Бүттү",
   "ID": "ID",
   "Name": "Аталышы",
@@ -79,5 +80,12 @@
   "Institution": "Мекеме",
   "Order": "Буйрук",
   "Criminal record": "Соттуулугу",
-  "Export to Excel": "Excelге экспорттоо"
+  "Export to Excel": "Excelге экспорттоо",
+  "The table can be scrolled horizontally or you can use the buttons to move around the table": "Таблицаны туурасынан жылдырса болот же айланасында жылдыруу үчүн баскычтарды колдонсоңуз болот",
+  "Applications": "Билдирүүлөр",
+  "Date": "Дата",
+  "Download": "Көчүрүү",
+  "Delete": "Өчүрүү",
+  "More detailed": "Кененирээк",
+  "Edit": "Оңдоо"
 }
