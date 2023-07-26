@@ -1,3 +1,11 @@
 {
+  "Type of action": "Type of action",
+  "Type of document": "Type of document",
+  "Status": "Status",
+  "Notary": "Notary",
+  "Executor": "Executor",
+  "Deleting an application": "Deleting an application",
+  "Do you really want to remove the application from the platform?": "Do you really want to remove the application from the platform?",
+  "Your applications": "Your applications",
   "Create application": "Create application"
 }
