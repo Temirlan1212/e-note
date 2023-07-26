@@ -2,15 +2,13 @@ import React, { FC, useState } from "react";
 
 import { useTranslations } from "next-intl";
 
-import { Box, Tooltip, IconButton } from "@mui/material";
+import { Box } from "@mui/material";
 
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
-
-import ExcelIcon from "@/public/icons/excel.svg";
 import Button from "../ui/Button";
 import SearchBar from "../ui/SearchBar";
 import { GridTable } from "../ui/GridTable";
+
+import ExcelIcon from "@/public/icons/excel.svg";
 
 interface IForeignInstitutionsContentProps {}
 
@@ -21,114 +19,81 @@ const ForeignInstitutionsContent: FC<IForeignInstitutionsContentProps> = (props)
 
   const columns = [
     { field: "fullName", headerName: "User's full name", width: 280 },
-    { field: "userRole", headerName: "User role", width: 160 },
-    { field: "login", headerName: "Login", width: 140 },
-    { field: "pin", headerName: "PIN", width: 160 },
+    { field: "position", headerName: "Position", width: 220 },
+    { field: "birthDate", headerName: "Date of birth", width: 140 },
     { field: "phoneNumber", headerName: "Phone Number", width: 160 },
-    { field: "email", headerName: "E-mail", width: 220 },
-    { field: "registerDate", headerName: "Date and time of registration", width: 180 },
-    { field: "whoRegister", headerName: "Registered by whom", width: 200 },
-    {
-      field: "actions",
-      headerName: "Action",
-      type: "acitons",
-      sortable: false,
-      width: 120,
-      renderCell: (params: any) => (
-        <Box
-          sx={{
-            background: "transparent !important",
-          }}
-        >
-          <Tooltip title={t("Password Reset")}>
-            <IconButton
-              sx={{
-                "&:hover, &.Mui-focusVisible": { color: "#1BAA75" },
-              }}
-            >
-              <RefreshRoundedIcon />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={t("Delete a user")}>
-            <IconButton
-              sx={{
-                "&:hover, &.Mui-focusVisible": { color: "#1BAA75" },
-              }}
-            >
-              <DeleteOutlineOutlinedIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      ),
-    },
+    { field: "email", headerName: "E-mail", width: 180 },
+    { field: "institution", headerName: "Institution", width: 180 },
+    { field: "order", headerName: "Order", width: 200 },
+    { field: "criminalRecord", headerName: "Criminal record", width: 200 },
   ];
 
   const rows = [
     {
       id: 1,
-      pin: 20102199000001,
       fullName: "Чалбеков Анарбек Ибраимович",
-      userRole: "Пользователь",
-      login: "nuramir",
+      position: "Сотрудник Консульства",
+      birthDate: "01.01.2022",
       phoneNumber: "0555 26 29 30",
-      email: "nuramir@example.org",
-      registerDate: "01.01.2022 00:00:00",
-      whoRegister: "nuramir@example.org",
+      email: "turat@gmail.com",
+      institution: "Доверенность",
+      order: "",
+      criminalRecord: "",
     },
     {
       id: 2,
-      pin: 20102199000001,
       fullName: "Чалбеков Анарбек Ибраимович",
-      userRole: "Пользователь",
-      login: "nuramir",
+      position: "Сотрудник Консульства",
+      birthDate: "01.01.2022",
       phoneNumber: "0555 26 29 30",
-      email: "nuramir@example.org",
-      registerDate: "01.01.2022 00:00:00",
-      whoRegister: "nuramir@example.org",
+      email: "turat@gmail.com",
+      institution: "Доверенность",
+      order: "",
+      criminalRecord: "",
     },
     {
       id: 3,
-      pin: 20102199000001,
       fullName: "Чалбеков Анарбек Ибраимович",
-      userRole: "Пользователь",
-      login: "nuramir",
+      position: "Сотрудник Консульства",
+      birthDate: "01.01.2022",
       phoneNumber: "0555 26 29 30",
-      email: "nuramir@example.org",
-      registerDate: "01.01.2022 00:00:00",
-      whoRegister: "nuramir@example.org",
+      email: "turat@gmail.com",
+      institution: "Доверенность",
+      order: "",
+      criminalRecord: "",
     },
     {
       id: 4,
-      pin: 20102199000001,
       fullName: "Чалбеков Анарбек Ибраимович",
-      userRole: "Пользователь",
-      login: "nuramir",
+      position: "Сотрудник Консульства",
+      birthDate: "01.01.2022",
       phoneNumber: "0555 26 29 30",
-      email: "nuramir@example.org",
-      registerDate: "01.01.2022 00:00:00",
-      whoRegister: "nuramir@example.org",
+      email: "turat@gmail.com",
+      institution: "Доверенность",
+      order: "",
+      criminalRecord: "",
     },
     {
       id: 5,
-      pin: 20102199000001,
       fullName: "Чалбеков Анарбек Ибраимович",
-      userRole: "Пользователь",
-      login: "nuramir",
+      position: "Сотрудник Консульства",
+      birthDate: "01.01.2022",
       phoneNumber: "0555 26 29 30",
-      email: "nuramir@example.org",
-      registerDate: "01.01.2022 00:00:00",
-      whoRegister: "nuramir@example.org",
+      email: "turat@gmail.com",
+      institution: "Доверенность",
+      order: "",
+      criminalRecord: "",
     },
     {
       id: 6,
-      pin: 20102199000001,
       fullName: "Чалбеков Анарбек Ибраимович",
-      userRole: "Пользователь",
-      login: "nuramir",
+      position: "Сотрудник Консульства",
+      birthDate: "01.01.2022",
       phoneNumber: "0555 26 29 30",
-      email: "nuramir@example.org",
-      registerDate: "01.01.2022 00:00:00",
-      whoRegister: "nuramir@example.org",
+      email: "turat@gmail.com",
+      institution: "Доверенность",
+      order: "",
+      criminalRecord: "",
     },
   ];
 
@@ -177,8 +142,9 @@ const ForeignInstitutionsContent: FC<IForeignInstitutionsContentProps> = (props)
         />
         <Button
           sx={{
-            ":hover": {
-              //   background: "#fff !important"
+            "&:hover": {
+              background: "#fff !important",
+              border: "1px solid",
             },
             display: {
               xs: "none",

@@ -69,5 +69,15 @@
   "Yes": "Ооба",
   "No": "Жок",
   "Do you really want to delete this record?": "Сиз чындыгында жазууну жок кылгыңыз келеби?",
-  "Deleting the record": "Жазууну өчүрүү"
+  "Deleting the record": "Жазууну өчүрүү",
+  "ForeignInstitutions": "Чет өлкөлөрдөгү мекемелердин кызмат адамдарынын реестри",
+  "User's full name": "Колдонуучунун аты-жөнү",
+  "Position": "Кызмат орду",
+  "Date of birth": "Туулган жылы",
+  "Phone Number": "Телефон номери",
+  "E-mail": "E-mail",
+  "Institution": "Мекеме",
+  "Order": "Буйрук",
+  "Criminal record": "Соттуулугу",
+  "Export to Excel": "Excelге экспорттоо"
 }

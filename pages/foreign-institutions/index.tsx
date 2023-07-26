@@ -13,7 +13,7 @@ export default function ForeignInstitutions() {
   return (
     <>
       <Head>
-        <title>{t("Login")}</title>
+        <title>{t("ForeignInstitutions")}</title>
       </Head>
 
       <Container
@@ -33,7 +33,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     props: {
       messages: {
         ...(await import(`locales/${context.locale}/common.json`)).default,
-        ...(await import(`locales/${context.locale}/login.json`)).default,
       },
     },
   };

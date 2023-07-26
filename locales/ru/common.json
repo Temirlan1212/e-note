@@ -64,5 +64,15 @@
   "Yes": "Да",
   "No": "Нет",
   "Do you really want to delete this record?": "Вы действительно хотите удалить эту запись?",
-  "Deleting the record": "Удаление записи"
+  "Deleting the record": "Удаление записи",
+  "ForeignInstitutions": "Реестр должностных лиц загранучреждений",
+  "User's full name": "ФИО пользователя",
+  "Position": "Должность",
+  "Date of birth": "Дата рождения",
+  "Phone Number": "Номер телефона",
+  "E-mail": "E-mail",
+  "Institution": "Учреждение",
+  "Order": "Приказ",
+  "Criminal record": "Судимость",
+  "Export to Excel": "Экспортировать в Exсel"
 }
