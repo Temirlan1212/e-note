@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import Head from "next/head";
-import { Box, Typography, Container } from "@mui/material";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
-import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
-import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
+import { Box, Typography } from "@mui/material";
 
 import { useTranslations } from "next-intl";
 
