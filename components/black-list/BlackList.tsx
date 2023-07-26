@@ -211,134 +211,75 @@ export default function BlackList() {
 
   return (
     <>
-      <Head>
-        <title>{t("Black list")}</title>
-      </Head>
-      <Container
+      <Grid
+        container
+        spacing={{ xs: 2.5, sm: 3.75, md: 3.75 }}
+        justifyContent="space-between"
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "30px",
-          padding: { xs: "30px 20px 31px 20px", sm: "30px 20px 57px 20px", md: "60px 60px 198px 60px" },
-          maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "usnet" },
+          display: { xs: "flex", sm: "flex" },
+          flexDirection: { xs: "column-reverse", sm: "column", md: "unset" },
+          alignItems: { xs: "unset", sm: "flex-end", md: "unset" },
         }}
       >
-        <Grid
-          container
-          spacing={{ xs: 2.5, sm: 3.75, md: 3.75 }}
-          justifyContent="space-between"
-          sx={{
-            display: { xs: "flex", sm: "flex" },
-            flexDirection: { xs: "column-reverse", sm: "column", md: "unset" },
-            alignItems: { xs: "unset", sm: "flex-end", md: "unset" },
-          }}
-        >
-          <Grid item xs={12} sm={12} md={9} sx={{ alignSelf: "stretch" }}>
-            <SearchBar onChange={handleSearchInputChange} value={searchQuery} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Button
-              variant="contained"
-              color="success"
-              sx={{
-                height: "56px",
-                gap: "8px",
-                padding: "13px 22px",
-              }}
-              fullWidth
-            >
-              <PostAddIcon />
-              <Typography fontWeight={600}>{t("Enter subject")}</Typography>
-            </Button>
-          </Grid>
+        <Grid item xs={12} sm={12} md={9} sx={{ alignSelf: "stretch" }}>
+          <SearchBar onChange={handleSearchInputChange} value={searchQuery} />
         </Grid>
 
-        <Grid container spacing={{ xs: 2.5, sm: 2.5, md: 5 }}>
-          <Grid item xs={12} sm={12} md={4}>
-            <InputLabel htmlFor="input-reason" sx={{ fontSize: "14px", fontWeight: "500" }}>
-              {t("Reason")}
-            </InputLabel>
-            <Input placeholder={t("Enter a reason")} variant="outlined" name="input-reason" fullWidth />
-          </Grid>
-          <Grid item xs={12} sm={12} md={4}>
-            <InputLabel htmlFor="input-pin" sx={{ fontSize: "14px", fontWeight: "500" }}>
-              {t("Subject PIN")}
-            </InputLabel>
-            <Input placeholder={t("Enter PIN")} variant="outlined" name="input-pin" fullWidth />
-          </Grid>
-          <Grid item xs={12} sm={12} md={4}>
-            <InputLabel htmlFor="input-full-name" sx={{ fontSize: "14px", fontWeight: "500" }}>
-              {t("Subject full name")}
-            </InputLabel>
-            <Input placeholder={t("Enter full name")} variant="outlined" name="input-full-name" fullWidth />
-          </Grid>
-        </Grid>
-
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <Box
+        <Grid item xs={12} sm={6} md={3}>
+          <Button
+            variant="contained"
+            color="success"
             sx={{
-              display: {
-                xs: "flex",
-                sm: "flex",
-                md: "none",
-                lg: "none",
-              },
-              justifyContent: "space-between",
+              height: "56px",
+              gap: "8px",
+              padding: "13px 22px",
             }}
+            fullWidth
           >
-            <HelpOutlineOutlinedIcon color="success" />
-            <Box
-              sx={{
-                display: "flex",
-                gap: "10px",
-              }}
-            >
-              <Button
-                variant="text"
-                sx={{ padding: "12px", border: "1px solid #EFEFEF", "&:hover": { color: "#FFF" } }}
-              >
-                <KeyboardArrowLeftOutlinedIcon />
-              </Button>
-              <Button
-                variant="text"
-                sx={{ padding: "12px", border: "1px solid #EFEFEF", "&:hover": { color: "#FFF" } }}
-              >
-                <KeyboardArrowRightOutlinedIcon />
-              </Button>
-            </Box>
-          </Box>
+            <PostAddIcon />
+            <Typography fontWeight={600}>{t("Enter subject")}</Typography>
+          </Button>
+        </Grid>
+      </Grid>
 
-          <Box sx={{ height: "448px" }}>
-            <GridTable
-              rows={filteredRows}
-              columns={columns}
-              filterData={{
-                data: {
-                  rows: [rows],
-                },
-                filterField: { field: "id" },
-              }}
-              sx={dataGridStyles}
-            />
-          </Box>
-        </Box>
+      <Grid container spacing={{ xs: 2.5, sm: 2.5, md: 5 }}>
+        <Grid item xs={12} sm={12} md={4}>
+          <InputLabel htmlFor="input-reason" sx={{ fontSize: "14px", fontWeight: "500" }}>
+            {t("Reason")}
+          </InputLabel>
+          <Input placeholder={t("Enter a reason")} variant="outlined" name="input-reason" fullWidth />
+        </Grid>
+        <Grid item xs={12} sm={12} md={4}>
+          <InputLabel htmlFor="input-pin" sx={{ fontSize: "14px", fontWeight: "500" }}>
+            {t("Subject PIN")}
+          </InputLabel>
+          <Input placeholder={t("Enter PIN")} variant="outlined" name="input-pin" fullWidth />
+        </Grid>
+        <Grid item xs={12} sm={12} md={4}>
+          <InputLabel htmlFor="input-full-name" sx={{ fontSize: "14px", fontWeight: "500" }}>
+            {t("Subject full name")}
+          </InputLabel>
+          <Input placeholder={t("Enter full name")} variant="outlined" name="input-full-name" fullWidth />
+        </Grid>
+      </Grid>
 
-        <Box alignSelf="center">
-          <Pagination currentPage={selectedPage} totalPages={totalPages} onPageChange={onPageChange} />
-        </Box>
-      </Container>
+      <Box sx={{ height: "448px" }}>
+        <GridTable
+          rows={filteredRows}
+          columns={columns}
+          filterData={{
+            data: {
+              rows: [rows],
+            },
+            filterField: { field: "id" },
+          }}
+          sx={dataGridStyles}
+        />
+      </Box>
+
+      <Box alignSelf="center">
+        <Pagination currentPage={selectedPage} totalPages={totalPages} onPageChange={onPageChange} />
+      </Box>
     </>
   );
-}
-
-export async function getStaticProps(context: GetStaticPropsContext) {
-  return {
-    props: {
-      messages: {
-        ...(await import(`locales/${context.locale}/common.json`)).default,
-        ...(await import(`locales/${context.locale}/black-list.json`)).default,
-      },
-    },
-  };
 }
