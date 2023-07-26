@@ -1,11 +1,12 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { Select as MUISelect, SelectProps } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
 enum types {
-  primary = "#24334B",
-  secondary = "success.main",
+  danger = "danger.main",
+  success = "success.main",
+  secondary = "secondary.main",
 }
 
 interface ISelectProps extends SelectProps {
@@ -15,10 +16,9 @@ interface ISelectProps extends SelectProps {
   onChange?: any;
   selectType?: keyof typeof types;
   register?: UseFormRegister<any>;
-  error?: boolean;
 }
 
-const Select: React.FC<ISelectProps> = ({
+const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = ({
   children,
   data = [],
   register,
@@ -27,27 +27,23 @@ const Select: React.FC<ISelectProps> = ({
   selectType = "secondary",
   valueField = "value",
   labelField = "label",
-  error,
   ...props
 }) => {
   const inputStyles = {
-    color: error ? "text.primary" : types[selectType],
+    color: "text.primary",
     minWidth: "226px",
     width: "100%",
     "& .MuiInputBase-input": {
       padding: "12px 14px",
     },
     ".MuiOutlinedInput-notchedOutline": {
-      borderColor: error ? "error.main" : types[selectType],
+      borderColor: types[selectType],
     },
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: error ? "error.main" : "success.main",
+      borderColor: types[selectType],
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: error ? "error.main" : "success.main",
-    },
-    ".MuiSvgIcon-root ": {
-      fill: !error && "#1BAA75 !important",
+      borderColor: types[selectType],
     },
     fontSize: "14px",
     borderRadius: 0,
@@ -65,8 +61,11 @@ const Select: React.FC<ISelectProps> = ({
       {data.map((item) => (
         <MenuItem
           sx={{
-            "&& .Mui-selected": {
+            "&.Mui-selected": {
               backgroundColor: "#EFEFEF",
+              "&:hover": {
+                backgroundColor: "#EFEFEF",
+              },
             },
             color: "#24334B",
             fontSize: "16px",
@@ -81,4 +80,4 @@ const Select: React.FC<ISelectProps> = ({
   );
 };
 
-export default Select;
+export default forwardRef<HTMLDivElement, ISelectProps>(Select);
