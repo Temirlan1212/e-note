@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import InheritanceCases from "../../components/registry/InheritanceCases";
+import InheritanceCases from "../../components/registries/InheritanceCases";
 
 export default function inheritanceCases() {
   const t = useTranslations();
