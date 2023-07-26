@@ -19,7 +19,7 @@ const ForeignInstitutionsContent: FC<IForeignInstitutionsContentProps> = (props)
 
   const columns = [
     { field: "fullName", headerName: "User's full name", width: 280 },
-    { field: "position", headerName: "Position", width: 220 },
+    { field: "position", headerName: "Position", width: 280 },
     { field: "birthDate", headerName: "Date of birth", width: 140 },
     { field: "phoneNumber", headerName: "Phone Number", width: 160 },
     { field: "email", headerName: "E-mail", width: 180 },
@@ -108,10 +108,6 @@ const ForeignInstitutionsContent: FC<IForeignInstitutionsContentProps> = (props)
 
   const totalPages = Math.ceil(rows.length / itemsPerPage);
 
-  const onPageChange = (page: number) => {
-    setSelectedPage(page);
-  };
-
   return (
     <Box
       sx={{
@@ -165,7 +161,19 @@ const ForeignInstitutionsContent: FC<IForeignInstitutionsContentProps> = (props)
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <Box>
-          <GridTable rows={rows} columns={columns} sx={dataGridStyles} />
+          <GridTable
+            rows={rows}
+            columns={columns}
+            sx={dataGridStyles}
+            filterData={{
+              data: {
+                position: rows ?? [],
+              },
+              filterField: {
+                position: { field: "title_ru", outputField: "value" },
+              },
+            }}
+          />
         </Box>
       </Box>
     </Box>
