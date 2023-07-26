@@ -51,6 +51,7 @@
   "Export": "Экспортировать",
   "Download as CSV": "Загрузить как CSV",
   "Print": "Распечатать",
+  "There are no changes in the form": "В форме нет никаких изменений",
   "Done": "Готово",
   "ID": "ID",
   "Name": "Наименование",
@@ -60,5 +61,16 @@
   "Correspondence": "Переписка",
   "Apply": "Применить",
   "No data": "Данных нет",
-  "Reset": "Сбросить"
+  "Reset": "Сбросить",
+  "Yes": "Да",
+  "No": "Нет",
+  "Do you really want to delete this record?": "Вы действительно хотите удалить эту запись?",
+  "Deleting the record": "Удаление записи",
+  "The table can be scrolled horizontally or you can use the buttons to move around the table": "Таблицу можно скролить по горизонтали либо Вы можете использовать кнопки для перемещения по таблице",
+  "Applications": "Заявки",
+  "Date": "Дата",
+  "Download": "Скачать",
+  "Delete": "Удалить",
+  "More detailed": "Подробнее",
+  "Edit": "Редактировать"
 }

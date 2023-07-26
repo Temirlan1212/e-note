@@ -12,11 +12,19 @@ interface ILink {
   href: string;
 }
 
+enum types {
+  hint = "success.main",
+  warning = "warning.main",
+  error = "error.main",
+  success = "success.main",
+}
+
 interface IHintProps extends BoxProps {
   title?: string;
   text?: string;
-  type: "success" | "error" | "hint";
+  type: keyof typeof types;
   links?: ILink[];
+  defaultActive?: boolean;
 }
 
 const Box = styled((props: BoxProps) => <MuiBox {...props} />)(({ theme }) => ({
@@ -28,9 +36,9 @@ const Box = styled((props: BoxProps) => <MuiBox {...props} />)(({ theme }) => ({
   boxShadow: "0px 10px 20px 0px #E9E9E9",
 }));
 
-export default function Hint({ title, text, links, type, children, ...props }: IHintProps) {
+export default function Hint({ title, text, links, type, defaultActive = true, children, ...props }: IHintProps) {
   const t = useTranslations();
-  const [isActive, setIsActive] = React.useState(true);
+  const [isActive, setIsActive] = React.useState(defaultActive);
 
   const Icon = type === "hint" ? HelpOutlinedIcon : type === "success" ? CheckCircleIcon : ErrorOutlineIcon;
 
@@ -62,7 +70,7 @@ export default function Hint({ title, text, links, type, children, ...props }: I
         </Typography>
       </MuiBox>
       <IconButton sx={{ height: "min-content", padding: 0 }} onClick={handleClick}>
-        <Icon sx={{ color: type === "error" ? "#EB5757" : "success.main" }} />
+        <Icon sx={{ color: types[type] }} />
       </IconButton>
     </Box>
   );

@@ -4,7 +4,9 @@ import { MenuItem } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
 interface ISelectProps extends SelectProps {
-  data: any;
+  data: Record<string, any>[];
+  labelField?: string;
+  outputField?: string;
   onChange?: any;
   selectType?: "primary" | "secondary";
   register?: UseFormRegister<any>;
@@ -12,11 +14,13 @@ interface ISelectProps extends SelectProps {
 
 const Select: React.FC<ISelectProps> = ({
   children,
-  data,
+  data = [],
   register,
   name,
   defaultValue,
   selectType = "secondary",
+  outputField = "value",
+  labelField = "label",
   ...props
 }) => {
   const inputStyles = {
@@ -50,7 +54,7 @@ const Select: React.FC<ISelectProps> = ({
       {...(register && name && register(name))}
       defaultValue={defaultValue ?? ""}
     >
-      {data.map((item: { value: any; label: any }) => (
+      {data.map((item) => (
         <MenuItem
           sx={{
             "&& .Mui-selected": {
@@ -59,10 +63,10 @@ const Select: React.FC<ISelectProps> = ({
             color: "#24334B",
             fontSize: "16px",
           }}
-          key={item.value}
-          value={item.value}
+          key={item[outputField]}
+          value={item[outputField]}
         >
-          {item.label}
+          {item[labelField]}
         </MenuItem>
       ))}
     </MUISelect>

@@ -55,6 +55,12 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
   ],
   userRoutes: [
     {
+      title: "Applications",
+      link: "/applications",
+      type: "menu",
+      icon: "BorderColor",
+    },
+    {
       title: "Files",
       link: "/files",
       type: "menu",
