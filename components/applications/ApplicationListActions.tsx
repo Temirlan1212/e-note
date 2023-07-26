@@ -1,7 +1,7 @@
 import { Box, IconButton, Tooltip } from "@mui/material";
 import { GridRenderCellParams, GridTreeNodeWithRender } from "@mui/x-data-grid";
 import Link from "@/components/ui/Link";
-import { ConfirmationModal } from "../ui/ConfirmationModal";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import { Dispatch, SetStateAction } from "react";
@@ -10,7 +10,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { useTranslations } from "next-intl";
 
-export const GridTableActionsCell = ({
+export const ApplicationListActions = ({
   params,
   onDelete,
 }: {

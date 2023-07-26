@@ -1,9 +1,8 @@
-import { GridTable, IFilterSubmitParams } from "../ui/GridTable";
+import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import { Box, Typography } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import { useDictionaryStore } from "@/stores/dictionaries";
 import { useState } from "react";
-import { GridTableActionsCell } from "./GridTableActionsCell";
 import { useRouter } from "next/router";
 import { IActionType } from "@/models/dictionaries/action-type";
 import Pagination from "@/components/ui/Pagination";
@@ -13,6 +12,7 @@ import Button from "@/components/ui/Button";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import Link from "@/components/ui/Link";
 import { useTranslations } from "next-intl";
+import { ApplicationListActions } from "./ApplicationLIstActions";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -155,7 +155,7 @@ export default function ApplicationList() {
             width: 200,
             sortable: false,
             type: "actions",
-            renderCell: (params) => <GridTableActionsCell params={params} onDelete={handleDelete} />,
+            renderCell: (params) => <ApplicationListActions params={params} onDelete={handleDelete} />,
           },
         ]}
         rows={data?.data ?? []}
