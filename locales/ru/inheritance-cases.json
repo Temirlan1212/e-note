@@ -1,0 +1,22 @@
+{
+  "QR": "QR",
+  "All years": "Все года",
+  "Register of inheritance cases": "Реестр наследственных дел",
+  "Registry number": "Номер реестра",
+  "PIN of the deceased": "ПИН умершего",
+  "Full name of the deceased": "ФИО умершего",
+  "Enter number": "Введите номер",
+  "Enter PIN": "Введите ПИН",
+  "Enter full name": "Введите ФИО",
+  "Date of birth": "Дата рождения",
+  "Place of last residence": "Место последнего проживания",
+  "Date of death": "Дата смерти",
+  "Date of creation": "Дата создания",
+  "Who created": "Кем создан",
+  "Collapse filter": "Свернуть фильтр",
+  "Expand filter": "Развернуть фильтр",
+  "Sorting for": "Сортировка за",
+  "Sorting": "Сортировка",
+  "Export to excel": "Экспортировать в Exсel",
+  "year": "год"
+}
