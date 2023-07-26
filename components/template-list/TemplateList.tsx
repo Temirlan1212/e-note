@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import Head from "next/head";
-import { Box, Typography, Container, RadioGroup } from "@mui/material";
+import { Box, Typography, Container } from "@mui/material";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 
 import { useTranslations } from "next-intl";
-import { GetStaticPropsContext } from "next";
 
-import SwitchLanguage from "../ui/SwitchLanguage";
+import SwitchLanguage from "./SwitchLanguage";
 import Pagination from "../ui/Pagination";
 import SearchBar from "../ui/SearchBar";
 import Button from "../ui/Button";
@@ -76,7 +75,7 @@ export default function TemplateList() {
       documentType: t(
         "Contract for the sale of an apartment (residential building) with the participation of a representative"
       ),
-      objectType: "Real estate",
+      objectType: t("Real estate"),
     },
     {
       id: 3,
@@ -178,87 +177,27 @@ export default function TemplateList() {
 
   return (
     <>
-      <Head>
-        <title>{t("Template list")}</title>
-      </Head>
-      <Container
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "30px",
-          alignSelf: "center",
-          padding: { xs: "30px 20px 33px 20px", sm: "30px 20px 49px 20px", md: "60px 60px 46px 60px" },
-          maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
-        }}
-      >
-        <SearchBar onChange={handleSearchInputChange} value={searchQuery} />
+      <SearchBar onChange={handleSearchInputChange} value={searchQuery} />
 
-        <SwitchLanguage defaultLanguage="Russian" languages={["Kyrgyz", "Russian"]} />
+      <SwitchLanguage defaultLanguage="Russian" languages={["Kyrgyz", "Russian"]} />
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <Box
-            sx={{
-              display: {
-                xs: "flex",
-                sm: "flex",
-                md: "none",
-                lg: "none",
-              },
-              justifyContent: "space-between",
-            }}
-          >
-            <HelpOutlineOutlinedIcon color="success" />
-            <Box
-              sx={{
-                display: "flex",
-                gap: "10px",
-              }}
-            >
-              <Button
-                variant="text"
-                sx={{ padding: "12px", border: "1px solid #EFEFEF", "&:hover": { color: "#FFF" } }}
-              >
-                <KeyboardArrowLeftOutlinedIcon />
-              </Button>
-              <Button
-                variant="text"
-                sx={{ padding: "12px", border: "1px solid #EFEFEF", "&:hover": { color: "#FFF" } }}
-              >
-                <KeyboardArrowRightOutlinedIcon />
-              </Button>
-            </Box>
-          </Box>
+      <Box sx={{ height: "448px" }}>
+        <GridTable
+          rows={filteredRows}
+          columns={columns}
+          filterData={{
+            data: {
+              rows: [rows],
+            },
+            filterField: { field: "id", outputField: "name" },
+          }}
+          sx={dataGridStyles}
+        />
+      </Box>
 
-          <Box sx={{ height: "450px", overflowX: "hidden" }}>
-            <GridTable
-              rows={filteredRows}
-              columns={columns}
-              filterData={{
-                data: {
-                  rows: [rows],
-                },
-                filterField: { field: "id", outputField: "name" },
-              }}
-              sx={dataGridStyles}
-            />
-          </Box>
-        </Box>
-
-        <Box alignSelf="center">
-          <Pagination currentPage={selectedPage} totalPages={totalPages} onPageChange={onPageChange} />
-        </Box>
-      </Container>
+      <Box alignSelf="center">
+        <Pagination currentPage={selectedPage} totalPages={totalPages} onPageChange={onPageChange} />
+      </Box>
     </>
   );
-}
-
-export async function getStaticProps(context: GetStaticPropsContext) {
-  return {
-    props: {
-      messages: {
-        ...(await import(`locales/${context.locale}/common.json`)).default,
-        ...(await import(`locales/${context.locale}/template-list.json`)).default,
-      },
-    },
-  };
 }
