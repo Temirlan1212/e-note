@@ -39,10 +39,12 @@ function Layout({ children }: { children: JSX.Element }) {
   }, [routes.guestRoutes]);
 
   useEffect(() => {
-    getStatusData();
-    getActionTypeData();
-    getDocumentTypeData();
-  }, []);
+    if (user != null) {
+      getStatusData();
+      getActionTypeData();
+      getDocumentTypeData();
+    }
+  }, [user]);
 
   if (user != null && !guestRoutes.map((r) => r.link).includes(router.route)) {
     return <PrivateLayout>{children}</PrivateLayout>;
