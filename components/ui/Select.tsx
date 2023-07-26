@@ -3,13 +3,19 @@ import { Select as MUISelect, SelectProps } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
+enum types {
+  primary = "#24334B",
+  secondary = "success.main",
+}
+
 interface ISelectProps extends SelectProps {
   data: Record<string, any>[];
   labelField?: string;
-  outputField?: string;
+  valueField?: string;
   onChange?: any;
-  selectType?: "primary" | "secondary";
+  selectType?: keyof typeof types;
   register?: UseFormRegister<any>;
+  error?: boolean;
 }
 
 const Select: React.FC<ISelectProps> = ({
@@ -19,28 +25,29 @@ const Select: React.FC<ISelectProps> = ({
   name,
   defaultValue,
   selectType = "secondary",
-  outputField = "value",
+  valueField = "value",
   labelField = "label",
+  error,
   ...props
 }) => {
   const inputStyles = {
-    color: selectType === "primary" ? "#24334B" : "#1BAA75",
+    color: error ? "text.primary" : types[selectType],
     minWidth: "226px",
     width: "100%",
     "& .MuiInputBase-input": {
       padding: "12px 14px",
     },
     ".MuiOutlinedInput-notchedOutline": {
-      borderColor: selectType === "primary" ? "#CDCDCD" : "#1BAA75",
+      borderColor: error ? "error.main" : types[selectType],
     },
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#1BAA75",
+      borderColor: error ? "error.main" : "success.main",
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#1BAA75",
+      borderColor: error ? "error.main" : "success.main",
     },
     ".MuiSvgIcon-root ": {
-      fill: "#1BAA75 !important",
+      fill: !error && "#1BAA75 !important",
     },
     fontSize: "14px",
     borderRadius: 0,
@@ -54,6 +61,7 @@ const Select: React.FC<ISelectProps> = ({
       {...(register && name && register(name))}
       defaultValue={defaultValue ?? ""}
     >
+      <MenuItem value="">---</MenuItem>
       {data.map((item) => (
         <MenuItem
           sx={{
@@ -63,8 +71,8 @@ const Select: React.FC<ISelectProps> = ({
             color: "#24334B",
             fontSize: "16px",
           }}
-          key={item[outputField]}
-          value={item[outputField]}
+          key={item[valueField]}
+          value={item[valueField]}
         >
           {item[labelField]}
         </MenuItem>
