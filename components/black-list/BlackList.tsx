@@ -1,18 +1,13 @@
 import React, { useState } from "react";
 import { useTranslations } from "next-intl";
-import { GetStaticPropsContext } from "next";
-import Head from "next/head";
 
-import { Box, Typography, Container, InputLabel } from "@mui/material";
+import { Box, Typography, InputLabel } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Popover from "@mui/material/Popover";
 import IconButton from "@mui/material/IconButton";
 
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PostAddIcon from "@mui/icons-material/PostAdd";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
-import KeyboardArrowRightOutlinedIcon from "@mui/icons-material/KeyboardArrowRightOutlined";
-import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 
 import Button from "../ui/Button";
 import Input from "../ui/Input";
