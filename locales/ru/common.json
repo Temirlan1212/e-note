@@ -68,5 +68,9 @@
   "Deleting the record": "Удаление записи",
   "The table can be scrolled horizontally or you can use the buttons to move around the table": "Таблицу можно скролить по горизонтали либо Вы можете использовать кнопки для перемещения по таблице",
   "Applications": "Заявки",
-  "Date": "Дата"
+  "Date": "Дата",
+  "Download": "Скачать",
+  "Delete": "Удалить",
+  "More detailed": "Подробнее",
+  "Edit": "Редактировать"
 }

@@ -1,4 +1,4 @@
-import { IApplication, IApplicationsQueryParamsData } from "@/models/applications/applications";
+import { IApplication, IApplicationsQueryParamsData } from "@/models/applications/application-list";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<IApplication | null>) {

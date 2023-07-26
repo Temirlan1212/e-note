@@ -11,7 +11,6 @@ export type IProduct = {
 
 export interface IApplication extends IProduct, ICreatedBy {
   statusSelect: number;
-  createdBy: ICreatedBy;
   id: number;
   creationDate: string;
   version: number;
@@ -25,12 +24,3 @@ export interface IApplicationsQueryParamsData {
     [key: string]: (number | string)[];
   };
 }
-
-export interface IApplicationQueryParams {
-  offset: number;
-  limit: number;
-  fields: string[];
-  data: IApplicationsQueryParamsData;
-}
-
-export type SortType = "asc" | "desc";

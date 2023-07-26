@@ -24,7 +24,7 @@ interface IHintProps extends BoxProps {
   text?: string;
   type: keyof typeof types;
   links?: ILink[];
-  defaultActiveState?: boolean;
+  defaultActive?: boolean;
 }
 
 const Box = styled((props: BoxProps) => <MuiBox {...props} />)(({ theme }) => ({
@@ -36,9 +36,9 @@ const Box = styled((props: BoxProps) => <MuiBox {...props} />)(({ theme }) => ({
   boxShadow: "0px 10px 20px 0px #E9E9E9",
 }));
 
-export default function Hint({ title, text, links, type, defaultActiveState = true, children, ...props }: IHintProps) {
+export default function Hint({ title, text, links, type, defaultActive = true, children, ...props }: IHintProps) {
   const t = useTranslations();
-  const [isActive, setIsActive] = React.useState(defaultActiveState);
+  const [isActive, setIsActive] = React.useState(defaultActive);
 
   const Icon = type === "hint" ? HelpOutlinedIcon : type === "success" ? CheckCircleIcon : ErrorOutlineIcon;
 

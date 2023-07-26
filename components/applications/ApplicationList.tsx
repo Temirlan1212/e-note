@@ -23,7 +23,6 @@ interface IAppQueryParams {
 
 export default function ApplicationList() {
   const t = useTranslations();
-  const url = "/api/applications/application-list";
   const { locale } = useRouter();
   const actionTypeData = useDictionaryStore((store) => store.actionTypeData);
   const documentTypeData = useDictionaryStore((store) => store.documentTypeData);
@@ -35,7 +34,7 @@ export default function ApplicationList() {
     filterValues: {},
   });
 
-  const { data, loading, update } = useFetch(url, "POST", {
+  const { data, loading, update } = useFetch("/api/applications", "POST", {
     body: appQueryParams,
   });
 
@@ -72,6 +71,14 @@ export default function ApplicationList() {
   const handleSortByDate = async (model: GridSortModel) => {
     const sortBy = model.map((s) => (s.sort === "asc" ? s.field : `-${s.field}`));
     updateAppQueryParams("sortBy", sortBy);
+  };
+
+  const handleDelete = async () => {
+    const res = await update();
+    if (res?.total) {
+      const page = Math.ceil(res.total / appQueryParams.pageSize);
+      updateAppQueryParams("page", page);
+    }
   };
 
   return (
@@ -148,7 +155,7 @@ export default function ApplicationList() {
             width: 200,
             sortable: false,
             type: "actions",
-            renderCell: (params) => <GridTableActionsCell params={params} onDelete={update} />,
+            renderCell: (params) => <GridTableActionsCell params={params} onDelete={handleDelete} />,
           },
         ]}
         rows={data?.data ?? []}

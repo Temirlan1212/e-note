@@ -154,7 +154,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
         flexWrap="wrap"
       >
         <Box>
-          <Hint type="hint" defaultActiveState={false}>
+          <Hint type="hint" defaultActive={false}>
             {t("The table can be scrolled horizontally or you can use the buttons to move around the table")}
           </Hint>
         </Box>

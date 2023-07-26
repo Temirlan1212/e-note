@@ -1,8 +1,9 @@
-import { IApplication } from "@/models/applications/applications";
+import { IApplication } from "@/models/applications/application-list";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<IApplication | null>) {
-  const id = req.query["id"];
+  const { id } = req.query;
+
   if (req.method !== "DELETE" && id == null) {
     return res.status(400).json(null);
   }

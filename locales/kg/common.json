@@ -73,5 +73,9 @@
   "Deleting the record": "Жазууну өчүрүү",
   "The table can be scrolled horizontally or you can use the buttons to move around the table": "Таблицаны туурасынан жылдырса болот же айланасында жылдыруу үчүн баскычтарды колдонсоңуз болот",
   "Applications": "Билдирүүлөр",
-  "Date": "Дата"
+  "Date": "Дата",
+  "Download": "Көчүрүү",
+  "Delete": "Өчүрүү",
+  "More detailed": "Кененирээк",
+  "Edit": "Оңдоо"
 }

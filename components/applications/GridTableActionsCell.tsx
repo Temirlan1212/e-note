@@ -1,14 +1,14 @@
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, Tooltip } from "@mui/material";
 import { GridRenderCellParams, GridTreeNodeWithRender } from "@mui/x-data-grid";
-import DetailsIcon from "@/public/icons/details-action.svg";
-import DownloadIcon from "@/public/icons/download-action.svg";
-import EditIcon from "@/public/icons/edit-action.svg";
-
 import Link from "@/components/ui/Link";
 import { ConfirmationModal } from "../ui/ConfirmationModal";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DeleteIcon from "@mui/icons-material/Delete";
+import DownloadIcon from "@mui/icons-material/Download";
 import { Dispatch, SetStateAction } from "react";
 import useFetch from "@/hooks/useFetch";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { useTranslations } from "next-intl";
 
 export const GridTableActionsCell = ({
   params,
@@ -17,14 +17,15 @@ export const GridTableActionsCell = ({
   params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>;
   onDelete: () => void;
 }) => {
-  const { update } = useFetch<Response>("/api/applications/delete?id=", "DELETE", {
+  const t = useTranslations();
+  const { update } = useFetch<Response>("", "DELETE", {
     useEffectOnce: false,
     returnResponse: true,
   });
 
   const handleDeleteClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
     if (params.row.id != null) {
-      await update("/api/applications/delete?id=" + params.row.id);
+      await update("/api/applications/delete/" + params.row.id);
       callback(false);
       onDelete();
     }
@@ -33,21 +34,27 @@ export const GridTableActionsCell = ({
   return (
     <Box display="flex" alignItems="center" gap="10px">
       <Link href="applications">
-        <IconButton sx={{ color: "text.primary" }}>
-          <DetailsIcon />
-        </IconButton>
+        <Tooltip title={t("More detailed")} arrow>
+          <IconButton>
+            <VisibilityIcon />
+          </IconButton>
+        </Tooltip>
       </Link>
 
       <Link href={"applications"}>
-        <IconButton sx={{ color: "text.primary" }}>
-          <EditIcon />
-        </IconButton>
+        <Tooltip title={t("Edit")} arrow>
+          <IconButton>
+            <ModeEditIcon />
+          </IconButton>
+        </Tooltip>
       </Link>
 
       <Link href="applications/">
-        <IconButton sx={{ color: "text.primary" }}>
-          <DownloadIcon />
-        </IconButton>
+        <Tooltip title={t("Download")} arrow>
+          <IconButton>
+            <DownloadIcon />
+          </IconButton>
+        </Tooltip>
       </Link>
 
       <ConfirmationModal
@@ -55,9 +62,11 @@ export const GridTableActionsCell = ({
         title="Deleting an application"
         onConfirm={(callback) => handleDeleteClick(callback)}
       >
-        <IconButton sx={{ color: "text.primary" }}>
-          <DeleteOutlineIcon />
-        </IconButton>
+        <Tooltip title={t("Delete")} arrow>
+          <IconButton>
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
       </ConfirmationModal>
     </Box>
   );
