@@ -58,6 +58,7 @@ export default function useFetch<T = FetchResponseBody>(
       })
       .then((res) => {
         setData(res);
+        return res;
       })
       .catch((e: Error) => {
         const error: FetchError = JSON.parse(e.message);

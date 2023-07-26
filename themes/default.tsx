@@ -13,6 +13,9 @@ const theme = createTheme({
     success: {
       main: "#1BAA75",
     },
+    secondary: {
+      main: "#3F5984",
+    },
     text: {
       primary: "#24334B",
     },

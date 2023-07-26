@@ -56,6 +56,7 @@
   "Export": "Export",
   "Download as CSV": "Download as CSV",
   "Print": "Print",
+  "There are no changes in the form": "There are no changes in the form",
   "Done": "Done",
   "ID": "ID",
   "Name": "Name",
@@ -65,5 +66,16 @@
   "Correspondence": "Correspondence",
   "Apply": "Apply",
   "No data": "No data",
-  "Reset": "Reset"
+  "Reset": "Reset",
+  "Yes": "Yes",
+  "No": "No",
+  "Do you really want to delete this record?": "Do you really want to delete this record?",
+  "Deleting the record": "Deleting the record",
+  "The table can be scrolled horizontally or you can use the buttons to move around the table": "The table can be scrolled horizontally or you can use the buttons to move around the table",
+  "Applications": "Applications",
+  "Date": "Date",
+  "Download": "Download",
+  "Delete": "Delete",
+  "More detailed": "More detailed",
+  "Edit": "Edit"
 }
