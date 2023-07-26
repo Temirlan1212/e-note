@@ -1,12 +1,11 @@
 import { DatePicker as MUIDatePicker, DatePickerProps } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-
+import { useLocale } from "next-intl";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { enUS, ru } from "date-fns/locale";
 
-import DateOpenIcon from "@/public/icons/date-open.svg";
-import { useLocale } from "next-intl";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 type Props<TInputDate> = {
   onChange?: any;
@@ -40,7 +39,7 @@ const DatePicker = <TInputDate, TDate = TInputDate>(props: Props<TInputDate>) =>
           format="dd.MM.yy"
           {...restProps}
           slots={{
-            openPickerIcon: DateOpenIcon,
+            openPickerIcon: CalendarMonthIcon,
           }}
           sx={{
             width: {
