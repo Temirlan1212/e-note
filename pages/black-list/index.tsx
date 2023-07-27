@@ -2,9 +2,9 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import BlackList from "../../components/black-list/BlackList";
+import BlackListComponent from "@/components/black-list/BlackList";
 
-export default function Profile() {
+export default function BlackList() {
   const t = useTranslations();
 
   return (
@@ -21,7 +21,7 @@ export default function Profile() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        <BlackList />
+        <BlackListComponent />
       </Container>
     </>
   );
