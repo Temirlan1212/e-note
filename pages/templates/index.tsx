@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import TemplateList from "@/components/template-list/TemplateList";
+import TemplateListComponent from "@/components/template-list/TemplateList";
 
 export default function TemplateList() {
   const t = useTranslations();
@@ -22,7 +22,7 @@ export default function TemplateList() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        <TemplateList />
+        <TemplateListComponent />
       </Container>
     </>
   );
