@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { Select as MUISelect, SelectProps } from "@mui/material";
+import { FormControl, FormHelperText, Select as MUISelect, SelectProps } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
@@ -16,6 +16,7 @@ interface ISelectProps extends SelectProps {
   onChange?: any;
   selectType?: keyof typeof types;
   register?: UseFormRegister<any>;
+  helperText?: string;
 }
 
 const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = ({
@@ -27,6 +28,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = ({
   selectType = "secondary",
   valueField = "value",
   labelField = "label",
+  helperText,
   ...props
 }) => {
   const inputStyles = {
@@ -51,32 +53,35 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = ({
 
   const combineStyles = { ...props.sx, ...inputStyles };
   return (
-    <MUISelect
-      sx={combineStyles}
-      {...props}
-      {...(register && name && register(name))}
-      defaultValue={defaultValue ?? ""}
-    >
-      <MenuItem value="">---</MenuItem>
-      {data.map((item) => (
-        <MenuItem
-          sx={{
-            "&.Mui-selected": {
-              backgroundColor: "#EFEFEF",
-              "&:hover": {
+    <FormControl>
+      <MUISelect
+        sx={combineStyles}
+        {...props}
+        {...(register && name && register(name))}
+        defaultValue={defaultValue ?? ""}
+      >
+        <MenuItem value="">---</MenuItem>
+        {data.map((item) => (
+          <MenuItem
+            sx={{
+              "&.Mui-selected": {
                 backgroundColor: "#EFEFEF",
+                "&:hover": {
+                  backgroundColor: "#EFEFEF",
+                },
               },
-            },
-            color: "#24334B",
-            fontSize: "16px",
-          }}
-          key={item[valueField]}
-          value={item[valueField]}
-        >
-          {item[labelField]}
-        </MenuItem>
-      ))}
-    </MUISelect>
+              color: "#24334B",
+              fontSize: "16px",
+            }}
+            key={item[valueField]}
+            value={item[valueField]}
+          >
+            {item[labelField]}
+          </MenuItem>
+        ))}
+      </MUISelect>
+      {helperText && <FormHelperText error={selectType === "danger"}>{helperText}</FormHelperText>}
+    </FormControl>
   );
 };
 
