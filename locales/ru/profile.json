@@ -6,5 +6,7 @@
   "Fullname": "ФИО",
   "Phone number": "Номер телефона",
   "Enter password": "Введите пароль",
-  "Confirm password": "Подтвердите пароль"
+  "Confirm password": "Подтвердите пароль",
+  "Old password": "Старый пароль",
+  "Change password": "Сменить пароль"
 }

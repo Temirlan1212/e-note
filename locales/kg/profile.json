@@ -6,5 +6,7 @@
   "Fullname": "ФИО",
   "Phone number": "Телефон номери",
   "Enter password": "Сырсөз",
-  "Confirm password": "Сырсөздү ырастоо"
+  "Confirm password": "Сырсөздү ырастоо",
+  "Old password": "Эски сырсөз",
+  "Change password": "Сырсөздү өзгөртүү"
 }

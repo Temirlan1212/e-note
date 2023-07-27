@@ -6,5 +6,7 @@
   "Fullname": "Full name",
   "Phone number": "Phone number",
   "Enter password": "Enter password",
-  "Confirm password": "Confirm password"
+  "Confirm password": "Confirm password",
+  "Old password": "Old password",
+  "Change password": "Change password"
 }

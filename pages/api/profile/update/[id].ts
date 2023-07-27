@@ -1,18 +1,23 @@
-import { IStatus } from "@/models/dictionaries/status";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IStatus | null>) {
-  if (req.method !== "POST") {
+import { IUserData } from "@/models/profile/user";
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse<IUserData | null>) {
+  const { id } = req.query;
+
+  if (req.method !== "POST" || req.body == null) {
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + "com.axelor.auth.db.User", {
+  const response = await fetch(process.env.BACKEND_API_URL + `/ws/rest/com.axelor.auth.db.User/${id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
-    body: JSON.stringify(req.body),
+    body: JSON.stringify({
+      data: req.body,
+    }),
   });
 
   if (!response.ok) {
