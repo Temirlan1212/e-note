@@ -77,5 +77,22 @@
   "Download": "Көчүрүү",
   "Delete": "Өчүрүү",
   "More detailed": "Кененирээк",
-  "Edit": "Оңдоо"
+  "Edit": "Оңдоо",
+  "QR": "QR",
+  "Registry number": "Реестр номери",
+  "Enter number": "Номерди киргизиңиз",
+  "Enter PIN": "ПИНди киргизиңиз",
+  "Enter full name": "Толук атын киргизиңиз",
+  "Date of birth": "Туулган күнү",
+  "Date of death": "Өлгөн күнү",
+  "Date of creation": "Түзүлгөн датасы",
+  "Collapse filter": "Чыпканы жыйыштыруу",
+  "Expand filter": "Чыпканы кеңейтүү",
+  "Sorting for": "Сортто",
+  "Sorting": "Сортто",
+  "Export to excel": "Excelге экспорттоо",
+  "year": "жыл",
+  "All years": "Бардык жылдар",
+  "Register of inheritance cases": "Мурастык иштердин реестри",
+  "Created by": "Ким түзгөн"
 }

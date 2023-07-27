@@ -72,5 +72,22 @@
   "Download": "Скачать",
   "Delete": "Удалить",
   "More detailed": "Подробнее",
-  "Edit": "Редактировать"
+  "Edit": "Редактировать",
+  "QR": "QR",
+  "Registry number": "Номер реестра",
+  "Enter number": "Введите номер",
+  "Enter PIN": "Введите ПИН",
+  "Enter full name": "Введите ФИО",
+  "Date of birth": "Дата рождения",
+  "Date of death": "Дата смерти",
+  "Date of creation": "Дата создания",
+  "Collapse filter": "Свернуть фильтр",
+  "Expand filter": "Развернуть фильтр",
+  "Sorting for": "Сортировка за",
+  "Sorting": "Сортировка",
+  "Export to excel": "Экспортировать в Exсel",
+  "year": "год",
+  "All years": "Все года",
+  "Register of inheritance cases": "Реестр наследственных дел",
+  "Created by": "Кем создан"
 }
