@@ -10,14 +10,15 @@ import theme from "@/themes/default";
 import { useProfileStore } from "@/stores/profile";
 import { IRoute, useRouteStore } from "@/stores/route";
 import { IUser } from "@/models/profile/user";
+import { useDictionaryStore } from "@/stores/dictionaries";
 
 function Layout({ children }: { children: JSX.Element }) {
   const router = useRouter();
   const profile = useProfileStore((state) => state);
   const routes = useRouteStore((state) => state);
-
   const [user, setUser]: [IUser | null, Function] = useState(null);
   const [guestRoutes, setGuestRoutes]: [IRoute[], Function] = useState([]);
+  const { getStatusData, getActionTypeData, getDocumentTypeData } = useDictionaryStore((state) => state);
 
   useEffect(() => {
     setUser(profile.user);
@@ -36,6 +37,14 @@ function Layout({ children }: { children: JSX.Element }) {
   useEffect(() => {
     setGuestRoutes(routes.getRoutes(routes.guestRoutes, "all"));
   }, [routes.guestRoutes]);
+
+  useEffect(() => {
+    if (user != null) {
+      getStatusData();
+      getActionTypeData();
+      getDocumentTypeData();
+    }
+  }, [user]);
 
   if (user != null && !guestRoutes.map((r) => r.link).includes(router.route)) {
     return <PrivateLayout>{children}</PrivateLayout>;

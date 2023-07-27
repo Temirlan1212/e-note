@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { UseFormReturn } from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
-import { IApplication } from "@/models/applications/application";
-import { Box, FormControl, InputLabel, Typography } from "@mui/material";
+import { IApplicationSchema } from "@/validator-schemas/application";
+import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
@@ -13,7 +13,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import useEffectOnce from "@/hooks/useEffectOnce";
 
 export interface IStepFieldsProps {
-  form: UseFormReturn<IApplication>;
+  form: UseFormReturn<IApplicationSchema>;
   onPrev?: Function | null;
   onNext?: Function | null;
 }
@@ -22,33 +22,34 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
   const t = useTranslations();
 
   const { data: regionsDictionary } = useFetch("/api/dictionaries/regions", "GET");
-  const { data: districtsDictionary } = useFetch("/api/dictionaries/districts", "GET");
-  const { data: citiesDictionary } = useFetch("/api/dictionaries/cities?districtId=6", "GET");
 
   useEffectOnce(() => {
     console.log(regionsDictionary);
   }, [regionsDictionary]);
 
-  useEffectOnce(() => {
-    console.log(districtsDictionary);
-  }, [districtsDictionary]);
-
-  useEffectOnce(() => {
-    console.log(citiesDictionary);
-  }, [citiesDictionary]);
-
   const {
     formState: { errors },
+    getValues,
     trigger,
-    register,
+    control,
+    watch,
   } = form;
+
+  useEffectOnce(() => {
+    const subscription = watch(() => triggerFields());
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   const handlePrevClick = () => {
     if (onPrev != null) onPrev();
   };
 
+  const triggerFields = async () => {
+    return await trigger(["name", "id"]);
+  };
+
   const handleNextClick = async () => {
-    const validated = await trigger(["name"]);
+    const validated = await triggerFields();
     if (onNext != null && validated) onNext();
   };
 
@@ -67,90 +68,101 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
       </Box>
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        <FormControl sx={{ width: "100%" }}>
-          <InputLabel
-            sx={{
-              fontSize: "18px",
-              top: "10px",
-              left: "-14px",
-              fontWeight: "500",
-              position: "inherit",
-            }}
-          >
-            {t("Region")}
-          </InputLabel>
-          <Select
-            placeholder="select"
-            data={[
-              { value: "1", label: t("Choose a device") },
-              { value: "2", label: t("noki") },
-            ]}
-            defaultValue={"1"}
-            register={register}
-            name="name"
-          ></Select>
-        </FormControl>
-        <FormControl sx={{ width: "100%" }}>
-          <InputLabel
-            sx={{
-              fontSize: "18px",
-              top: "10px",
-              left: "-14px",
-              fontWeight: "500",
-              position: "inherit",
-            }}
-          >
-            {t("District")}
-          </InputLabel>
-          <Select placeholder="select" data={[{ value: "1", label: t("Choose a device") }]} defaultValue={"1"}></Select>
-        </FormControl>
+        <Controller
+          control={control}
+          name="name"
+          defaultValue=""
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Region")}</InputLabel>
+              <Select
+                placeholder="select"
+                labelField="name"
+                valueField="id"
+                data={regionsDictionary?.data}
+                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                helperText={t(fieldState.error?.message)}
+                {...field}
+              ></Select>
+            </Box>
+          )}
+        />
+        <Controller
+          control={control}
+          name="id"
+          defaultValue={undefined}
+          render={({ field, fieldState }) => {
+            const regionId = getValues().name;
+            const { data: districtsDictionary } = useFetch(`/api/dictionaries/districts?regionId=${regionId}`, "GET");
+
+            return (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel>{t("District")}</InputLabel>
+                <Select
+                  placeholder="select"
+                  labelField="name"
+                  valueField="id"
+                  data={districtsDictionary?.data}
+                  selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                  helperText={t(fieldState.error?.message)}
+                  disabled={!regionId}
+                  {...field}
+                ></Select>
+              </Box>
+            );
+          }}
+        />
       </Box>
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        <FormControl sx={{ width: "100%" }}>
-          <InputLabel
-            sx={{
-              fontSize: "18px",
-              top: "10px",
-              left: "-14px",
-              fontWeight: "500",
-              position: "inherit",
-            }}
-          >
-            {t("City")}
-          </InputLabel>
-          <Select placeholder="select" data={[{ value: "1", label: t("Choose a device") }]} defaultValue={"1"}></Select>
-        </FormControl>
-        <FormControl sx={{ width: "100%" }}>
-          <InputLabel
-            sx={{
-              fontSize: "18px",
-              top: "10px",
-              left: "-14px",
-              fontWeight: "500",
-              position: "inherit",
-            }}
-          >
-            {t("Notary District")}
-          </InputLabel>
-          <Select placeholder="select" data={[{ value: "1", label: t("Choose a device") }]} defaultValue={"1"}></Select>
-        </FormControl>
-      </Box>
+        <Controller
+          control={control}
+          name="name"
+          defaultValue=""
+          render={({ field, fieldState }) => {
+            const districtId = getValues().id;
+            const { data: citiesDictionary } = useFetch(`/api/dictionaries/cities?districtId=${districtId}`, "GET");
 
-      <FormControl sx={{ width: "100%" }}>
-        <InputLabel
-          sx={{
-            fontSize: "18px",
-            top: "10px",
-            left: "-14px",
-            fontWeight: "500",
-            position: "inherit",
+            return (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel>{t("City")}</InputLabel>
+                <Select
+                  placeholder="select"
+                  labelField="name"
+                  valueField="id"
+                  data={citiesDictionary?.data}
+                  selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                  helperText={t(fieldState.error?.message)}
+                  disabled={!districtId}
+                  {...field}
+                ></Select>
+              </Box>
+            );
           }}
-        >
-          {t("Notary")}
-        </InputLabel>
-        <Select placeholder="select" data={[{ value: "1", label: t("Choose a device") }]} defaultValue={"1"}></Select>
-      </FormControl>
+        />
+        <Controller
+          control={control}
+          name="id"
+          defaultValue={undefined}
+          render={({ field, fieldState }) => {
+            return (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel>{t("District")}</InputLabel>
+                <Select
+                  placeholder="select"
+                  labelField="name"
+                  valueField="id"
+                  data={[]}
+                  selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                  helperText={t(fieldState.error?.message)}
+                  defaultValue={field.value}
+                  {...field}
+                ></Select>
+              </Box>
+            );
+          }}
+        />
+      </Box>
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (

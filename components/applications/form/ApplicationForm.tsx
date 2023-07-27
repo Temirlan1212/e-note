@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { applicationSchema } from "@/validator-schemas/application";
-import { IApplication } from "@/models/applications/application";
+import { IApplicationSchema, applicationSchema } from "@/validator-schemas/application";
+import { IApplication } from "@/models/application";
 import FirstStepFields from "./steps/FirstStepFields";
 import SecondStepFields from "./steps/SecondStepFields";
 import ThirdStepFields from "./steps/ThirdStepFields";
@@ -18,13 +18,8 @@ import Button from "@/components/ui/Button";
 export default function ApplicationForm() {
   const t = useTranslations();
 
-  const form = useForm<IApplication>({
-    resolver: yupResolver<IApplication>(applicationSchema),
-    defaultValues: {
-      id: 0,
-      version: 0,
-      name: "",
-    },
+  const form = useForm<IApplicationSchema>({
+    resolver: yupResolver<IApplicationSchema>(applicationSchema),
   });
 
   const {
@@ -36,14 +31,14 @@ export default function ApplicationForm() {
 
   const steps = [
     <FirstStepFields form={form} onNext={() => setStep(step + 1)} />,
-    <SecondStepFields form={form} />,
-    <ThirdStepFields form={form} />,
-    <FourthStepFields form={form} />,
-    <FifthStepFields form={form} />,
-    <SixthStepFields form={form} />,
+    <SecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    <ThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    <FourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    <FifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    <SixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
   ];
 
-  const onSubmit = async (data: IApplication) => {
+  const onSubmit = async (data: IApplicationSchema) => {
     console.log(data);
   };
 
@@ -75,6 +70,7 @@ export default function ApplicationForm() {
           })}
         </Stepper>
       </Box>
+
       <Box
         component="form"
         display="flex"
@@ -85,7 +81,9 @@ export default function ApplicationForm() {
         onSubmit={form.handleSubmit(onSubmit)}
       >
         {steps.map((component, index) => (
-          <Box sx={{ display: step != index ? "none" : "block" }}>{component}</Box>
+          <Box sx={{ display: step != index ? "none" : "block" }} key={index}>
+            {component}
+          </Box>
         ))}
         {step === steps.length - 1 && <Button type="submit">{t("Submit")}</Button>}
       </Box>

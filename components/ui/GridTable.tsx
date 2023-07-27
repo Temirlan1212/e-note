@@ -6,17 +6,19 @@ import {
   GridColDef,
   DataGridProps,
   GridValidRowModel,
-  GridToolbarExport,
 } from "@mui/x-data-grid";
-import { Box, MenuItem, Typography, lighten } from "@mui/material";
+import { Box, LinearProgress, MenuItem, Typography, lighten } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import Checkbox from "./Checkbox";
 import { useForm } from "react-hook-form";
-import Button from "./Button";
+import Button from "@/components/ui/Button";
 import { useTranslations } from "next-intl";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import Badge from "@mui/material/Badge";
+import Hint from "@/components/ui/Hint";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 export interface IGridTableFilterField {
   field: string;
@@ -61,6 +63,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
 }) => {
   const t = useTranslations();
   const rootStyles = {
+    height: "100%",
     ".MuiDataGrid-cell": {
       borderBottom: "none",
       color: "text.primary",
@@ -105,80 +108,129 @@ export const GridTable: React.FC<IGridTableProps> = ({
       ".MuiDataGrid-cellContent": {
         overflow: "auto",
         height: "100%",
-        display: "flex",
+        display: "block",
         alignItems: "center",
+        overflowWrap: "break-word",
       },
     },
-
+    ".MuiDataGrid-cell:focus-within": {
+      outline: "none",
+    },
+    ".MuiDataGrid-virtualScroller": {
+      scrollBehavior: "smooth",
+    },
     border: "none",
     background: "#F6F6F6",
+  };
+
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+
+  const handleScrollLeft = () => {
+    if (containerRef.current) {
+      const virtualScroller = containerRef.current.querySelector(".MuiDataGrid-virtualScroller");
+
+      if (virtualScroller) virtualScroller.scrollLeft -= 200;
+    }
+  };
+
+  const handleScrollRight = () => {
+    if (containerRef.current) {
+      const virtualScroller = containerRef.current.querySelector(".MuiDataGrid-virtualScroller");
+
+      if (virtualScroller) virtualScroller.scrollLeft += 200;
+    }
   };
 
   const mergedStyles = { ...rootStyles, ...sx };
 
   return (
-    <DataGrid
-      rows={rows}
-      columns={columns?.map((col) => ({
-        ...col,
-        renderHeader: (rowParams: GridColumnHeaderParams) => {
-          const specificFieldFilterData = filterData?.data?.[rowParams?.field];
-          const filterField = filterData?.filterField?.[rowParams?.field];
+    <Box height="100%" display="flex" flexDirection="column">
+      <Box
+        display={{ xs: "flex", md: "none" }}
+        justifyContent="space-between"
+        marginBottom="20px"
+        gap="20px"
+        alignItems="center"
+        flexWrap="wrap"
+      >
+        <Box>
+          <Hint type="hint" defaultActive={false}>
+            {t("The table can be scrolled horizontally or you can use the buttons to move around the table")}
+          </Hint>
+        </Box>
+        <Box display="flex" gap="10px">
+          <Button
+            size="small"
+            onClick={handleScrollLeft}
+            sx={{ bgcolor: "white", "&:hover": { bgcolor: "transparent" } }}
+          >
+            <ChevronLeftIcon color="success" />
+          </Button>
+          <Button onClick={handleScrollRight} sx={{ bgcolor: "white", "&:hover": { bgcolor: "transparent" } }}>
+            <ChevronRightIcon color="success" />
+          </Button>
+        </Box>
+      </Box>
+      <DataGrid
+        ref={containerRef}
+        rows={rows}
+        columns={columns?.map((col) => ({
+          ...col,
+          renderHeader: (rowParams: GridColumnHeaderParams) => {
+            const specificFieldFilterData = filterData?.data?.[rowParams?.field];
+            const filterField = filterData?.filterField?.[rowParams?.field];
 
-          return (
-            <GridTableHeader
-              rowParams={rowParams}
-              filterData={specificFieldFilterData}
-              onFilterSubmit={onFilterSubmit}
-              filterField={filterField}
-            />
-          );
-        },
-      }))}
-      localeText={{
-        toolbarExport: t("Export"),
-        toolbarExportCSV: t("Download as CSV"),
-        toolbarExportPrint: t("Print"),
-        noRowsLabel: t("No data"),
-      }}
-      disableDensitySelector
-      disableVirtualization
-      hideFooterPagination
-      disableColumnFilter
-      disableColumnMenu
-      showColumnVerticalBorder={false}
-      hideFooter
-      rowSelection={false}
-      density="comfortable"
-      slots={{
-        toolbar: () => (
-          <Box padding="5px" display="flex" justifyContent="flex-end">
-            <GridToolbarExport sx={{ color: "text.primary" }} />
-          </Box>
-        ),
-      }}
-      slotProps={{
-        panel: {
-          sx: {
-            "& .MuiTypography-root": {
-              color: "success.main",
-            },
-            "& .MuiDataGrid-filterForm": {
-              bgcolor: "lightblue",
+            return (
+              <GridTableHeader
+                rowParams={rowParams}
+                filterData={specificFieldFilterData}
+                onFilterSubmit={onFilterSubmit}
+                filterField={filterField}
+              />
+            );
+          },
+        }))}
+        localeText={{
+          toolbarExport: t("Export"),
+          toolbarExportCSV: t("Download as CSV"),
+          toolbarExportPrint: t("Print"),
+          noRowsLabel: t("No data"),
+        }}
+        disableDensitySelector
+        disableVirtualization
+        hideFooterPagination
+        disableColumnFilter
+        disableColumnMenu
+        showColumnVerticalBorder={false}
+        hideFooter
+        rowSelection={false}
+        density="comfortable"
+        slotProps={{
+          panel: {
+            sx: {
+              "& .MuiTypography-root": {
+                color: "success.main",
+              },
+              "& .MuiDataGrid-filterForm": {
+                bgcolor: "lightblue",
+              },
             },
           },
-        },
-        toolbar: {
-          sx: {
-            "& .MuiButtonBase-root": {
-              color: "text.primary",
+          toolbar: {
+            sx: {
+              "& .MuiButtonBase-root": {
+                color: "text.primary",
+              },
             },
           },
-        },
-      }}
-      sx={mergedStyles}
-      {...rest}
-    />
+        }}
+        slots={{
+          loadingOverlay: () => <LinearProgress color="success" />,
+        }}
+        sx={mergedStyles}
+        {...rest}
+      />
+    </Box>
   );
 };
 
