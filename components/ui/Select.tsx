@@ -53,7 +53,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = ({
 
   const combineStyles = { ...props.sx, ...inputStyles };
   return (
-    <FormControl>
+    <FormControl error={selectType === "danger"}>
       <MUISelect
         sx={combineStyles}
         {...props}
