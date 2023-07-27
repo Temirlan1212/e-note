@@ -45,7 +45,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
   };
 
   const triggerFields = async () => {
-    return await trigger(["name", "id"]);
+    return await trigger(["region", "district", "city", "notaryDistrict", "company"]);
   };
 
   const handleNextClick = async () => {
@@ -70,8 +70,8 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller
           control={control}
-          name="name"
-          defaultValue=""
+          name="region"
+          defaultValue={undefined}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Region")}</InputLabel>
@@ -79,7 +79,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                 placeholder="select"
                 labelField="name"
                 valueField="id"
-                data={regionsDictionary?.data}
+                data={regionsDictionary?.status === 0 ? regionsDictionary.data : []}
                 selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                 helperText={t(fieldState.error?.message)}
                 {...field}
@@ -89,10 +89,10 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
         />
         <Controller
           control={control}
-          name="id"
+          name="district"
           defaultValue={undefined}
           render={({ field, fieldState }) => {
-            const regionId = getValues().name;
+            const regionId = getValues().region;
             const { data: districtsDictionary } = useFetch(`/api/dictionaries/districts?regionId=${regionId}`, "GET");
 
             return (
@@ -102,7 +102,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   placeholder="select"
                   labelField="name"
                   valueField="id"
-                  data={districtsDictionary?.data}
+                  data={districtsDictionary?.status === 0 ? districtsDictionary.data : []}
                   selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                   helperText={t(fieldState.error?.message)}
                   disabled={!regionId}
@@ -117,10 +117,10 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller
           control={control}
-          name="name"
-          defaultValue=""
+          name="city"
+          defaultValue={undefined}
           render={({ field, fieldState }) => {
-            const districtId = getValues().id;
+            const districtId = getValues().district;
             const { data: citiesDictionary } = useFetch(`/api/dictionaries/cities?districtId=${districtId}`, "GET");
 
             return (
@@ -130,7 +130,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   placeholder="select"
                   labelField="name"
                   valueField="id"
-                  data={citiesDictionary?.data}
+                  data={citiesDictionary?.status === 0 ? citiesDictionary.data : []}
                   selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                   helperText={t(fieldState.error?.message)}
                   disabled={!districtId}
@@ -142,20 +142,26 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
         />
         <Controller
           control={control}
-          name="id"
+          name="notaryDistrict"
           defaultValue={undefined}
           render={({ field, fieldState }) => {
+            const cityId = getValues().city;
+            const { data: notaryDistrictsDictionary } = useFetch(
+              `/api/dictionaries/notary-districts?cityId=${cityId}`,
+              "GET"
+            );
+
             return (
               <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("District")}</InputLabel>
+                <InputLabel>{t("Notary district")}</InputLabel>
                 <Select
                   placeholder="select"
                   labelField="name"
                   valueField="id"
-                  data={[]}
+                  data={notaryDistrictsDictionary?.status === 0 ? notaryDistrictsDictionary.data : []}
                   selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                   helperText={t(fieldState.error?.message)}
-                  defaultValue={field.value}
+                  disabled={!cityId}
                   {...field}
                 ></Select>
               </Box>
@@ -163,6 +169,28 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
           }}
         />
       </Box>
+
+      <Controller
+        control={control}
+        name="company"
+        defaultValue={undefined}
+        render={({ field, fieldState }) => {
+          return (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Company")}</InputLabel>
+              <Select
+                placeholder="select"
+                labelField="name"
+                valueField="id"
+                data={[]}
+                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                helperText={t(fieldState.error?.message)}
+                {...field}
+              ></Select>
+            </Box>
+          );
+        }}
+      />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
