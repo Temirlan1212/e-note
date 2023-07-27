@@ -18,10 +18,10 @@ const OMSUOfficialsContent: FC<IOMSUOfficialsContentProps> = (props) => {
   const t = useTranslations();
 
   const columns = [
-    { field: "fullName", headerName: "User's full name", width: 280 },
+    { field: "fullName", headerName: "Full name", width: 280 },
     { field: "position", headerName: "Position", width: 280 },
     { field: "birthDate", headerName: "Date of birth", width: 140 },
-    { field: "phoneNumber", headerName: "Phone Number", width: 160 },
+    { field: "phoneNumber", headerName: "Phone number", width: 160 },
     { field: "email", headerName: "E-mail", width: 180 },
     { field: "institution", headerName: "Institution", width: 180 },
     { field: "order", headerName: "Order", width: 200 },
