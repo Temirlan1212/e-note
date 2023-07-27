@@ -63,6 +63,9 @@
   "Reset": "Сбросить",
   "Yes": "Да",
   "No": "Нет",
+  "Prev": "Предыдущий",
+  "Next": "Следующий",
+  "Submit": "Подтвердить",
   "Do you really want to delete this record?": "Вы действительно хотите удалить эту запись?",
   "Deleting the record": "Удаление записи"
 }
