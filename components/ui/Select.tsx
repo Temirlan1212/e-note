@@ -19,18 +19,21 @@ interface ISelectProps extends SelectProps {
   helperText?: string;
 }
 
-const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = ({
-  children,
-  data = [],
-  register,
-  name,
-  defaultValue,
-  selectType = "secondary",
-  valueField = "value",
-  labelField = "label",
-  helperText,
-  ...props
-}) => {
+const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
+  {
+    children,
+    data = [],
+    register,
+    name,
+    defaultValue,
+    selectType = "secondary",
+    valueField = "value",
+    labelField = "label",
+    helperText,
+    ...props
+  },
+  ref
+) => {
   const inputStyles = {
     color: "text.primary",
     minWidth: "226px",
@@ -45,7 +48,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = ({
       borderColor: types[selectType],
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: types[selectType],
+      borderColor: !props.disabled && types[selectType],
     },
     fontSize: "14px",
     borderRadius: 0,
@@ -53,12 +56,12 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = ({
 
   const combineStyles = { ...props.sx, ...inputStyles };
   return (
-    <FormControl error={selectType === "danger"}>
+    <FormControl error={selectType === "danger"} ref={ref}>
       <MUISelect
         sx={combineStyles}
-        {...props}
         {...(register && name && register(name))}
         defaultValue={defaultValue ?? ""}
+        {...props}
       >
         <MenuItem value="">---</MenuItem>
         {data.map((item) => (

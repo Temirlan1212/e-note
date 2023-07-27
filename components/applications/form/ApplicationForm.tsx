@@ -36,7 +36,7 @@ export default function ApplicationForm() {
 
   const steps = [
     <FirstStepFields form={form} />,
-    <SecondStepFields form={form} />,
+    <SecondStepFields form={form} onNext={() => setStep(step + 1)} onPrev={() => setStep(step - 1)} />,
     <ThirdStepFields form={form} />,
     <FourthStepFields form={form} />,
     <FifthStepFields form={form} />,
@@ -56,7 +56,7 @@ export default function ApplicationForm() {
   return (
     <Box>
       <Box display="flex" justifyContent="center" my={2}>
-        <Stepper activeStep={step} connector={<StepConnector sx={{ flex: "0 0 45px" }} />}>
+        <Stepper activeStep={step} connector={<StepConnector sx={{ width: "20px" }} />}>
           {steps.map((component, index) => {
             return (
               <Step
