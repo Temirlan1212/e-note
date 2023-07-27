@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import TemplateList from "@/components/template-list/TemplateList";
 
-export default function Profile() {
+export default function TemplateList() {
   const t = useTranslations();
 
   return (
