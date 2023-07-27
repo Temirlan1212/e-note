@@ -1,46 +1,49 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { Select as MUISelect, SelectProps } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
+enum types {
+  danger = "danger.main",
+  success = "success.main",
+  secondary = "secondary.main",
+}
+
 interface ISelectProps extends SelectProps {
   data: Record<string, any>[];
   labelField?: string;
-  outputField?: string;
+  valueField?: string;
   onChange?: any;
-  selectType?: "primary" | "secondary";
+  selectType?: keyof typeof types;
   register?: UseFormRegister<any>;
 }
 
-const Select: React.FC<ISelectProps> = ({
+const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = ({
   children,
   data = [],
   register,
   name,
   defaultValue,
   selectType = "secondary",
-  outputField = "value",
+  valueField = "value",
   labelField = "label",
   ...props
 }) => {
   const inputStyles = {
-    color: selectType === "primary" ? "#24334B" : "#1BAA75",
+    color: "text.primary",
     minWidth: "226px",
     width: "100%",
     "& .MuiInputBase-input": {
       padding: "12px 14px",
     },
     ".MuiOutlinedInput-notchedOutline": {
-      borderColor: selectType === "primary" ? "#CDCDCD" : "#1BAA75",
+      borderColor: types[selectType],
     },
     "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#1BAA75",
+      borderColor: types[selectType],
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: "#1BAA75",
-    },
-    ".MuiSvgIcon-root ": {
-      fill: "#1BAA75 !important",
+      borderColor: types[selectType],
     },
     fontSize: "14px",
     borderRadius: 0,
@@ -54,17 +57,21 @@ const Select: React.FC<ISelectProps> = ({
       {...(register && name && register(name))}
       defaultValue={defaultValue ?? ""}
     >
+      <MenuItem value="">---</MenuItem>
       {data.map((item) => (
         <MenuItem
           sx={{
-            "&& .Mui-selected": {
+            "&.Mui-selected": {
               backgroundColor: "#EFEFEF",
+              "&:hover": {
+                backgroundColor: "#EFEFEF",
+              },
             },
             color: "#24334B",
             fontSize: "16px",
           }}
-          key={item[outputField]}
-          value={item[outputField]}
+          key={item[valueField]}
+          value={item[valueField]}
         >
           {item[labelField]}
         </MenuItem>
@@ -73,4 +80,4 @@ const Select: React.FC<ISelectProps> = ({
   );
 };
 
-export default Select;
+export default forwardRef<HTMLDivElement, ISelectProps>(Select);
