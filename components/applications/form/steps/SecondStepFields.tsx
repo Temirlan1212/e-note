@@ -18,24 +18,19 @@ export interface IStepFieldsProps {
   onNext?: Function | null;
 }
 
-export default function SecondStepFields({ form, onNext, onPrev }: IStepFieldsProps) {
+export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
-  const { trigger, control, watch, resetField, getValues } = form;
-  const { data: dataBek } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
+  const { trigger, control, watch, resetField } = form;
+  const { data: notarialData } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
 
-  const stepNameList: (keyof IApplicationSchema)[] = [
+  const formFields: (keyof IApplicationSchema)[] = [
     "object",
     "objectType",
     "notarialAction",
     "typeNotarialAction",
     "action",
   ];
-
-  const objectId = watch("object");
-  const objectTypeId = watch("objectType");
-  const notarialActionId = watch("notarialAction");
-  const typeNotarialActionId = watch("typeNotarialAction");
 
   const resetFields = (fields: (keyof IApplicationSchema)[]) => {
     fields.map((field) => resetField(field));
@@ -45,8 +40,12 @@ export default function SecondStepFields({ form, onNext, onPrev }: IStepFieldsPr
     if (onPrev != null) onPrev();
   };
 
+  const triggerFields = async () => {
+    return await trigger(["object", "objectType"]);
+  };
+
   const handleNextClick = async () => {
-    const validated = await trigger(stepNameList);
+    const validated = await triggerFields();
     if (onNext != null && validated) onNext();
   };
 
@@ -57,7 +56,8 @@ export default function SecondStepFields({ form, onNext, onPrev }: IStepFieldsPr
         name="object"
         defaultValue=""
         render={({ field, fieldState }) => {
-          const objectData = dataBek?.object;
+          const objectData = notarialData?.object;
+          const errorMessage = fieldState.error?.message;
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
@@ -70,16 +70,16 @@ export default function SecondStepFields({ form, onNext, onPrev }: IStepFieldsPr
 
               <Select
                 fullWidth
-                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                selectType={errorMessage ? "danger" : field.value ? "success" : "secondary"}
                 data={objectData ?? []}
                 labelField={"title_" + locale}
                 valueField="value"
-                helperText={fieldState.error?.message}
+                helperText={errorMessage ? t(errorMessage) : ""}
                 {...field}
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger("object");
-                  resetFields(stepNameList.slice(1, stepNameList.length));
+                  resetFields(formFields.slice(1, formFields.length));
                 }}
               />
             </Box>
@@ -92,117 +92,27 @@ export default function SecondStepFields({ form, onNext, onPrev }: IStepFieldsPr
         name="objectType"
         defaultValue=""
         render={({ field, fieldState }) => {
-          const objectType = dataBek?.objectType.filter((item) =>
-            item["parent.value"].join(",").includes(String(objectId))
+          const errorMessage = fieldState.error?.message;
+          const objectVal = watch("object");
+          const objectType = notarialData?.objectType.filter((item) =>
+            item["parent.value"].join(",").includes(String(objectVal))
           );
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
               <InputLabel>{t("Object type")}</InputLabel>
               <Select
-                disabled={!objectId}
+                disabled={!objectVal}
                 selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                 data={objectType ?? []}
                 labelField={"title_" + locale}
                 valueField="value"
-                helperText={!!objectId ? fieldState.error?.message : ""}
+                helperText={!!objectVal && errorMessage ? t(errorMessage) : ""}
                 {...field}
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger("objectType");
-                  resetFields(stepNameList.slice(2, stepNameList.length));
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
-
-      <Controller
-        control={control}
-        name="notarialAction"
-        defaultValue=""
-        render={({ field, fieldState }) => {
-          const notarialActionData = dataBek?.notarialAction.filter((item) =>
-            item["parent.value"].join(",").includes(String(objectTypeId))
-          );
-
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>notarialAction</InputLabel>
-              <Select
-                disabled={!objectTypeId}
-                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
-                data={notarialActionData ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!objectTypeId ? fieldState.error?.message : ""}
-                {...field}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger("notarialAction");
-                  resetFields(stepNameList.slice(3, stepNameList.length));
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
-
-      <Controller
-        control={control}
-        name="typeNotarialAction"
-        defaultValue=""
-        render={({ field, fieldState }) => {
-          const typeNotarialActionData = dataBek?.typeNotarialAction.filter((item) =>
-            item["parent.value"].join(",").includes(String(notarialActionId))
-          );
-
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>typeNotarialAction</InputLabel>
-              <Select
-                disabled={!notarialActionId}
-                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
-                data={typeNotarialActionData ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!notarialActionId ? fieldState.error?.message : ""}
-                {...field}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger("typeNotarialAction");
-                  resetFields(stepNameList.slice(4, stepNameList.length));
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
-
-      <Controller
-        control={control}
-        name="action"
-        defaultValue=""
-        render={({ field, fieldState }) => {
-          const actionData = dataBek?.action.filter((item) =>
-            item["parent.value"].join(",").includes(String(typeNotarialActionId))
-          );
-
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>action</InputLabel>
-              <Select
-                disabled={!typeNotarialActionId}
-                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
-                data={actionData ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!typeNotarialActionId ? fieldState.error?.message : ""}
-                {...field}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger("action");
+                  resetFields(formFields.slice(2, formFields.length));
                 }}
               />
             </Box>
@@ -213,12 +123,12 @@ export default function SecondStepFields({ form, onNext, onPrev }: IStepFieldsPr
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
           <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
-            Prev
+            {t("Prev")}
           </Button>
         )}
         {onNext != null && (
-          <Button onClick={handleNextClick} type="submit" endIcon={<ArrowForwardIcon />}>
-            Next
+          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+            {t("Next")}
           </Button>
         )}
       </Box>

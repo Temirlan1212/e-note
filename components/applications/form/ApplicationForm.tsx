@@ -9,11 +9,10 @@ import ThirdStepFields from "./steps/ThirdStepFields";
 import FourthStepFields from "./steps/FourthStepFields";
 import FifthStepFields from "./steps/FifthStepFields";
 import SixthStepFields from "./steps/SixthStepFields";
-import Box from "@mui/material/Box";
-import { Step, StepIcon, Stepper, StepConnector } from "@mui/material";
-import Button from "../../ui/Button";
+import { Box, Step, StepIcon, Stepper, StepConnector } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
+import Button from "@/components/ui/Button";
 
 export default function ApplicationForm() {
   const t = useTranslations();
@@ -28,24 +27,19 @@ export default function ApplicationForm() {
 
   const {
     formState: { errors },
-    setError,
     reset,
   } = form;
 
-  const steps = [
-    <FirstStepFields form={form} />,
-    <SecondStepFields form={form} onNext={() => setStep(step + 1)} onPrev={() => setStep(step - 1)} />,
-    <ThirdStepFields form={form} />,
-    <FourthStepFields form={form} />,
-    <FifthStepFields form={form} />,
-    <SixthStepFields form={form} />,
-  ];
-
   const [step, setStep] = useState(0);
 
-  const handleStepClick = (index: number) => {
-    setStep(index);
-  };
+  const steps = [
+    <FirstStepFields form={form} onNext={() => setStep(step + 1)} />,
+    <SecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    <ThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    <FourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    <FifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    <SixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
+  ];
 
   const onSubmit = async (data: IApplicationSchema) => {
     console.log(data);
@@ -54,15 +48,14 @@ export default function ApplicationForm() {
   return (
     <Box>
       <Box display="flex" justifyContent="center" my={2}>
-        <Stepper activeStep={step} connector={<StepConnector sx={{ width: "20px" }} />}>
+        <Stepper
+          activeStep={step}
+          connector={<StepConnector sx={{ flex: { xs: "0 0 5px", md: "0 0 45px" } }} />}
+          sx={{ justifyContent: "center" }}
+        >
           {steps.map((component, index) => {
             return (
-              <Step
-                key={index}
-                completed={step - 1 === index}
-                onClick={() => handleStepClick(index)}
-                sx={{ display: "flex", p: 0, cursor: "pointer" }}
-              >
+              <Step key={index} completed={step - 1 === index} sx={{ display: "flex", p: 0 }}>
                 <StepIcon
                   icon={
                     step - 1 >= index ? (
@@ -80,6 +73,7 @@ export default function ApplicationForm() {
           })}
         </Stepper>
       </Box>
+
       <Box
         component="form"
         display="flex"
@@ -89,7 +83,11 @@ export default function ApplicationForm() {
         boxShadow={4}
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        {steps.map((component, index) => (step === index ? component : <></>))}
+        {steps.map((component, index) => (
+          <Box sx={{ display: step != index ? "none" : "block" }} key={index}>
+            {component}
+          </Box>
+        ))}
         {step === steps.length - 1 && <Button type="submit">{t("Submit")}</Button>}
       </Box>
     </Box>

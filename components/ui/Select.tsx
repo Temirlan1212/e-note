@@ -60,6 +60,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
       <MUISelect
         sx={combineStyles}
         {...(register && name && register(name))}
+        {...props}
         defaultValue={defaultValue ?? ""}
         {...props}
       >

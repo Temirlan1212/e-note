@@ -7,12 +7,12 @@ export const applicationSchema = object().shape({
   district: number().optional(),
   city: number().optional(),
   notaryDistrict: number().optional(),
-  company: number().required("required"),
-  object: string().required(),
-  objectType: string().required(),
-  notarialAction: string().required(),
-  typeNotarialAction: string().required(),
-  action: string().required(),
+  company: number(),
+  object: string().required("This field is required!"),
+  objectType: string().required("This field is required!"),
+  notarialAction: string().required("This field is required!"),
+  typeNotarialAction: string().required("This field is required!"),
+  action: string().required("This field is required!"),
 });
 
 export type IApplicationSchema = InferType<typeof applicationSchema>;
