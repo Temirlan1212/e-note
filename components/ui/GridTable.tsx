@@ -236,11 +236,18 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
   let dictionaryList: Record<string, any>[] = [];
   let valueField: string = "";
   let labelField: string = "";
+  let searchFilterChange: (v: string) => void;
 
   if (type === "dictionary") {
     dictionaryList = rowParams.colDef.filter?.data as Record<string, any>[];
     valueField = rowParams.colDef.filter?.valueField as string;
     labelField = rowParams.colDef.filter?.labelField as string;
+  }
+
+  if (type === "simple") {
+    if (rowParams.colDef.filter?.onChange) {
+      searchFilterChange = rowParams.colDef.filter?.onChange;
+    }
   }
 
   const t = useTranslations();
@@ -378,7 +385,12 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
             <Box component="form" onSubmit={handleSubmit(onSubmit)} paddingTop="10px" minWidth={250}>
               {type === "simple" && (
                 <Box display="flex" justifyContent="center" mb="10px">
-                  <Input size="small" register={register} name="input" />
+                  <Input
+                    size="small"
+                    register={register}
+                    name="input"
+                    onChange={(e) => searchFilterChange(e.target.value)}
+                  />
                 </Box>
               )}
 

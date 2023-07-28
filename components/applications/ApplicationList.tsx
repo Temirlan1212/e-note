@@ -145,11 +145,7 @@ export default function ApplicationList() {
             editable: false,
             sortable: false,
             filter: {
-              data: statusData ?? [],
-              labelField: "title_" + locale,
-              valueField: "value",
-              type: "dictionary",
-              field: "statusSelect",
+              type: "simple",
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (statusData != null) {
