@@ -1,5 +1,3 @@
-import React from "react";
-
 import { UseFormRegister } from "react-hook-form";
 import { Box, TextFieldProps } from "@mui/material";
 import { SearchOutlined } from "@mui/icons-material";
@@ -11,7 +9,6 @@ import { useTranslations } from "next-intl";
 type ISearchBarProps = TextFieldProps & {
   register?: UseFormRegister<any>;
   name?: string;
-  sxBox?: any;
   sx?: any;
   loading?: boolean;
   error?: any;
@@ -22,7 +19,7 @@ type ISearchBarProps = TextFieldProps & {
 const SearchBar: React.FC<ISearchBarProps> = (props) => {
   const t = useTranslations();
 
-  const { register, name, loading, error, boxSx, helperText, ...rest } = props;
+  const { register, name, loading, error, helperText, boxSx, ...rest } = props;
 
   return (
     <Box display="flex" sx={boxSx}>
