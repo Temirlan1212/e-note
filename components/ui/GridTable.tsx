@@ -1,12 +1,5 @@
 import * as React from "react";
-import {
-  DataGrid,
-  GridRowsProp,
-  GridColumnHeaderParams,
-  GridColDef,
-  DataGridProps,
-  GridValidRowModel,
-} from "@mui/x-data-grid";
+import { DataGrid, GridRowsProp, GridColDef, DataGridProps, GridValidRowModel } from "@mui/x-data-grid";
 import { Box, LinearProgress, MenuItem, Typography, lighten } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import Checkbox from "./Checkbox";
@@ -19,42 +12,54 @@ import Badge from "@mui/material/Badge";
 import Hint from "@/components/ui/Hint";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import Input from "./Input";
+import { GridStateColDef } from "@mui/x-data-grid/internals";
 
-export interface IGridTableFilterField {
+export type IGridColDefSimple = {
+  filter?: {
+    type: "simple";
+    onChange?: (v: string) => void;
+  };
+} & GridColDef;
+
+export type IGridColDefDictionary = {
+  filter?: {
+    type: "dictionary";
+    data: Record<string, any>[];
+    labelField: string;
+    valueField: string;
+    field: string | number;
+  };
+} & GridColDef;
+
+export type IGridColDef = IGridColDefSimple | IGridColDefDictionary;
+
+export interface IGridRowParamsHeaderProps<R extends GridValidRowModel = GridValidRowModel, V = any, F = V> {
   field: string;
-  outputField: string;
-}
-
-export interface IFilterData {
-  data: Record<string, Record<string, any>[]>;
-  filterField: Record<string, IGridTableFilterField>;
+  colDef: GridStateColDef<R, V, F> & IGridColDef;
 }
 
 export interface IFilterSubmitParams {
-  value: (string | number)[];
-  rowParams: GridColumnHeaderParams<GridValidRowModel, any, any>;
+  value: (string | number)[] | string;
+  rowParams: IGridRowParamsHeaderProps<GridValidRowModel, any, any>;
 }
 
 export interface IGridTableProps extends DataGridProps {
-  filterData?: IFilterData;
   rows: GridRowsProp;
-  columns: GridColDef[];
+  columns: IGridColDef[];
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
   cellMaxHeight?: string | number;
   headerCellMaxHeight?: string | number;
 }
 
 export interface IGridTableHeaderProps {
-  rowParams: GridColumnHeaderParams;
-  filterData?: Record<string, any>[];
-  filterField?: IGridTableFilterField;
+  rowParams: IGridRowParamsHeaderProps;
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
 }
 
 export const GridTable: React.FC<IGridTableProps> = ({
   columns,
   rows,
-  filterData,
   cellMaxHeight,
   onFilterSubmit,
   headerCellMaxHeight,
@@ -177,18 +182,8 @@ export const GridTable: React.FC<IGridTableProps> = ({
         rows={rows}
         columns={columns?.map((col) => ({
           ...col,
-          renderHeader: (rowParams: GridColumnHeaderParams) => {
-            const specificFieldFilterData = filterData?.data?.[rowParams?.field];
-            const filterField = filterData?.filterField?.[rowParams?.field];
-
-            return (
-              <GridTableHeader
-                rowParams={rowParams}
-                filterData={specificFieldFilterData}
-                onFilterSubmit={onFilterSubmit}
-                filterField={filterField}
-              />
-            );
+          renderHeader: (rowParams: IGridRowParamsHeaderProps) => {
+            return <GridTableHeader rowParams={rowParams} onFilterSubmit={onFilterSubmit} />;
           },
         }))}
         localeText={{
@@ -235,12 +230,19 @@ export const GridTable: React.FC<IGridTableProps> = ({
   );
 };
 
-export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
-  rowParams,
-  filterData,
-  onFilterSubmit,
-  filterField,
-}) => {
+export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, onFilterSubmit }) => {
+  const type = rowParams.colDef.filter?.type;
+
+  let dictionaryList: Record<string, any>[] = [];
+  let valueField: string = "";
+  let labelField: string = "";
+
+  if (type === "dictionary") {
+    dictionaryList = rowParams.colDef.filter?.data as Record<string, any>[];
+    valueField = rowParams.colDef.filter?.valueField as string;
+    labelField = rowParams.colDef.filter?.labelField as string;
+  }
+
   const t = useTranslations();
   const [filterMenu, setFilterMenu] = React.useState<HTMLElement | null>(null);
   const [formValues, setFormValues] = React.useState<Record<string, any> | null>(null);
@@ -297,11 +299,18 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
   };
 
   const onSubmit = async (data: Record<string, any>) => {
-    setSubmitFormValues(data);
-    setFormValues(data);
+    if (type === "dictionary" && onFilterSubmit) {
+      setSubmitFormValues(data);
+      setFormValues(data);
+      const keysWithTrueValues = Object.keys(data).filter((key) => data[key] === true);
+      onFilterSubmit({ value: keysWithTrueValues, rowParams });
+    }
+
+    if (type === "simple" && onFilterSubmit) {
+      onFilterSubmit({ value: data.input, rowParams });
+    }
+
     setFilterMenu(null);
-    const keysWithTrueValues = Object.keys(data).filter((key) => data[key] === true);
-    onFilterSubmit && onFilterSubmit({ value: keysWithTrueValues, rowParams: rowParams });
   };
 
   React.useEffect(() => {
@@ -327,7 +336,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
       <Typography color="text.primary" fontWeight={600}>
         {rowParams?.colDef?.headerName ? t(rowParams?.colDef?.headerName) : ""}
       </Typography>
-      {filterData && filterField && (
+      {!!type && (
         <>
           <Box
             onClick={(e: any) => handleMenuOpen(e)}
@@ -367,32 +376,40 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({
             sx={{ ".MuiList-padding": { padding: "0px" } }}
           >
             <Box component="form" onSubmit={handleSubmit(onSubmit)} paddingTop="10px" minWidth={250}>
-              <Box
-                maxHeight={190}
-                overflow="auto"
-                maxWidth={250}
-                px="20px"
-                sx={{
-                  "::-webkit-scrollbar": { width: "4px" },
-                  "::-webkit-scrollbar-thumb": {
-                    background: "#E0E0E0",
-                  },
-                }}
-              >
-                {filterData.map((item, index) => (
-                  <MenuItem key={index} sx={{ padding: 0, margin: "0 0 10px 0" }}>
-                    <Checkbox
-                      name={String(item[filterField.outputField])}
-                      register={register}
-                      label={item[filterField.field]}
-                      checked={!!formValues?.[String(item[filterField.outputField])]}
-                      width={"100%"}
-                    />
-                  </MenuItem>
-                ))}
+              {type === "simple" && (
+                <Box display="flex" justifyContent="center" mb="10px">
+                  <Input size="small" register={register} name="input" />
+                </Box>
+              )}
 
-                {filterData.length < 1 && <Typography textAlign="center">{t("No data")}</Typography>}
-              </Box>
+              {type === "dictionary" && (
+                <Box
+                  maxHeight={190}
+                  overflow="auto"
+                  maxWidth={250}
+                  sx={{
+                    "::-webkit-scrollbar": { width: "4px" },
+                    "::-webkit-scrollbar-thumb": {
+                      background: "#E0E0E0",
+                    },
+                  }}
+                >
+                  {dictionaryList.map((item, index) => (
+                    <MenuItem key={index} sx={{ padding: 0, margin: "0 0 10px 0", px: "20px" }}>
+                      <Checkbox
+                        name={String(item[valueField])}
+                        register={register}
+                        label={item[labelField]}
+                        checked={!!formValues?.[String(item[valueField])]}
+                        width={"100%"}
+                      />
+                    </MenuItem>
+                  ))}
+
+                  {dictionaryList.length < 1 && <Typography textAlign="center">{t("No data")}</Typography>}
+                </Box>
+              )}
+
               <Box display="flex" borderTop="1px solid #E0E0E0">
                 <Button
                   type="submit"

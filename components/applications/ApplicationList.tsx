@@ -12,7 +12,7 @@ import Button from "@/components/ui/Button";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import Link from "@/components/ui/Link";
 import { useTranslations } from "next-intl";
-import { ApplicationListActions } from "./ApplicationLIstActions";
+import { ApplicationListActions } from "./ApplicationListActions";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -54,16 +54,22 @@ export default function ApplicationList() {
   };
 
   const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
-    const outPutFieldName = value.rowParams.colDef.description;
-    const prevValue = appQueryParams.filterValues;
+    const type = value.rowParams.colDef.filter?.type;
+    if (type === "dictionary") {
+      const field = value.rowParams.colDef.filter?.field;
+      const prevValue = appQueryParams.filterValues;
 
-    if (outPutFieldName) {
-      if (value.value.length > 0) {
-        updateAppQueryParams("filterValues", { ...prevValue, [outPutFieldName]: value.value });
-      } else {
-        const updatedFilterValues = { ...prevValue };
-        delete updatedFilterValues[outPutFieldName];
-        updateAppQueryParams("filterValues", updatedFilterValues);
+      if (field && Array.isArray(value.value)) {
+        if (value.value.length > 0) {
+          updateAppQueryParams("filterValues", {
+            ...prevValue,
+            [field]: value.value,
+          });
+        } else {
+          const updatedFilterValues = { ...prevValue };
+          delete updatedFilterValues[field];
+          updateAppQueryParams("filterValues", updatedFilterValues);
+        }
       }
     }
   };
@@ -99,26 +105,37 @@ export default function ApplicationList() {
           {
             field: "typeNotarialAction",
             headerName: "Type of action",
-            description: "typeNotarialAction",
             width: 200,
             editable: false,
             sortable: false,
+            filter: {
+              data: actionTypeData ?? [],
+              labelField: "title_" + locale,
+              valueField: "value",
+              type: "dictionary",
+              field: "typeNotarialAction",
+            },
             valueGetter: (params: GridValueGetterParams) => {
               if (actionTypeData != null) {
                 const matchedItem = actionTypeData?.find((item) => item.value == params.value);
                 return matchedItem?.[("title_" + locale) as keyof IActionType];
               }
-
               return params.value;
             },
           },
           {
             field: "product.name",
-            description: "product.id",
             headerName: "Type of document",
             width: 250,
             editable: false,
             sortable: false,
+            filter: {
+              data: documentTypeData ?? [],
+              labelField: "name",
+              valueField: "id",
+              type: "dictionary",
+              field: "product.id",
+            },
           },
           {
             field: "statusSelect",
@@ -127,12 +144,18 @@ export default function ApplicationList() {
             width: 200,
             editable: false,
             sortable: false,
+            filter: {
+              data: statusData ?? [],
+              labelField: "title_" + locale,
+              valueField: "value",
+              type: "dictionary",
+              field: "statusSelect",
+            },
             valueGetter: (params: GridValueGetterParams) => {
               if (statusData != null) {
                 const matchedItem = statusData?.find((item) => item.value == String(1));
                 return matchedItem?.[("title_" + locale) as keyof IActionType];
               }
-
               return params.value;
             },
           },
@@ -159,18 +182,6 @@ export default function ApplicationList() {
           },
         ]}
         rows={data?.data ?? []}
-        filterData={{
-          data: {
-            typeNotarialAction: actionTypeData ?? [],
-            statusSelect: statusData ?? [],
-            "product.name": documentTypeData ?? [],
-          },
-          filterField: {
-            typeNotarialAction: { field: "title_" + locale, outputField: "value" },
-            statusSelect: { field: "title_" + locale, outputField: "value" },
-            "product.name": { field: "name", outputField: "id" },
-          },
-        }}
         onFilterSubmit={handleFilterSubmit}
         onSortModelChange={handleSortByDate}
         cellMaxHeight="200px"

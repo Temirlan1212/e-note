@@ -14,7 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         "Content-Type": "application/json",
         Cookie: req.headers["server-cookie"]?.toString() ?? "",
       },
-      body: JSON.stringify(req.body),
+      body: JSON.stringify({
+        ...req.body,
+        translate: true,
+      }),
     }
   );
 
