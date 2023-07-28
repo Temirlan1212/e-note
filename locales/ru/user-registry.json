@@ -11,5 +11,6 @@
   "Password Reset": "Сброс пароля",
   "Delete a user": "Удалить пользователя",
   "Action": "Действие",
-  "FromTo": "по"
+  "FromTo": "по",
+  "Create user": "Регистрация пользователей"
 }

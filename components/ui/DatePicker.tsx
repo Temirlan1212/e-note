@@ -10,10 +10,11 @@ type Props<TInputDate> = {
   onChange?: any;
   value?: any;
   placeholder?: string;
+  width?: string;
 } & Omit<DatePickerProps<TInputDate>, "onChange" | "value">;
 
 const DatePicker = <TInputDate, TDate = TInputDate>(props: Props<TInputDate>) => {
-  const { onChange, value, placeholder, ...restProps } = props;
+  const { onChange, value, placeholder, width, ...restProps } = props;
 
   const locale = useLocale();
 
@@ -31,7 +32,7 @@ const DatePicker = <TInputDate, TDate = TInputDate>(props: Props<TInputDate>) =>
         sx={{
           width: {
             xs: "100%",
-            md: "150px",
+            md: width,
           },
           ".MuiInputBase-root": {
             fontSize: "14px",
