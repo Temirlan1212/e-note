@@ -68,6 +68,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
       borderBottom: "none",
       color: "text.primary",
       fontWeight: "500",
+      outline: 0,
     },
     ".MuiDataGrid-row": {
       border: "1px solid transparent",
