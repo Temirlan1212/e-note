@@ -18,7 +18,10 @@ import { GridTable } from "../ui/GridTable";
 export default function BlackList() {
   const [selectedPage, setSelectedPage] = useState(1);
   const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchAllQuery, setSearchAllQuery] = useState("");
+  const [reasonQuery, setReasonQuery] = useState("");
+  const [pinQuery, setPinQuery] = useState("");
+  const [fullnameQuery, setFullnameQuery] = useState("");
 
   const t = useTranslations();
 
@@ -182,26 +185,41 @@ export default function BlackList() {
     setSelectedPage(page);
   };
 
-  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
+  const handleSearchAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchAllQuery(event.target.value);
+  };
+
+  const handleReasonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setReasonQuery(event.target.value);
+  };
+
+  const handlePinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPinQuery(event.target.value);
+  };
+
+  const handleFullnameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFullnameQuery(event.target.value);
   };
 
   const filteredRows = rows.filter((row) => {
-    const query = searchQuery.toLowerCase();
+    const filterSearchAll = searchAllQuery.toLowerCase();
+    const { reasonForBlacklisting, pin, fullName, dateOfBirth, entryDate, whoCreated } = row;
+    const filterReason = reasonQuery.toLowerCase();
+    const filterPin = pinQuery.toLowerCase();
+    const filterFullName = fullnameQuery.toLowerCase();
 
-    if (String(row.pin).toLowerCase().includes(query)) {
-      return true;
-    }
-
-    return Object.values(row).some((value) => {
-      if (typeof value === "string") {
-        return value.toLowerCase().includes(query);
-      } else if (Array.isArray(value)) {
-        return value.some((item) => String(item).toLowerCase().includes(query));
-      } else {
-        return false;
-      }
-    });
+    return (
+      (!searchAllQuery ||
+        reasonForBlacklisting.toLowerCase().includes(filterSearchAll) ||
+        String(pin).toLowerCase().includes(filterSearchAll) ||
+        fullName.toLowerCase().includes(filterSearchAll) ||
+        dateOfBirth.toLowerCase().includes(filterSearchAll) ||
+        entryDate.toLowerCase().includes(filterSearchAll) ||
+        whoCreated.toLowerCase().includes(filterSearchAll)) &&
+      (!filterReason || reasonForBlacklisting.toLowerCase().includes(filterReason)) &&
+      (!filterPin || String(pin).toLowerCase().includes(filterPin)) &&
+      (!filterFullName || fullName.toLowerCase().includes(filterFullName))
+    );
   });
 
   return (
@@ -217,7 +235,7 @@ export default function BlackList() {
         }}
       >
         <Grid item xs={12} sm={12} md={9} sx={{ alignSelf: "stretch" }}>
-          <SearchBar onChange={handleSearchInputChange} value={searchQuery} />
+          <SearchBar onChange={handleSearchAllChange} value={searchAllQuery} />
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
@@ -242,19 +260,37 @@ export default function BlackList() {
           <InputLabel htmlFor="input-reason" sx={{ fontSize: "14px", fontWeight: "500" }}>
             {t("Reason")}
           </InputLabel>
-          <Input placeholder={t("Enter a reason")} variant="outlined" name="input-reason" fullWidth />
+          <Input
+            placeholder={t("Enter a reason")}
+            variant="outlined"
+            name="input-reason"
+            fullWidth
+            onChange={handleReasonChange}
+          />
         </Grid>
         <Grid item xs={12} sm={12} md={4}>
           <InputLabel htmlFor="input-pin" sx={{ fontSize: "14px", fontWeight: "500" }}>
             {t("Subject PIN")}
           </InputLabel>
-          <Input placeholder={t("Enter PIN")} variant="outlined" name="input-pin" fullWidth />
+          <Input
+            placeholder={t("Enter PIN")}
+            variant="outlined"
+            name="input-pin"
+            fullWidth
+            onChange={handlePinChange}
+          />
         </Grid>
         <Grid item xs={12} sm={12} md={4}>
           <InputLabel htmlFor="input-full-name" sx={{ fontSize: "14px", fontWeight: "500" }}>
             {t("Subject full name")}
           </InputLabel>
-          <Input placeholder={t("Enter full name")} variant="outlined" name="input-full-name" fullWidth />
+          <Input
+            placeholder={t("Enter full name")}
+            variant="outlined"
+            name="input-full-name"
+            fullWidth
+            onChange={handleFullnameChange}
+          />
         </Grid>
       </Grid>
 
