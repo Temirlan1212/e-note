@@ -1,0 +1,588 @@
+{
+  "object": [
+    {
+      "title_ru": "Имущественные права",
+      "title_kg": "Мүлктүк укуктар",
+      "title_en": "Property rights",
+      "id": 2821,
+      "title": "Property rights",
+      "value": 9
+    },
+    {
+      "title_ru": "Документы",
+      "title_kg": "Документтер",
+      "title_en": "Documents",
+      "id": 2820,
+      "title": "Documents",
+      "value": 8
+    },
+    {
+      "title_ru": "Брак, семья",
+      "title_kg": "Нике, үй-бүлө",
+      "title_en": "Marriage, family",
+      "id": 2819,
+      "title": "Marriage, family",
+      "value": 7
+    },
+    {
+      "title_ru": "Вещи",
+      "title_kg": "Буюм",
+      "title_en": "Items",
+      "id": 2818,
+      "title": "Items",
+      "value": 6
+    },
+    {
+      "title_ru": "Деньги",
+      "title_kg": "Акча",
+      "title_en": "Money",
+      "id": 2817,
+      "title": "Money",
+      "value": 5
+    },
+    {
+      "title_ru": "Валютные ценности",
+      "title_kg": "Валюталык баалуулуктар",
+      "title_en": "Currency values",
+      "id": 2816,
+      "title": "Currency values",
+      "value": 4
+    },
+    {
+      "title_ru": "Ценные бумаги",
+      "title_kg": "Баалуу кагаздар",
+      "title_en": "Securities",
+      "id": 2815,
+      "title": "Securities",
+      "value": 3
+    },
+    {
+      "title_ru": "Недвижимое имущество",
+      "title_kg": "Кыймылсыз мүлк",
+      "title_en": "Immovable property",
+      "id": 2814,
+      "title": "Immovable property",
+      "value": 2
+    },
+    {
+      "title_ru": "Движимое имущество",
+      "title_kg": "Кыймылдуу мүлк",
+      "title_en": "Movable property",
+      "id": 2813,
+      "title": "Movable property",
+      "value": 1
+    }
+  ],
+  "objectType": [
+    {
+      "order_seq": 1,
+      "title_ru": "Дом, Квартира, Помещение, Зем.участок",
+      "title_kg": "Үй, батир, имарат, жер тилкеси",
+      "title_en": "House,Apartment,Premise,Land plot",
+      "title": "House,Apartment,Premise,Land plot",
+      "value": 1,
+      "parent.value": [2]
+    },
+    {
+      "order_seq": 2,
+      "title_ru": "Транспортные средства",
+      "title_kg": "Үй, батир, имарат, жер тилкеси",
+      "title_en": "Transport vehicle",
+      "title": "Transport vehicle",
+      "value": 2,
+      "parent.value": [1]
+    },
+    {
+      "order_seq": 3,
+      "title_ru": "Деньги, счета, Доля в уставном капитале, имущественные права и т.д.",
+      "title_kg": "Акча, эсептер, уставдык капиталдагы үлүш, мүлктүк укуктар ж. б.",
+      "title_en": "Money,Accounts,Share in authorized capital,Property rights,etc.",
+      "title": "Money,Accounts,Share in authorized capital,Property rights,etc.",
+      "value": 3,
+      "parent.value": [1]
+    },
+    {
+      "order_seq": 4,
+      "title_ru": "Ценные бумаги (акции, вексель, облигация, чеки банков, сертификат, коносамент и другие",
+      "title_kg": "Баалуу кагаздар (акциялар, векселдер, облигациялар, банктын чектери, сертификат, коносамент жана башкалар)",
+      "title_en": "Securities(shares,bill of exchange,bond,bank checks,certificate,bill of lading,etc)",
+      "title": "Securities(shares,bill of exchange,bond,bank checks,certificate,bill of lading,etc)",
+      "value": 4,
+      "parent.value": [1]
+    },
+    {
+      "order_seq": 5,
+      "title_ru": "Гос. регистрация недвижимости",
+      "title_kg": "Кыймылсыз мүлктү мамлекеттик каттоо",
+      "title_en": "State registration of immovable property",
+      "title": "State registration of immovable property",
+      "value": 5,
+      "parent.value": [2]
+    },
+    {
+      "order_seq": 6,
+      "title_ru": "Документы",
+      "title_kg": "Документтер",
+      "title_en": "Documents",
+      "title": "Documents",
+      "value": 6,
+      "parent.value": [1]
+    },
+    {
+      "order_seq": 7,
+      "title_ru": "Родители, супруги, дети",
+      "title_kg": "Ата-эне, жубайлар, балдар",
+      "title_en": "Parents,spouses,kids",
+      "title": "Parents,spouses,kids",
+      "value": 7,
+      "parent.value": []
+    },
+    {
+      "order_seq": 8,
+      "title_ru": "Другие права",
+      "title_kg": "Башка укуктар",
+      "title_en": "Other rights",
+      "title": "Other rights",
+      "value": 8,
+      "parent.value": [2]
+    },
+    {
+      "order_seq": 9,
+      "title_ru": "Все принадлежащие имущества",
+      "title_kg": "Бардык таандык мүлк",
+      "title_en": "All properties owned",
+      "title": "All properties owned",
+      "value": 9,
+      "parent.value": []
+    }
+  ],
+  "notarialAction": [
+    {
+      "order_seq": 1,
+      "title_ru": "Удостоверение сделок (доверенности, договора, прочие сделки, завещание, согласие)",
+      "title_kg": "Бүтүмдөрдү күбөлөндүрүү (ишеним каттар, келишимдер, башка бүтүмдөр, керээз, макулдук)",
+      "title_en": "Certificate (powers of attorney,contracts,other transactions,will,agreement)",
+      "title": "Certificate (powers of attorney,contracts,other transactions,will,agreement)",
+      "value": 1,
+      "parent.value": [1, 2]
+    },
+    {
+      "order_seq": 2,
+      "title_ru": "Свидетельствование подлинности подписи на документах, и подлинности перевода и копий (заявление, переводы, копии, равнозначность документа )",
+      "title_kg": "Документтердеги коюлган колдун аныктыгын, котормонун жана көчүрмөлөрдүн аныктыгын күбөлөндүрүү (арыз, котормолор, көчүрмөлөр, документтин теңдештиги )",
+      "title_en": "Authentication of signatures on documents, and authenticity of translations and copies (declaration,translations,copies,document equivalence)",
+      "title": "Authentication of signatures on documents, and authenticity of translations and copies (declaration,translations,copies,document equivalence)",
+      "value": 2,
+      "parent.value": []
+    },
+    {
+      "order_seq": 3,
+      "title_ru": "Наследственное право (виды заявлений на наследство, акт описи наслед имущества, извещение, выдача свидетельство по закону или по завещанию)",
+      "title_kg": "Мурастоо укугу (мураска арыздын түрлөрү, мурасты каттоо актысы, билдирүү, мыйзам боюнча же керээз боюнча күбөлүк берүү)",
+      "title_en": "Inheritance law (types of inheritance claims,inventory report,notification,issuance of a certificate by law or by will)",
+      "title": "Inheritance law (types of inheritance claims,inventory report,notification,issuance of a certificate by law or by will)",
+      "value": 3,
+      "parent.value": [1, 2]
+    },
+    {
+      "order_seq": 4,
+      "title_ru": "Удостоверение фактов (факт нахождения гражданина в живых, в определенном месте, тождественность гражданина с лицом изображенным на фотографии, время предъявление документа)",
+      "title_kg": "Фактыларды күбөлөндүрүү (жарандын тирүү, белгилүү бир жерде жүргөндүгүнүн фактысы, жарандын фото сүрөттөгү адам менен окшоштугу, документти көрсөтүү убактысы)",
+      "title_en": "Certification of facts(the fact that a citizen is alive,in a certain location,Identity of the citizen with the person depicted in the photograph,document production time)",
+      "title": "Certification of facts(the fact that a citizen is alive,in a certain location,Identity of the citizen with the person depicted in the photograph,document production time)",
+      "value": 4,
+      "parent.value": []
+    },
+    {
+      "order_seq": 5,
+      "title_ru": "Совершение исполнительной надписи",
+      "title_kg": "Аткаруу жазуусун жүргүзүү",
+      "title_en": "Execution of an executive inscription",
+      "title": "Execution of an executive inscription",
+      "value": 5,
+      "parent.value": []
+    },
+    {
+      "order_seq": 6,
+      "title_ru": "Совершение протестов векселей, предъявление чеков к платежу и удостоверение неоплаты чеков",
+      "title_kg": "Векселдердин протесттерин жасоо, чектерди төлөөгө көрсөтүү жана чектердин төлөнбөгөндүгүн күбөлөндүрүү",
+      "title_en": "Making protests of promissory notes, presentation of checks for payment and certification of non-payment of checks",
+      "title": "Making protests of promissory notes, presentation of checks for payment and certification of non-payment of checks",
+      "value": 6,
+      "parent.value": []
+    },
+    {
+      "order_seq": 7,
+      "title_ru": "Хранение документов",
+      "title_kg": "Документтерди сактоо",
+      "title_en": "Document storage",
+      "title": "Document storage",
+      "value": 7,
+      "parent.value": []
+    },
+    {
+      "order_seq": 9,
+      "title_ru": "Прочие нотариальные действия",
+      "title_kg": "Башка нотариалдык аракеттер",
+      "title_en": "Other notarial acts",
+      "title": "Other notarial acts",
+      "value": 9,
+      "parent.value": [1, 2]
+    },
+    {
+      "order_seq": 9,
+      "title_ru": "Свидетельство о праве собственности",
+      "title_kg": "Менчик укугу жөнүндө күбөлүк",
+      "title_en": "Certificate of ownership",
+      "title": "Certificate of ownership",
+      "value": 9,
+      "parent.value": [1, 2]
+    }
+  ],
+  "typeNotarialAction": [
+    {
+      "order_seq": 1,
+      "title_ru": "Доверенности",
+      "title_fr": "Ишеним каттар",
+      "title_en": "Powers of attorney",
+      "title": "Powers of attorney",
+      "value": 1,
+      "parent.value": [1]
+    },
+    {
+      "order_seq": 2,
+      "title_ru": "Согласия",
+      "title_fr": "Макулдук",
+      "title_en": "Consents",
+      "title": "Consents",
+      "value": 2,
+      "parent.value": [1]
+    },
+    {
+      "order_seq": 3,
+      "title_ru": "Заявление",
+      "title_fr": "Билдирүү",
+      "title_en": "Statement",
+      "title": "Statement",
+      "value": 3,
+      "parent.value": [1]
+    },
+    {
+      "order_seq": 4,
+      "title_ru": "Договора",
+      "title_fr": "Келишим",
+      "title_en": "Сontracts",
+      "title": "Сontracts",
+      "value": 4,
+      "parent.value": [1]
+    },
+    {
+      "order_seq": 5,
+      "title_ru": "Свидетельство",
+      "title_fr": "Далилдер",
+      "title_en": "Certificate",
+      "title": "Certificate",
+      "value": 5,
+      "parent.value": []
+    },
+    {
+      "order_seq": 6,
+      "title_ru": "Прочие договора",
+      "title_fr": "Башка келишимдер",
+      "title_en": "Other contracts",
+      "title": "Other contracts",
+      "value": 6,
+      "parent.value": [1]
+    },
+    {
+      "order_seq": 7,
+      "title_ru": "Завещание",
+      "title_fr": "Керээз",
+      "title_en": "Testament",
+      "title": "Testament",
+      "value": 7,
+      "parent.value": [1]
+    },
+    {
+      "order_seq": 8,
+      "title_ru": "Выдача наследство",
+      "title_fr": "Мурас берүү",
+      "title_en": "Issuance of inheritance",
+      "title": "Issuance of inheritance",
+      "value": 8,
+      "parent.value": []
+    },
+    {
+      "order_seq": 9,
+      "title_ru": "Копии",
+      "title_fr": "Көчүрмө",
+      "title_en": "Copies",
+      "title": "Copies",
+      "value": 9,
+      "parent.value": []
+    },
+    {
+      "order_seq": 10,
+      "title_ru": "Депозит",
+      "title_fr": "Депозиттик",
+      "title_en": "Deposit",
+      "title": "Deposit",
+      "value": 10,
+      "parent.value": []
+    },
+    {
+      "order_seq": 11,
+      "title_ru": "Удостоверение фактов",
+      "title_fr": "Фактыларды күбөлөндүрүү",
+      "title_en": "Certification of facts",
+      "title": "Certification of facts",
+      "value": 11,
+      "parent.value": []
+    },
+    {
+      "order_seq": 12,
+      "title_ru": "Свидетельство подлинности подписи и  перевода документов с одного языка на другой",
+      "title_fr": "Коюлган колдун аныктыгын жана документтердин бир тилден экинчи тилге которулушун күбөлөндүрүү",
+      "title_en": "Certificate of authenticity of signature and translation of documents from one language to another",
+      "title": "Certificate of authenticity of signature and translation of documents from one language to another",
+      "value": 12,
+      "parent.value": []
+    },
+    {
+      "order_seq": 13,
+      "title_ru": "Свидетельство верности копий документов",
+      "title_fr": "Документтердин көчүрмөлөрүнүн тууралыгын күбөлөндүрүү",
+      "title_en": "Certificate of fidelity of copies of documents",
+      "title": "Certificate of fidelity of copies of documents",
+      "value": 13,
+      "parent.value": []
+    },
+    {
+      "order_seq": 14,
+      "title_ru": "Представление на государственную регистрацию нотариальных документов",
+      "title_fr": "Нотариалдык документтерди мамлекеттик каттоого берүү",
+      "title_en": "Submission of notarial documents for state registration",
+      "title": "Submission of notarial documents for state registration",
+      "value": 14,
+      "parent.value": []
+    },
+    {
+      "order_seq": 15,
+      "title_ru": "Прочие сделки",
+      "title_fr": "Башка бүтүмдөр",
+      "title_en": "Other transactions",
+      "title": "Other transactions",
+      "value": 15,
+      "parent.value": []
+    }
+  ],
+  "action": [
+    {
+      "order_seq": 1,
+      "title_ru": "Купля/Продажа",
+      "title_kg": "Сатып Алуу / Сатуу",
+      "title_en": "Purchase/Sale",
+      "title": "Purchase/Sale",
+      "value": 1,
+      "parent.value": [4]
+    },
+    {
+      "order_seq": 2,
+      "title_ru": "Управление и распоряжение",
+      "title_kg": "Башкаруу жана тескөө",
+      "title_en": "Management and disposal",
+      "title": "Management and disposal",
+      "value": 2,
+      "parent.value": []
+    },
+    {
+      "order_seq": 3,
+      "title_ru": "Дарение",
+      "title_kg": "Берүү",
+      "title_en": "Gifting",
+      "title": "Gifting",
+      "value": 3,
+      "parent.value": [4]
+    },
+    {
+      "order_seq": 4,
+      "title_ru": "Аренда",
+      "title_kg": "Ижара",
+      "title_en": "Rent",
+      "title": "Rent",
+      "value": 4,
+      "parent.value": [4]
+    },
+    {
+      "order_seq": 5,
+      "title_ru": "Залог",
+      "title_kg": "Күрөө",
+      "title_en": "Bail",
+      "title": "Bail",
+      "value": 5,
+      "parent.value": [4]
+    },
+    {
+      "order_seq": 6,
+      "title_ru": "Перевод долга",
+      "title_kg": "Карызды которуу",
+      "title_en": "Debt transfer",
+      "title": "Debt transfer",
+      "value": 6,
+      "parent.value": []
+    },
+    {
+      "order_seq": 7,
+      "title_ru": "Свидетельство подлинности подписи",
+      "title_kg": "Колтамганын аныктыгын күбөлөндүрүү",
+      "title_en": "Certificate of authenticity of signature",
+      "title": "Certificate of authenticity of signature",
+      "value": 7,
+      "parent.value": []
+    },
+    {
+      "order_seq": 8,
+      "title_ru": "Обязательство",
+      "title_kg": "Милдеттенме",
+      "title_en": "Obligation",
+      "title": "Obligation",
+      "value": 8,
+      "parent.value": []
+    },
+    {
+      "order_seq": 9,
+      "title_ru": "Брачный договор",
+      "title_kg": "Нике келишими",
+      "title_en": "Marriage contract",
+      "title": "Marriage contract",
+      "value": 9,
+      "parent.value": []
+    },
+    {
+      "order_seq": 10,
+      "title_ru": "Согласие",
+      "title_kg": "Макулдук",
+      "title_en": "Consent",
+      "title": "Consent",
+      "value": 10,
+      "parent.value": []
+    },
+    {
+      "order_seq": 11,
+      "title_ru": "Получение",
+      "title_kg": "Алуу",
+      "title_en": "Receipt",
+      "title": "Receipt",
+      "value": 11,
+      "parent.value": [4]
+    },
+    {
+      "order_seq": 12,
+      "title_ru": "Перевод документа с одного языка на другой язык",
+      "title_kg": "Документти бир тилден экинчи тилге которуу",
+      "title_en": "Translation of a document from one language into another language",
+      "title": "Translation of a document from one language into another language",
+      "value": 12,
+      "parent.value": []
+    },
+    {
+      "order_seq": 13,
+      "title_ru": "Свидетельство копии документа",
+      "title_kg": "Документтин көчүрмөсүн күбөлөндүрүү",
+      "title_en": "Документтин көчүрмөсүн күбөлөндүрүү",
+      "title": "Документтин көчүрмөсүн күбөлөндүрүү",
+      "value": 13,
+      "parent.value": []
+    },
+    {
+      "order_seq": 14,
+      "title_ru": "Удостоверение факта",
+      "title_kg": "Фактыны күбөлөндүрүү",
+      "title_en": "Certification of fact",
+      "title": "Certification of fact",
+      "value": 14,
+      "parent.value": []
+    },
+    {
+      "order_seq": 15,
+      "title_ru": "Наследование",
+      "title_kg": "Мурастоо",
+      "title_en": "Inheritance",
+      "title": "Inheritance",
+      "value": 15,
+      "parent.value": []
+    },
+    {
+      "order_seq": 16,
+      "title_ru": "Представление",
+      "title_kg": "Өкүлчүлүк",
+      "title_en": "Presentation",
+      "title": "Presentation",
+      "value": 16,
+      "parent.value": []
+    },
+    {
+      "order_seq": 17,
+      "title_ru": "Сопровождение",
+      "title_kg": "Коштоо",
+      "title_en": "Support",
+      "title": "Support",
+      "value": 17,
+      "parent.value": []
+    },
+    {
+      "order_seq": 18,
+      "title_ru": "Принятие",
+      "title_kg": "Кабыл алуу",
+      "title_en": "Acceptance",
+      "title": "Acceptance",
+      "value": 18,
+      "parent.value": []
+    },
+    {
+      "order_seq": 19,
+      "title_ru": "Воспитание",
+      "title_kg": "Тарбиялоо",
+      "title_en": "Parenting",
+      "title": "Parenting",
+      "value": 19,
+      "parent.value": []
+    },
+    {
+      "order_seq": 20,
+      "title_ru": "Передача",
+      "title_kg": "Өткөрүп берүү",
+      "title_en": "Transfer",
+      "title": "Transfer",
+      "value": 20,
+      "parent.value": [4]
+    },
+    {
+      "order_seq": 21,
+      "title_ru": "Хранение",
+      "title_kg": "Сактоочу жай",
+      "title_en": "Storing",
+      "title": "Storing",
+      "value": 21,
+      "parent.value": []
+    },
+    {
+      "order_seq": 22,
+      "title_ru": "Выдача",
+      "title_kg": "Берүү",
+      "title_en": "Issuing",
+      "title": "Issuing",
+      "value": 22,
+      "parent.value": []
+    },
+    {
+      "order_seq": 23,
+      "title_ru": "Выход",
+      "title_kg": "Чыгуу",
+      "title_en": "Exit",
+      "title": "Exit",
+      "value": 23,
+      "parent.value": []
+    }
+  ]
+}

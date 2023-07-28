@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { applicationSchema } from "@/validator-schemas/application";
-import { IApplication } from "@/models/applications/application";
+import { IApplicationSchema, applicationSchema } from "@/validator-schemas/application";
 import FirstStepFields from "./steps/FirstStepFields";
 import SecondStepFields from "./steps/SecondStepFields";
 import ThirdStepFields from "./steps/ThirdStepFields";
@@ -19,12 +18,11 @@ import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 export default function ApplicationForm() {
   const t = useTranslations();
 
-  const form = useForm<IApplication>({
-    resolver: yupResolver<IApplication>(applicationSchema),
+  const form = useForm<IApplicationSchema>({
+    resolver: yupResolver<IApplicationSchema>(applicationSchema),
     defaultValues: {
       id: 0,
       version: 0,
-      name: "t",
     },
   });
 
@@ -49,7 +47,7 @@ export default function ApplicationForm() {
     setStep(index);
   };
 
-  const onSubmit = async (data: IApplication) => {
+  const onSubmit = async (data: IApplicationSchema) => {
     console.log(data);
   };
 
@@ -92,6 +90,7 @@ export default function ApplicationForm() {
         onSubmit={form.handleSubmit(onSubmit)}
       >
         {steps.map((component, index) => (step === index ? component : <></>))}
+        {step === steps.length - 1 && <Button type="submit">{t("Submit")}</Button>}
       </Box>
     </Box>
   );

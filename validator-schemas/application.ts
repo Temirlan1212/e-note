@@ -1,10 +1,18 @@
-import { number, object, string } from "yup";
+import { number, object, InferType, string } from "yup";
 
 export const applicationSchema = object().shape({
-  id: number(),
-  version: number(),
-  region: number(),
-  name: string().required("required"),
-  object: number().required("required"),
-  objectType: number().required("required"),
+  id: number().optional(),
+  version: number().optional(),
+  region: number().optional(),
+  district: number().optional(),
+  city: number().optional(),
+  notaryDistrict: number().optional(),
+  company: number().required("required"),
+  object: string().required(),
+  objectType: string().required(),
+  notarialAction: string().required(),
+  typeNotarialAction: string().required(),
+  action: string().required(),
 });
+
+export type IApplicationSchema = InferType<typeof applicationSchema>;
