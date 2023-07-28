@@ -185,7 +185,7 @@ export default function SecondStepFields({ form, onNext, onPrev }: IStepFieldsPr
         name="action"
         defaultValue=""
         render={({ field, fieldState }) => {
-          const actionData = dataBek?.typeNotarialAction.filter((item) =>
+          const actionData = dataBek?.action.filter((item) =>
             item["parent.value"].join(",").includes(String(typeNotarialActionId))
           );
 
