@@ -12,7 +12,7 @@ import Button from "@/components/ui/Button";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import Link from "@/components/ui/Link";
 import { useTranslations } from "next-intl";
-import { ApplicationListActions } from "./ApplicationLIstActions";
+import { ApplicationListActions } from "./ApplicationListActions";
 
 interface IAppQueryParams {
   pageSize: number;
