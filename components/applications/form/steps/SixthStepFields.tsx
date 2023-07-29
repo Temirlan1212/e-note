@@ -4,7 +4,7 @@ import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, InputLabel, Typography, SelectChangeEvent } from "@mui/material";
+import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";

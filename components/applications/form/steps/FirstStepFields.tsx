@@ -4,7 +4,7 @@ import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, InputLabel, Typography, SelectChangeEvent } from "@mui/material";
+import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
@@ -24,6 +24,11 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
+
+  const regionId = watch("region");
+  const districtId = watch("district");
+  const cityId = watch("city");
+  const notaryDistrictId = watch("notaryDistrict");
 
   const { data: regionsDictionary } = useFetch("/api/dictionaries/regions", "GET");
 
@@ -69,11 +74,9 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                 data={regionsDictionary?.status === 0 ? regionsDictionary.data : []}
                 selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                 helperText={t(fieldState.error?.message)}
-                onChange={(event: SelectChangeEvent) => {
-                  const {
-                    target: { value },
-                  } = event;
-                  field.onChange(value);
+                value={field.value != null ? field.value : ""}
+                onChange={(...event: any[]) => {
+                  field.onChange(...event);
                   trigger(field.name);
                 }}
               ></Select>
@@ -85,7 +88,6 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
           name="district"
           defaultValue={null}
           render={({ field, fieldState }) => {
-            const regionId = watch("region");
             const { data: districtsDictionary } = useFetch(`/api/dictionaries/districts?regionId=${regionId}`, "GET");
 
             useEffectOnce(() => {
@@ -103,11 +105,9 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                   helperText={t(fieldState.error?.message)}
                   disabled={!regionId}
-                  onChange={(event: SelectChangeEvent) => {
-                    const {
-                      target: { value },
-                    } = event;
-                    field.onChange(value);
+                  value={field.value != null ? field.value : ""}
+                  onChange={(...event: any[]) => {
+                    field.onChange(...event);
                     trigger(field.name);
                   }}
                 ></Select>
@@ -123,7 +123,6 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
           name="city"
           defaultValue={null}
           render={({ field, fieldState }) => {
-            const districtId = watch("district");
             const { data: citiesDictionary } = useFetch(`/api/dictionaries/cities?districtId=${districtId}`, "GET");
 
             useEffectOnce(() => {
@@ -141,11 +140,9 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                   helperText={t(fieldState.error?.message)}
                   disabled={!districtId}
-                  onChange={(event: SelectChangeEvent) => {
-                    const {
-                      target: { value },
-                    } = event;
-                    field.onChange(value);
+                  value={field.value != null ? field.value : ""}
+                  onChange={(...event: any[]) => {
+                    field.onChange(...event);
                     trigger(field.name);
                   }}
                 ></Select>
@@ -158,7 +155,6 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
           name="notaryDistrict"
           defaultValue={null}
           render={({ field, fieldState }) => {
-            const cityId = watch("city");
             const { data: notaryDistrictsDictionary } = useFetch(
               `/api/dictionaries/notary-districts?cityId=${cityId}`,
               "GET"
@@ -179,11 +175,9 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                   helperText={t(fieldState.error?.message)}
                   disabled={!cityId}
-                  onChange={(event: SelectChangeEvent) => {
-                    const {
-                      target: { value },
-                    } = event;
-                    field.onChange(value);
+                  value={field.value != null ? field.value : ""}
+                  onChange={(...event: any[]) => {
+                    field.onChange(...event);
                     trigger(field.name);
                   }}
                 ></Select>
@@ -197,7 +191,6 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
         control={control}
         name="company"
         render={({ field, fieldState }) => {
-          const notaryDistrictId = watch("notaryDistrict");
           const { data: companyData, loading: companyLoading } = useFetch(
             `/api/companies${notaryDistrictId != null ? "?notaryDistrictId=" + notaryDistrictId : ""}`,
             "GET"
