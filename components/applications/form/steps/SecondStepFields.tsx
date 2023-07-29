@@ -10,6 +10,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Hint from "@/components/ui/Hint";
 import { useRouter } from "next/router";
 import { INotarialActionData } from "@/models/dictionaries/notarial-action";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -20,8 +21,9 @@ export interface IStepFieldsProps {
 export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
-  const { trigger, control, watch, resetField } = form;
   const { data: notarialData } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
+
+  const { trigger, control, watch, resetField } = form;
 
   const handlePrevClick = () => {
     if (onPrev != null) onPrev();
@@ -44,6 +46,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
       <Controller
         control={control}
         name="object"
+        defaultValue={undefined}
         render={({ field, fieldState }) => {
           const objectList = notarialData?.object;
           const errorMessage = fieldState.error?.message;
@@ -67,7 +70,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  resetField("objectType");
+                  // resetField("objectType");
                 }}
               />
             </Box>
@@ -78,11 +81,16 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
       <Controller
         control={control}
         name="objectType"
+        defaultValue={undefined}
         render={({ field, fieldState }) => {
           const errorMessage = fieldState.error?.message;
           const objectTypeList = notarialData?.objectType.filter((item) =>
             item["parent.value"].join(",").includes(String(objectVal))
           );
+
+          useEffectOnce(() => {
+            resetField(field.name);
+          }, [objectVal]);
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
@@ -98,7 +106,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  resetField("notarialAction");
+                  // resetField("notarialAction");
                 }}
               />
             </Box>
@@ -109,11 +117,17 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
       <Controller
         control={control}
         name="notarialAction"
+        defaultValue={undefined}
         render={({ field, fieldState }) => {
           const errorMessage = fieldState.error?.message;
           const notarialActionList = notarialData?.notarialAction.filter((item) =>
             item["parent.value"].join(",").includes(String(objectTypeVal))
           );
+
+          useEffectOnce(() => {
+            resetField(field.name);
+          }, [objectTypeVal]);
+          console.log(objectTypeVal, "typeVal");
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
