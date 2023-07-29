@@ -7,7 +7,7 @@ export const applicationSchema = object().shape({
   district: number().optional(),
   city: number().optional(),
   notaryDistrict: number().optional(),
-  company: number().required("required"),
+  // company: number().required("required"),
   object: string().required("This field is required!"),
   objectType: string().required("This field is required!"),
   notarialAction: string().required("This field is required!"),

@@ -21,7 +21,7 @@ export interface IStepFieldsProps {
 export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
-  const { trigger, control, watch, resetField } = form;
+  const { trigger, control, watch, resetField, setValue } = form;
   const { data: notarialData } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
 
   const formFields: (keyof IApplicationSchema)[] = [
@@ -33,7 +33,10 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   ];
 
   const resetFields = (fields: (keyof IApplicationSchema)[]) => {
-    fields.map((field) => resetField(field));
+    fields.map((field) => {
+      resetField(field);
+      setValue(field, "");
+    });
   };
 
   const handlePrevClick = () => {
