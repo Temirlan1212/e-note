@@ -2,15 +2,17 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, InputLabel, Typography } from "@mui/material";
+import { Box, InputLabel, Typography, SelectChangeEvent } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import Hint from "@/components/ui/Hint";
+import Autocomplete from "@/components/ui/Autocomplete";
+import { ICompany } from "@/models/company";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import useEffectOnce from "@/hooks/useEffectOnce";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -21,31 +23,16 @@ export interface IStepFieldsProps {
 export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
 
+  const { trigger, control, watch, resetField } = form;
+
   const { data: regionsDictionary } = useFetch("/api/dictionaries/regions", "GET");
-
-  useEffectOnce(() => {
-    console.log(regionsDictionary);
-  }, [regionsDictionary]);
-
-  const {
-    formState: { errors },
-    getValues,
-    trigger,
-    control,
-    watch,
-  } = form;
-
-  useEffectOnce(() => {
-    const subscription = watch(() => triggerFields());
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-  const handlePrevClick = () => {
-    if (onPrev != null) onPrev();
-  };
 
   const triggerFields = async () => {
     return await trigger(["region", "district", "city", "notaryDistrict", "company"]);
+  };
+
+  const handlePrevClick = () => {
+    if (onPrev != null) onPrev();
   };
 
   const handleNextClick = async () => {
@@ -71,7 +58,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
         <Controller
           control={control}
           name="region"
-          defaultValue={undefined}
+          defaultValue={null}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Region")}</InputLabel>
@@ -82,7 +69,13 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                 data={regionsDictionary?.status === 0 ? regionsDictionary.data : []}
                 selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                 helperText={t(fieldState.error?.message)}
-                {...field}
+                onChange={(event: SelectChangeEvent) => {
+                  const {
+                    target: { value },
+                  } = event;
+                  field.onChange(value);
+                  trigger(field.name);
+                }}
               ></Select>
             </Box>
           )}
@@ -90,10 +83,14 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
         <Controller
           control={control}
           name="district"
-          defaultValue={undefined}
+          defaultValue={null}
           render={({ field, fieldState }) => {
-            const regionId = getValues().region;
+            const regionId = watch("region");
             const { data: districtsDictionary } = useFetch(`/api/dictionaries/districts?regionId=${regionId}`, "GET");
+
+            useEffectOnce(() => {
+              resetField(field.name);
+            }, [regionId]);
 
             return (
               <Box display="flex" flexDirection="column" width="100%">
@@ -106,7 +103,13 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                   helperText={t(fieldState.error?.message)}
                   disabled={!regionId}
-                  {...field}
+                  onChange={(event: SelectChangeEvent) => {
+                    const {
+                      target: { value },
+                    } = event;
+                    field.onChange(value);
+                    trigger(field.name);
+                  }}
                 ></Select>
               </Box>
             );
@@ -118,10 +121,14 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
         <Controller
           control={control}
           name="city"
-          defaultValue={undefined}
+          defaultValue={null}
           render={({ field, fieldState }) => {
-            const districtId = getValues().district;
+            const districtId = watch("district");
             const { data: citiesDictionary } = useFetch(`/api/dictionaries/cities?districtId=${districtId}`, "GET");
+
+            useEffectOnce(() => {
+              resetField(field.name);
+            }, [districtId]);
 
             return (
               <Box display="flex" flexDirection="column" width="100%">
@@ -134,7 +141,13 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                   helperText={t(fieldState.error?.message)}
                   disabled={!districtId}
-                  {...field}
+                  onChange={(event: SelectChangeEvent) => {
+                    const {
+                      target: { value },
+                    } = event;
+                    field.onChange(value);
+                    trigger(field.name);
+                  }}
                 ></Select>
               </Box>
             );
@@ -143,13 +156,17 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
         <Controller
           control={control}
           name="notaryDistrict"
-          defaultValue={undefined}
+          defaultValue={null}
           render={({ field, fieldState }) => {
-            const cityId = getValues().city;
+            const cityId = watch("city");
             const { data: notaryDistrictsDictionary } = useFetch(
               `/api/dictionaries/notary-districts?cityId=${cityId}`,
               "GET"
             );
+
+            useEffectOnce(() => {
+              resetField(field.name);
+            }, [cityId]);
 
             return (
               <Box display="flex" flexDirection="column" width="100%">
@@ -162,7 +179,13 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                   helperText={t(fieldState.error?.message)}
                   disabled={!cityId}
-                  {...field}
+                  onChange={(event: SelectChangeEvent) => {
+                    const {
+                      target: { value },
+                    } = event;
+                    field.onChange(value);
+                    trigger(field.name);
+                  }}
                 ></Select>
               </Box>
             );
@@ -173,20 +196,31 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
       <Controller
         control={control}
         name="company"
-        defaultValue={undefined}
         render={({ field, fieldState }) => {
+          const notaryDistrictId = watch("notaryDistrict");
+          const { data: companyData, loading: companyLoading } = useFetch(
+            `/api/companies${notaryDistrictId != null ? "?notaryDistrictId=" + notaryDistrictId : ""}`,
+            "GET"
+          );
+
+          useEffectOnce(() => {
+            resetField(field.name);
+          }, [notaryDistrictId]);
+
           return (
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Company")}</InputLabel>
-              <Select
-                placeholder="select"
+              <Autocomplete
                 labelField="name"
-                valueField="id"
-                data={[]}
-                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                type={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                 helperText={t(fieldState.error?.message)}
-                {...field}
-              ></Select>
+                options={companyData?.status === 0 ? (companyData.data as ICompany[]) : []}
+                loading={companyLoading}
+                onChange={(event, value) => {
+                  field.onChange(value != null ? value.id : undefined);
+                  trigger(field.name);
+                }}
+              />
             </Box>
           );
         }}
