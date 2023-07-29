@@ -25,7 +25,6 @@ export const applicationSchema = object().shape({
     .integer()
     .nullable()
     .transform((value) => (isNaN(value) ? null : value)),
-  // company: number().integer().required("required"),
   object: number()
     .integer()
     .required("required")
@@ -43,6 +42,10 @@ export const applicationSchema = object().shape({
     .required("required")
     .transform((value) => (isNaN(value) ? null : value)),
   action: number()
+    .integer()
+    .required("required")
+    .transform((value) => (isNaN(value) ? null : value)),
+  company: number()
     .integer()
     .required("required")
     .transform((value) => (isNaN(value) ? null : value)),

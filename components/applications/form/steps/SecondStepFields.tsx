@@ -1,17 +1,15 @@
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
-import Box from "@mui/material/Box";
+import useFetch from "@/hooks/useFetch";
+import { IApplicationSchema } from "@/validator-schemas/application";
+import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Hint from "@/components/ui/Hint";
-import { InputLabel, SelectChangeEvent } from "@mui/material";
 import { useRouter } from "next/router";
-import { IApplicationSchema } from "@/validator-schemas/application";
-import useFetch from "@/hooks/useFetch";
 import { INotarialActionData } from "@/models/dictionaries/notarial-action";
-import useEffectOnce from "@/hooks/useEffectOnce";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;

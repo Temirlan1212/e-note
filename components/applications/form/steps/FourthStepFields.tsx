@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { UseFormReturn } from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
+import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box, InputLabel, Typography } from "@mui/material";
@@ -18,18 +19,7 @@ export interface IStepFieldsProps {
 export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
 
-  const {
-    formState: { errors },
-    getValues,
-    trigger,
-    control,
-    watch,
-  } = form;
-
-  useEffectOnce(() => {
-    const subscription = watch(() => triggerFields());
-    return () => subscription.unsubscribe();
-  }, [watch]);
+  const { trigger, control, watch, resetField } = form;
 
   const handlePrevClick = () => {
     if (onPrev != null) onPrev();

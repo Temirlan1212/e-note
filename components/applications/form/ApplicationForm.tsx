@@ -84,7 +84,7 @@ export default function ApplicationForm() {
         onSubmit={form.handleSubmit(onSubmit)}
       >
         {steps.map((component, index) => (
-          <Box sx={{ display: step != index ? "none" : "block" }} key={index}>
+          <Box key={index} sx={{ display: step != index ? "none" : "block" }}>
             {component}
           </Box>
         ))}
