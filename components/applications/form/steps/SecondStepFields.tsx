@@ -6,11 +6,12 @@ import Select from "@/components/ui/Select";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Hint from "@/components/ui/Hint";
-import { InputLabel } from "@mui/material";
+import { InputLabel, SelectChangeEvent } from "@mui/material";
 import { useRouter } from "next/router";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import useFetch from "@/hooks/useFetch";
 import { INotarialActionData } from "@/models/dictionaries/notarial-action";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -21,20 +22,8 @@ export interface IStepFieldsProps {
 export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
-  const { trigger, control, watch, resetField, setValue } = form;
+  const { trigger, control, watch, resetField } = form;
   const { data: notarialData } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
-
-  const formFields: (keyof IApplicationSchema)[] = [
-    "object",
-    "objectType",
-    "notarialAction",
-    "typeNotarialAction",
-    "action",
-  ];
-
-  const resetFields = (fields: (keyof IApplicationSchema)[]) => {
-    fields.map((field) => resetField(field));
-  };
 
   const handlePrevClick = () => {
     if (onPrev != null) onPrev();
@@ -49,16 +38,17 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
     if (onNext != null && validated) onNext();
   };
 
+  const objectVal = watch("object");
+  const objectTypeVal = watch("objectType");
+
   return (
     <Box display="flex" flexDirection="column" gap="30px">
       <Controller
         control={control}
         name="object"
-        defaultValue=""
         render={({ field, fieldState }) => {
-          const objectData = notarialData?.object;
+          const objectList = notarialData?.object;
           const errorMessage = fieldState.error?.message;
-
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
               <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
@@ -71,15 +61,15 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
               <Select
                 fullWidth
                 selectType={errorMessage ? "danger" : field.value ? "success" : "secondary"}
-                data={objectData ?? []}
+                data={objectList ?? []}
                 labelField={"title_" + locale}
                 valueField="value"
                 helperText={errorMessage ? t(errorMessage) : ""}
-                {...field}
+                value={field.value == null ? "" : field.value}
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
-                  trigger("object");
-                  resetFields(formFields.slice(1, formFields.length));
+                  trigger(field.name);
+                  resetField("objectType");
                 }}
               />
             </Box>
@@ -90,11 +80,9 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
       <Controller
         control={control}
         name="objectType"
-        defaultValue=""
         render={({ field, fieldState }) => {
           const errorMessage = fieldState.error?.message;
-          const objectVal = watch("object");
-          const objectType = notarialData?.objectType.filter((item) =>
+          const objectTypeList = notarialData?.objectType.filter((item) =>
             item["parent.value"].join(",").includes(String(objectVal))
           );
 
@@ -104,15 +92,45 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
               <Select
                 disabled={!objectVal}
                 selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
-                data={objectType ?? []}
+                data={objectTypeList ?? []}
                 labelField={"title_" + locale}
                 valueField="value"
                 helperText={!!objectVal && errorMessage ? t(errorMessage) : ""}
-                {...field}
+                value={field.value == null ? "" : field.value}
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
-                  trigger("objectType");
-                  resetFields(formFields.slice(2, formFields.length));
+                  trigger(field.name);
+                  resetField("notarialAction");
+                }}
+              />
+            </Box>
+          );
+        }}
+      />
+
+      <Controller
+        control={control}
+        name="notarialAction"
+        render={({ field, fieldState }) => {
+          const errorMessage = fieldState.error?.message;
+          const notarialActionList = notarialData?.notarialAction.filter((item) =>
+            item["parent.value"].join(",").includes(String(objectTypeVal))
+          );
+
+          return (
+            <Box width="100%" display="flex" flexDirection="column" gap="10px">
+              <InputLabel>{t("Object type")}</InputLabel>
+              <Select
+                disabled={!objectTypeVal}
+                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                data={notarialActionList ?? []}
+                labelField={"title_" + locale}
+                valueField="value"
+                helperText={!!objectTypeVal && errorMessage ? t(errorMessage) : ""}
+                value={field.value == null ? "" : field.value}
+                onChange={(...event: any[]) => {
+                  field.onChange(...event);
+                  trigger(field.name);
                 }}
               />
             </Box>
@@ -127,7 +145,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           </Button>
         )}
         {onNext != null && (
-          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button type="submit" endIcon={<ArrowForwardIcon />}>
             {t("Next")}
           </Button>
         )}
