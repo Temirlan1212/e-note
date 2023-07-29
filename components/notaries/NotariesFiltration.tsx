@@ -20,7 +20,7 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
   const optionSelectData: any = [
     {
       id: 1,
-      label: t("Area"),
+      label: t("Region"),
       options: [
         {
           name: "area",
@@ -51,7 +51,7 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
     },
     {
       id: 2,
-      label: t("Region"),
+      label: t("District"),
       options: [
         {
           name: "region",
@@ -156,7 +156,7 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
     },
     {
       id: 6,
-      label: t("Notary District"),
+      label: t("Notary district"),
       options: [
         {
           name: "notary",
