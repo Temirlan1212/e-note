@@ -25,9 +25,7 @@ const roles = [
 const UserCreateForm: FC<IUserCreateFormProps> = (props) => {
   const [date, setDate] = useState<string | null>(null);
 
-  const form = useForm<any>({
-    // resolver: yupResolver<any>(),
-  });
+  const form = useForm<any>();
 
   const t = useTranslations();
 
@@ -55,7 +53,7 @@ const UserCreateForm: FC<IUserCreateFormProps> = (props) => {
   };
   return (
     <Box
-      // component=""
+      component="form"
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -69,14 +67,14 @@ const UserCreateForm: FC<IUserCreateFormProps> = (props) => {
           color: "#687C9B",
         }}
       >
-        Документ, удостоверяющий личность
+        {t("IdentityDocument")}
       </Typography>
       <Box sx={inputStyles}>
-        <Typography>Наименование</Typography>
+        <Typography> {t("DocumentName")}</Typography>
         <Select data={roles} selectType="success" defaultValue={roles[1]} fullWidth />
       </Box>
       <Box sx={inputStyles}>
-        <Typography>Серия и № паспорта*</Typography>
+        <Typography> {t("PassportSeriesNumber")}</Typography>
         <Box
           sx={{
             display: "flex",
@@ -84,20 +82,24 @@ const UserCreateForm: FC<IUserCreateFormProps> = (props) => {
             alignItems: "center",
           }}
         >
-          <Select data={roles} selectType="success" defaultValue={roles[1]} />
-          <Input
-            fullWidth
-            placeholder="Введите cерия и № паспорта"
-            name="middleName"
-            color="success"
-            // error={!!errors.lastName?.message ?? false}
-            // helperText={errors.lastName?.message && t(errors.lastName?.message)}
-            register={form.register}
+          <Select
+            data={roles}
+            selectType="success"
+            defaultValue={roles[1]}
+            sx={{
+              minWidth: {
+                xs: "120px",
+                sm: "145px",
+              },
+              height: "44px",
+              borderRadius: "0",
+            }}
           />
+          <Input fullWidth placeholder={t("EnterPassportSeriesNumber")} color="success" register={form.register} />
         </Box>
       </Box>
       <Box sx={inputStyles}>
-        <Typography>Орган и дата выдачи</Typography>
+        <Typography> {t("IssuingAuthorityDate")}</Typography>
         <Box
           sx={{
             display: "flex",
@@ -105,24 +107,8 @@ const UserCreateForm: FC<IUserCreateFormProps> = (props) => {
             alignItems: "center",
           }}
         >
-          <Input
-            fullWidth
-            placeholder="Введите орган выдачи"
-            name="middleName"
-            color="success"
-            // error={!!errors.lastName?.message ?? false}
-            // helperText={errors.lastName?.message && t(errors.lastName?.message)}
-            register={form.register}
-          />
-          <Input
-            fullWidth
-            placeholder="Введите орган выдачи"
-            name="middleName"
-            color="success"
-            // error={!!errors.lastName?.message ?? false}
-            // helperText={errors.lastName?.message && t(errors.lastName?.message)}
-            register={form.register}
-          />
+          <Input fullWidth placeholder={t("EnterIssuingAuthority")} color="success" register={form.register} />
+          <Input fullWidth placeholder={t("EnterIssuingAuthority")} color="success" register={form.register} />
           <Typography>от</Typography>
           <DatePicker onChange={handleDateChange} value={date} width="350px" />
         </Box>
@@ -134,26 +120,25 @@ const UserCreateForm: FC<IUserCreateFormProps> = (props) => {
           color: "#687C9B",
         }}
       >
-        Адрес прописки (регистрации)
+        {t("RegistrationAddress")}
       </Typography>
       <Box sx={inputStyles}>
-        <Typography>Область</Typography>
+        <Typography>{t("Region")}</Typography>
         <Select data={roles} selectType="success" defaultValue={roles[1]} fullWidth />
       </Box>
       <Box sx={inputStyles}>
-        <Typography>Район</Typography>
+        <Typography>{t("District")}</Typography>
         <Select data={roles} selectType="success" defaultValue={roles[1]} fullWidth />
       </Box>
       <Box sx={inputStyles}>
-        <Typography>Населенный пункт, город</Typography>
+        <Typography>{t("LocalityCity")}</Typography>
         <Select data={roles} selectType="success" defaultValue={roles[1]} fullWidth />
       </Box>
       <Box sx={inputStyles}>
-        <Typography>Улица</Typography>
+        <Typography>{t("Street")}</Typography>
         <Input
           fullWidth
-          placeholder="Введите улицу"
-          name="middleName"
+          placeholder={t("EnterStreet")}
           color="success"
           // error={!!errors.lastName?.message ?? false}
           // helperText={errors.lastName?.message && t(errors.lastName?.message)}
@@ -168,28 +153,12 @@ const UserCreateForm: FC<IUserCreateFormProps> = (props) => {
         }}
       >
         <Box sx={inputStyles} width="100%">
-          <Typography>Дом</Typography>
-          <Input
-            fullWidth
-            placeholder="Введите cерия и № паспорта"
-            name="middleName"
-            color="success"
-            // error={!!errors.lastName?.message ?? false}
-            // helperText={errors.lastName?.message && t(errors.lastName?.message)}
-            register={form.register}
-          />
+          <Typography>{t("HouseNumber")}</Typography>
+          <Input fullWidth placeholder={t("EnterHouseNumber")} color="success" register={form.register} />
         </Box>
         <Box sx={inputStyles} width="100%">
-          <Typography>Квартира</Typography>
-          <Input
-            fullWidth
-            placeholder="Введите cерия и № паспорта"
-            name="middleName"
-            color="success"
-            // error={!!errors.lastName?.message ?? false}
-            // helperText={errors.lastName?.message && t(errors.lastName?.message)}
-            register={form.register}
-          />
+          <Typography>{t("ApartmentNumber")}</Typography>
+          <Input fullWidth placeholder={t("ApartmentNumber")} color="success" register={form.register} />
         </Box>
       </Box>
       <Typography
@@ -199,26 +168,25 @@ const UserCreateForm: FC<IUserCreateFormProps> = (props) => {
           color: "#687C9B",
         }}
       >
-        Адрес фактического места жительства
+        {t("ActualResidenceAddress")}
       </Typography>
       <Box sx={inputStyles}>
-        <Typography>Область</Typography>
+        <Typography>{t("Region")}</Typography>
         <Select data={roles} selectType="success" defaultValue={roles[1]} fullWidth />
       </Box>
       <Box sx={inputStyles}>
-        <Typography>Район</Typography>
+        <Typography>{t("District")}</Typography>
         <Select data={roles} selectType="success" defaultValue={roles[1]} fullWidth />
       </Box>
       <Box sx={inputStyles}>
-        <Typography>Населенный пункт, город</Typography>
+        <Typography>{t("LocalityCity")}</Typography>
         <Select data={roles} selectType="success" defaultValue={roles[1]} fullWidth />
       </Box>
       <Box sx={inputStyles}>
-        <Typography>Улица</Typography>
+        <Typography>{t("Street")}</Typography>
         <Input
           fullWidth
-          placeholder="Введите улицу"
-          name="middleName"
+          placeholder={t("EnterStreet")}
           color="success"
           // error={!!errors.lastName?.message ?? false}
           // helperText={errors.lastName?.message && t(errors.lastName?.message)}
@@ -233,28 +201,12 @@ const UserCreateForm: FC<IUserCreateFormProps> = (props) => {
         }}
       >
         <Box sx={inputStyles} width="100%">
-          <Typography>Дом</Typography>
-          <Input
-            fullWidth
-            placeholder="Введите cерия и № паспорта"
-            name="middleName"
-            color="success"
-            // error={!!errors.lastName?.message ?? false}
-            // helperText={errors.lastName?.message && t(errors.lastName?.message)}
-            register={form.register}
-          />
+          <Typography>{t("HouseNumber")}</Typography>
+          <Input fullWidth placeholder={t("EnterHouseNumber")} color="success" register={form.register} />
         </Box>
         <Box sx={inputStyles} width="100%">
-          <Typography>Квартира</Typography>
-          <Input
-            fullWidth
-            placeholder="Введите cерия и № паспорта"
-            name="middleName"
-            color="success"
-            // error={!!errors.lastName?.message ?? false}
-            // helperText={errors.lastName?.message && t(errors.lastName?.message)}
-            register={form.register}
-          />
+          <Typography>{t("ApartmentNumber")}</Typography>
+          <Input fullWidth placeholder={t("ApartmentNumber")} color="success" register={form.register} />
         </Box>
       </Box>
     </Box>

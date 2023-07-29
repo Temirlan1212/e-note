@@ -80,14 +80,14 @@ const UserCreateContent: FC<IUserCreateContentProps> = (props) => {
               marginBottom: "5px",
             }}
           >
-            Роль пользователя
+            {t("User role")}
           </Typography>
           <Select data={roles} selectType="success" defaultValue={roles[1]} fullWidth />
         </Box>
-        <Checkbox label="Иностранное лицо" />
+        <Checkbox label={t("Foreign person")} />
       </Box>
       <Box
-        // component=""
+        component="form"
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -101,13 +101,13 @@ const UserCreateContent: FC<IUserCreateContentProps> = (props) => {
             color: "#687C9B",
           }}
         >
-          Данные для выгрузки с портала “Тундук”
+          {t("DataFromTundukPortal")}
         </Typography>
         <Box sx={inputStyles}>
-          <Typography>Фамилия</Typography>
+          <Typography> {t("Surname")}</Typography>
           <Input
             fullWidth
-            placeholder="Введите фамилию"
+            placeholder={t("EnterSurname")}
             name="lastName"
             color="success"
             // error={!!errors.lastName?.message ?? false}
@@ -116,45 +116,45 @@ const UserCreateContent: FC<IUserCreateContentProps> = (props) => {
           />
         </Box>
         <Box sx={inputStyles}>
-          <Typography>Имя</Typography>
+          <Typography> {t("FirstName")}</Typography>
           <Input
             fullWidth
-            placeholder="Введите имя"
+            placeholder={t("EnterFirstName")}
             name="firstName"
             color="success"
-            // error={!!errors.lastName?.message ?? false}
-            // helperText={errors.lastName?.message && t(errors.lastName?.message)}
+            // error={!!errors.firstName?.message ?? false}
+            // helperText={errors.firstName?.message && t(errors.firstName?.message)}
             register={form.register}
           />
         </Box>
         <Box sx={inputStyles}>
-          <Typography>Отчество</Typography>
+          <Typography>{t("Patronymic")}</Typography>
           <Input
             fullWidth
-            placeholder="Введите отчество"
+            placeholder={t("EnterPatronymic")}
             name="middleName"
             color="success"
-            // error={!!errors.lastName?.message ?? false}
-            // helperText={errors.lastName?.message && t(errors.lastName?.message)}
+            // error={!!errors.middleName?.message ?? false}
+            // helperText={errors.middleName?.message && t(errors.middleName?.message)}
             register={form.register}
           />
         </Box>
         <Box sx={inputStyles}>
-          <Typography>Персональный номер (ИНН)</Typography>
+          <Typography>{t("PersonalID")}</Typography>
           <Input
             fullWidth
-            placeholder="Введите персональный номер (ИНН)"
+            placeholder={t("EnterPersonalID")}
             name="personalNumber"
             color="success"
-            // error={!!errors.lastName?.message ?? false}
-            // helperText={errors.lastName?.message && t(errors.lastName?.message)}
+            // error={!!errors.personalNumber?.message ?? false}
+            // helperText={errors.personalNumber?.message && t(errors.personalNumber?.message)}
             register={form.register}
           />
         </Box>
       </Box>
       <Box
         sx={{
-          maxHeight: isVisible ? "1000px" : 0,
+          maxHeight: isVisible ? "1400px" : 0,
           overflow: "hidden",
           transition: "max-height 0.3s ease-out",
         }}
@@ -177,7 +177,7 @@ const UserCreateContent: FC<IUserCreateContentProps> = (props) => {
             padding: "10px 16px",
           }}
         >
-          Проверить
+          {t("Check")}
         </Button>
         <Box
           sx={{
@@ -203,7 +203,7 @@ const UserCreateContent: FC<IUserCreateContentProps> = (props) => {
                 color: "#687C9B",
               }}
             >
-              Паспортные данные действительны в базе данных “Тундук”
+              {t("PassportDataValid")}
             </Typography>
           </Box>
           <Typography
@@ -213,30 +213,30 @@ const UserCreateContent: FC<IUserCreateContentProps> = (props) => {
               color: "#687C9B",
             }}
           >
-            Контактные данные
+            {t("ContactInformation")}
           </Typography>
           <Box display="flex" flexDirection="column" gap="20px">
             <Box sx={inputStyles}>
               <Typography>E-mail*</Typography>
               <Input
                 fullWidth
-                placeholder="Введите фамилию"
-                name="lastName"
+                placeholder={t("EnterEmail")}
+                name="email"
                 color="success"
-                // error={!!errors.lastName?.message ?? false}
-                // helperText={errors.lastName?.message && t(errors.lastName?.message)}
+                // error={!!errors.email?.message ?? false}
+                // helperText={errors.email?.message && t(errors.email?.message)}
                 register={form.register}
               />
             </Box>
             <Box sx={inputStyles}>
-              <Typography>Номер телефона*</Typography>
+              <Typography>{t("PhoneNumber")}</Typography>
               <Input
                 fullWidth
-                placeholder="Введите фамилию"
-                name="lastName"
+                placeholder={t("EnterPhoneNumber")}
+                name="phoneNumber"
                 color="success"
-                // error={!!errors.lastName?.message ?? false}
-                // helperText={errors.lastName?.message && t(errors.lastName?.message)}
+                // error={!!errors.phoneNumber?.message ?? false}
+                // helperText={errors.phoneNumber?.message && t(errors.phoneNumber?.message)}
                 register={form.register}
               />
             </Box>
@@ -249,7 +249,7 @@ const UserCreateContent: FC<IUserCreateContentProps> = (props) => {
             padding: "8px 16px",
           }}
         >
-          Зарегистрировать
+          {t("Register")}
         </Button>
       </Box>
     </Box>
