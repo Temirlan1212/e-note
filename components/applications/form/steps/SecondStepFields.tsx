@@ -33,10 +33,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   ];
 
   const resetFields = (fields: (keyof IApplicationSchema)[]) => {
-    fields.map((field) => {
-      resetField(field);
-      setValue(field, "");
-    });
+    fields.map((field) => resetField(field));
   };
 
   const handlePrevClick = () => {
