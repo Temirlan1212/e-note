@@ -1,7 +1,6 @@
 import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import { Box, Typography } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
-import { useDictionaryStore } from "@/stores/dictionaries";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { IActionType } from "@/models/dictionaries/action-type";
@@ -24,9 +23,10 @@ interface IAppQueryParams {
 export default function ApplicationList() {
   const t = useTranslations();
   const { locale } = useRouter();
-  const actionTypeData = useDictionaryStore((store) => store.actionTypeData);
-  const documentTypeData = useDictionaryStore((store) => store.documentTypeData);
-  const statusData = useDictionaryStore((store) => store.statusData);
+  const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
+  const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
+  const { data: statusData } = useFetch("/api/dictionaries/status", "POST");
+
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,
     page: 1,
@@ -46,7 +46,7 @@ export default function ApplicationList() {
 
   const handleFilterSubmit = async (value: IFilterSubmitParams) => {
     handleUpdateFilterValues(value);
-    updateAppQueryParams("page", 1);
+    if (value.value.length > 0) updateAppQueryParams("page", 1);
   };
 
   const handlePageChange = (page: number) => {
@@ -93,7 +93,7 @@ export default function ApplicationList() {
         <Typography variant="h4" color="text.primary">
           {t("Your applications")}
         </Typography>
-        <Link href="applications">
+        <Link href="applications/create">
           <Button sx={{ py: "10px", px: "20px" }} component="label" startIcon={<PostAddIcon />}>
             {t("Create application")}
           </Button>
@@ -109,15 +109,15 @@ export default function ApplicationList() {
             editable: false,
             sortable: false,
             filter: {
-              data: actionTypeData ?? [],
+              data: actionTypeData?.data ?? [],
               labelField: "title_" + locale,
               valueField: "value",
               type: "dictionary",
               field: "typeNotarialAction",
             },
             valueGetter: (params: GridValueGetterParams) => {
-              if (actionTypeData != null) {
-                const matchedItem = actionTypeData?.find((item) => item.value == params.value);
+              if (actionTypeData?.data != null) {
+                const matchedItem = actionTypeData?.data.find((item: any) => item.value == params.value);
                 return matchedItem?.[("title_" + locale) as keyof IActionType];
               }
               return params.value;
@@ -130,7 +130,7 @@ export default function ApplicationList() {
             editable: false,
             sortable: false,
             filter: {
-              data: documentTypeData ?? [],
+              data: documentTypeData?.data ?? [],
               labelField: "name",
               valueField: "id",
               type: "dictionary",
@@ -145,7 +145,7 @@ export default function ApplicationList() {
             editable: false,
             sortable: false,
             filter: {
-              data: statusData ?? [],
+              data: statusData?.data ?? [],
               labelField: "title_" + locale,
               valueField: "value",
               type: "dictionary",
@@ -153,7 +153,7 @@ export default function ApplicationList() {
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (statusData != null) {
-                const matchedItem = statusData?.find((item) => item.value == String(1));
+                const matchedItem = statusData?.data?.find((item: any) => item.value == String(1));
                 return matchedItem?.[("title_" + locale) as keyof IActionType];
               }
               return params.value;

@@ -15,8 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         Cookie: req.headers["server-cookie"]?.toString() ?? "",
       },
       body: JSON.stringify({
-        ...req.body,
+        offset: 0,
+        limit: 100,
+        fields: ["title", "value"],
         translate: true,
+        ...req.body,
       }),
     }
   );
