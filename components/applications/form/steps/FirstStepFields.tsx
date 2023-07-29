@@ -73,7 +73,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                 valueField="id"
                 data={regionsDictionary?.status === 0 ? regionsDictionary.data : []}
                 selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
-                helperText={t(fieldState.error?.message)}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 value={field.value != null ? field.value : ""}
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
@@ -103,7 +103,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   valueField="id"
                   data={districtsDictionary?.status === 0 ? districtsDictionary.data : []}
                   selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
-                  helperText={t(fieldState.error?.message)}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={!regionId}
                   value={field.value != null ? field.value : ""}
                   onChange={(...event: any[]) => {
@@ -138,7 +138,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   valueField="id"
                   data={citiesDictionary?.status === 0 ? citiesDictionary.data : []}
                   selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
-                  helperText={t(fieldState.error?.message)}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={!districtId}
                   value={field.value != null ? field.value : ""}
                   onChange={(...event: any[]) => {
@@ -173,7 +173,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   valueField="id"
                   data={notaryDistrictsDictionary?.status === 0 ? notaryDistrictsDictionary.data : []}
                   selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
-                  helperText={t(fieldState.error?.message)}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={!cityId}
                   value={field.value != null ? field.value : ""}
                   onChange={(...event: any[]) => {
@@ -206,7 +206,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
               <Autocomplete
                 labelField="name"
                 type={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
-                helperText={t(fieldState.error?.message)}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 options={companyData?.status === 0 ? (companyData.data as ICompany[]) : []}
                 loading={companyLoading}
                 onChange={(event, value) => {
