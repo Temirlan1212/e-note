@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import useFetch from "@/hooks/useFetch";
 
 import { Box, Typography, InputLabel } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -8,6 +9,7 @@ import IconButton from "@mui/material/IconButton";
 
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PostAddIcon from "@mui/icons-material/PostAdd";
+import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 
 import Button from "../ui/Button";
 import Input from "../ui/Input";
@@ -16,27 +18,113 @@ import SearchBar from "../ui/SearchBar";
 import { GridTable } from "../ui/GridTable";
 
 export default function BlackList() {
-  const [selectedPage, setSelectedPage] = useState(1);
+  const [selectedPage, setSelectedPage] = useState<number>(1);
   const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
-  const [searchAllQuery, setSearchAllQuery] = useState("");
-  const [reasonQuery, setReasonQuery] = useState("");
-  const [pinQuery, setPinQuery] = useState("");
-  const [fullnameQuery, setFullnameQuery] = useState("");
-
+  const [keywordValue, setKeywordValue] = useState<string>("");
+  const [reasonValue, setReasonValue] = useState<string>("");
+  const [pinValue, setPinValue] = useState<string>("");
+  const [fullNameValue, setFullNameValue] = useState<string>("");
+  const [rowData, setRowData] = useState<any>({});
   const t = useTranslations();
+
+  const initStateFilterFields = [
+    { fieldName: "blockingReason.name", operator: "like", value: reasonValue ? `%${reasonValue}%` : null },
+    { fieldName: "partner.fullName", operator: "like", value: fullNameValue ? `%${fullNameValue}%` : null },
+    { fieldName: "partner.personalNumber", operator: "like", value: pinValue ? `%${pinValue}%` : null },
+  ];
+
+  const initStateKeywordFilterFields = [
+    { fieldName: "blockingReason.name", operator: "like", value: keywordValue ? `%${keywordValue}%` : null },
+    { fieldName: "partner.fullName", operator: "like", value: keywordValue ? `%${keywordValue}%` : null },
+    { fieldName: "createdBy.fullName", operator: "like", value: keywordValue ? `%${keywordValue}%` : null },
+    { fieldName: "partner.personalNumber", operator: "like", value: keywordValue ? `%${keywordValue}%` : null },
+  ];
+
+  const dataGridStyles = {
+    ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": { padding: "10px 16px" },
+    ".MuiBox-root": { backgroundColor: "#FFF" },
+    ".MuiDataGrid-columnHeader": { padding: "16px" },
+  };
+
+  const [requestBody, setRequestBody] = useState<any>({
+    filterFields: null,
+    operator: null,
+  });
+
+  const { data: allData } = useFetch("/api/black-list/all-data", "POST");
+  const { data: filteredData } = useFetch("/api/black-list/filtered-data", "POST", {
+    body: requestBody,
+  });
+
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(allData?.data.length / itemsPerPage);
+
+  const onPageChange = (page: number) => {
+    setSelectedPage(page);
+  };
 
   const handleActionsPopupToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setAnchorEl(anchorEl == null ? event.currentTarget : null);
   };
 
+  const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setKeywordValue(event.target.value);
+  };
+
+  const handleReasonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setReasonValue(event.target.value);
+  };
+
+  const handlePinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPinValue(event.target.value);
+  };
+
+  const handleFullNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFullNameValue(event.target.value);
+  };
+
+  const handleFilterSearch = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const filteredFields = initStateFilterFields.filter((field) => field.value !== null && field.value !== "");
+    setRequestBody((prev: any) => {
+      return { ...prev, filterFields: filteredFields, operator: "and" };
+    });
+    setRowData(filteredData);
+  };
+
+  const handleKeywordSearch = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const filteredFields = initStateKeywordFilterFields.filter((field) => field.value !== null && field.value !== "");
+    setRequestBody((prev: any) => {
+      return { ...prev, filterFields: filteredFields, operator: "or" };
+    });
+    setRowData(filteredData);
+  };
+
+  useEffect(() => {
+    if (allData && reasonValue === "" && pinValue === "" && fullNameValue === "") {
+      setRowData(allData);
+    }
+  }, [allData, reasonValue, pinValue, fullNameValue]);
+
   const columns = [
-    { field: "pin", headerName: "Subject PIN", width: 180 },
-    { field: "fullName", headerName: "Subject full name", width: 320 },
-    { field: "dateOfBirth", headerName: "Date of birth", width: 210 },
-    { field: "entryDate", headerName: "Entry date", width: 180 },
-    { field: "whoCreated", headerName: "Who created", width: 320 },
+    { field: "partner.personalNumber", headerName: "Subject PIN", width: 200 },
+    { field: "partner.fullName", headerName: "Subject full name", width: 320 },
+    { field: "partner.birthDate", headerName: "Date of birth", width: 210 },
     {
-      field: "reasonForBlacklisting",
+      field: "createdOn",
+      headerName: "Entry date",
+      width: 180,
+      valueGetter: (params: any) => {
+        const createdOn = new Date(params.value);
+        const day = createdOn.getDate();
+        const month = createdOn.getMonth() + 1;
+        const year = createdOn.getFullYear();
+        const formattedCreatedOn = `${day < 10 ? "0" : ""}${day}.${month < 10 ? "0" : ""}${month}.${year}`;
+        return formattedCreatedOn;
+      },
+    },
+    { field: "createdBy.fullName", headerName: "Who created", width: 320 },
+    {
+      field: "blockingReason.name",
       headerName: "Reason for blacklisting",
       type: "acitons",
       sortable: false,
@@ -44,7 +132,7 @@ export default function BlackList() {
       renderCell: (params: any) => (
         <Grid sx={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
           <Typography fontSize={14} fontWeight={500}>
-            {t(`${params.row.reasonForBlacklisting}`)}
+            {params.row["blockingReason.name"] ?? ""}
           </Typography>
 
           <IconButton sx={{ visibility: anchorEl ? "visible" : "hidden" }} onClick={handleActionsPopupToggle}>
@@ -88,140 +176,6 @@ export default function BlackList() {
     },
   ];
 
-  const rows = [
-    {
-      id: 1,
-      pin: 20607199701071,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      dateOfBirth: "01.07.1977",
-      entryDate: "01.01.2022",
-      whoCreated: "ЧН Абдыгулов",
-      reasonForBlacklisting: t("Incapacitated"),
-    },
-    {
-      id: 2,
-      pin: 20607199701099,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      dateOfBirth: "01.07.1966",
-      entryDate: "02.01.2022",
-      whoCreated: "ЧН Абдыгулов",
-      reasonForBlacklisting: t("Fake passport"),
-    },
-    {
-      id: 3,
-      pin: 20607199701010,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      dateOfBirth: "01.07.1976",
-      entryDate: "03.01.2022",
-      whoCreated: "ЧН Абдыгулов",
-      reasonForBlacklisting: t("In the lists of Financial Intelligence"),
-    },
-    {
-      id: 4,
-      pin: 20607192701022,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      dateOfBirth: "01.07.1969",
-      entryDate: "04.01.2022",
-      whoCreated: "ЧН Абдыгулов",
-      reasonForBlacklisting: t("Against the law"),
-    },
-    {
-      id: 5,
-      pin: 20607199701033,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      dateOfBirth: "01.07.1986",
-      entryDate: "05.01.2022",
-      whoCreated: "ЧН Абдыгулов",
-      reasonForBlacklisting: t("Fake passport"),
-    },
-    {
-      id: 6,
-      pin: 20603199701079,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      dateOfBirth: "01.07.1996",
-      entryDate: "06.01.2022",
-      whoCreated: "ЧН Абдыгулов",
-      reasonForBlacklisting: t("Mental deviation"),
-    },
-    {
-      id: 7,
-      pin: 11107199701079,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      dateOfBirth: "01.07.1995",
-      entryDate: "07.01.2022",
-      whoCreated: "ЧН Абдыгулов",
-      reasonForBlacklisting: t("Fake passport"),
-    },
-    {
-      id: 8,
-      pin: 20222199701079,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      dateOfBirth: "01.07.1999",
-      entryDate: "08.01.2022",
-      whoCreated: "ЧН Абдыгулов",
-      reasonForBlacklisting: t("Mental deviation"),
-    },
-    {
-      id: 9,
-      pin: 20607199711079,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      dateOfBirth: "01.07.1988",
-      entryDate: "09.01.2022",
-      whoCreated: "ЧН Абдыгулов",
-      reasonForBlacklisting: t("Fake passport"),
-    },
-  ];
-
-  const dataGridStyles = {
-    ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": { padding: "10px 16px" },
-    ".MuiBox-root": { backgroundColor: "#FFF" },
-    ".MuiDataGrid-columnHeader": { padding: "16px" },
-  };
-
-  const itemsPerPage = 6;
-  const totalPages = Math.ceil(rows.length / itemsPerPage);
-
-  const onPageChange = (page: number) => {
-    setSelectedPage(page);
-  };
-
-  const handleSearchAllChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchAllQuery(event.target.value);
-  };
-
-  const handleReasonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setReasonQuery(event.target.value);
-  };
-
-  const handlePinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPinQuery(event.target.value);
-  };
-
-  const handleFullnameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFullnameQuery(event.target.value);
-  };
-
-  const filteredRows = rows.filter((row) => {
-    const filterSearchAll = searchAllQuery.toLowerCase();
-    const { reasonForBlacklisting, pin, fullName, dateOfBirth, entryDate, whoCreated } = row;
-    const filterReason = reasonQuery.toLowerCase();
-    const filterPin = pinQuery.toLowerCase();
-    const filterFullName = fullnameQuery.toLowerCase();
-
-    return (
-      (!searchAllQuery ||
-        reasonForBlacklisting.toLowerCase().includes(filterSearchAll) ||
-        String(pin).toLowerCase().includes(filterSearchAll) ||
-        fullName.toLowerCase().includes(filterSearchAll) ||
-        dateOfBirth.toLowerCase().includes(filterSearchAll) ||
-        entryDate.toLowerCase().includes(filterSearchAll) ||
-        whoCreated.toLowerCase().includes(filterSearchAll)) &&
-      (!filterReason || reasonForBlacklisting.toLowerCase().includes(filterReason)) &&
-      (!filterPin || String(pin).toLowerCase().includes(filterPin)) &&
-      (!filterFullName || fullName.toLowerCase().includes(filterFullName))
-    );
-  });
-
   return (
     <>
       <Grid
@@ -235,7 +189,7 @@ export default function BlackList() {
         }}
       >
         <Grid item xs={12} sm={12} md={9} sx={{ alignSelf: "stretch" }}>
-          <SearchBar onChange={handleSearchAllChange} value={searchAllQuery} />
+          <SearchBar onChange={handleKeywordChange} onClick={handleKeywordSearch} value={keywordValue} />
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
@@ -248,15 +202,15 @@ export default function BlackList() {
               padding: "13px 22px",
             }}
             fullWidth
+            startIcon={<PostAddIcon />}
           >
-            <PostAddIcon />
             <Typography fontWeight={600}>{t("Enter subject")}</Typography>
           </Button>
         </Grid>
       </Grid>
 
-      <Grid container spacing={{ xs: 2.5, sm: 2.5, md: 5 }}>
-        <Grid item xs={12} sm={12} md={4}>
+      <Grid container spacing={{ xs: 2.5, sm: 3.75, md: 3.75 }} sx={{ alignItems: "end" }}>
+        <Grid item xs={12} sm={12} md={3}>
           <InputLabel htmlFor="input-reason" sx={{ fontSize: "14px", fontWeight: "500" }}>
             {t("Reason")}
           </InputLabel>
@@ -264,11 +218,11 @@ export default function BlackList() {
             placeholder={t("Enter a reason")}
             variant="outlined"
             name="input-reason"
-            fullWidth
             onChange={handleReasonChange}
+            fullWidth
           />
         </Grid>
-        <Grid item xs={12} sm={12} md={4}>
+        <Grid item xs={12} sm={12} md={3}>
           <InputLabel htmlFor="input-pin" sx={{ fontSize: "14px", fontWeight: "500" }}>
             {t("Subject PIN")}
           </InputLabel>
@@ -276,11 +230,11 @@ export default function BlackList() {
             placeholder={t("Enter PIN")}
             variant="outlined"
             name="input-pin"
-            fullWidth
             onChange={handlePinChange}
+            fullWidth
           />
         </Grid>
-        <Grid item xs={12} sm={12} md={4}>
+        <Grid item xs={12} sm={12} md={3}>
           <InputLabel htmlFor="input-full-name" sx={{ fontSize: "14px", fontWeight: "500" }}>
             {t("Subject full name")}
           </InputLabel>
@@ -288,19 +242,36 @@ export default function BlackList() {
             placeholder={t("Enter full name")}
             variant="outlined"
             name="input-full-name"
+            onChange={handleFullNameChange}
             fullWidth
-            onChange={handleFullnameChange}
           />
+        </Grid>
+
+        <Grid item xs={12} sm={6} md={3}>
+          <Button
+            variant="contained"
+            color="success"
+            sx={{
+              height: "56px",
+              gap: "8px",
+              padding: "13px 22px",
+            }}
+            fullWidth
+            startIcon={<ContentPasteSearchIcon />}
+            onClick={handleFilterSearch}
+          >
+            <Typography fontWeight={600}>{t("Поиск по критериям")}</Typography>
+          </Button>
         </Grid>
       </Grid>
 
       <Box sx={{ height: "448px" }}>
         <GridTable
-          rows={filteredRows}
+          rows={rowData?.data ?? []}
           columns={columns}
           filterData={{
             data: {
-              rows: [rows],
+              rows: [rowData?.data],
             },
             filterField: { field: "id" },
           }}
