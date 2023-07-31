@@ -113,7 +113,6 @@ export const GridTable: React.FC<IGridTableProps> = ({
       padding: "10px",
       ".MuiDataGrid-cellContent": {
         overflow: "auto",
-        height: "100%",
         display: "block",
         alignItems: "center",
         overflowWrap: "break-word",
