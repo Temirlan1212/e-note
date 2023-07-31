@@ -5,8 +5,6 @@ import { GetStaticPropsContext } from "next";
 
 import OMSUOfficialsContent from "@/components/omsu/OMSUOfficialsContent";
 
-interface IOMSUOfficialsProps {}
-
 export default function OMSUOfficials() {
   const t = useTranslations();
 
