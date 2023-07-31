@@ -1,18 +1,24 @@
-import { IDocumentType } from "@/models/dictionaries/document-type";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IDocumentType | null>) {
-  if (req.method !== "POST") {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== "GET") {
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Product/search", {
+  const criteria: Record<string, string | number>[] = [];
+
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Region/search", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
-    body: JSON.stringify(req.body),
+    body: JSON.stringify({
+      fields: ["id", "version", "name", "code"],
+      data: {
+        criteria,
+      },
+    }),
   });
 
   if (!response.ok) {
