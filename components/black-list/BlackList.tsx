@@ -15,17 +15,7 @@ import Button from "../ui/Button";
 import Input from "../ui/Input";
 import Pagination from "../ui/Pagination";
 import SearchBar from "../ui/SearchBar";
-import { GridTable } from "../ui/GridTable";
-
-type GridColumn = {
-  field: string;
-  headerName: string;
-  type?: string;
-  width?: number;
-  sortable?: boolean;
-  filter?: { type: string };
-  renderCell?: (value: any) => any;
-};
+import { GridTable, IGridColDef } from "../ui/GridTable";
 
 function GridTableActionsCell({ row }: { row: Record<string, any> }) {
   const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
@@ -136,7 +126,7 @@ export default function BlackList() {
     operator: null,
   });
 
-  const { data: allData } = useFetch("/api/black-list/index", "POST");
+  const { data: allData } = useFetch("/api/black-list/", "POST");
   const { data: filteredData } = useFetch("/api/black-list/filter-data", "POST", {
     body: requestBody,
   });
@@ -173,7 +163,7 @@ export default function BlackList() {
     setRowData(filteredData);
   };
 
-  const handleKeywordSearch = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleKeywordSearch = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const filteredFields = initStateKeywordFilterFields.filter((field) => field.value !== null && field.value !== "");
     setRequestBody((prev: any) => {
       return { ...prev, filterFields: filteredFields, operator: "or" };
@@ -188,7 +178,7 @@ export default function BlackList() {
     }
   }, [allData, reasonValue, pinValue, fullNameValue, keywordValue]);
 
-  const columns: GridColumn[] = [
+  const columns: IGridColDef[] = [
     {
       field: "partner.personalNumber",
       headerName: "Subject PIN",
@@ -221,7 +211,9 @@ export default function BlackList() {
       type: "acitons",
       width: 340,
       sortable: false,
-      filter: { type: "simple" },
+      filter: {
+        type: "simple",
+      },
       renderCell: ({ row }) => <GridTableActionsCell row={row} />,
     },
   ];
@@ -310,7 +302,7 @@ export default function BlackList() {
             startIcon={<ContentPasteSearchIcon />}
             onClick={handleFilterSearch}
           >
-            <Typography fontWeight={600}>{t("Поиск по критериям")}</Typography>
+            <Typography fontWeight={600}>{t("Search by criteria")}</Typography>
           </Button>
         </Grid>
       </Grid>
