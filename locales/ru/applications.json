@@ -9,5 +9,6 @@
   "Executor": "Исполнитель",
   "Deleting an application": "Удаление заявки",
   "Do you really want to remove the application from the platform?": "Вы действительно хотите удалить заявку с платформы?",
-  "Your applications": "Ваши заявки"
+  "Your applications": "Ваши заявки",
+  "InformationAboutStatusApplication": "Информация о статусе заявки"
 }
