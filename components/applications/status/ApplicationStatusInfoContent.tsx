@@ -1,7 +1,9 @@
 import { FC } from "react";
 
+import { useTranslations } from "next-intl";
 import KeyboardBackspaceOutlinedIcon from "@mui/icons-material/KeyboardBackspaceOutlined";
 import { Box, Typography } from "@mui/material";
+
 import Button from "@/components/ui/Button";
 import ApplicationStatusRead from "./ApplicationStatusRead";
 import ApplicationStatusView from "./ApplicationStatusView";
@@ -9,6 +11,8 @@ import ApplicationStatusView from "./ApplicationStatusView";
 interface IApplicationStatusInfoContentProps {}
 
 const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (props) => {
+  const t = useTranslations();
+
   return (
     <Box
       sx={{
@@ -28,7 +32,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
             fontWeight: "600",
           }}
         >
-          Информация о статусе заявки
+          {t("InformationAboutStatusApplication")}
         </Typography>
         <Button
           variant="text"
@@ -43,7 +47,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
           }}
           startIcon={<KeyboardBackspaceOutlinedIcon />}
         >
-          Назад
+          {t("Back")}
         </Button>
       </Box>
       <ApplicationStatusRead />

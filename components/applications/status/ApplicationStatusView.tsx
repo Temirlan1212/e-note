@@ -1,13 +1,17 @@
 import { FC } from "react";
 
+import { useTranslations } from "next-intl";
 import { Box, Typography } from "@mui/material";
 import PictureAsPdfOutlinedIcon from "@mui/icons-material/PictureAsPdfOutlined";
 
 import Button from "@/components/ui/Button";
+// import PDFViewer from "@/components/PDFViewer";
 
 interface IApplicationStatusViewProps {}
 
 const ApplicationStatusView: FC<IApplicationStatusViewProps> = (props) => {
+  const t = useTranslations();
+
   return (
     <Box display="flex" flexDirection="column" gap="25px">
       <Box display="flex" justifyContent="space-between" alignItems="center">
@@ -18,7 +22,7 @@ const ApplicationStatusView: FC<IApplicationStatusViewProps> = (props) => {
             color: "#687C9B",
           }}
         >
-          Просмотр документа
+          {t("Viewing a document")}
         </Typography>
         <Button
           variant="outlined"
@@ -36,9 +40,11 @@ const ApplicationStatusView: FC<IApplicationStatusViewProps> = (props) => {
           }}
           startIcon={<PictureAsPdfOutlinedIcon />}
         >
-          Скачать PDF
+          {t("Download PDF")}
         </Button>
       </Box>
+
+      {/* <PDFViewer fileUrl="pdfFile" /> */}
     </Box>
   );
 };

@@ -1,17 +1,19 @@
-import { Box, List, ListItem, Typography } from "@mui/material";
 import React, { FC } from "react";
+
+import { Box, List, ListItem, Typography } from "@mui/material";
+import { useTranslations } from "next-intl";
 
 interface IApplicationStatusReadProps {}
 
 const titles = [
-  { id: 1, title: "Наименование" },
-  { id: 2, title: "Вид нотариального действия" },
-  { id: 3, title: "Статус" },
-  { id: 4, title: "Статус подписи" },
-  { id: 5, title: "Дата совершения действия" },
-  { id: 6, title: "ФИО нотариуса" },
-  { id: 7, title: "Уникальный номер реестра" },
-  { id: 8, title: "Стороны" },
+  { id: 1, title: "Name" },
+  { id: 2, title: "Type of notarial action" },
+  { id: 3, title: "StatusApplication" },
+  { id: 4, title: "Signature status" },
+  { id: 5, title: "Date of the action" },
+  { id: 6, title: "Notary's full name" },
+  { id: 7, title: "Unique registry number" },
+  { id: 8, title: "Sides" },
 ];
 
 const data = [
@@ -52,6 +54,8 @@ const data = [
 ];
 
 const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
+  const t = useTranslations();
+
   return (
     <Box
       sx={{
@@ -77,7 +81,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                   fontWeight: "600",
                 }}
               >
-                {el.title}
+                {t(el.title)}
               </Typography>
             </ListItem>
           );

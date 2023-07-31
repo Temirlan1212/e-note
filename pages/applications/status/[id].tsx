@@ -1,14 +1,10 @@
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { GetStaticPathsContext, GetStaticPropsContext } from "next";
-import { Box, Container, Typography } from "@mui/material";
-import ApplicationForm from "@/components/applications/form/ApplicationForm";
-import Button from "@/components/ui/Button";
-import CloseIcon from "@mui/icons-material/Close";
+import { Container } from "@mui/material";
 import ApplicationStatusInfoContent from "@/components/applications/status/ApplicationStatusInfoContent";
 
-export default function Applications() {
+export default function ApplicationsStatusInformation() {
   const t = useTranslations();
 
   return (
@@ -17,15 +13,7 @@ export default function Applications() {
         <title>{t("InformationAboutStatusApplication")}</title>
       </Head>
 
-      <Container
-        maxWidth="xl"
-        sx={{
-          p: {
-            xs: "20px",
-            md: "40px",
-          },
-        }}
-      >
+      <Container maxWidth="xl">
         <ApplicationStatusInfoContent />
       </Container>
     </>
