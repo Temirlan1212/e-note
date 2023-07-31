@@ -75,6 +75,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                 selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 value={field.value != null ? field.value : ""}
+                onBlur={field.onBlur}
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
@@ -106,6 +107,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={!regionId}
                   value={field.value != null ? field.value : ""}
+                  onBlur={field.onBlur}
                   onChange={(...event: any[]) => {
                     field.onChange(...event);
                     trigger(field.name);
@@ -141,6 +143,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={!districtId}
                   value={field.value != null ? field.value : ""}
+                  onBlur={field.onBlur}
                   onChange={(...event: any[]) => {
                     field.onChange(...event);
                     trigger(field.name);
@@ -176,6 +179,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={!cityId}
                   value={field.value != null ? field.value : ""}
+                  onBlur={field.onBlur}
                   onChange={(...event: any[]) => {
                     field.onChange(...event);
                     trigger(field.name);
@@ -209,9 +213,15 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 options={companyData?.status === 0 ? (companyData.data as ICompany[]) : []}
                 loading={companyLoading}
+                value={
+                  field.value != null
+                    ? (companyData?.data ?? []).find((item: ICompany) => item.id == field.value)
+                    : null
+                }
+                onBlur={field.onBlur}
                 onChange={(event, value) => {
                   field.onChange(value != null ? value.id : undefined);
-                  trigger(field.name);
+                  if (fieldState.isTouched) trigger(field.name);
                 }}
               />
             </Box>
