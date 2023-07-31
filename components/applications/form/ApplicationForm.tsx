@@ -18,6 +18,7 @@ export default function ApplicationForm() {
   const t = useTranslations();
 
   const form = useForm<IApplicationSchema>({
+    mode: "onTouched",
     resolver: yupResolver<IApplicationSchema>(applicationSchema),
     defaultValues: {
       id: 0,

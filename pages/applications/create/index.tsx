@@ -7,7 +7,7 @@ import ApplicationForm from "@/components/applications/form/ApplicationForm";
 import Button from "@/components/ui/Button";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function Applications() {
+export default function CreateApplication() {
   const router = useRouter();
   const t = useTranslations();
 
@@ -47,12 +47,5 @@ export async function getStaticProps(context: GetStaticPropsContext) {
         ...(await import(`locales/${context.locale}/applications.json`)).default,
       },
     },
-  };
-}
-
-export async function getStaticPaths(context: GetStaticPathsContext) {
-  return {
-    paths: [],
-    fallback: "blocking",
   };
 }
