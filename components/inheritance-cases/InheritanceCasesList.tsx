@@ -29,16 +29,52 @@ export default function InheritanceCases() {
       field: "QR",
       headerName: "QR",
       width: 90,
+      sortable: false,
       renderCell: (params: any) => <QrCode2Icon />,
     },
-    { field: "registryNumber", headerName: "Registry number", width: 210 },
-    { field: "pin", headerName: t("PIN of the deceased"), width: 210 },
-    { field: "fullName", headerName: t("Full name of the deceased"), width: 270 },
-    { field: "dateOfBirth", headerName: t("Date of birth"), width: 180 },
-    { field: "placeOfLastResidence", headerName: t("Place of last residence"), width: 270 },
-    { field: "dateOfDeath", headerName: t("Date of death"), width: 200 },
-    { field: "dateOfCreation", headerName: t("Date of creation"), width: 210 },
-    { field: "whoCreated", headerName: t("Who created"), width: 200 },
+    {
+      field: "registryNumber",
+      headerName: "Registry number",
+      width: 210,
+    },
+    {
+      field: "pin",
+      headerName: t("PIN of the deceased"),
+      width: 210,
+      sortable: false,
+    },
+    {
+      field: "fullName",
+      headerName: t("Full name of the deceased"),
+      width: 270,
+    },
+    {
+      field: "dateOfBirth",
+      headerName: t("Date of birth"),
+      width: 180,
+    },
+    {
+      field: "placeOfLastResidence",
+      headerName: t("Place of last residence"),
+      width: 270,
+      sortable: false,
+    },
+    {
+      field: "dateOfDeath",
+      headerName: t("Date of death"),
+      width: 200,
+    },
+    {
+      field: "dateOfCreation",
+      headerName: t("Date of creation"),
+      width: 210,
+    },
+    {
+      field: "whoCreated",
+      headerName: t("Who created"),
+      width: 200,
+      sortable: false,
+    },
   ];
 
   const rows = [
@@ -318,17 +354,7 @@ export default function InheritanceCases() {
         />
       </Box>
 
-      <GridTable
-        rows={filteredRows}
-        columns={columns}
-        filterData={{
-          data: {
-            rows: [rows],
-          },
-          filterField: { field: "id" },
-        }}
-        sx={dataGridStyles}
-      />
+      <GridTable rows={filteredRows} columns={columns} sx={dataGridStyles} />
 
       <Box alignSelf="center">
         <Pagination currentPage={selectedPage} totalPages={totalPages} onPageChange={onPageChange} />
