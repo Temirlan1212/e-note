@@ -1,4 +1,4 @@
-import { ISubjectData } from "@/models/black-list/all-data";
+import { ISubjectData } from "@/models/black-list/subject-data";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ISubjectData | null>) {
@@ -35,26 +35,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   return res.status(200).json(responseData);
 }
-
-// const requestBody = {
-//     fields: ["partner.personalNumber", "partner.birthDate", "partner.fullName", "createdOn", "createdBy.fullName", "blockingReason.name"],
-//     data: {
-//         criteria: [
-//             {
-//                 fieldName: "blockingReason.name",
-//                 operator: "like",
-//                 value: "%jo%",
-//             },
-//             {
-//                 fieldName: "partner.personalNumber",
-//                 operator: "like",
-//                 value: "%223%",
-//             },
-//             {
-//                 fieldName: "partner.fullName",
-//                 operator: "like",
-//                 value: "%po%",
-//             },
-//         ],
-//     },
-// }

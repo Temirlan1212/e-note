@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
 
 import { Box, Typography, InputLabel } from "@mui/material";
@@ -17,9 +17,93 @@ import Pagination from "../ui/Pagination";
 import SearchBar from "../ui/SearchBar";
 import { GridTable } from "../ui/GridTable";
 
+type GridColumn = {
+  field: string;
+  headerName: string;
+  type?: string;
+  width?: number;
+  sortable?: boolean;
+  filter?: { type: string };
+  renderCell?: (value: any) => any;
+};
+
+function GridTableActionsCell({ row }: { row: Record<string, any> }) {
+  const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
+  const t = useTranslations();
+
+  const handleActionsPopupToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    setAnchorEl(anchorEl == null ? event.currentTarget : null);
+  };
+
+  const handleDeleteClick = async () => {};
+
+  const handleEditClick = async () => {};
+
+  return (
+    <Grid sx={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
+      <Typography fontSize={14} fontWeight={500}>
+        {row["blockingReason.name"] ?? ""}
+      </Typography>
+
+      <IconButton sx={{ visibility: anchorEl ? "visible" : "hidden" }} onClick={handleActionsPopupToggle}>
+        <MoreVertIcon color="info" />
+      </IconButton>
+
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handleActionsPopupToggle}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        PaperProps={{
+          sx: {
+            boxShadow: "none",
+          },
+        }}
+      >
+        <Grid sx={{ padding: "16px 32px", height: "auto", display: "flex", flexDirection: "column", gap: "16px" }}>
+          <Button
+            sx={{
+              background: "#3F5984",
+              "&:hover": {
+                backgroundColor: "#3F5984",
+              },
+            }}
+            onClick={handleEditClick}
+          >
+            <Typography fontSize={14} fontWeight={600}>
+              {t("Редактировать")}
+            </Typography>
+          </Button>
+
+          <Button
+            sx={{
+              border: "1px dashed #CDCDCD",
+              "&:hover": {
+                backgroundColor: "inherit",
+              },
+            }}
+            variant="text"
+            onClick={handleDeleteClick}
+          >
+            <Typography color="success" fontSize={14} fontWeight={600}>
+              {t("Удалить")}
+            </Typography>
+          </Button>
+        </Grid>
+      </Popover>
+    </Grid>
+  );
+}
+
 export default function BlackList() {
   const [selectedPage, setSelectedPage] = useState<number>(1);
-  const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
   const [keywordValue, setKeywordValue] = useState<string>("");
   const [reasonValue, setReasonValue] = useState<string>("");
   const [pinValue, setPinValue] = useState<string>("");
@@ -42,6 +126,7 @@ export default function BlackList() {
 
   const dataGridStyles = {
     ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": { padding: "10px 16px" },
+    ".MuiDataGrid-row": { "&:hover": { "& .MuiIconButton-root": { visibility: "visible" } } },
     ".MuiBox-root": { backgroundColor: "#FFF" },
     ".MuiDataGrid-columnHeader": { padding: "16px" },
   };
@@ -51,20 +136,16 @@ export default function BlackList() {
     operator: null,
   });
 
-  const { data: allData } = useFetch("/api/black-list/all-data", "POST");
-  const { data: filteredData } = useFetch("/api/black-list/filtered-data", "POST", {
+  const { data: allData } = useFetch("/api/black-list/index", "POST");
+  const { data: filteredData } = useFetch("/api/black-list/filter-data", "POST", {
     body: requestBody,
   });
 
-  const itemsPerPage = 6;
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(allData?.data.length / itemsPerPage);
 
   const onPageChange = (page: number) => {
     setSelectedPage(page);
-  };
-
-  const handleActionsPopupToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    setAnchorEl(anchorEl == null ? event.currentTarget : null);
   };
 
   const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,94 +169,60 @@ export default function BlackList() {
     setRequestBody((prev: any) => {
       return { ...prev, filterFields: filteredFields, operator: "and" };
     });
+
     setRowData(filteredData);
   };
 
-  const handleKeywordSearch = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleKeywordSearch = async (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const filteredFields = initStateKeywordFilterFields.filter((field) => field.value !== null && field.value !== "");
     setRequestBody((prev: any) => {
       return { ...prev, filterFields: filteredFields, operator: "or" };
     });
+
     setRowData(filteredData);
   };
 
   useEffect(() => {
-    if (allData && reasonValue === "" && pinValue === "" && fullNameValue === "") {
+    if (allData && reasonValue === "" && pinValue === "" && fullNameValue === "" && keywordValue === "") {
       setRowData(allData);
     }
-  }, [allData, reasonValue, pinValue, fullNameValue]);
+  }, [allData, reasonValue, pinValue, fullNameValue, keywordValue]);
 
-  const columns = [
-    { field: "partner.personalNumber", headerName: "Subject PIN", width: 200 },
-    { field: "partner.fullName", headerName: "Subject full name", width: 320 },
-    { field: "partner.birthDate", headerName: "Date of birth", width: 210 },
+  const columns: GridColumn[] = [
+    {
+      field: "partner.personalNumber",
+      headerName: "Subject PIN",
+      width: 200,
+    },
+    {
+      field: "partner.fullName",
+      headerName: "Subject full name",
+      width: 320,
+    },
+    {
+      field: "partner.birthDate",
+      headerName: "Date of birth",
+      width: 210,
+    },
     {
       field: "createdOn",
       headerName: "Entry date",
       width: 180,
-      valueGetter: (params: any) => {
-        const createdOn = new Date(params.value);
-        const day = createdOn.getDate();
-        const month = createdOn.getMonth() + 1;
-        const year = createdOn.getFullYear();
-        const formattedCreatedOn = `${day < 10 ? "0" : ""}${day}.${month < 10 ? "0" : ""}${month}.${year}`;
-        return formattedCreatedOn;
-      },
+      renderCell: ({ value }) => new Date(value).toLocaleDateString(useLocale()),
     },
-    { field: "createdBy.fullName", headerName: "Who created", width: 320 },
+    {
+      field: "createdBy.fullName",
+      headerName: "Who created",
+      width: 320,
+    },
     {
       field: "blockingReason.name",
       headerName: "Reason for blacklisting",
       type: "acitons",
-      sortable: false,
       width: 340,
-      filter: {
-        type: "simple",
-      },
-      renderCell: (params: any) => (
-        <Grid sx={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
-          <Typography fontSize={14} fontWeight={500}>
-            {params.row["blockingReason.name"] ?? ""}
-          </Typography>
-
-          <IconButton sx={{ visibility: anchorEl ? "visible" : "hidden" }} onClick={handleActionsPopupToggle}>
-            <MoreVertIcon color="info" />
-          </IconButton>
-
-          <Popover
-            open={Boolean(anchorEl)}
-            anchorEl={anchorEl}
-            onClose={handleActionsPopupToggle}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            PaperProps={{
-              sx: {
-                boxShadow: "none",
-              },
-            }}
-          >
-            <Grid sx={{ padding: "16px 32px", height: "auto", display: "flex", flexDirection: "column", gap: "16px" }}>
-              <Button sx={{ background: "#3F5984", padding: "13px 29px", "&:hover": { backgroundColor: "#3F5984" } }}>
-                <Typography fontSize={14} fontWeight={600}>
-                  {t("Редактировать")}
-                </Typography>
-              </Button>
-
-              <Button sx={{ border: "1px dashed #CDCDCD", "&:hover": { backgroundColor: "inherit" } }} variant="text">
-                <Typography color="success" fontSize={14} fontWeight={600}>
-                  {t("Удалить")}
-                </Typography>
-              </Button>
-            </Grid>
-          </Popover>
-        </Grid>
-      ),
+      sortable: false,
+      filter: { type: "simple" },
+      renderCell: ({ row }) => <GridTableActionsCell row={row} />,
     },
   ];
 
@@ -269,17 +316,7 @@ export default function BlackList() {
       </Grid>
 
       <Box sx={{ height: "448px" }}>
-        <GridTable
-          rows={rowData?.data ?? []}
-          columns={columns}
-          filterData={{
-            data: {
-              rows: [rowData?.data],
-            },
-            filterField: { field: "id" },
-          }}
-          sx={dataGridStyles}
-        />
+        <GridTable rows={rowData?.data ?? []} columns={columns} sx={dataGridStyles} />
       </Box>
 
       <Box alignSelf="center">
