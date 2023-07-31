@@ -10,6 +10,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useRouter } from "next/router";
 import { INotarialActionData } from "@/models/dictionaries/notarial-action";
 import useEffectOnce from "@/hooks/useEffectOnce";
+import { useState } from "react";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -21,6 +22,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
   const t = useTranslations();
   const { locale } = useRouter();
   const { data: notarialData, loading } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
+  const [searchedDocCriteria, setSearchedDocCriteria] = useState<Record<string, any>>({});
 
   const { trigger, control, watch, resetField } = form;
 
@@ -37,15 +39,38 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
     if (onNext != null && validated) onNext();
   };
 
-  // Callback version of watch.  It's your responsibility to unsubscribe when done.
-  useEffectOnce(() => {
-    const subscription = watch((value, { name, type }) => console.log(value, name, type));
-    return () => subscription.unsubscribe();
-  }, [watch]);
+  const updateCriteria = (name: string, value: number | null | undefined) => {
+    return {
+      operator: "=",
+      fieldName: name,
+      value: value != null ? value : null,
+    };
+  };
 
+  const objectVal = watch("object");
   const objectTypeVal = watch("objectType");
   const notarialActionVal = watch("notarialAction");
   const typeNotarialActionVal = watch("typeNotarialAction");
+  const actionVal = watch("action");
+
+  useEffectOnce(() => {
+    if (actionVal != null) {
+      setSearchedDocCriteria((prev: Record<keyof INotarialActionData, any>) => {
+        return {
+          ...prev,
+          object: updateCriteria("notaryObject", objectVal),
+          objectType: updateCriteria("notaryObjectType", objectTypeVal),
+          notarialAction: updateCriteria("notaryAction", notarialActionVal),
+          typeNotarialAction: updateCriteria("notaryActionType", typeNotarialActionVal),
+          action: updateCriteria("notaryRequestAction", actionVal),
+        };
+      });
+    }
+  }, [actionVal]);
+
+  useEffectOnce(() => {
+    console.log(searchedDocCriteria);
+  }, [searchedDocCriteria]);
 
   return (
     <Box display="flex" flexDirection="column" gap="30px">
