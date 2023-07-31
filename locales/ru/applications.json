@@ -1,4 +1,7 @@
 {
+  "Create application": "Создать заявку",
+  "Choose notary": "Выбор нотариуса",
+  "Form first step hint text": "Вы также можете сразу перейти к поисковой форме “Нотариус” если знаете конкретного нотариуса, игнорируя предшествующие поля.",
   "Type of action": "Вид действия",
   "Type of document": "Вид документа",
   "Status": "Статус",
@@ -7,5 +10,8 @@
   "Deleting an application": "Удаление заявки",
   "Do you really want to remove the application from the platform?": "Вы действительно хотите удалить заявку с платформы?",
   "Your applications": "Ваши заявки",
-  "Create application": "Создать заявку"
+  "Object": "Объект",
+  "Object type": "Вид объекта",
+  "Object selection": "Выбор объекта",
+  "second-step-hint-title": "Вам необходимо выбрать объект и его вид касательно чего вы хотите сделать нотариальный документ. Выбор объекта поможет вам быстро найти нужный вам нотариальный документ."
 }

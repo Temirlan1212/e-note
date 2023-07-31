@@ -1,0 +1,15 @@
+{
+  "Add a new user": "Жаңы колдонуучу кошуңуз",
+  "Registration period": "Каттоо мезгили",
+  "User role": "Колдонуучунун ролу",
+  "Registered by whom": "Ким тарабынан катталган",
+  "User's full name": "Колдонуучунун аты-жөнү",
+  "Login": "Логин",
+  "PIN": "ПИН",
+  "Phone Number": "Телефон номери",
+  "Date and time of registration": "Катталуу күнү жана убактысы",
+  "Password Reset": "Сырсөз кайтаруу",
+  "Delete a user": "Колдонуучуну чыгарып салуу",
+  "Action": "Аракет",
+  "FromTo": "-"
+}

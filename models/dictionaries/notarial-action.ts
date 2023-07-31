@@ -1,0 +1,12 @@
+export interface INotarialAction {
+  title_ru: string;
+  title_kg: string;
+  title_en: string;
+  id: number;
+  value: number;
+  "parent.value": number[];
+}
+
+export type INotarialActionData = {
+  [key in "object" | "objectType" | "notarialAction" | "typeNotarialAction" | "action"]: INotarialAction[];
+};
