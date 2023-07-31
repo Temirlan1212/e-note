@@ -1,4 +1,4 @@
-import { number, object, string, InferType } from "yup";
+import { number, object, InferType, string, mixed } from "yup";
 
 export const applicationSchema = object().shape({
   id: number()
@@ -29,6 +29,31 @@ export const applicationSchema = object().shape({
     .integer()
     .required("required")
     .transform((value) => (isNaN(value) ? null : value)),
+  object: number()
+    .integer()
+    .transform((value) => (isNaN(value) ? null : value))
+    .nullable()
+    .test("nullable-required", "required", (v) => v != null),
+  objectType: number()
+    .integer()
+    .transform((value) => (isNaN(value) ? null : value))
+    .nullable()
+    .test("nullable-required", "required", (v) => v != null),
+  notarialAction: number()
+    .integer()
+    .transform((value) => (isNaN(value) ? null : value))
+    .nullable()
+    .test("nullable-required", "required", (v) => v != null),
+  typeNotarialAction: number()
+    .integer()
+    .transform((value) => (isNaN(value) ? null : value))
+    .nullable()
+    .test("nullable-required", "required", (v) => v != null),
+  action: number()
+    .integer()
+    .transform((value) => (isNaN(value) ? null : value))
+    .nullable()
+    .test("nullable-required", "required", (v) => v != null),
 });
 
 export type IApplicationSchema = InferType<typeof applicationSchema>;

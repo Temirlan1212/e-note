@@ -9,5 +9,9 @@
   "Executor": "Executor",
   "Deleting an application": "Deleting an application",
   "Do you really want to remove the application from the platform?": "Do you really want to remove the application from the platform?",
+  "Object": "Object",
+  "Object type": "Object type",
+  "Object selection": "Object selection",
+  "second-step-hint-title": "You need to choose the object and its type regarding what you want to make a notarial document. Choosing an object will help you quickly find the notarial document you need.",
   "Your applications": "Your applications"
 }
