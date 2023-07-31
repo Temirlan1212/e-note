@@ -1,7 +1,7 @@
-import { IFilteredData } from "@/models/black-list/filtered-data";
+import { ISubjectData } from "@/models/black-list/subject-data";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IFilteredData | null>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<ISubjectData | null>) {
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }

@@ -129,6 +129,9 @@ export default function BlackList() {
       type: "acitons",
       sortable: false,
       width: 340,
+      filter: {
+        type: "simple",
+      },
       renderCell: (params: any) => (
         <Grid sx={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
           <Typography fontSize={14} fontWeight={500}>
