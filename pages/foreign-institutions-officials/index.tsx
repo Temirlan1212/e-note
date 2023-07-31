@@ -3,11 +3,9 @@ import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 
-import ForeignInstitutionsContent from "@/components/foreign-institutions/ForeignInstitutionsContent";
+import ForeignInstitutionsOfficialsContent from "@/components/foreign-institutions-officials/ForeignInstitutionsContent";
 
-interface IForeignInstitutionsProps {}
-
-export default function ForeignInstitutions() {
+export default function ForeignInstitutionsOfficials() {
   const t = useTranslations();
 
   return (
@@ -22,7 +20,7 @@ export default function ForeignInstitutions() {
           py: "40px",
         }}
       >
-        <ForeignInstitutionsContent />
+        <ForeignInstitutionsOfficialsContent />
       </Container>
     </>
   );

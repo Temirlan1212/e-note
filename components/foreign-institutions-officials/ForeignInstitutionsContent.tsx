@@ -10,9 +10,9 @@ import { GridTable } from "../ui/GridTable";
 
 import ExcelIcon from "@/public/icons/excel.svg";
 
-interface IForeignInstitutionsContentProps {}
+interface IForeignInstitutionsOfficialsContentProps {}
 
-const ForeignInstitutionsContent: FC<IForeignInstitutionsContentProps> = (props) => {
+const ForeignInstitutionsOfficialsContent: FC<IForeignInstitutionsOfficialsContentProps> = (props) => {
   const t = useTranslations();
 
   const columns = [
@@ -178,4 +178,4 @@ const ForeignInstitutionsContent: FC<IForeignInstitutionsContentProps> = (props)
   );
 };
 
-export default ForeignInstitutionsContent;
+export default ForeignInstitutionsOfficialsContent;
