@@ -9,7 +9,6 @@
   "Executor": "Executor",
   "Deleting an application": "Deleting an application",
   "Do you really want to remove the application from the platform?": "Do you really want to remove the application from the platform?",
-  "Your applications": "Your applications",
   "InformationAboutStatusApplication": "Information about the status of the application",
   "Viewing a document": "Viewing a document",
   "Download PDF": "Download PDF",
@@ -20,5 +19,10 @@
   "Date of the action": "Date of the action",
   "Notary's full name": "Notary's full name",
   "Unique registry number": "Unique registry number",
-  "Sides": "Sides"
+  "Sides": "Sides",
+  "Object": "Object",
+  "Object type": "Object type",
+  "Object selection": "Object selection",
+  "second-step-hint-title": "You need to choose the object and its type regarding what you want to make a notarial document. Choosing an object will help you quickly find the notarial document you need.",
+  "Your applications": "Your applications"
 }
