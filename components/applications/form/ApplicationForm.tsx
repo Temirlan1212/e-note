@@ -20,10 +20,6 @@ export default function ApplicationForm() {
   const form = useForm<IApplicationSchema>({
     mode: "onTouched",
     resolver: yupResolver<IApplicationSchema>(applicationSchema),
-    defaultValues: {
-      id: 0,
-      version: 0,
-    },
   });
 
   const {

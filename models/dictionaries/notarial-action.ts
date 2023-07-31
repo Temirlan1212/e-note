@@ -7,8 +7,6 @@ export interface INotarialAction {
   "parent.value": number[];
 }
 
-export type INotarialActionType = "object" | "objectType" | "notarialAction" | "typeNotarialAction" | "action";
-
 export type INotarialActionData = {
-  [key in INotarialActionType]: INotarialAction[];
+  [key in "object" | "objectType" | "notarialAction" | "typeNotarialAction" | "action"]: INotarialAction[];
 };
