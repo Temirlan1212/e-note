@@ -17,7 +17,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       limit: 100,
       fields: ["title", "value"],
       translate: true,
-      ...req.body,
     }),
   });
 
