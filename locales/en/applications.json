@@ -1,4 +1,7 @@
 {
+  "Create application": "Create application",
+  "Choose notary": "Choose notary",
+  "Form first step hint text": "You can also go directly to the “Notary” search form if you know a specific notary, ignoring the previous fields.",
   "Type of action": "Type of action",
   "Type of document": "Type of document",
   "Status": "Status",
@@ -6,6 +9,5 @@
   "Executor": "Executor",
   "Deleting an application": "Deleting an application",
   "Do you really want to remove the application from the platform?": "Do you really want to remove the application from the platform?",
-  "Your applications": "Your applications",
-  "Create application": "Create application"
+  "Your applications": "Your applications"
 }

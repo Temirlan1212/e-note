@@ -1,4 +1,7 @@
 {
+  "Create application": "Создать заявку",
+  "Choose notary": "Выбор нотариуса",
+  "Form first step hint text": "Вы также можете сразу перейти к поисковой форме “Нотариус” если знаете конкретного нотариуса, игнорируя предшествующие поля.",
   "Type of action": "Вид действия",
   "Type of document": "Вид документа",
   "Status": "Статус",
@@ -6,6 +9,5 @@
   "Executor": "Исполнитель",
   "Deleting an application": "Удаление заявки",
   "Do you really want to remove the application from the platform?": "Вы действительно хотите удалить заявку с платформы?",
-  "Your applications": "Ваши заявки",
-  "Create application": "Создать заявку"
+  "Your applications": "Ваши заявки"
 }

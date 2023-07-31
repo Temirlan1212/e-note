@@ -19,18 +19,21 @@ interface ISelectProps extends SelectProps {
   helperText?: string;
 }
 
-const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = ({
-  children,
-  data = [],
-  register,
-  name,
-  defaultValue,
-  selectType = "secondary",
-  valueField = "value",
-  labelField = "label",
-  helperText,
-  ...props
-}) => {
+const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
+  {
+    children,
+    data = [],
+    register,
+    name,
+    defaultValue,
+    selectType = "secondary",
+    valueField = "value",
+    labelField = "label",
+    helperText,
+    ...props
+  },
+  ref
+) => {
   const inputStyles = {
     color: "text.primary",
     minWidth: "226px",
@@ -53,11 +56,11 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = ({
 
   const combineStyles = { ...props.sx, ...inputStyles };
   return (
-    <FormControl error={selectType === "danger"}>
+    <FormControl error={selectType === "danger"} ref={ref}>
       <MUISelect
         sx={combineStyles}
-        {...props}
         {...(register && name && register(name))}
+        {...props}
         defaultValue={defaultValue ?? ""}
       >
         <MenuItem value="">---</MenuItem>

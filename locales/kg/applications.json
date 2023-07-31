@@ -1,4 +1,7 @@
 {
+  "Create application": "Өтүнмө түзүү",
+  "Choose notary": "Нотариус тандоо",
+  "Form first step hint text": "Мурунку талааларды эске албай, белгилүү бир нотариусту билсеңиз, “Нотариус“ издөө формасына түз өтсөңүз болот.",
   "Type of action": "Иш-аракеттердин түрү",
   "Type of document": "Документтин түрү",
   "Status": "Статус",
@@ -6,6 +9,5 @@
   "Executor": "Аткаруучу",
   "Deleting an application": "Өтүнмөнү алып салуу",
   "Do you really want to remove the application from the platform?": "Колдонмоңузду платформадан алып салгыңыз келеби?",
-  "Your applications": "Сиздин өтүнмө",
-  "Create application": "Өтүнмө түзүү"
+  "Your applications": "Сиздин өтүнмө"
 }
