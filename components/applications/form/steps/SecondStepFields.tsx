@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, InputLabel, Typography } from "@mui/material";
+import { Box, InputLabel } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -21,7 +21,7 @@ export interface IStepFieldsProps {
 export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
-  const { data: notarialData } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
+  const { data: notarialData, loading } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
 
   const { trigger, control, watch, resetField } = form;
 
@@ -39,14 +39,13 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   };
 
   const objectVal = watch("object");
-  const objectTypeVal = watch("objectType");
 
   return (
     <Box display="flex" flexDirection="column" gap="30px">
       <Controller
         control={control}
         name="object"
-        defaultValue={undefined}
+        defaultValue={null}
         render={({ field, fieldState }) => {
           const objectList = notarialData?.object;
           const errorMessage = fieldState.error?.message;
@@ -67,10 +66,11 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
                 valueField="value"
                 helperText={errorMessage ? t(errorMessage) : ""}
                 value={field.value == null ? "" : field.value}
+                onBlur={field.onBlur}
+                loading={loading}
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  // resetField("objectType");
                 }}
               />
             </Box>
@@ -81,7 +81,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
       <Controller
         control={control}
         name="objectType"
-        defaultValue={undefined}
+        defaultValue={null}
         render={({ field, fieldState }) => {
           const errorMessage = fieldState.error?.message;
           const objectTypeList = notarialData?.objectType.filter((item) =>
@@ -103,43 +103,8 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
                 valueField="value"
                 helperText={!!objectVal && errorMessage ? t(errorMessage) : ""}
                 value={field.value == null ? "" : field.value}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                  // resetField("notarialAction");
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
-
-      <Controller
-        control={control}
-        name="notarialAction"
-        defaultValue={undefined}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-          const notarialActionList = notarialData?.notarialAction.filter((item) =>
-            item["parent.value"].join(",").includes(String(objectTypeVal))
-          );
-
-          useEffectOnce(() => {
-            resetField(field.name);
-          }, [objectTypeVal]);
-          console.log(objectTypeVal, "typeVal");
-
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Object type")}</InputLabel>
-              <Select
-                disabled={!objectTypeVal}
-                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
-                data={notarialActionList ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!objectTypeVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
+                onBlur={field.onBlur}
+                loading={loading}
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
@@ -157,7 +122,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           </Button>
         )}
         {onNext != null && (
-          <Button type="submit" endIcon={<ArrowForwardIcon />}>
+          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
             {t("Next")}
           </Button>
         )}
