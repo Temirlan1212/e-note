@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IApplicationSchema, applicationSchema } from "@/validator-schemas/application";
+import { IApplication } from "@/models/application";
 import FirstStepFields from "./steps/FirstStepFields";
 import SecondStepFields from "./steps/SecondStepFields";
 import ThirdStepFields from "./steps/ThirdStepFields";
