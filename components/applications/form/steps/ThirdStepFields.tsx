@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, InputLabel } from "@mui/material";
+import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -22,9 +22,9 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
   const t = useTranslations();
   const { locale } = useRouter();
   const { data: notarialData, loading } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
-  const [searchedDocCriteria, setSearchedDocCriteria] = useState<Record<string, any>>({});
+  const [formValues, setformValues] = useState<Record<string, any>>({});
 
-  const { trigger, control, watch, resetField } = form;
+  const { trigger, control, watch, resetField, getValues } = form;
 
   const handlePrevClick = () => {
     if (onPrev != null) onPrev();
@@ -39,15 +39,6 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
     if (onNext != null && validated) onNext();
   };
 
-  const updateCriteria = (name: string, value: number | null | undefined) => {
-    return {
-      operator: "=",
-      fieldName: name,
-      value: value != null ? value : null,
-    };
-  };
-
-  const objectVal = watch("object");
   const objectTypeVal = watch("objectType");
   const notarialActionVal = watch("notarialAction");
   const typeNotarialActionVal = watch("typeNotarialAction");
@@ -55,25 +46,24 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
   useEffectOnce(() => {
     if (actionVal != null) {
-      setSearchedDocCriteria((prev: Record<keyof INotarialActionData, any>) => {
-        return {
-          ...prev,
-          object: updateCriteria("notaryObject", objectVal),
-          objectType: updateCriteria("notaryObjectType", objectTypeVal),
-          notarialAction: updateCriteria("notaryAction", notarialActionVal),
-          typeNotarialAction: updateCriteria("notaryActionType", typeNotarialActionVal),
-          action: updateCriteria("notaryRequestAction", actionVal),
-        };
-      });
+      const values = getValues();
+      setformValues(values);
     }
   }, [actionVal]);
 
-  useEffectOnce(() => {
-    console.log(searchedDocCriteria);
-  }, [searchedDocCriteria]);
-
   return (
     <Box display="flex" flexDirection="column" gap="30px">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        gap={{ xs: "20px", md: "200px" }}
+        flexDirection={{ xs: "column", md: "row" }}
+      >
+        <Typography variant="h5" whiteSpace="nowrap">
+          {t("Document selection")}
+        </Typography>
+      </Box>
+
       <Controller
         control={control}
         name="notarialAction"
@@ -90,7 +80,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>Нотариальное действие</InputLabel>
+              <InputLabel>{t("Notarial action")}</InputLabel>
               <Select
                 disabled={!objectTypeVal}
                 selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
@@ -127,7 +117,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>Вид нотариального действия</InputLabel>
+              <InputLabel>{t("Type of notarial action")}</InputLabel>
               <Select
                 disabled={!notarialActionVal}
                 selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
@@ -164,7 +154,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>Действие</InputLabel>
+              <InputLabel>{t("Action")}</InputLabel>
               <Select
                 disabled={!typeNotarialActionVal}
                 selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}

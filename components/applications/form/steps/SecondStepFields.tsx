@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, InputLabel } from "@mui/material";
+import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -42,6 +42,17 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
   return (
     <Box display="flex" flexDirection="column" gap="30px">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        gap={{ xs: "20px", md: "200px" }}
+        flexDirection={{ xs: "column", md: "row" }}
+      >
+        <Typography variant="h4" whiteSpace="nowrap">
+          {t("Choose notary")}
+        </Typography>
+      </Box>
+
       <Controller
         control={control}
         name="object"
