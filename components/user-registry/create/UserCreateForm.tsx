@@ -110,7 +110,17 @@ const UserCreateForm: FC<IUserCreateFormProps> = (props) => {
           <Input fullWidth placeholder={t("EnterIssuingAuthority")} color="success" register={form.register} />
           <Input fullWidth placeholder={t("EnterIssuingAuthority")} color="success" register={form.register} />
           <Typography>от</Typography>
-          <DatePicker onChange={handleDateChange} value={date} width="350px" />
+          <DatePicker
+            onChange={handleDateChange}
+            value={date}
+            sx={{
+              width: {
+                xs: "100%",
+                md: "350px",
+              },
+            }}
+            placeholder="__/__/____"
+          />
         </Box>
       </Box>
       <Typography

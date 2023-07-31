@@ -30,10 +30,6 @@ const DatePicker = <TInputDate, TDate = TInputDate>(props: Props<TInputDate>) =>
           openPickerIcon: CalendarMonthIcon,
         }}
         sx={{
-          width: {
-            xs: "100%",
-            md: width,
-          },
           ".MuiInputBase-root": {
             fontSize: "14px",
             border: "1px solid #CDCDCD",
@@ -43,6 +39,7 @@ const DatePicker = <TInputDate, TDate = TInputDate>(props: Props<TInputDate>) =>
           ".MuiInputBase-input": {
             padding: "11px 14px",
           },
+          ...restProps.sx,
         }}
         value={value ?? null}
         onChange={(val) => onChange(val)}
