@@ -12,6 +12,7 @@ import PostAddIcon from "@mui/icons-material/PostAdd";
 import Link from "@/components/ui/Link";
 import { useTranslations } from "next-intl";
 import { ApplicationListActions } from "./ApplicationListActions";
+import { IStatus } from "@/models/dictionaries/status";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -117,7 +118,7 @@ export default function ApplicationList() {
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (actionTypeData?.data != null) {
-                const matchedItem = actionTypeData?.data.find((item: any) => item.value == params.value);
+                const matchedItem = actionTypeData?.data.find((item: IActionType) => item.value == params.value);
                 return matchedItem?.[("title_" + locale) as keyof IActionType];
               }
               return params.value;
@@ -153,8 +154,8 @@ export default function ApplicationList() {
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (statusData != null) {
-                const matchedItem = statusData?.data?.find((item: any) => item.value == String(1));
-                return matchedItem?.[("title_" + locale) as keyof IActionType];
+                const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(1));
+                return matchedItem?.[("title_" + locale) as keyof IStatus];
               }
               return params.value;
             },
