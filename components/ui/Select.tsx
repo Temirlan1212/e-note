@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import { FormControl, FormHelperText, Select as MUISelect, SelectProps } from "@mui/material";
+import { FormControl, FormHelperText, LinearProgress, Select as MUISelect, SelectProps } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
@@ -17,6 +17,7 @@ interface ISelectProps extends SelectProps {
   selectType?: keyof typeof types;
   register?: UseFormRegister<any>;
   helperText?: string;
+  loading?: boolean;
 }
 
 const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
@@ -30,6 +31,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
     valueField = "value",
     labelField = "label",
     helperText,
+    loading = false,
     ...props
   },
   ref
@@ -48,7 +50,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
       borderColor: types[selectType],
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: types[selectType],
+      borderColor: !props.disabled && types[selectType],
     },
     fontSize: "14px",
     borderRadius: 0,
@@ -62,8 +64,22 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
         {...(register && name && register(name))}
         {...props}
         defaultValue={defaultValue ?? ""}
+        {...props}
       >
-        <MenuItem value="">---</MenuItem>
+        {loading && <LinearProgress color={selectType === "secondary" ? "secondary" : "success"} />}
+        <MenuItem
+          value=""
+          sx={{
+            "&.Mui-selected": {
+              backgroundColor: "transparent",
+              "&:hover": {
+                backgroundColor: "#EFEFEF",
+              },
+            },
+          }}
+        >
+          ---
+        </MenuItem>
         {data.map((item) => (
           <MenuItem
             sx={{

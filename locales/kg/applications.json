@@ -9,5 +9,9 @@
   "Executor": "Аткаруучу",
   "Deleting an application": "Өтүнмөнү алып салуу",
   "Do you really want to remove the application from the platform?": "Колдонмоңузду платформадан алып салгыңыз келеби?",
-  "Your applications": "Сиздин өтүнмө"
+  "Your applications": "Сиздин өтүнмө",
+  "Object": "Объект",
+  "Object type": "Объекттин түрү",
+  "Object selection": "Объект тандоо",
+  "second-step-hint-title": "Сиз объектти жана анын түрүн тандашыңыз керек нотариалдык документти жасагыңыз келген нерсеге байланыштуу. Объектти тандоо сизге керектүү нотариалдык документти тез табууга жардам берет."
 }
