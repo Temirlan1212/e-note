@@ -35,7 +35,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
   };
 
   const triggerFields = async () => {
-    return await trigger(["notarialAction", "typeNotarialAction", "action"]);
+    return await trigger(["notarialAction", "typeNotarialAction", "action", "product.id"]);
   };
 
   const handleNextClick = async () => {
