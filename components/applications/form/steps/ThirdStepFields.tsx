@@ -24,6 +24,10 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
   const { data: notarialData, loading } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
   const [formValues, setformValues] = useState<Record<string, any>>({});
 
+  const { data: searchedDocData } = useFetch("/api/dictionaries/document-type", "POST", {
+    body: formValues,
+  });
+
   const { trigger, control, watch, resetField, getValues } = form;
 
   const handlePrevClick = () => {
@@ -47,7 +51,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
   useEffectOnce(() => {
     if (actionVal != null) {
       const values = getValues();
-      setformValues(values);
+      setformValues({ formValues: values });
     }
   }, [actionVal]);
 
@@ -162,6 +166,40 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
                 labelField={"title_" + locale}
                 valueField="value"
                 helperText={!!typeNotarialActionVal && errorMessage ? t(errorMessage) : ""}
+                value={field.value == null ? "" : field.value}
+                onBlur={field.onBlur}
+                loading={loading}
+                onChange={(...event: any[]) => {
+                  field.onChange(...event);
+                  trigger(field.name);
+                }}
+              />
+            </Box>
+          );
+        }}
+      />
+
+      <Controller
+        control={control}
+        name="product.id"
+        defaultValue={null}
+        render={({ field, fieldState }) => {
+          const errorMessage = fieldState.error?.message;
+
+          useEffectOnce(() => {
+            resetField(field.name);
+          }, [actionVal]);
+
+          return (
+            <Box width="100%" display="flex" flexDirection="column" gap="10px">
+              <InputLabel>{t("Searched document")}</InputLabel>
+              <Select
+                disabled={!actionVal}
+                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                data={searchedDocData?.data ?? []}
+                labelField="name"
+                valueField="id"
+                helperText={!!actionVal && errorMessage ? t(errorMessage) : ""}
                 value={field.value == null ? "" : field.value}
                 onBlur={field.onBlur}
                 loading={loading}
