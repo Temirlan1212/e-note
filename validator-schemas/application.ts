@@ -54,6 +54,13 @@ export const applicationSchema = object().shape({
     .transform((value) => (isNaN(value) ? null : value))
     .nullable()
     .test("nullable-required", "required", (v) => v != null),
+  product: object({
+    id: number()
+      .integer()
+      .transform((value) => (isNaN(value) ? null : value))
+      .nullable()
+      .test("nullable-required", "required", (v) => v != null),
+  }),
 });
 
 export type IApplicationSchema = InferType<typeof applicationSchema>;
