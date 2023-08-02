@@ -7,7 +7,22 @@ import Pagination from "@/components/ui/Pagination";
 import SearchBar from "@/components/ui/SearchBar";
 import Button from "@/components/ui/Button";
 import { GridTable, IFilterSubmitParams, IGridColDef } from "@/components/ui/GridTable";
-import { IRequestBody, IRowData } from "@/models/templates/template-data";
+
+interface IRequestBody {
+  criteria: Array<{
+    fieldName: string;
+    operator: string;
+    value: string;
+  }> | null;
+  operator: string | null;
+}
+
+interface IRowData {
+  status: number;
+  offset: number;
+  total: number;
+  data: Array<Record<string, any>>;
+}
 
 function GridTableActionsCell({ row }: { row: Record<string, any> }) {
   const t = useTranslations();
@@ -129,6 +144,9 @@ export default function TemplateList() {
   const handleKeywordSearch = () => {
     const filterData = allData?.data.filter((field: any) => field.name.includes(keywordValue));
     const resultObject: IRowData = {
+      status: 0,
+      offset: 0,
+      total: filterData.length,
       data: filterData,
     };
     setRowData(resultObject);
