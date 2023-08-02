@@ -1,4 +1,4 @@
-import { ITemplateData } from "@/models/black-list/template-data";
+import { ITemplateData } from "@/models/templates/template-data";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ITemplateData | null>) {
