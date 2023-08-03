@@ -6,17 +6,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
-  const criteria = req.body["criteria"];
   const operator = req.body["operator"];
+  const searchType = req.body["searchType"];
+  const values = req.body["values"];
+  const field = req.body["fieldName"];
 
-  if (req.body["fieldName"] && req.body["value"]) {
-    const fieldCriterion = {
-      fieldName: req.body["fieldName"],
-      operator: "like",
-      value: req.body["value"],
-    };
-    criteria.push(fieldCriterion);
+  const fieldsToSearch: Array<{ fieldName: string; operator: string; value: string | null }> = [];
+
+  if (searchType === "keyword") {
+    fieldsToSearch.push(
+      { fieldName: "createdBy.fullName", operator: "like", value: `%${values.keywordValue}%` },
+      { fieldName: "partner.fullName", operator: "like", value: `%${values.keywordValue}%` },
+      { fieldName: "partner.personalNumber", operator: "like", value: `%${values.keywordValue}%` },
+      { fieldName: "blockingReason.name", operator: "like", value: `%${values.keywordValue}%` }
+    );
   }
+
+  if (searchType === "criteria") {
+    if (values.reasonValue !== "") {
+      fieldsToSearch.push({ fieldName: "blockingReason.name", operator: "like", value: `%${values.reasonValue}%` });
+    }
+
+    if (values.pinValue !== "") {
+      fieldsToSearch.push({ fieldName: "partner.personalNumber", operator: "like", value: `%${values.pinValue}%` });
+    }
+
+    if (values.fullNameValue !== "") {
+      fieldsToSearch.push({ fieldName: "partner.fullName", operator: "like", value: `%${values.fullNameValue}%` });
+    }
+  }
+
+  if (searchType === "filter") {
+    if (values.searchedValue !== "") {
+      fieldsToSearch.push({ fieldName: field, operator: "like", value: `%${values.searchedValue}%` });
+    }
+  }
+
+  const criteria = fieldsToSearch;
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Blocking/search", {
     method: "POST",

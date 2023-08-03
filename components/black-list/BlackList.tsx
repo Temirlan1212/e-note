@@ -18,18 +18,17 @@ import SearchBar from "../ui/SearchBar";
 import { GridTable, IFilterSubmitParams, IGridColDef } from "../ui/GridTable";
 
 interface IRowData {
-  status: number;
-  offset: number;
-  total: number;
+  status?: number;
+  offset?: number;
+  total?: number;
   data: Array<Record<string, any>>;
 }
 
 interface IRequestBody {
-  criteria: Array<{
-    fieldName: string;
-    operator: string;
-    value: string;
-  }> | null;
+  searchType: string | null;
+  values: {
+    [key: string]: string | null;
+  };
   operator: string | null;
 }
 
@@ -165,8 +164,9 @@ export default function BlackList() {
   };
 
   const [requestBody, setRequestBody] = useState<IRequestBody>({
-    criteria: null,
     operator: null,
+    searchType: null,
+    values: {},
   });
 
   const { data: allData } = useFetch("/api/black-list/", "POST");
@@ -197,71 +197,41 @@ export default function BlackList() {
     setFullNameValue(event.target.value);
   };
 
-  const filterDataFieldsBy = (value: string) => {
-    const filterData = allData?.data.filter((field: any) => field.name.includes(value));
-    return filterData;
+  const handleKeywordSearch = async () => {
+    setRequestBody((prev: any) => ({
+      ...prev,
+      operator: "or",
+      searchType: "keyword",
+      values: { keywordValue },
+    }));
+
+    setRowData(filteredData);
   };
 
   const handleCriteriaSearch = () => {
-    const fieldsToSearch: Array<{ fieldName: string; value: string | null }> = [];
+    setRequestBody((prev: any) => ({
+      ...prev,
+      searchType: "criteria",
+      operator: "and",
+      values: { reasonValue, pinValue, fullNameValue },
+    }));
 
-    if (reasonValue) {
-      // filterDataFieldsBy(reasonValue);
-      console.log("REQ1", filterDataFieldsBy(reasonValue));
-
-      // fieldsToSearch.push({ fieldName: "blockingReason.name", value: `%${reasonValue}%` });
-    }
-
-    if (pinValue) {
-      console.log("REQ2", filterDataFieldsBy(pinValue));
-
-      // fieldsToSearch.push({ fieldName: "partner.personalNumber", value: `%${pinValue}%` });
-    }
-
-    if (fullNameValue) {
-      console.log("REQ3", filterDataFieldsBy(fullNameValue));
-
-      // fieldsToSearch.push({ fieldName: "partner.fullName", value: `%${fullNameValue}%` });
-    }
-
-    if (fieldsToSearch.length === 0) {
-      return;
-    }
-
-    // setRequestBody((prev: any) => ({
-    //   ...prev,
-    //   criteria: fieldsToSearch,
-    //   operator: "and",
-    // }));
-
-    // setRowData(filteredData);
-  };
-
-  const handleKeywordSearch = () => {
-    const filterData = allData?.data.filter((field: any) => field.name.includes(keywordValue));
-    const resultObject: IRowData = {
-      data: filterData,
-    };
-    setRowData(resultObject);
+    setRowData(filteredData);
   };
 
   const onFilterSubmit = (value: IFilterSubmitParams) => {
     if (!Array.isArray(value.value)) {
       const field = value.rowParams.field;
-      console.log("REQfield", field);
+      const searchedValue = value.value;
 
       if (field != null) {
         setRequestBody((prev: any) => {
           return {
             ...prev,
-            criteria: [
-              {
-                fieldName: field,
-                operator: "like",
-                value: `%${value.value}%`,
-              },
-            ],
             operator: "or",
+            searchType: "filter",
+            fieldName: field,
+            values: { searchedValue },
           };
         });
         setRowData(filteredData);
