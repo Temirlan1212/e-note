@@ -4,7 +4,7 @@ import { MenuItem } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
 enum types {
-  danger = "danger.main",
+  error = "error.main",
   success = "success.main",
   secondary = "secondary.main",
 }
@@ -58,7 +58,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
 
   const combineStyles = { ...props.sx, ...inputStyles };
   return (
-    <FormControl error={selectType === "danger"} ref={ref}>
+    <FormControl error={selectType === "error"} ref={ref}>
       <MUISelect
         sx={combineStyles}
         {...(register && name && register(name))}
@@ -99,7 +99,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
           </MenuItem>
         ))}
       </MUISelect>
-      {helperText && <FormHelperText error={selectType === "danger"}>{helperText}</FormHelperText>}
+      {helperText && <FormHelperText error={selectType === "error"}>{helperText}</FormHelperText>}
     </FormControl>
   );
 };

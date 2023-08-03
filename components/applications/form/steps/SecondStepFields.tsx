@@ -71,7 +71,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
               <Select
                 fullWidth
-                selectType={errorMessage ? "danger" : field.value ? "success" : "secondary"}
+                selectType={errorMessage ? "error" : field.value ? "success" : "secondary"}
                 data={objectList ?? []}
                 labelField={"title_" + locale}
                 valueField="value"
@@ -108,7 +108,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
               <InputLabel>{t("Object type")}</InputLabel>
               <Select
                 disabled={!objectVal}
-                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 data={objectTypeList ?? []}
                 labelField={"title_" + locale}
                 valueField="value"

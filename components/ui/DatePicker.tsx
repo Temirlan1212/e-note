@@ -3,51 +3,79 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { useLocale } from "next-intl";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { enUS, ru } from "date-fns/locale";
-
+import { FormControl, FormHelperText } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import { forwardRef } from "react";
+import { useTheme } from "@mui/material/styles";
 
-type Props<TInputDate> = {
-  onChange?: any;
-  value?: any;
+enum types {
+  error = "error.main",
+  success = "success.main",
+  secondary = "secondary.main",
+}
+
+interface IDatePickerProps<T = Date | null> extends Omit<DatePickerProps<T>, "onChange" | "value"> {
+  onChange?: Function;
+  value?: T;
   placeholder?: string;
-} & Omit<DatePickerProps<TInputDate>, "onChange" | "value">;
+  type?: keyof typeof types;
+  helperText?: string;
+}
 
-const DatePicker = <TInputDate, TDate = TInputDate>(props: Props<TInputDate>) => {
-  const { onChange, value, placeholder, ...restProps } = props;
+const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProps> = (props, ref) => {
+  const { onChange, value, placeholder, type = "secondary", helperText, ...restProps } = props;
 
   const locale = useLocale();
+  const theme = useTheme();
 
   const adapterLocale = locale === "en" ? enUS : ru;
 
+  const palettes: Record<string, any> = theme.palette;
+  const splittedType = types[type].trim().split(".");
+  const palette = splittedType.reduce((acc, cur) => {
+    return acc != null ? acc[cur] : acc;
+  }, palettes);
+
+  const inputStyles = {
+    color: "text.primary",
+    width: "100%",
+    "& .MuiInputBase-root": {
+      borderRadius: 0,
+    },
+    "& .MuiInputBase-input": {
+      padding: "10px",
+    },
+    ".MuiOutlinedInput-notchedOutline": {
+      borderColor: palette,
+    },
+    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: palette,
+    },
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+      borderColor: palette,
+    },
+  };
+
+  const mergedStyles = { ...inputStyles, ...props.sx };
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={adapterLocale}>
-      <MUIDatePicker
-        views={["day", "month", "year"]}
-        format="dd.MM.yy"
-        {...restProps}
-        slots={{
-          openPickerIcon: CalendarMonthIcon,
-        }}
-        sx={{
-          width: {
-            xs: "100%",
-            md: "150px",
-          },
-          ".MuiInputBase-root": {
-            fontSize: "14px",
-            border: "1px solid #CDCDCD",
-            background: " #FFF",
-            borderRadius: 0,
-          },
-          ".MuiInputBase-input": {
-            padding: "11px 14px",
-          },
-        }}
-        value={value ?? null}
-        onChange={(val) => onChange(val)}
-        slotProps={{ textField: { placeholder } }}
-      />
-    </LocalizationProvider>
+    <FormControl error={type === "error"} ref={ref}>
+      <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={adapterLocale}>
+        <MUIDatePicker
+          views={["day", "month", "year"]}
+          format="dd.MM.yy"
+          {...restProps}
+          slots={{
+            openPickerIcon: CalendarMonthIcon,
+          }}
+          sx={mergedStyles}
+          value={value ?? null}
+          onChange={(val) => (onChange ? onChange(val) : null)}
+          slotProps={{ textField: { placeholder } }}
+        />
+        {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
+      </LocalizationProvider>
+    </FormControl>
   );
 };
-export default DatePicker;
+export default forwardRef(DatePicker);
