@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, FC, useState } from "react";
 
 import { useTranslations } from "next-intl";
-import { Box, RadioGroup, Typography } from "@mui/material";
+import { Controller, useForm } from "react-hook-form";
+import { Box, InputLabel, RadioGroup, Typography } from "@mui/material";
 import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
 
 import SearchBar from "../ui/SearchBar";
@@ -9,199 +10,130 @@ import Button from "../ui/Button";
 import Select from "../ui/Select";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import EraserIcon from "@/public/icons/eraser.svg";
-import NotariesMultipleSelects from "./NotariesMultipleSelects";
 import Radio from "../ui/Radio";
+import useFetch from "@/hooks/useFetch";
 
-interface INotariesFiltrationProps {}
+interface INotariesFiltrationProps {
+  setSearchQuery: (val: string) => void;
+  searchQuery: string;
+  onSearchSubmit: () => void;
+  handleFilter: (val: any) => void;
+  radioValue: any;
+  setRadioValue: any;
+  notariesSortOptions: any;
+  handleNotariesSortChange: any;
+  onFilterSubmit: (val: any) => void;
+  loading?: boolean;
+  filterCriteria?: any;
+  inputRef?: any;
+}
 
-const NotariesFiltration = (props: INotariesFiltrationProps) => {
+const NotariesFiltration: FC<INotariesFiltrationProps> = ({
+  searchQuery,
+  setSearchQuery,
+  onSearchSubmit,
+  handleFilter,
+  radioValue,
+  setRadioValue,
+  notariesSortOptions,
+  handleNotariesSortChange,
+  onFilterSubmit,
+  loading,
+}) => {
   const t = useTranslations();
+
+  const form = useForm();
+
+  const {
+    formState: { errors },
+    handleSubmit,
+    reset,
+    control,
+  } = form;
+
+  // Search
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setSearchQuery(value);
+  };
+
+  // Filtration
+
+  const { data: regionsData } = useFetch("/api/citizens-registry/dictionaries/regions", "POST");
+  const { data: citiesData } = useFetch("/api/citizens-registry/dictionaries/cities", "POST");
+  const { data: districtsData } = useFetch("/api/citizens-registry/dictionaries/districts", "POST");
+  const { data: notaryAreaData } = useFetch("/api/citizens-registry/dictionaries/notary-area", "POST");
+
+  const { data: workDaysAreaData } = useFetch("/api/citizens-registry/dictionaries/work-days", "GET");
+  const { data: notaryTypesData } = useFetch("/api/citizens-registry/dictionaries/notary-types", "GET");
 
   const optionSelectData: any = [
     {
       id: 1,
       label: t("Region"),
-      options: [
-        {
-          name: "area",
-          value: "all",
-          label: "Все",
-        },
-        {
-          name: "area",
-          value: "osh",
-          label: "Ош",
-        },
-        {
-          name: "area",
-          value: "chui",
-          label: "Чуй",
-        },
-        {
-          name: "area",
-          value: "talas",
-          label: "Талас",
-        },
-        {
-          name: "area",
-          value: "batken",
-          label: "Баткен",
-        },
-      ],
+      name: "region",
+      fieldName: "address.region.id",
+      operator: "=",
+      type: "prime",
+      options: regionsData?.data,
     },
     {
       id: 2,
       label: t("District"),
-      options: [
-        {
-          name: "region",
-          value: "all",
-          label: "Все",
-        },
-        {
-          name: "region",
-          value: "chui",
-          label: "Чуй",
-        },
-        {
-          name: "region",
-          value: "talas",
-          label: "Талас",
-        },
-        {
-          name: "region",
-          value: "batken",
-          label: "Баткен",
-        },
-      ],
+      name: "district",
+      fieldName: "address.district.id",
+      operator: "=",
+      type: "prime",
+      options: districtsData?.data,
     },
     {
       id: 3,
       label: t("City"),
-
-      options: [
-        {
-          name: "city",
-          value: "all",
-          label: "Все",
-        },
-        {
-          name: "city",
-          value: "chui",
-          label: "Чуй",
-        },
-        {
-          name: "city",
-          value: "talas",
-          label: "Талас",
-        },
-        {
-          name: "city",
-          value: "batken",
-          label: "Баткен",
-        },
-      ],
+      name: "city",
+      fieldName: "address.city.id",
+      operator: "=",
+      type: "prime",
+      options: citiesData?.data,
     },
     {
       id: 4,
       label: t("Type of notary"),
-      options: [
-        {
-          name: "type",
-          value: "all",
-          label: "Все",
-        },
-        {
-          name: "type",
-          value: "chui",
-          label: "Чуй",
-        },
-        {
-          name: "type",
-          value: "talas",
-          label: "Талас",
-        },
-        {
-          name: "type",
-          value: "batken",
-          label: "Баткен",
-        },
-      ],
+      name: "typeOfNotary",
+      fieldName: "typeOfNotary",
+      operator: "=",
+      type: "second",
+      options: notaryTypesData?.data,
     },
     {
       id: 5,
       label: t("Working days"),
-      options: [
-        {
-          name: "days",
-          value: "all",
-          label: "Все",
-        },
-        {
-          name: "days",
-          value: "chui",
-          label: "Чуй",
-        },
-        {
-          name: "days",
-          value: "talas",
-          label: "Талас",
-        },
-        {
-          name: "days",
-          value: "batken",
-          label: "Баткен",
-        },
-      ],
+      name: "workDays",
+      fieldName: "workingDay.weekDayNumber",
+      operator: "in",
+      type: "second",
+      options: workDaysAreaData?.data,
     },
     {
       id: 6,
       label: t("Notary district"),
-      options: [
-        {
-          name: "notary",
-          value: "all",
-          label: "Все",
-        },
-        {
-          name: "notary",
-          value: "chui",
-          label: "Чуй",
-        },
-        {
-          name: "notary",
-          value: "talas",
-          label: "Талас",
-        },
-        {
-          name: "notary",
-          value: "batken",
-          label: "Баткен",
-        },
-      ],
+      name: "notaryDistrict",
+      fieldName: "notaryDistrict.id",
+      operator: "=",
+      type: "prime",
+      options: notaryAreaData?.data,
     },
   ];
 
+  // Show/Hide
   const [isVisible, setIsVisible] = useState(true);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
   };
 
-  const notariesSortOptionsData = [
-    { value: 10, label: "В алфавитном порядке" },
-    { value: 20, label: "В алфавитном порядке" },
-    { value: 30, label: "В алфавитном порядке" },
-  ];
-
-  const [filters, setFilters] = useState([]);
-
-  const [notariesSortOptions, setNotariesSortOptions] = useState(notariesSortOptionsData[0].value);
-
-  const handleNotariesSortChange = (event: React.ChangeEvent<{ value: any }>) => {
-    const value = event.target.value as any;
-    setNotariesSortOptions(value);
-  };
+  // Sort
+  const notariesSortOptionsData = [{ value: "partner.simpleFullName", label: "В алфавитном порядке" }];
 
   return (
     <Box
@@ -214,7 +146,7 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
       }}
       flexDirection="column"
     >
-      <SearchBar />
+      <SearchBar value={searchQuery} onChange={handleSearchChange} onClick={onSearchSubmit} loading={loading} />
       <Box
         display="flex"
         justifyContent="space-between"
@@ -273,9 +205,9 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
           </Typography>
           <Select
             data={notariesSortOptionsData}
-            defaultValue={notariesSortOptions}
+            value={notariesSortOptions}
             onChange={handleNotariesSortChange}
-            selectType="secondary"
+            selectType="success"
           />
         </Box>
       </Box>
@@ -291,6 +223,8 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
           overflow: "hidden",
           transition: "max-height 0.3s ease-out",
         }}
+        component="form"
+        onSubmit={handleSubmit(onFilterSubmit)}
       >
         <Box
           sx={{
@@ -313,16 +247,51 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
             },
           }}
         >
-          <NotariesMultipleSelects option={optionSelectData} setFilters={setFilters} />
+          {optionSelectData.map((el: any) => {
+            return (
+              <Controller
+                control={control}
+                name={el.name}
+                key={el.id}
+                defaultValue={null}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel
+                      sx={{
+                        fontSize: "14px",
+                        marginBottom: "5px",
+                        fontWeight: 500,
+                        color: "#24334B",
+                      }}
+                    >
+                      {el.label}
+                    </InputLabel>
+                    <Select
+                      placeholder="select"
+                      labelField={el.type === "second" ? "title" : "name"}
+                      valueField={el.type === "second" ? "value" : "id"}
+                      data={el.options}
+                      selectType={fieldState.error?.message ? "danger" : "success"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      value={field.value != null ? field.value : ""}
+                      onBlur={field.onBlur}
+                      onChange={(...event: any[]) => {
+                        field.onChange(...event);
+                      }}
+                    ></Select>
+                  </Box>
+                )}
+              />
+            );
+          })}
         </Box>
         <RadioGroup
           sx={{ display: "flex", flexDirection: "row" }}
-          aria-labelledby="filter-radio-buttons-group-label"
-          defaultValue="krug"
-          name="radio-buttons-group"
+          value={radioValue}
+          onChange={(e) => setRadioValue(e.target.value)}
         >
-          <Radio label={t("Around the clock")} value="krug" />
-          <Radio label={t("Visiting")} value="vyesd" />
+          <Radio label={t("Around the clock")} value="roundClock" />
+          <Radio label={t("Visiting")} value="checkOut" />
         </RadioGroup>
         <Box
           display="flex"
@@ -337,6 +306,7 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
           <Button
             startIcon={<FilterAltOutlinedIcon />}
             color="success"
+            type="submit"
             buttonType="primary"
             sx={{
               width: {
@@ -345,6 +315,8 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
               },
               padding: "10px 0",
             }}
+            // onClick={onFilterSubmit}
+            loading={loading}
           >
             {t("Apply a filter")}
           </Button>
@@ -361,6 +333,11 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
                 backgroundColor: "#3F5984",
               },
             }}
+            onClick={() => {
+              reset();
+              setRadioValue("roundClock");
+            }}
+            loading={loading}
           >
             {t("Clear the filter")}
           </Button>
