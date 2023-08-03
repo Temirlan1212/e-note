@@ -6,6 +6,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
+  const criteria = req.body["criteria"];
+  const operator = req.body["operator"];
+
+  if (req.body["fieldName"] && req.body["value"]) {
+    const fieldCriterion = {
+      fieldName: req.body["fieldName"],
+      operator: "like",
+      value: req.body["value"],
+    };
+    criteria.push(fieldCriterion);
+  }
+
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Blocking/search", {
     method: "POST",
     headers: {
@@ -23,6 +35,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         "createdBy.fullName",
         "blockingReason.name",
       ],
+      data: {
+        operator: operator,
+        criteria: criteria,
+      },
       ...req.body,
     }),
   });

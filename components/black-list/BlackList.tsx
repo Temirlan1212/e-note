@@ -15,7 +15,23 @@ import Button from "../ui/Button";
 import Input from "../ui/Input";
 import Pagination from "../ui/Pagination";
 import SearchBar from "../ui/SearchBar";
-import { GridTable, IGridColDef } from "../ui/GridTable";
+import { GridTable, IFilterSubmitParams, IGridColDef } from "../ui/GridTable";
+
+interface IRowData {
+  status: number;
+  offset: number;
+  total: number;
+  data: Array<Record<string, any>>;
+}
+
+interface IRequestBody {
+  criteria: Array<{
+    fieldName: string;
+    operator: string;
+    value: string;
+  }> | null;
+  operator: string | null;
+}
 
 function GridTableActionsCell({ row }: { row: Record<string, any> }) {
   const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
@@ -98,85 +114,8 @@ export default function BlackList() {
   const [reasonValue, setReasonValue] = useState<string>("");
   const [pinValue, setPinValue] = useState<string>("");
   const [fullNameValue, setFullNameValue] = useState<string>("");
-  const [rowData, setRowData] = useState<any>({});
+  const [rowData, setRowData] = useState<IRowData>({});
   const t = useTranslations();
-
-  const initStateFilterFields = [
-    { fieldName: "blockingReason.name", operator: "like", value: reasonValue ? `%${reasonValue}%` : null },
-    { fieldName: "partner.fullName", operator: "like", value: fullNameValue ? `%${fullNameValue}%` : null },
-    { fieldName: "partner.personalNumber", operator: "like", value: pinValue ? `%${pinValue}%` : null },
-  ];
-
-  const initStateKeywordFilterFields = [
-    { fieldName: "blockingReason.name", operator: "like", value: keywordValue ? `%${keywordValue}%` : null },
-    { fieldName: "partner.fullName", operator: "like", value: keywordValue ? `%${keywordValue}%` : null },
-    { fieldName: "createdBy.fullName", operator: "like", value: keywordValue ? `%${keywordValue}%` : null },
-    { fieldName: "partner.personalNumber", operator: "like", value: keywordValue ? `%${keywordValue}%` : null },
-  ];
-
-  const dataGridStyles = {
-    ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": { padding: "10px 16px" },
-    ".MuiDataGrid-row": { "&:hover": { "& .MuiIconButton-root": { visibility: "visible" } } },
-    ".MuiBox-root": { backgroundColor: "#FFF" },
-    ".MuiDataGrid-columnHeader": { padding: "16px" },
-  };
-
-  const [requestBody, setRequestBody] = useState<any>({
-    filterFields: null,
-    operator: null,
-  });
-
-  const { data: allData } = useFetch("/api/black-list/", "POST");
-  const { data: filteredData } = useFetch("/api/black-list/filter-data", "POST", {
-    body: requestBody,
-  });
-
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(allData?.data.length / itemsPerPage);
-
-  const onPageChange = (page: number) => {
-    setSelectedPage(page);
-  };
-
-  const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setKeywordValue(event.target.value);
-  };
-
-  const handleReasonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setReasonValue(event.target.value);
-  };
-
-  const handlePinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPinValue(event.target.value);
-  };
-
-  const handleFullNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFullNameValue(event.target.value);
-  };
-
-  const handleFilterSearch = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    const filteredFields = initStateFilterFields.filter((field) => field.value !== null && field.value !== "");
-    setRequestBody((prev: any) => {
-      return { ...prev, filterFields: filteredFields, operator: "and" };
-    });
-
-    setRowData(filteredData);
-  };
-
-  const handleKeywordSearch = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const filteredFields = initStateKeywordFilterFields.filter((field) => field.value !== null && field.value !== "");
-    setRequestBody((prev: any) => {
-      return { ...prev, filterFields: filteredFields, operator: "or" };
-    });
-
-    setRowData(filteredData);
-  };
-
-  useEffect(() => {
-    if (allData && reasonValue === "" && pinValue === "" && fullNameValue === "" && keywordValue === "") {
-      setRowData(allData);
-    }
-  }, [allData, reasonValue, pinValue, fullNameValue, keywordValue]);
 
   const columns: IGridColDef[] = [
     {
@@ -217,6 +156,124 @@ export default function BlackList() {
       renderCell: ({ row }) => <GridTableActionsCell row={row} />,
     },
   ];
+
+  const dataGridStyles = {
+    ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": { padding: "10px 16px" },
+    ".MuiDataGrid-row": { "&:hover": { "& .MuiIconButton-root": { visibility: "visible" } } },
+    ".MuiBox-root": { backgroundColor: "#FFF" },
+    ".MuiDataGrid-columnHeader": { padding: "16px" },
+  };
+
+  const [requestBody, setRequestBody] = useState<IRequestBody>({
+    criteria: null,
+    operator: null,
+  });
+
+  const { data: allData } = useFetch("/api/black-list/", "POST");
+  const { data: filteredData } = useFetch("/api/black-list/", "POST", {
+    body: requestBody,
+  });
+
+  const itemsPerPage = 6;
+  const totalPages = Array.isArray(allData?.data) ? Math.ceil(allData?.data.length / itemsPerPage) : 1;
+
+  const onPageChange = (page: number) => {
+    setSelectedPage(page);
+  };
+
+  const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setKeywordValue(event.target.value);
+  };
+
+  const handleReasonChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setReasonValue(event.target.value);
+  };
+
+  const handlePinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPinValue(event.target.value);
+  };
+
+  const handleFullNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFullNameValue(event.target.value);
+  };
+
+  const filterDataFieldsBy = (value: string) => {
+    const filterData = allData?.data.filter((field: any) => field.name.includes(value));
+    return filterData;
+  };
+
+  const handleCriteriaSearch = () => {
+    const fieldsToSearch: Array<{ fieldName: string; value: string | null }> = [];
+
+    if (reasonValue) {
+      // filterDataFieldsBy(reasonValue);
+      console.log("REQ1", filterDataFieldsBy(reasonValue));
+
+      // fieldsToSearch.push({ fieldName: "blockingReason.name", value: `%${reasonValue}%` });
+    }
+
+    if (pinValue) {
+      console.log("REQ2", filterDataFieldsBy(pinValue));
+
+      // fieldsToSearch.push({ fieldName: "partner.personalNumber", value: `%${pinValue}%` });
+    }
+
+    if (fullNameValue) {
+      console.log("REQ3", filterDataFieldsBy(fullNameValue));
+
+      // fieldsToSearch.push({ fieldName: "partner.fullName", value: `%${fullNameValue}%` });
+    }
+
+    if (fieldsToSearch.length === 0) {
+      return;
+    }
+
+    // setRequestBody((prev: any) => ({
+    //   ...prev,
+    //   criteria: fieldsToSearch,
+    //   operator: "and",
+    // }));
+
+    // setRowData(filteredData);
+  };
+
+  const handleKeywordSearch = () => {
+    const filterData = allData?.data.filter((field: any) => field.name.includes(keywordValue));
+    const resultObject: IRowData = {
+      data: filterData,
+    };
+    setRowData(resultObject);
+  };
+
+  const onFilterSubmit = (value: IFilterSubmitParams) => {
+    if (!Array.isArray(value.value)) {
+      const field = value.rowParams.field;
+      console.log("REQfield", field);
+
+      if (field != null) {
+        setRequestBody((prev: any) => {
+          return {
+            ...prev,
+            criteria: [
+              {
+                fieldName: field,
+                operator: "like",
+                value: `%${value.value}%`,
+              },
+            ],
+            operator: "or",
+          };
+        });
+        setRowData(filteredData);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (allData && reasonValue === "" && pinValue === "" && fullNameValue === "" && keywordValue === "") {
+      setRowData(allData);
+    }
+  }, [allData, reasonValue, pinValue, fullNameValue, keywordValue]);
 
   return (
     <>
@@ -300,7 +357,7 @@ export default function BlackList() {
             }}
             fullWidth
             startIcon={<ContentPasteSearchIcon />}
-            onClick={handleFilterSearch}
+            onClick={handleCriteriaSearch}
           >
             <Typography fontWeight={600}>{t("Search by criteria")}</Typography>
           </Button>
@@ -308,7 +365,7 @@ export default function BlackList() {
       </Grid>
 
       <Box sx={{ height: "448px" }}>
-        <GridTable rows={rowData?.data ?? []} columns={columns} sx={dataGridStyles} />
+        <GridTable rows={rowData?.data ?? []} columns={columns} sx={dataGridStyles} onFilterSubmit={onFilterSubmit} />
       </Box>
 
       <Box alignSelf="center">
