@@ -1,25 +1,42 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Box, Popover, IconButton } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import CircleIcon from "@mui/icons-material/Circle";
 import { useTranslations } from "next-intl";
 
-import Button from "../ui/Button";
-export default function PopupNotifications() {
-  const [notifications, setNotifications] = useState<{ time: string; text: string }[]>([]);
-  const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
+import useFetch from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
+import Button from "@/components/ui/Button";
+import { useProfileStore } from "../../stores/profile";
+import { IProfileState, IUserData } from "@/models/profile/user";
 
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import CircleIcon from "@mui/icons-material/Circle";
+
+interface IRequestBody {
+  sortBy: Array<string>;
+  criteria: Array<{
+    fieldName: string;
+    operator: string;
+    value: string;
+  }> | null;
+  operator: string | null;
+}
+
+export default function PopupNotifications() {
+  const [notifications, setNotifications] = useState<{ createdOn: string; message: string }[]>([]);
+  const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
   const t = useTranslations();
 
-  const sampleData = [
-    { time: new Date("20 Jule 2023 8:48 UTC").toISOString(), text: "Новое сообщение от пользователя Нурмырзаевой А." },
-    {
-      time: new Date("20 Jule 2023 03:00 UTC").toISOString(),
-      text: "Нотариальное действие ID 028-336 успешно внесено в реестр",
-    },
-    { time: new Date("19 Jule 2023 7:48 UTC").toISOString(), text: "Профиль пользователя изменен" },
-    { time: new Date("17 Jule 2023 1:48 UTC").toISOString(), text: "Новый пользователь успешно добавлен" },
-  ];
+  const [requestBody, setRequestBody] = useState<IRequestBody>({
+    sortBy: [""],
+    criteria: null,
+    operator: null,
+  });
+
+  const { data: messages } = useFetch("/api/notifications/", "POST", {
+    body: requestBody,
+  });
+
+  const user: IUserData | null = useProfileStore((state: IProfileState) => state.getUserData());
 
   const handleNotificationPopupToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setAnchorEl(anchorEl == null ? event.currentTarget : null);
@@ -43,8 +60,30 @@ export default function PopupNotifications() {
   };
 
   useEffect(() => {
-    setNotifications(sampleData);
-  }, []);
+    setRequestBody((prev: any) => {
+      return {
+        ...prev,
+        sortBy: ["createdOn", "updatedOn"],
+        operator: "and",
+        criteria: [
+          {
+            fieldName: "user.id",
+            operator: "=",
+            value: user?.id ?? "",
+          },
+        ],
+      };
+    });
+    console.log("userR", requestBody);
+    console.log("userM", messages);
+  }, [messages != "" && null && undefined]);
+
+  useEffect(() => {
+    if (messages) {
+      setNotifications(messages?.data);
+      console.log("userN", notifications);
+    }
+  }, [messages]);
 
   return (
     <>
@@ -73,43 +112,71 @@ export default function PopupNotifications() {
             width: { xs: "100%", sm: "100%", md: "320px" },
           }}
         >
-          {notifications.map((notification) => (
+          {notifications ? (
             <Box
-              key={notification.time}
               sx={{
                 padding: "15px 10px 15px 15px",
                 display: "flex",
-                flexDirection: "row",
-                gap: "5px",
-                alignItems: "flex-start",
+                justifyContent: "center",
                 borderBottom: "1px solid #F6F6F6",
+                width: "100%",
               }}
             >
-              <CircleIcon color="success" sx={{ width: "12px", height: "12px" }} />
-              <Box
+              <Typography
+                fontSize={14}
+                alignSelf="center"
+                color="textPrimary"
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "5px",
+                  maxHeight: "39px",
+                  textOverflow: "ellipsis",
+                  overflow: "hidden",
                 }}
               >
-                <Typography
-                  fontSize={14}
-                  color="textPrimary"
+                {t("No notifications")}
+              </Typography>
+            </Box>
+          ) : (
+            ""
+          )}
+          {notifications &&
+            notifications.length > 0 &&
+            notifications.map((notification) => (
+              <Box
+                key={notification.createdOn}
+                sx={{
+                  padding: "15px 10px 15px 15px",
+                  display: "flex",
+                  flexDirection: "row",
+                  gap: "5px",
+                  alignItems: "flex-start",
+                  borderBottom: "1px solid #F6F6F6",
+                }}
+              >
+                <CircleIcon color="success" sx={{ width: "12px", height: "12px" }} />
+                <Box
                   sx={{
-                    maxHeight: "39px",
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "5px",
                   }}
                 >
-                  {notification.text}
-                </Typography>
-                <Typography fontSize={12} color="textSecondary">
-                  {getTimeAgo(notification.time)}
-                </Typography>
+                  <Typography
+                    fontSize={14}
+                    color="textPrimary"
+                    sx={{
+                      maxHeight: "39px",
+                      textOverflow: "ellipsis",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {notification.message}
+                  </Typography>
+                  <Typography fontSize={12} color="textSecondary">
+                    {getTimeAgo(notification.createdOn)}
+                  </Typography>
+                </Box>
               </Box>
-            </Box>
-          ))}
+            ))}
           <Box
             sx={{
               display: "flex",
