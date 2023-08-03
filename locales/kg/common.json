@@ -97,5 +97,16 @@
   "Phone number": "Телефон номуру",
   "Contacts": "Байланыштар",
   "Document": "Документ",
-  "Citizenship": "Жарандык"
+  "Citizenship": "Жарандык",
+  "Series": "Сериясы",
+  "Organ": "Орган",
+  "Date of issue": "Берилген күнү",
+  "E-mail": "E-mail",
+  "File": "Файл",
+  "Number": "Сан",
+  "Personal data": "Жеке маалыматтар",
+  "Identity document": "Өздүгүн тастыктаган документ",
+  "Place of residence": "Жашаган жери",
+  "Actual place of residence": "Чыныгы жашаган жери",
+  "Files to upload": "Жүктөө үчүн файлдар"
 }

@@ -2,6 +2,7 @@ import { InputLabel, Box } from "@mui/material";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import Input from "@/components/ui/Input";
+import TelInput from "../ui/TelInput";
 
 export interface IContactProps {
   form: UseFormReturn<any>;
@@ -45,7 +46,7 @@ export default function Contact({ form, names, defaultValues }: IContactProps) {
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Phone number")}</InputLabel>
-              <Input
+              <TelInput
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 {...field}

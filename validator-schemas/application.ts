@@ -49,11 +49,10 @@ export const requesterSchema = object().shape({
   middleName: string()
     .trim()
     .matches(/^[aA-zZаА-яЯ\s]*$/, "onlyLetters"),
-  personalNumber: number()
-    .integer()
-    .nullable()
-    .test("nullable-required", "required", (v) => v != null)
-    .transform((value) => (isNaN(value) ? null : value)),
+  personalNumber: string()
+    .trim()
+    .required("required")
+    .matches(/^[0-9]*$/, "onlyNumbers"),
   birthDate: date().nullable(),
   citizenship: object({
     id: number()
@@ -69,18 +68,22 @@ export const requesterSchema = object().shape({
     .integer()
     .nullable()
     .transform((value) => (isNaN(value) ? null : value)),
-  passportNumber: string().trim(),
+  passportNumber: string()
+    .trim()
+    .matches(/^[0-9]*$/, "onlyNumbers"),
   authority: string().trim(),
-  authorityNumber: number()
-    .integer()
-    .nullable()
-    .transform((value) => (isNaN(value) ? null : value)),
+  authorityNumber: string()
+    .trim()
+    .matches(/^[0-9]*$/, "onlyNumbers"),
   dateOfIssue: date().nullable(),
   partnerAddressList: array().of(requesterAddressSchema),
   emailAddress: object({
-    address: string().trim().email(),
+    address: string().trim().email("email"),
   }),
-  mobilePhone: string().trim(),
+  mobilePhone: string()
+    .trim()
+    .required("required")
+    .matches(/^[0-9\+\s]*$/, "onlyNumbers"),
 });
 
 export const applicationSchema = object().shape({

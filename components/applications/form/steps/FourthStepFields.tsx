@@ -5,6 +5,7 @@ import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import Select from "@/components/ui/Select";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import AddressFields from "@/components/fields/Address";
@@ -75,11 +76,11 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography variant="h4" whiteSpace="nowrap">
-          Сторона 1 (личные данные)
+          {t("fourth-step-title")}
         </Typography>
       </Box>
 
-      <Typography variant="h5">Личные данные</Typography>
+      <Typography variant="h5">{t("Personal data")}</Typography>
 
       <PersonalData
         form={form}
@@ -95,7 +96,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         }}
       />
 
-      <Typography variant="h5">Документ, удостоверяющий личность</Typography>
+      <Typography variant="h5">{t("Identity document")}</Typography>
 
       <IdentityDocument
         form={form}
@@ -109,7 +110,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         }}
       />
 
-      <Typography variant="h5">Адрес прописки (регистрации)</Typography>
+      <Typography variant="h5">{t("Place of residence")}</Typography>
 
       <AddressFields
         form={form}
@@ -123,7 +124,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         }}
       />
 
-      <Typography variant="h5">Адрес фактического места жительства</Typography>
+      <Typography variant="h5">{t("Actual place of residence")}</Typography>
 
       <AddressFields
         form={form}
@@ -137,7 +138,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         }}
       />
 
-      <Typography variant="h5">Контактные данные</Typography>
+      <Typography variant="h5">{t("Contacts")}</Typography>
 
       <Contact
         form={form}
@@ -147,7 +148,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         }}
       />
 
-      <Typography variant="h5">Файлы для загрузки</Typography>
+      <Typography variant="h5">{t("Files to upload")}</Typography>
 
       <UploadFiles />
 

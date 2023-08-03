@@ -7,17 +7,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const criteria: Record<string, string | number>[] = [];
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Citizenship/search", {
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/selection/notary.request.identity.select", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      fields: ["id", "version", "name", "code"],
+      fields: ["title", "value"],
       data: {
         criteria,
       },
+      translate: true,
     }),
   });
 

@@ -1,6 +1,6 @@
 import { forwardRef, useState } from "react";
 import { FormControl, FormHelperText } from "@mui/material";
-import { MuiFileInput, MuiFileInputProps } from "mui-file-input";
+import { MuiTelInput, MuiTelInputProps } from "mui-tel-input";
 
 enum types {
   error = "error.main",
@@ -8,7 +8,7 @@ enum types {
   secondary = "secondary.main",
 }
 
-export type IFileInputProps = MuiFileInputProps<boolean | undefined> & {
+export type IFileInputProps = MuiTelInputProps & {
   inputType?: keyof typeof types;
   value?: File | File[] | null;
   onChange?: (file: File | File[] | null) => void;
@@ -42,15 +42,15 @@ export default forwardRef<HTMLDivElement, IFileInputProps>(function FileInput(
 
   const mergedStyles = { ...styles, ...rest.sx };
 
-  const [file, setFile] = useState<File | File[] | null>(null);
+  const [phone, setPhone] = useState("");
 
-  const handleOnChange = (file: File | File[] | null) => {
-    setFile(file);
+  const handleOnChange = (newPhone: string) => {
+    setPhone(newPhone);
   };
 
   return (
     <FormControl error={inputType === "error"} ref={ref}>
-      <MuiFileInput sx={mergedStyles} value={value ?? file} onChange={onChange ?? handleOnChange} {...rest} />
+      <MuiTelInput sx={mergedStyles} value={value ?? phone} onChange={onChange ?? handleOnChange} {...rest} />
       {helperText && <FormHelperText error={inputType === "error"}>{helperText}</FormHelperText>}
     </FormControl>
   );

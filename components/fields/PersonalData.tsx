@@ -35,7 +35,7 @@ export interface IPersonalDataProps {
 export default function PersonalData({ form, names, defaultValues }: IPersonalDataProps) {
   const t = useTranslations();
 
-  const { control } = form;
+  const { trigger, control, watch, resetField } = form;
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -43,7 +43,7 @@ export default function PersonalData({ form, names, defaultValues }: IPersonalDa
         <Controller
           control={control}
           name={names.type}
-          defaultValue={defaultValues?.type ?? null}
+          defaultValue={defaultValues?.type ?? 2}
           render={({ field, fieldState }) => (
             <Radio
               labelField="name"
@@ -51,7 +51,6 @@ export default function PersonalData({ form, names, defaultValues }: IPersonalDa
               row
               type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
               helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-              defaultValue={2}
               data={[
                 { id: 2, name: "Физическое лицо" },
                 { id: 1, name: "Юридическое лицо" },
@@ -65,7 +64,14 @@ export default function PersonalData({ form, names, defaultValues }: IPersonalDa
           control={control}
           name={names.foreigner}
           defaultValue={defaultValues?.foreigner ?? false}
-          render={({ field, fieldState }) => <Checkbox label="Иностранное лицо" {...field} />}
+          render={({ field, fieldState }) => (
+            <Checkbox
+              label="Иностранное лицо"
+              type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+              helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+              {...field}
+            />
+          )}
         />
       </Box>
 
@@ -76,7 +82,7 @@ export default function PersonalData({ form, names, defaultValues }: IPersonalDa
           defaultValue={defaultValues?.lastName ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel required>{t("Last name")}</InputLabel>
+              <InputLabel>{t("Last name")}</InputLabel>
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -91,7 +97,7 @@ export default function PersonalData({ form, names, defaultValues }: IPersonalDa
           defaultValue={defaultValues?.firstName ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel required>{t("First name")}</InputLabel>
+              <InputLabel>{t("First name")}</InputLabel>
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -120,10 +126,10 @@ export default function PersonalData({ form, names, defaultValues }: IPersonalDa
       <Controller
         control={control}
         name={names.pin}
-        defaultValue={defaultValues?.pin ?? null}
+        defaultValue={defaultValues?.pin ?? ""}
         render={({ field, fieldState }) => (
           <Box display="flex" flexDirection="column" width="100%">
-            <InputLabel required>{t("PIN")}</InputLabel>
+            <InputLabel>{t("PIN")}</InputLabel>
             <Input
               inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
               helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -142,7 +148,15 @@ export default function PersonalData({ form, names, defaultValues }: IPersonalDa
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Birth date")}</InputLabel>
-              <DatePicker {...field} />
+              <DatePicker
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                {...field}
+                onChange={(...event: any[]) => {
+                  field.onChange(...event);
+                  trigger(field.name);
+                }}
+              />
             </Box>
           )}
         />

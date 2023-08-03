@@ -92,5 +92,16 @@
   "Phone number": "Номер телефона",
   "Contacts": "Контакты",
   "Document": "Документ",
-  "Citizenship": "Гражданство"
+  "Citizenship": "Гражданство",
+  "Series": "Серия",
+  "Organ": "Орган",
+  "Date of issue": "Дата выдачи",
+  "E-mail": "E-mail",
+  "File": "Файл",
+  "Number": "Номер",
+  "Personal data": "Личные данные",
+  "Identity document": "Документ, удостоверяющий личность",
+  "Place of residence": "Адрес прописки",
+  "Actual place of residence": "Фактическая места жительства",
+  "Files to upload": "Файлы для загрузки"
 }

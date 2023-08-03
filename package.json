@@ -34,6 +34,7 @@
     "jsqr": "^1.4.0",
     "leaflet": "^1.9.4",
     "mui-file-input": "^2.0.6",
+    "mui-tel-input": "^3.2.2",
     "next": "13.4.8",
     "next-intl": "^2.17.4",
     "react": "18.2.0",

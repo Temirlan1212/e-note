@@ -44,7 +44,8 @@ const Radio: React.ForwardRefRenderFunction<HTMLDivElement, IRadioProps> = (
   ref
 ) => {
   const styles = {
-    "&, &.Mui-checked": {
+    color: types["secondary"],
+    "&.Mui-checked": {
       color: types[type],
     },
   };
@@ -53,7 +54,7 @@ const Radio: React.ForwardRefRenderFunction<HTMLDivElement, IRadioProps> = (
 
   return (
     <FormControl error={type === "error"} ref={ref}>
-      <RadioGroup row={row} defaultValue={defaultValue != null ? defaultValue : ""} value={value != null ? value : ""}>
+      <RadioGroup row={row} defaultValue={defaultValue} value={value != null ? value : ""}>
         {data.map(
           (item) =>
             item[labelField] != null &&

@@ -97,5 +97,16 @@
   "Phone number": "Phone number",
   "Contacts": "Contacts",
   "Document": "Document",
-  "Citizenship": "Citizenship"
+  "Citizenship": "Citizenship",
+  "Series": "Series",
+  "Organ": "Organ",
+  "Date of issue": "Date of issue",
+  "E-mail": "E-mail",
+  "File": "File",
+  "Number": "Number",
+  "Personal data": "Personal data",
+  "Identity document": "Identity document",
+  "Place of residence": "Place of residence",
+  "Actual place of residence": "Actual place of residence",
+  "Files to upload": "Files to upload"
 }

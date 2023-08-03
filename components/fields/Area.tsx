@@ -22,7 +22,7 @@ export interface IAreaProps {
 export default function Area({ form, names, defaultValues }: IAreaProps) {
   const t = useTranslations();
 
-  const { control, watch, resetField } = form;
+  const { trigger, control, watch, resetField } = form;
 
   const regionId = watch(names.region);
   const districtId = watch(names.district);

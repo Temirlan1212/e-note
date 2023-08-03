@@ -3,7 +3,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { useLocale } from "next-intl";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { enUS, ru } from "date-fns/locale";
-
+import { FormControl, FormHelperText } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { forwardRef } from "react";
 import { useTheme } from "@mui/material/styles";
@@ -19,10 +19,11 @@ interface IDatePickerProps<T = Date | null> extends Omit<DatePickerProps<T>, "on
   value?: T;
   placeholder?: string;
   type?: keyof typeof types;
+  helperText?: string;
 }
 
 const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProps> = (props, ref) => {
-  const { onChange, value, placeholder, type = "secondary", ...restProps } = props;
+  const { onChange, value, placeholder, type = "secondary", helperText, ...restProps } = props;
 
   const locale = useLocale();
   const theme = useTheme();
@@ -58,21 +59,23 @@ const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProp
   const mergedStyles = { ...inputStyles, ...props.sx };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={adapterLocale}>
-      <MUIDatePicker
-        views={["day", "month", "year"]}
-        format="dd.MM.yy"
-        {...restProps}
-        slots={{
-          openPickerIcon: CalendarMonthIcon,
-        }}
-        sx={mergedStyles}
-        ref={ref}
-        value={value ?? null}
-        onChange={(val) => (onChange ? onChange(val) : null)}
-        slotProps={{ textField: { placeholder } }}
-      />
-    </LocalizationProvider>
+    <FormControl error={type === "error"} ref={ref}>
+      <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={adapterLocale}>
+        <MUIDatePicker
+          views={["day", "month", "year"]}
+          format="dd.MM.yy"
+          {...restProps}
+          slots={{
+            openPickerIcon: CalendarMonthIcon,
+          }}
+          sx={mergedStyles}
+          value={value ?? null}
+          onChange={(val) => (onChange ? onChange(val) : null)}
+          slotProps={{ textField: { placeholder } }}
+        />
+        {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
+      </LocalizationProvider>
+    </FormControl>
   );
 };
 export default forwardRef(DatePicker);
