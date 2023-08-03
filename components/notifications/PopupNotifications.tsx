@@ -59,31 +59,42 @@ export default function PopupNotifications() {
     }
   };
 
-  useEffect(() => {
-    setRequestBody((prev: any) => {
-      return {
-        ...prev,
-        sortBy: ["createdOn", "updatedOn"],
-        operator: "and",
-        criteria: [
-          {
-            fieldName: "user.id",
-            operator: "=",
-            value: user?.id ?? "",
-          },
-        ],
-      };
-    });
-    console.log("userR", requestBody);
-    console.log("userM", messages);
-  }, [messages != "" && null && undefined]);
+  const testMessages = [
+    { message: "Message1", createdOn: new Date("19 Jule 2023 7:48 UTC").toISOString() },
+    { message: "Message2", createdOn: new Date("9 Jule 2023 7:48 UTC").toISOString() },
+    { message: "Message3", createdOn: new Date("1 Jule 2023 7:48 UTC").toISOString() },
+    { message: "Message4", createdOn: new Date("2 Jule 2023 7:48 UTC").toISOString() },
+  ];
 
   useEffect(() => {
-    if (messages) {
-      setNotifications(messages?.data);
-      console.log("userN", notifications);
-    }
-  }, [messages]);
+    setNotifications(testMessages);
+  }, []);
+
+  // useEffect(() => {
+  //   setRequestBody((prev: any) => {
+  //     return {
+  //       ...prev,
+  //       sortBy: ["createdOn", "updatedOn"],
+  //       operator: "and",
+  //       criteria: [
+  //         {
+  //           fieldName: "user.id",
+  //           operator: "=",
+  //           value: user?.id ?? "",
+  //         },
+  //       ],
+  //     };
+  //   });
+  //   console.log("userR", requestBody);
+  //   console.log("userM", messages);
+  // }, [messages != "" && null && undefined]);
+
+  // useEffect(() => {
+  //   if (messages) {
+  //     setNotifications(messages?.data);
+  //     console.log("userN", notifications);
+  //   }
+  // }, [messages]);
 
   return (
     <>
@@ -112,7 +123,7 @@ export default function PopupNotifications() {
             width: { xs: "100%", sm: "100%", md: "320px" },
           }}
         >
-          {notifications ? (
+          {notifications && notifications.length <= 0 ? (
             <Box
               sx={{
                 padding: "15px 10px 15px 15px",
@@ -136,10 +147,6 @@ export default function PopupNotifications() {
               </Typography>
             </Box>
           ) : (
-            ""
-          )}
-          {notifications &&
-            notifications.length > 0 &&
             notifications.map((notification) => (
               <Box
                 key={notification.createdOn}
@@ -176,7 +183,8 @@ export default function PopupNotifications() {
                   </Typography>
                 </Box>
               </Box>
-            ))}
+            ))
+          )}
           <Box
             sx={{
               display: "flex",
