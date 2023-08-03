@@ -84,5 +84,18 @@
   "Download": "Download",
   "Delete": "Delete",
   "More detailed": "More detailed",
-  "Edit": "Edit"
+  "Edit": "Edit",
+  "Last name": "Last name",
+  "First name": "First name",
+  "Middle name": "Middle name",
+  "Birth date": "Birth date",
+  "PIN": "PIN",
+  "Street": "Street",
+  "House": "House",
+  "Apartment": "Apartment",
+  "Address": "Address",
+  "Phone number": "Phone number",
+  "Contacts": "Contacts",
+  "Document": "Document",
+  "Citizenship": "Citizenship"
 }

@@ -1,3 +1,5 @@
 {
-  "required": "This field is required!"
+  "required": "This field is required!",
+  "onlyLetters": "This field must contain only letters",
+  "onlyNumbers": "This field must contain only numbers"
 }

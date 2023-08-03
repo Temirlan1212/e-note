@@ -79,5 +79,18 @@
   "Download": "Скачать",
   "Delete": "Удалить",
   "More detailed": "Подробнее",
-  "Edit": "Редактировать"
+  "Edit": "Редактировать",
+  "Last name": "Фамилия",
+  "First name": "Имя",
+  "Middle name": "Отчество",
+  "Birth date": "Дата рождения",
+  "PIN": "ИНН",
+  "Street": "Улица",
+  "House": "Дом",
+  "Apartment": "Квартира",
+  "Address": "Адрес",
+  "Phone number": "Номер телефона",
+  "Contacts": "Контакты",
+  "Document": "Документ",
+  "Citizenship": "Гражданство"
 }

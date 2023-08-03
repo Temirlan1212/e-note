@@ -84,5 +84,18 @@
   "Download": "Көчүрүү",
   "Delete": "Өчүрүү",
   "More detailed": "Кененирээк",
-  "Edit": "Оңдоо"
+  "Edit": "Оңдоо",
+  "Last name": "Фамилиясы",
+  "First name": "Аты",
+  "Middle name": "Атасынын аты",
+  "Birth date": "Туулган күнү",
+  "PIN": "ИНН",
+  "Street": "Көчө",
+  "House": "Үй",
+  "Apartment": "Баатир",
+  "Address": "Дареги",
+  "Phone number": "Телефон номуру",
+  "Contacts": "Байланыштар",
+  "Document": "Документ",
+  "Citizenship": "Жарандык"
 }
