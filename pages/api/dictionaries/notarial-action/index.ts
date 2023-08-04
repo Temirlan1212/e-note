@@ -1,18 +1,17 @@
-import { IDocumentType } from "@/models/dictionaries/document-type";
+import { INotarialActionData } from "@/models/dictionaries/notarial-action";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IDocumentType | null>) {
-  if (req.method !== "POST") {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<INotarialActionData | null>) {
+  if (req.method !== "GET") {
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Product/search", {
-    method: "POST",
+  const response = await fetch(process.env.BACKEND_API_URL + "/json/notarialAction.json", {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
-    body: JSON.stringify(req.body),
   });
 
   if (!response.ok) {
