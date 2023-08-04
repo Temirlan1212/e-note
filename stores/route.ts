@@ -66,6 +66,39 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
       type: "menu",
       icon: "Folder",
     },
+    {
+      title: "Registries",
+      link: "",
+      type: "group",
+      icon: "Inventory",
+      children: [
+        {
+          title: "Register of local government officials",
+          link: "/omsu-officials",
+          type: "menu",
+        },
+        {
+          title: "Register of officials of foreign missions",
+          link: "/foreign-institutions-officials",
+          type: "menu",
+        },
+        {
+          title: "Notaries registry",
+          link: "/notaries",
+          type: "menu",
+        },
+        {
+          title: "Register of inheritance cases",
+          link: "/inheritance-cases",
+          type: "menu",
+        },
+        {
+          title: "Black list",
+          link: "/black-list",
+          type: "menu",
+        },
+      ],
+    },
   ],
   notaryRoutes: [],
   getRoutes: (routeList, type, rootOnly = false) => {
