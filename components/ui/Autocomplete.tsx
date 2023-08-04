@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { forwardRef, ReactNode } from "react";
 import {
   Autocomplete as MuiAutocomplete,
   AutocompleteProps,
@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 
 enum types {
-  danger = "danger.main",
+  error = "error.main",
   success = "success.main",
   secondary = "secondary.main",
 }
@@ -23,15 +23,11 @@ export interface IAutocompleteProps<T = any>
   type?: keyof typeof types;
 }
 
-export default function Autocomplete({
-  type = "secondary",
-  labelField = "label",
-  helperText,
-  renderInput,
-  options,
-  ...props
-}: IAutocompleteProps) {
-  const inputStyles = {
+export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocomplete(
+  { type = "secondary", labelField = "label", helperText, renderInput, options, ...rest }: IAutocompleteProps,
+  ref
+) {
+  const styles = {
     color: "text.primary",
     width: "100%",
     "& .MuiInputBase-root": {
@@ -50,15 +46,15 @@ export default function Autocomplete({
     },
   };
 
-  const combineStyles = { ...props.sx, ...inputStyles };
+  const combineStyles = { ...styles, ...rest.sx };
 
   const defaultRenderInput =
     renderInput != null
       ? renderInput
       : (params: AutocompleteRenderInputParams) => (
           <Box>
-            <TextField {...params} error={type === "danger"} />
-            {helperText && <FormHelperText error={type === "danger"}>{helperText}</FormHelperText>}
+            <TextField {...params} error={type === "error"} />
+            {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
           </Box>
         );
 
@@ -67,8 +63,9 @@ export default function Autocomplete({
       options={options}
       getOptionLabel={(option) => option[labelField]}
       sx={combineStyles}
-      {...props}
+      ref={ref}
+      {...rest}
       renderInput={defaultRenderInput}
     />
   );
-}
+});
