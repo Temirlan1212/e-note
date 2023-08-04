@@ -9,6 +9,7 @@ import NotariesFiltration from "./NotariesFiltration";
 import NotariesList from "./NotariesList";
 import useFetch from "@/hooks/useFetch";
 import HeirNotFoundData from "../search-for-heirs/HeirNotFoundData";
+import { useForm } from "react-hook-form";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -40,22 +41,15 @@ interface INotaryFilterData {
 const NotariesContent: FC<INotariesContentProps> = (props) => {
   const t = useTranslations();
 
+  const form = useForm();
+
+  const { handleSubmit, control, reset } = form;
+
   // Sort
 
   const [notariesSortOptions, setNotariesSortOptions] = useState("");
 
-  const [filterCriteria, setFilterCriteria] = useState<Criteria[]>([]);
-
   const [radioValue, setRadioValue] = useState<string>("");
-
-  const [filterData, setFilterData] = useState<INotaryFilterData>({
-    city: null,
-    district: null,
-    notaryDistrict: null,
-    region: null,
-    typeOfNotary: null,
-    workDays: null,
-  });
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -70,7 +64,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   });
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const { data: notaryData, loading } = useFetch("/api/citizens-registry", "POST", { body: appQueryParams });
+  const { data: notaryData, loading, update } = useFetch("/api/citizens-registry", "POST", { body: appQueryParams });
 
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
     setAppQueryParams((prev) => {
@@ -105,6 +99,15 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
         criteria: [searchData],
       },
     }));
+  };
+
+  const onFilterClear = () => {
+    reset();
+    setRadioValue("");
+    updateAppQueryParams("data", {
+      operator: "and",
+      criteria: [],
+    });
   };
 
   // Filtration
@@ -178,7 +181,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
             value: false,
           },
         ];
-      } else {
+      } else if (radioValue === "checkOut") {
         return [
           {
             fieldName: "roundClock",
@@ -191,6 +194,8 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
             value: true,
           },
         ];
+      } else {
+        return [];
       }
     };
 
@@ -218,15 +223,17 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         onSearchSubmit={handleSearchSubmit}
-        handleFilter={setFilterData}
         radioValue={radioValue}
         setRadioValue={setRadioValue}
         notariesSortOptions={notariesSortOptions}
         handleNotariesSortChange={handleNotariesSortChange}
         loading={loading}
         onFilterSubmit={onFilterSubmit}
-        filterCriteria={filterCriteria}
         inputRef={inputRef}
+        update={update}
+        handleSubmit={handleSubmit}
+        control={control}
+        onFilterClear={onFilterClear}
       />
       {notaryData?.data && notaryData?.data?.length > 0 ? (
         <NotariesList

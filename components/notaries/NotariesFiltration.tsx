@@ -17,39 +17,34 @@ interface INotariesFiltrationProps {
   setSearchQuery: (val: string) => void;
   searchQuery: string;
   onSearchSubmit: () => void;
-  handleFilter: (val: any) => void;
   radioValue: any;
   setRadioValue: any;
   notariesSortOptions: any;
   handleNotariesSortChange: any;
   onFilterSubmit: (val: any) => void;
   loading?: boolean;
-  filterCriteria?: any;
   inputRef?: any;
+  update: any;
+  handleSubmit: any;
+  control: any;
+  onFilterClear: any;
 }
 
 const NotariesFiltration: FC<INotariesFiltrationProps> = ({
   searchQuery,
   setSearchQuery,
   onSearchSubmit,
-  handleFilter,
   radioValue,
   setRadioValue,
   notariesSortOptions,
   handleNotariesSortChange,
   onFilterSubmit,
   loading,
+  handleSubmit,
+  control,
+  onFilterClear,
 }) => {
   const t = useTranslations();
-
-  const form = useForm();
-
-  const {
-    formState: { errors },
-    handleSubmit,
-    reset,
-    control,
-  } = form;
 
   // Search
 
@@ -254,7 +249,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
                 name={el.name}
                 key={el.id}
                 defaultValue={null}
-                render={({ field, fieldState }) => (
+                render={({ field }) => (
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel
                       sx={{
@@ -271,8 +266,6 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
                       labelField={el.type === "second" ? "title" : "name"}
                       valueField={el.type === "second" ? "value" : "id"}
                       data={el.options}
-                      selectType={fieldState.error?.message ? "danger" : "success"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       value={field.value != null ? field.value : ""}
                       onBlur={field.onBlur}
                       onChange={(...event: any[]) => {
@@ -315,7 +308,6 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
               },
               padding: "10px 0",
             }}
-            // onClick={onFilterSubmit}
             loading={loading}
           >
             {t("Apply a filter")}
@@ -333,10 +325,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
                 backgroundColor: "#3F5984",
               },
             }}
-            onClick={() => {
-              reset();
-              setRadioValue("roundClock");
-            }}
+            onClick={onFilterClear}
             loading={loading}
           >
             {t("Clear the filter")}
