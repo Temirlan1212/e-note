@@ -87,7 +87,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
               <InputLabel>{t("Notarial action")}</InputLabel>
               <Select
                 disabled={!objectTypeVal}
-                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 data={notarialActionList ?? []}
                 labelField={"title_" + locale}
                 valueField="value"
@@ -124,7 +124,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
               <InputLabel>{t("Type of notarial action")}</InputLabel>
               <Select
                 disabled={!notarialActionVal}
-                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 data={typeNotarialActionList ?? []}
                 labelField={"title_" + locale}
                 valueField="value"
@@ -161,7 +161,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
               <InputLabel>{t("Action")}</InputLabel>
               <Select
                 disabled={!typeNotarialActionVal}
-                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 data={actionList ?? []}
                 labelField={"title_" + locale}
                 valueField="value"
@@ -195,7 +195,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
               <InputLabel>{t("Searched document")}</InputLabel>
               <Select
                 disabled={!actionVal}
-                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 data={searchedDocData?.data ?? []}
                 labelField="name"
                 valueField="id"

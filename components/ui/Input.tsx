@@ -1,40 +1,53 @@
-import { FC, useState } from "react";
+import { forwardRef, useState } from "react";
 
 import { UseFormRegister } from "react-hook-form";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { IconButton, InputAdornment, TextField, TextFieldProps } from "@mui/material";
 
-type InputProps = TextFieldProps & {
+enum types {
+  error = "error.main",
+  success = "success.main",
+  secondary = "secondary.main",
+}
+
+export type IInputProps = TextFieldProps & {
   variant?: "filled" | "outlined" | "standard";
   register?: UseFormRegister<any>;
   name?: string;
+  inputType?: keyof typeof types;
 };
 
-const Input: FC<InputProps> = ({
-  color = "success",
-  variant = "outlined",
-  type,
-  helperText,
-  register,
-  name = "name",
-  ...props
-}) => {
-  const inputStyles = {
+const Input: React.ForwardRefRenderFunction<HTMLDivElement, IInputProps> = (
+  {
+    color = "success",
+    variant = "outlined",
+    type,
+    helperText,
+    register,
+    name = "name",
+    inputType = "secondary",
+    ...props
+  },
+  ref
+) => {
+  const styles = {
+    color: "text.primary",
+    width: "100%",
     "& .MuiInputBase-root": {
-      color: "text.primary",
       borderRadius: 0,
+      borderColor: types[inputType],
     },
-    "& .MuiOutlinedInput-notchedOutline": {
-      borderColor: "grey[300]",
+    "& .MuiInputBase-input": {
+      padding: "10px",
     },
-    "& .MuiFormLabel-root:not(.Mui-focused)": {
-      color: props.error ? "danger" : "text.primary",
+    ".MuiOutlinedInput-notchedOutline": {
+      borderColor: types[inputType],
     },
-    "& .MuiFormLabel-root(.Mui-focused)": {
-      color: "success",
+    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: types[inputType],
     },
-    "& .MuiFormHelperText-root": {
-      color: props.error ? "danger" : "text.primary",
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+      borderColor: types[inputType],
     },
   };
 
@@ -42,32 +55,34 @@ const Input: FC<InputProps> = ({
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const mergedStyles = { ...inputStyles, ...props.sx };
+  const combineStyles = { ...styles, ...props.sx };
 
   return (
     <TextField
+      error={inputType === "error"}
       variant={variant}
       color={color}
-      sx={mergedStyles}
+      sx={combineStyles}
       helperText={helperText}
+      ref={ref}
       {...(register && register(name))}
-      {...props}
       type={showPassword ? "text" : type}
       InputProps={
         type === "password"
           ? {
               endAdornment: (
                 <InputAdornment position="end">
-                  <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} edge="end">
-                    {showPassword ? <VisibilityOff color="success" /> : <Visibility color="success" />}
+                  <IconButton onClick={handleClickShowPassword} edge="end">
+                    {showPassword ? <VisibilityOff color="inherit" /> : <Visibility color="inherit" />}
                   </IconButton>
                 </InputAdornment>
               ),
             }
           : {}
       }
+      {...props}
     />
   );
 };
 
-export default Input;
+export default forwardRef<HTMLDivElement, IInputProps>(Input);
