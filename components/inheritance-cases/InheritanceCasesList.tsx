@@ -4,16 +4,16 @@ import { useTranslations } from "next-intl";
 import { Box, Typography, InputLabel } from "@mui/material";
 import Grid from "@mui/material/Grid";
 
-import ExelIcon from "../../public/icons/exel.svg";
+import ExcelIcon from "@/public/icons/excel.svg";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
 import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 
-import Select from "../ui/Select";
-import Button from "../ui/Button";
-import Input from "../ui/Input";
-import Pagination from "../ui/Pagination";
-import SearchBar from "../ui/SearchBar";
-import { GridTable } from "../ui/GridTable";
+import Select from "@/components/ui/Select";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import Pagination from "@/components/ui/Pagination";
+import SearchBar from "@/components/ui/SearchBar";
+import { GridTable } from "@/components/ui/GridTable";
 
 export default function InheritanceCases() {
   const [selectedPage, setSelectedPage] = useState(1);
@@ -268,7 +268,7 @@ export default function InheritanceCases() {
             variant="outlined"
             color="success"
             sx={{
-              height: "56px",
+              height: "43px",
               gap: "10px",
               padding: "14px 24px",
               "&:hover": { color: "#F6F6F6" },
@@ -278,7 +278,7 @@ export default function InheritanceCases() {
             <Typography fontWeight={600} fontSize={14}>
               {t("Export to excel")}
             </Typography>
-            <ExelIcon />
+            <ExcelIcon />
           </Button>
         </Grid>
       </Grid>
@@ -365,7 +365,7 @@ export default function InheritanceCases() {
           variant="outlined"
           color="success"
           sx={{
-            height: "56px",
+            height: "43px",
             gap: "10px",
             padding: "14px 24px",
           }}
@@ -373,7 +373,7 @@ export default function InheritanceCases() {
           <Typography fontWeight={600} fontSize={14}>
             {t("Export to excel")}
           </Typography>
-          <ExelIcon />
+          <ExcelIcon />
         </Button>
       </Grid>
     </>
