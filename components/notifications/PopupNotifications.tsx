@@ -3,7 +3,6 @@ import { Typography, Box, Popover, IconButton } from "@mui/material";
 import { useTranslations } from "next-intl";
 
 import useFetch from "@/hooks/useFetch";
-import useEffectOnce from "@/hooks/useEffectOnce";
 import Button from "@/components/ui/Button";
 import { useProfileStore } from "../../stores/profile";
 import { IProfileState, IUserData } from "@/models/profile/user";
@@ -59,42 +58,30 @@ export default function PopupNotifications() {
     }
   };
 
-  const testMessages = [
-    { message: "Message1", createdOn: new Date("19 Jule 2023 7:48 UTC").toISOString() },
-    { message: "Message2", createdOn: new Date("9 Jule 2023 7:48 UTC").toISOString() },
-    { message: "Message3", createdOn: new Date("1 Jule 2023 7:48 UTC").toISOString() },
-    { message: "Message4", createdOn: new Date("2 Jule 2023 7:48 UTC").toISOString() },
-  ];
+  useEffect(() => {
+    setRequestBody((prev: any) => {
+      return {
+        ...prev,
+        sortBy: ["createdOn", "updatedOn"],
+        operator: "and",
+        criteria: [
+          {
+            fieldName: "user.id",
+            operator: "=",
+            value: user?.id ?? "",
+          },
+        ],
+      };
+    });
+    console.log("userR", requestBody);
+    console.log("userM", messages);
+  }, [messages != "" && null && undefined]);
 
   useEffect(() => {
-    setNotifications(testMessages);
-  }, []);
-
-  // useEffect(() => {
-  //   setRequestBody((prev: any) => {
-  //     return {
-  //       ...prev,
-  //       sortBy: ["createdOn", "updatedOn"],
-  //       operator: "and",
-  //       criteria: [
-  //         {
-  //           fieldName: "user.id",
-  //           operator: "=",
-  //           value: user?.id ?? "",
-  //         },
-  //       ],
-  //     };
-  //   });
-  //   console.log("userR", requestBody);
-  //   console.log("userM", messages);
-  // }, [messages != "" && null && undefined]);
-
-  // useEffect(() => {
-  //   if (messages) {
-  //     setNotifications(messages?.data);
-  //     console.log("userN", notifications);
-  //   }
-  // }, [messages]);
+    if (messages) {
+      setNotifications(messages?.data);
+    }
+  }, [messages]);
 
   return (
     <>
@@ -205,7 +192,7 @@ export default function PopupNotifications() {
                 padding: "unset",
               }}
             >
-              <Typography fontSize={14}>{t("Все уведомления")}</Typography>
+              <Typography fontSize={14}>{t("All notifications")}</Typography>
             </Button>
             <Button
               onClick={handleNotificationPopupToggle}
@@ -216,7 +203,7 @@ export default function PopupNotifications() {
               }}
             >
               <Typography fontSize={14} color="#687C9B">
-                {t("Закрыть")}
+                {t("Close")}
               </Typography>
             </Button>
           </Box>
