@@ -1,90 +1,7 @@
 import { number, object, InferType, string, mixed, date, array, boolean } from "yup";
+import { personSchema } from "./person";
 
-export const requesterAddressSchema = object().shape({
-  address: object({
-    region: object({
-      id: number()
-        .integer()
-        .nullable()
-        .transform((value) => (isNaN(value) ? null : value)),
-    }),
-    district: object({
-      id: number()
-        .integer()
-        .nullable()
-        .transform((value) => (isNaN(value) ? null : value)),
-    }),
-    city: object({
-      id: number()
-        .integer()
-        .nullable()
-        .transform((value) => (isNaN(value) ? null : value)),
-    }),
-    addressL4: string().trim(),
-    addressL3: string().trim(),
-    addressL2: string().trim(),
-  }),
-  isDeliveryAddr: boolean(),
-  isDefaultAddr: boolean(),
-  isInvoicingAddr: boolean(),
-});
-
-export const requesterSchema = object().shape({
-  partnerTypeSelect: number()
-    .integer()
-    .nullable()
-    .test("nullable-required", "required", (v) => v != null)
-    .transform((value) => (isNaN(value) ? null : value)),
-  partner: object({
-    foreigner: boolean(),
-  }),
-  lastName: string()
-    .trim()
-    .required("required")
-    .matches(/^[aA-zZаА-яЯ\s]*$/, "onlyLetters"),
-  name: string()
-    .trim()
-    .required("required")
-    .matches(/^[aA-zZаА-яЯ\s]*$/, "onlyLetters"),
-  middleName: string()
-    .trim()
-    .matches(/^[aA-zZаА-яЯ\s]*$/, "onlyLetters"),
-  personalNumber: string()
-    .trim()
-    .required("required")
-    .matches(/^[0-9]*$/, "onlyNumbers"),
-  birthDate: date().nullable(),
-  citizenship: object({
-    id: number()
-      .integer()
-      .nullable()
-      .transform((value) => (isNaN(value) ? null : value)),
-  }),
-  identityDocument: number()
-    .integer()
-    .nullable()
-    .transform((value) => (isNaN(value) ? null : value)),
-  passportSeries: number()
-    .integer()
-    .nullable()
-    .transform((value) => (isNaN(value) ? null : value)),
-  passportNumber: string()
-    .trim()
-    .matches(/^[0-9]*$/, "onlyNumbers"),
-  authority: string().trim(),
-  authorityNumber: string()
-    .trim()
-    .matches(/^[0-9]*$/, "onlyNumbers"),
-  dateOfIssue: date().nullable(),
-  partnerAddressList: array().of(requesterAddressSchema),
-  emailAddress: object({
-    address: string().trim().email("email"),
-  }),
-  mobilePhone: string()
-    .trim()
-    .required("required")
-    .matches(/^[0-9\+\s]*$/, "onlyNumbers"),
-});
+export type IApplicationSchema = InferType<typeof applicationSchema>;
 
 export const applicationSchema = object().shape({
   id: number()
@@ -149,7 +66,6 @@ export const applicationSchema = object().shape({
       .nullable()
       .test("nullable-required", "required", (v) => v != null),
   }),
-  requester: array().of(requesterSchema),
+  requester: array().of(personSchema),
+  members: array().of(personSchema),
 });
-
-export type IApplicationSchema = InferType<typeof applicationSchema>;
