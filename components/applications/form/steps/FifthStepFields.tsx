@@ -183,7 +183,7 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography variant="h4" whiteSpace="nowrap">
-          {t("fourth-step-title")}
+          {t("fifth-step-title")}
         </Typography>
       </Box>
 
