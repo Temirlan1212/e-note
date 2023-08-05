@@ -73,8 +73,6 @@ export default function PopupNotifications() {
         ],
       };
     });
-    console.log("userR", requestBody);
-    console.log("userM", messages);
   }, [messages != "" && null && undefined]);
 
   useEffect(() => {
