@@ -13,12 +13,9 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 
 function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onDelete: Function }) {
   const { data: downloadData, update: downloadUpdate } = useFetch<Response>("", "GET", {
-    useEffectOnce: false,
     returnResponse: true,
   });
-  const { update: deleteUpdate } = useFetch<Response>("", "DELETE", {
-    useEffectOnce: false,
-  });
+  const { update: deleteUpdate } = useFetch<Response>("", "DELETE");
 
   useEffectOnce(async () => {
     if (downloadData == null || downloadData.body == null || downloadData.blob == null) return;
@@ -76,9 +73,7 @@ export default function FileList() {
     body: pagination,
   });
 
-  const { loading: uploadLoading, update: uploadUpdate } = useFetch("", "POST", {
-    useEffectOnce: false,
-  });
+  const { loading: uploadLoading, update: uploadUpdate } = useFetch("", "POST");
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const elem = event.target;

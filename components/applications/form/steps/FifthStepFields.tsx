@@ -136,6 +136,8 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
       }
 
       setTabsErrorsCounts(tabsErrorsCounts);
+    } else {
+      setTabsErrorsCounts({});
     }
 
     return validated;

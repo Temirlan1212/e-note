@@ -3,6 +3,8 @@ import { useRouter } from "next/router";
 import useEffectOnce from "./useEffectOnce";
 import { useProfileStore } from "@/stores/profile";
 
+const cache: Record<string, { date: Date; data: any }> = {};
+
 export interface FetchError {
   status: number;
   message: string;
@@ -21,7 +23,6 @@ export default function useFetch<T = FetchResponseBody>(
   options?: {
     headers?: HeadersInit;
     body?: FormData | Record<string, any> | null | undefined;
-    useEffectOnce?: boolean;
     returnResponse?: boolean;
   }
 ) {
@@ -32,11 +33,25 @@ export default function useFetch<T = FetchResponseBody>(
   const [error, setError] = useState<FetchError | null>(null);
   const [data, setData] = useState<T | null>(null);
 
+  useEffectOnce(() => {
+    if (url) {
+      handleFetching(url);
+    }
+  }, [url, options?.body, router.route]);
+
   const handleFetching = (fetchUrl = url, fetchBody = options?.body) => {
     const headers: HeadersInit = { "server-cookie": profile.cookie ?? "" };
 
     if (!(fetchBody instanceof FormData)) {
       headers["Content-Type"] = "application/json";
+    }
+
+    const currentDate = new Date();
+    const cacheDate = cache[url]?.date;
+
+    if (currentDate.getMinutes() - cacheDate?.getMinutes() < 5) {
+      setData(cache[url].data);
+      return cache[url].data;
     }
 
     setLoading(true);
@@ -58,6 +73,7 @@ export default function useFetch<T = FetchResponseBody>(
       })
       .then((res) => {
         setData(res);
+        cache[url] = { date: new Date(), data: res };
         return res;
       })
       .catch((e: Error) => {
@@ -71,14 +87,6 @@ export default function useFetch<T = FetchResponseBody>(
       })
       .finally(() => setLoading(false));
   };
-
-  if (options?.useEffectOnce !== false) {
-    useEffectOnce(() => {
-      if (url) {
-        handleFetching(url);
-      }
-    }, [url, options?.body, router.route]);
-  }
 
   return { data, loading, error, update: handleFetching };
 }
