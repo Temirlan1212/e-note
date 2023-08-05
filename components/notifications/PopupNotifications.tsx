@@ -76,7 +76,7 @@ export default function PopupNotifications() {
   }, [messages != "" && null && undefined]);
 
   useEffect(() => {
-    if (messages) {
+    if (messages?.data && messages.data instanceof Array) {
       setNotifications(messages?.data);
     }
   }, [messages]);
