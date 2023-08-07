@@ -19,7 +19,6 @@ export const ApplicationListActions = ({
 }) => {
   const t = useTranslations();
   const { update } = useFetch<Response>("", "DELETE", {
-    useEffectOnce: false,
     returnResponse: true,
   });
 
