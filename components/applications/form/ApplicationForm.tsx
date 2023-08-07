@@ -10,14 +10,12 @@ import ThirdStepFields from "./steps/ThirdStepFields";
 import FourthStepFields from "./steps/FourthStepFields";
 import FifthStepFields from "./steps/FifthStepFields";
 import SixthStepFields from "./steps/SixthStepFields";
-import SeventhStepFields from "./steps/SeventhStepFields";
 import NotaryFirstStepFields from "./notary-steps/FirstStepFields";
 import NotarySecondStepFields from "./notary-steps/SecondStepFields";
 import NotaryThirdStepFields from "./notary-steps/ThirdStepFields";
 import NotaryFourthStepFields from "./notary-steps/FourthStepFields";
 import NotaryFifthStepFields from "./notary-steps/FifthStepFields";
 import NotarySixthStepFields from "./notary-steps/SixthStepFields";
-import NotarySeventhStepFields from "./notary-steps/SeventhStepFields";
 import { Box, Step, StepIcon, Stepper, StepConnector } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
@@ -45,8 +43,7 @@ export default function ApplicationForm() {
         <ThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
         <FourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
         <FifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <SixthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <SeventhStepFields form={form} onPrev={() => setStep(step - 1)} />,
+        <SixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
       ]
     : [
         <NotaryFirstStepFields form={form} onNext={() => setStep(step + 1)} />,
@@ -54,8 +51,7 @@ export default function ApplicationForm() {
         <NotaryThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
         <NotaryFourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
         <NotaryFifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <NotarySixthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <NotarySeventhStepFields form={form} onPrev={() => setStep(step - 1)} />,
+        <NotarySixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
       ];
 
   const onSubmit = async (data: IApplicationSchema) => {

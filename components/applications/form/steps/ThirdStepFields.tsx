@@ -1,16 +1,17 @@
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Controller, UseFormReturn } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, InputLabel, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
-import Select from "@/components/ui/Select";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { useRouter } from "next/router";
-import { INotarialActionData } from "@/models/dictionaries/notarial-action";
-import useEffectOnce from "@/hooks/useEffectOnce";
-import { useState } from "react";
+import Address from "@/components/fields/Address";
+import IdentityDocument from "@/components/fields/IdentityDocument";
+import Contact from "@/components/fields/Contact";
+import PersonalData from "@/components/fields/PersonalData";
+import UploadFiles from "@/components/fields/UploadFiles";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -20,43 +21,94 @@ export interface IStepFieldsProps {
 
 export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
-  const { locale } = useRouter();
-  const { data: notarialData, loading } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
-  const [formValues, setformValues] = useState<Record<string, any>>({});
 
-  const { data: searchedDocData } = useFetch("/api/dictionaries/document-type", "POST", {
-    body: formValues,
+  const { trigger, getValues, setValue } = form;
+
+  const { update: applicationUpdate } = useFetch("", "PUT");
+
+  const getPersonalDataNames = (index: number) => ({
+    type: `requester.${index}.partnerTypeSelect`,
+    foreigner: `requester.${index}.partner.foreigner`,
+    lastName: `requester.${index}.lastName`,
+    firstName: `requester.${index}.name`,
+    middleName: `requester.${index}.middleName`,
+    pin: `requester.${index}.personalNumber`,
+    birthDate: `requester.${index}.birthDate`,
+    citizenship: `requester.${index}.citizenship.id`,
   });
 
-  const { trigger, control, watch, resetField, getValues } = form;
+  const getIdentityDocumentNames = (index: number) => ({
+    documentType: `requester.${index}.identityDocument`,
+    documentSeries: `requester.${index}.passportSeries`,
+    documentNumber: `requester.${index}.passportNumber`,
+    organType: `requester.${index}.authority`,
+    organNumber: `requester.${index}.authorityNumber`,
+    issueDate: `requester.${index}.dateOfIssue`,
+  });
+
+  const getAddressNames = (index: number) => ({
+    region: `requester.${index}.partnerAddressList.0.address.region.id`,
+    district: `requester.${index}.partnerAddressList.0.address.district.id`,
+    city: `requester.${index}.partnerAddressList.0.address.city.id`,
+    street: `requester.${index}.partnerAddressList.0.address.addressL4`,
+    house: `requester.${index}.partnerAddressList.0.address.addressL3`,
+    apartment: `requester.${index}.partnerAddressList.0.address.addressL2`,
+  });
+
+  const getActualAddressNames = (index: number) => ({
+    region: `requester.${index}.partnerAddressList.1.address.region.id`,
+    district: `requester.${index}.partnerAddressList.1.address.district.id`,
+    city: `requester.${index}.partnerAddressList.1.address.city.id`,
+    street: `requester.${index}.partnerAddressList.1.address.addressL4`,
+    house: `requester.${index}.partnerAddressList.1.address.addressL3`,
+    apartment: `requester.${index}.partnerAddressList.1.address.addressL2`,
+  });
+
+  const getContactNames = (index: number) => ({
+    email: `requester.${index}.emailAddress.address`,
+    phone: `requester.${index}.mobilePhone`,
+  });
+
+  const triggerFields = async () => {
+    const index = 0;
+    const allFields = [
+      ...Object.values(getPersonalDataNames(index)),
+      ...Object.values(getIdentityDocumentNames(index)),
+      ...Object.values(getAddressNames(index)),
+      ...Object.values(getActualAddressNames(index)),
+      ...Object.values(getContactNames(index)),
+    ];
+
+    return await trigger(allFields as any);
+  };
 
   const handlePrevClick = () => {
     if (onPrev != null) onPrev();
   };
 
-  const triggerFields = async () => {
-    return await trigger(["notarialAction", "typeNotarialAction", "action", "product.id"]);
-  };
-
   const handleNextClick = async () => {
     const validated = await triggerFields();
+
+    if (validated) {
+      const values = getValues();
+      const data: Partial<IApplicationSchema> = {
+        id: values.id,
+        version: values.version,
+        requester: values.requester,
+      };
+
+      const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
+      if (result != null && result.data != null && result.data[0]?.id != null) {
+        setValue("id", result.data[0].id);
+        setValue("version", result.data[0].version);
+      }
+    }
+
     if (onNext != null && validated) onNext();
   };
 
-  const objectTypeVal = watch("objectType");
-  const notarialActionVal = watch("notarialAction");
-  const typeNotarialActionVal = watch("typeNotarialAction");
-  const actionVal = watch("action");
-
-  useEffectOnce(() => {
-    if (actionVal != null) {
-      const values = getValues();
-      setformValues({ formValues: values });
-    }
-  }, [actionVal]);
-
   return (
-    <Box display="flex" flexDirection="column" gap="30px">
+    <Box display="flex" gap="20px" flexDirection="column">
       <Box
         display="flex"
         justifyContent="space-between"
@@ -64,154 +116,27 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography variant="h4" whiteSpace="nowrap">
-          {t("Document selection")}
+          {t("fourth-step-title")}
         </Typography>
       </Box>
 
-      <Controller
-        control={control}
-        name="notarialAction"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-          const notarialActionList = notarialData?.notarialAction.filter((item) =>
-            item["parent.value"].join(",").includes(String(objectTypeVal))
-          );
+      <Typography variant="h5">{t("Personal data")}</Typography>
+      <PersonalData form={form} names={getPersonalDataNames(0)} />
 
-          useEffectOnce(() => {
-            resetField(field.name);
-          }, [objectTypeVal]);
+      <Typography variant="h5">{t("Identity document")}</Typography>
+      <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
 
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Notarial action")}</InputLabel>
-              <Select
-                disabled={!objectTypeVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={notarialActionList ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!objectTypeVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
+      <Typography variant="h5">{t("Place of residence")}</Typography>
+      <Address form={form} names={getAddressNames(0)} />
 
-      <Controller
-        control={control}
-        name="typeNotarialAction"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-          const typeNotarialActionList = notarialData?.typeNotarialAction.filter((item) =>
-            item["parent.value"].join(",").includes(String(notarialActionVal))
-          );
+      <Typography variant="h5">{t("Actual place of residence")}</Typography>
+      <Address form={form} names={getActualAddressNames(0)} />
 
-          useEffectOnce(() => {
-            resetField(field.name);
-          }, [notarialActionVal]);
+      <Typography variant="h5">{t("Contacts")}</Typography>
+      <Contact form={form} names={getContactNames(0)} />
 
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Type of notarial action")}</InputLabel>
-              <Select
-                disabled={!notarialActionVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={typeNotarialActionList ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!notarialActionVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
-
-      <Controller
-        control={control}
-        name="action"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-          const actionList = notarialData?.action.filter((item) =>
-            item["parent.value"].join(",").includes(String(typeNotarialActionVal))
-          );
-
-          useEffectOnce(() => {
-            resetField(field.name);
-          }, [typeNotarialActionVal]);
-
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Action")}</InputLabel>
-              <Select
-                disabled={!typeNotarialActionVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={actionList ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!typeNotarialActionVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
-
-      <Controller
-        control={control}
-        name="product.id"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-
-          useEffectOnce(() => {
-            resetField(field.name);
-          }, [actionVal]);
-
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Searched document")}</InputLabel>
-              <Select
-                disabled={!actionVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={searchedDocData?.data ?? []}
-                labelField="name"
-                valueField="id"
-                helperText={!!actionVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
+      <Typography variant="h5">{t("Files to upload")}</Typography>
+      <UploadFiles />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
