@@ -1,7 +1,6 @@
-import { IUserNotification } from "@/models/notifications/user-notification";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IUserNotification | null>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }
