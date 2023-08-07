@@ -51,8 +51,8 @@ export default function useFetch<T = FetchResponseBody>(
     const diffMinutes = Math.round((currentDate.getTime() - cacheDate?.getTime()) / 60000);
 
     if (diffMinutes < 5) {
-      setData(cache[url].data);
-      return cache[url].data;
+      // setData(cache[url].data);
+      // return cache[url].data;
     }
 
     setLoading(true);

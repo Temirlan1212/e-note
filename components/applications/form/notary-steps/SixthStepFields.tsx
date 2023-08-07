@@ -6,10 +6,8 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -36,7 +34,7 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
   };
 
   return (
-    <Box display="flex" gap="30px" flexDirection="column">
+    <Box display="flex" gap="20px" flexDirection="column">
       <Box
         display="flex"
         justifyContent="space-between"
@@ -44,18 +42,8 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography variant="h4" whiteSpace="nowrap">
-          Просмотр документа
+          6
         </Typography>
-      </Box>
-
-      <Box display="flex" justifyContent="space-between">
-        <Typography variant="h5" whiteSpace="nowrap">
-          Предпросмотр документа
-        </Typography>
-
-        <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
-          {t("Download PDF")}
-        </Button>
       </Box>
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
