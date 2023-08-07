@@ -1,0 +1,20 @@
+{
+  "Black list": "Кара тизме",
+  "Subject PIN": "Субъектин жеке номуру",
+  "Subject full name": "Субъектин толук аты",
+  "Date of birth": "Туулган куну",
+  "Entry date": "Кирүү күнү",
+  "Who created": "Ким түздү",
+  "Reason for blacklisting": "Кара тизмеге кирүүнүн себеби",
+  "Fake passport": "Жасалма паспорт",
+  "Reason": "Себеби",
+  "Enter subject": "Субъекти киргизүү",
+  "Enter full name": "Толук аты-жөнүңүздү жазыңыз",
+  "Enter a reason": "Себебепти жазыңыз",
+  "Enter PIN": "Жеке номерди жазыңыз",
+  "Disabled, disability of the 3rd group": "Аракетке жөндөмсүз, 3-топтогу майып",
+  "Mental deviation": "Психикалык четтөө",
+  "Against the law": "Мыйзамга каршы",
+  "In the lists of Financial Intelligence": "Финансылык чалгындоо тизмесинде",
+  "Incapacitated": "Жөндөмсүз"
+}

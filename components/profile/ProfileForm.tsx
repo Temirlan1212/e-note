@@ -184,7 +184,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               width: "150px",
               border: "1px dashed  #CDCDCD",
               ":hover": {
-                backgroundColor: "#fff",
+                background: "#fff !important",
                 border: "1px dashed  #CDCDCD",
               },
             }}
