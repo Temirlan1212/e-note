@@ -1,0 +1,20 @@
+{
+  "Black list": "Черный список",
+  "Subject PIN": "ПИН субъекта",
+  "Subject full name": "ФИО субъекта",
+  "Date of birth": "Дата рождения",
+  "Entry date": "Дата ввода",
+  "Who created": "Кем создан",
+  "Reason for blacklisting": "Причина ввода в черный список",
+  "Fake passport": "Поддельный паспорт",
+  "Reason": "Причина",
+  "Enter subject": "Ввод субъекта",
+  "Enter full name": "Введите ФИО",
+  "Enter a reason": "Введите причину",
+  "Enter PIN": "Введите ПИН",
+  "Disabled, disability of the 3rd group": "Недееспособный, инвалидность 3-й группы",
+  "Mental deviation": "Психическое отклонение",
+  "Against the law": "Противоречит закону",
+  "In the lists of Financial Intelligence": "В списках Финразведки",
+  "Incapacitated": "Недееспособный"
+}

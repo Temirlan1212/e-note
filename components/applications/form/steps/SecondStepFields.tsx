@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, InputLabel } from "@mui/material";
+import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -42,6 +42,17 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
   return (
     <Box display="flex" flexDirection="column" gap="30px">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        gap={{ xs: "20px", md: "200px" }}
+        flexDirection={{ xs: "column", md: "row" }}
+      >
+        <Typography variant="h4" whiteSpace="nowrap">
+          {t("Choose notary")}
+        </Typography>
+      </Box>
+
       <Controller
         control={control}
         name="object"
@@ -60,7 +71,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
               <Select
                 fullWidth
-                selectType={errorMessage ? "danger" : field.value ? "success" : "secondary"}
+                selectType={errorMessage ? "error" : field.value ? "success" : "secondary"}
                 data={objectList ?? []}
                 labelField={"title_" + locale}
                 valueField="value"
@@ -97,7 +108,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
               <InputLabel>{t("Object type")}</InputLabel>
               <Select
                 disabled={!objectVal}
-                selectType={fieldState.error?.message ? "danger" : field.value ? "success" : "secondary"}
+                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 data={objectTypeList ?? []}
                 labelField={"title_" + locale}
                 valueField="value"

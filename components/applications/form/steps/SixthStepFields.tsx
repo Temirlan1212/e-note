@@ -42,7 +42,7 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
         gap={{ xs: "20px", md: "200px" }}
         flexDirection={{ xs: "column", md: "row" }}
       >
-        <Typography variant="h5" whiteSpace="nowrap">
+        <Typography variant="h4" whiteSpace="nowrap">
           6
         </Typography>
       </Box>

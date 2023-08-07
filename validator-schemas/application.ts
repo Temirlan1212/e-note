@@ -1,4 +1,7 @@
-import { number, object, InferType, string, mixed } from "yup";
+import { number, object, InferType, string, mixed, date, array, boolean } from "yup";
+import { personSchema } from "./person";
+
+export type IApplicationSchema = InferType<typeof applicationSchema>;
 
 export const applicationSchema = object().shape({
   id: number()
@@ -25,10 +28,12 @@ export const applicationSchema = object().shape({
     .integer()
     .nullable()
     .transform((value) => (isNaN(value) ? null : value)),
-  company: number()
-    .integer()
-    .required("required")
-    .transform((value) => (isNaN(value) ? null : value)),
+  company: object({
+    id: number()
+      .integer()
+      .required("required")
+      .transform((value) => (isNaN(value) ? null : value)),
+  }),
   object: number()
     .integer()
     .transform((value) => (isNaN(value) ? null : value))
@@ -54,6 +59,13 @@ export const applicationSchema = object().shape({
     .transform((value) => (isNaN(value) ? null : value))
     .nullable()
     .test("nullable-required", "required", (v) => v != null),
+  product: object({
+    id: number()
+      .integer()
+      .transform((value) => (isNaN(value) ? null : value))
+      .nullable()
+      .test("nullable-required", "required", (v) => v != null),
+  }),
+  requester: array().of(personSchema),
+  members: array().of(personSchema),
 });
-
-export type IApplicationSchema = InferType<typeof applicationSchema>;
