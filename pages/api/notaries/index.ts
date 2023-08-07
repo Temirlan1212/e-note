@@ -1,7 +1,8 @@
-import { IFileList } from "@/models/files/file-list";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IFileList | null>) {
+import { INotaryData } from "@/models/notaries/notary";
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse<INotaryData | null>) {
   if (req.method !== "POST" && req.body == null) {
     return res.status(400).json(null);
   }

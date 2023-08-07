@@ -55,13 +55,13 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
 
   // Filtration
 
-  const { data: regionsData } = useFetch("/api/citizens-registry/dictionaries/regions", "POST");
-  const { data: citiesData } = useFetch("/api/citizens-registry/dictionaries/cities", "POST");
-  const { data: districtsData } = useFetch("/api/citizens-registry/dictionaries/districts", "POST");
-  const { data: notaryAreaData } = useFetch("/api/citizens-registry/dictionaries/notary-area", "POST");
+  const { data: regionsData } = useFetch("/api/notaries/dictionaries/regions", "POST");
+  const { data: citiesData } = useFetch("/api/notaries/dictionaries/cities", "POST");
+  const { data: districtsData } = useFetch("/api/notaries/dictionaries/districts", "POST");
+  const { data: notaryAreaData } = useFetch("/api/notaries/dictionaries/notary-area", "POST");
 
-  const { data: workDaysAreaData } = useFetch("/api/citizens-registry/dictionaries/work-days", "GET");
-  const { data: notaryTypesData } = useFetch("/api/citizens-registry/dictionaries/notary-types", "GET");
+  const { data: workDaysAreaData } = useFetch("/api/notaries/dictionaries/work-days", "GET");
+  const { data: notaryTypesData } = useFetch("/api/notaries/dictionaries/notary-types", "GET");
 
   const optionSelectData: any = [
     {
@@ -263,6 +263,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
                     </InputLabel>
                     <Select
                       placeholder="select"
+                      selectType="success"
                       labelField={el.type === "second" ? "title" : "name"}
                       valueField={el.type === "second" ? "value" : "id"}
                       data={el.options}
@@ -278,14 +279,23 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
             );
           })}
         </Box>
-        <RadioGroup
-          sx={{ display: "flex", flexDirection: "row" }}
+        <Radio
+          labelField="name"
+          valueField="id"
+          row
           value={radioValue}
           onChange={(e) => setRadioValue(e.target.value)}
-        >
-          <Radio label={t("Around the clock")} value="roundClock" />
-          <Radio label={t("Visiting")} value="checkOut" />
-        </RadioGroup>
+          data={[
+            {
+              name: t("Around the clock"),
+              id: "roundClock",
+            },
+            {
+              name: t("Visiting"),
+              id: "checkOut",
+            },
+          ]}
+        />
         <Box
           display="flex"
           gap="30px"

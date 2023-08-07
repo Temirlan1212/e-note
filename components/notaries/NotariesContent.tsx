@@ -64,7 +64,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   });
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const { data: notaryData, loading, update } = useFetch("/api/citizens-registry", "POST", { body: appQueryParams });
+  const { data: notaryData, loading, update } = useFetch("/api/notaries", "POST", { body: appQueryParams });
 
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
     setAppQueryParams((prev) => {
@@ -87,11 +87,16 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   };
 
   const handleSearchSubmit = () => {
+    if (!searchQuery) {
+      return;
+    }
+
     const searchData: Criteria = {
       fieldName: "name",
       operator: "like",
       value: searchQuery,
     };
+
     setAppQueryParams((prevParams) => ({
       ...prevParams,
       data: {

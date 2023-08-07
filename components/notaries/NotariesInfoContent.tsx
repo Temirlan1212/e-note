@@ -1,8 +1,12 @@
-import { Box, Typography } from "@mui/material";
+import { Avatar, Box, Typography } from "@mui/material";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/router";
+import { format } from "date-fns";
 
 import Button from "../ui/Button";
 import Rating from "../ui/Rating";
+import { ApiNotaryResponse } from "@/models/notaries/notary";
 
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import PhoneEnabledOutlinedIcon from "@mui/icons-material/PhoneEnabledOutlined";
@@ -15,64 +19,76 @@ import profileImage from "@/public/images/avatar.png";
 import LicenseIcon from "@/public/icons/license.svg";
 import ContentPlusIcon from "@/public/icons/content-plus.svg";
 import CloudMessageIcon from "@/public/icons/cloud-message.svg";
-import { useTranslations } from "next-intl";
-
-const infoArray = [
-  {
-    text: "Частный нотариус",
-    icon: <AccountCircleOutlinedIcon />,
-    type: "text",
-    array: [],
-  },
-  {
-    text: "Лицензия №053 от 01.05.2010",
-    icon: <LicenseIcon />,
-    type: "text",
-    array: [],
-  },
-  {
-    text: "+996 700 000 000, 555 000 000",
-    icon: <PhoneEnabledOutlinedIcon />,
-    type: "text",
-    array: [],
-  },
-  {
-    text: "+996 700 000 000",
-    icon: <WhatsAppIcon />,
-    type: "link",
-    array: [],
-  },
-  {
-    text: "balancha@gmail.com",
-    icon: <EmailOutlinedIcon />,
-    type: "link",
-    array: [],
-  },
-  {
-    text: "Чуйская область, Московский район, с.Беловодское, ул Маяковского 95а",
-    icon: <LocationOnOutlinedIcon />,
-    type: "text",
-    array: [],
-  },
-  {
-    text: "Рабочие дни, с перерывом на обед",
-    icon: <AccessTimeOutlinedIcon />,
-    type: "list",
-    array: [
-      "Пн 09:00 - 18:00",
-      "Пн 09:00 - 18:00",
-      "Пн 09:00 - 18:00",
-      "Пн 09:00 - 18:00",
-      "Пн 09:00 - 18:00",
-      "Пн 09:00 - 18:00",
-    ],
-  },
-];
+import useFetch from "@/hooks/useFetch";
 
 interface INotariesInfoContentProps {}
 
+const formatDate = (inputDate: string | number | Date) => {
+  if (inputDate) {
+    const date = new Date(inputDate);
+    return format(date, "dd.MM.yyyy");
+  }
+};
+
 const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const t = useTranslations();
+
+  const router = useRouter();
+
+  const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
+
+  const notaryData = data?.data || [];
+
+  const infoArray = [
+    {
+      text: notaryData[0]?.typeOfNotary,
+      icon: <AccountCircleOutlinedIcon />,
+      type: "text",
+      array: [],
+    },
+    {
+      text: notaryData[0]?.licenseNo + " от " + formatDate(notaryData[0]?.licenseTermFrom),
+      icon: <LicenseIcon />,
+      type: "text",
+      array: [],
+    },
+    {
+      text: "+996 700 000 000, 555 000 000",
+      icon: <PhoneEnabledOutlinedIcon />,
+      type: "text",
+      array: [],
+    },
+    {
+      text: "+996 700 000 000",
+      icon: <WhatsAppIcon />,
+      type: "link",
+      array: [],
+    },
+    {
+      text: "balancha@gmail.com",
+      icon: <EmailOutlinedIcon />,
+      type: "link",
+      array: [],
+    },
+    {
+      text:
+        notaryData[0]?.address.region.name +
+        ", " +
+        notaryData[0]?.address.district.name +
+        ", " +
+        notaryData[0]?.address.city.fullName,
+      icon: <LocationOnOutlinedIcon />,
+      type: "text",
+      array: [],
+    },
+    {
+      text: "Рабочие дни, с перерывом на обед",
+      icon: <AccessTimeOutlinedIcon />,
+      type: "list",
+      array: notaryData[0]?.workingDay,
+    },
+  ];
+
   return (
     <Box
       sx={{
@@ -111,15 +127,29 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
             },
           }}
         >
-          <Box
-            sx={{
-              width: "194px",
-              height: "194px",
-              objectFit: "contain",
-            }}
-          >
-            <Image src={profileImage} alt="notaryImage" />
-          </Box>
+          {notaryData[0]?.logo ? (
+            <Box
+              sx={{
+                width: "194px",
+                height: "194px",
+                objectFit: "contain",
+              }}
+            >
+              <Image src={notaryData[0]?.logo} alt="notaryImage" />
+            </Box>
+          ) : (
+            <Avatar
+              sizes="194"
+              sx={{
+                bgcolor: "success.main",
+                width: "194px",
+                height: "194px",
+                borderRadius: 0,
+              }}
+              aria-label="recipe"
+            />
+          )}
+
           <Box>
             <Box display="flex" gap="8px">
               <Rating value={4} readOnly />
@@ -158,7 +188,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
               fontWeight: 600,
             }}
           >
-            Баланчаев Баланча Баланчаевич
+            {notaryData[0]?.name}
           </Typography>
           <Box>
             <Box display="flex" gap="20px" flexDirection="column">

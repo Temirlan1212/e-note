@@ -43,3 +43,52 @@ export interface INotaryTypeSelectionsData {
   title: string;
   value: string;
 }
+
+export interface INotaryInfoData {
+  notaryDistrict: {
+    name: string;
+    id: number;
+    $version: number;
+  };
+  licenseNo: string;
+  address: {
+    city: {
+      fullName: string;
+      id: number;
+      $version: number;
+    };
+    district: {
+      code: string;
+      name: string;
+      id: number;
+      $version: number;
+    };
+    fullName: string;
+    id: number;
+    $version: number;
+    region: {
+      code: string;
+      name: string;
+      id: number;
+      $version: number;
+    };
+  };
+  $attachments: number;
+  licenseTermUntil: string;
+  version: number;
+  $wkfStatus: any;
+  workingDay: any[];
+  partner: any;
+  licenseStatus: number;
+  name: string;
+  logo: string;
+  licenseTermFrom: string;
+  $processInstanceId: any;
+  id: number;
+  typeOfNotary: string;
+}
+
+export interface ApiNotaryResponse {
+  status: number;
+  data: INotaryInfoData[];
+}
