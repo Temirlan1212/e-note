@@ -34,6 +34,10 @@ export default function ApplicationForm() {
     reset,
   } = form;
 
+  const dynamicForm = useForm({
+    mode: "onTouched",
+  });
+
   const [step, setStep] = useState(0);
 
   const steps = true
@@ -42,7 +46,12 @@ export default function ApplicationForm() {
         <SecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
         <ThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
         <FourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <FifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+        <FifthStepFields
+          dynamicForm={dynamicForm}
+          form={form}
+          onPrev={() => setStep(step - 1)}
+          onNext={() => setStep(step + 1)}
+        />,
         <SixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
       ]
     : [
