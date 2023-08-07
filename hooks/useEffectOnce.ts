@@ -1,13 +1,13 @@
 import { DependencyList, useEffect } from "react";
 
-let initial = true;
-
 export default function useEffectOnce(callback: Function, deps: DependencyList = []) {
-  useEffect(() => {
-    if (initial) {
-      callback();
+  let timer: ReturnType<typeof setTimeout> | null = null;
 
-      if (deps.length === 0) initial = false;
-    }
-  }, deps);
+  useEffect(() => {
+    if (timer) clearTimeout(timer);
+
+    timer = setTimeout(() => {
+      callback();
+    }, 0);
+  }, deps ?? []);
 }
