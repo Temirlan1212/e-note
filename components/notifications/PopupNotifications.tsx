@@ -73,7 +73,7 @@ export default function PopupNotifications() {
         ],
       };
     });
-  }, [messages != "" && null && undefined]);
+  }, [messages]);
 
   useEffect(() => {
     if (messages?.data && messages.data instanceof Array) {
