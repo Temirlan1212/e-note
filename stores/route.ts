@@ -73,22 +73,22 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
       icon: "Inventory",
       children: [
         {
-          title: "Register of local government officials",
+          title: "OMSUOfficials",
           link: "/omsu-officials",
           type: "menu",
         },
         {
-          title: "Register of officials of foreign missions",
+          title: "ForeignInstitutions",
           link: "/foreign-institutions-officials",
           type: "menu",
         },
         {
-          title: "Notaries registry",
+          title: "Register of Notaries of the KR",
           link: "",
           type: "menu",
         },
         {
-          title: "Notary actions",
+          title: "Register of notarial acts",
           link: "",
           type: "menu",
         },
