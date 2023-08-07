@@ -14,6 +14,7 @@ import { Box, Step, StepIcon, Stepper, StepConnector } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import Button from "@/components/ui/Button";
+import SeventhStepFields from "./steps/SeventhStepFields";
 
 export default function ApplicationForm() {
   const t = useTranslations();
@@ -31,12 +32,13 @@ export default function ApplicationForm() {
   const [step, setStep] = useState(0);
 
   const steps = [
-    <FirstStepFields form={form} onNext={() => setStep(step + 1)} />,
-    <SecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-    <ThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-    <FourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-    <FifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-    <SixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
+    // <FirstStepFields form={form} onNext={() => setStep(step + 1)} />,
+    // <SecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    // <ThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    // <FourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    // <FifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    // <SixthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+    <SeventhStepFields form={form} onPrev={() => setStep(step - 1)} />,
   ];
 
   const onSubmit = async (data: IApplicationSchema) => {
