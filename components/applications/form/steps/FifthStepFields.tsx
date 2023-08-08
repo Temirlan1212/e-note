@@ -5,6 +5,7 @@ import {
   ControllerRenderProps,
   UseFormReturn,
   UseFormTrigger,
+  useForm,
 } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -24,7 +25,6 @@ import DateTimePicker from "@/components/ui/DateTimePicker";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  dynamicForm: UseFormReturn<any>;
   onPrev?: Function | null;
   onNext?: Function | null;
 }
@@ -153,11 +153,16 @@ const getDynamicDefaultValue = (field: DynamicComponentTypes, value: any) => {
 
 const getDynamicDefaultGroupName = (name: string) => (name === "null" ? "" : name ?? "");
 
-export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: IStepFieldsProps) {
+export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
-  const { trigger, control } = dynamicForm;
   const productId = form.watch("product.id");
+
+  const dynamicForm = useForm({
+    mode: "onTouched",
+  });
+
+  const { trigger, control } = dynamicForm;
 
   const handlePrevClick = () => {
     if (onPrev != null) onPrev();
