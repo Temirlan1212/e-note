@@ -169,6 +169,7 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
   };
 
   const { update, data: documentTemplateData } = useFetch("", "GET");
+  const { update: applicationUpdate } = useFetch("", "POST");
 
   const triggerFields = async () => {
     return await trigger();
@@ -182,6 +183,23 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
   const handleNextClick = async () => {
     const validated = await triggerFields();
+    const { setValue, getValues } = form;
+
+    if (validated) {
+      const values = getValues();
+      const data: Partial<IApplicationSchema> = {
+        id: values.id,
+        version: values.version,
+        ...dynamicForm.getValues(),
+      };
+
+      const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
+      if (result != null && result.data != null && result.data[0]?.id != null) {
+        setValue("id", result.data[0].id);
+        setValue("version", result.data[0].version);
+      }
+    }
+
     if (onNext != null && validated) onNext();
   };
 
