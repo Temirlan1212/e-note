@@ -51,6 +51,7 @@ type DynamicComponentTypes =
 
 const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicComponentProps) => {
   const { locale, field, data, errorMessage, trigger } = props;
+
   const componentTypes = {
     String: (
       <Input
@@ -102,7 +103,8 @@ const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicCompone
     Date: (
       <DatePicker
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={field.value}
+        value={field.value == "" ? null : field.value}
+        helperText={errorMessage}
         onChange={(...event: any[]) => {
           field.onChange(...event);
           trigger(field.name);
@@ -113,7 +115,8 @@ const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicCompone
     Time: (
       <TimePicker
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={field.value}
+        value={field.value == "" ? null : field.value}
+        helperText={errorMessage}
         onChange={(...event: any[]) => {
           field.onChange(...event);
           trigger(field.name);
@@ -123,7 +126,8 @@ const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicCompone
     DateTime: (
       <DateTimePicker
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={field.value}
+        value={field.value == "" ? null : field.value}
+        helperText={errorMessage}
         onChange={(...event: any[]) => {
           field.onChange(...event);
           trigger(field.name);
@@ -137,15 +141,15 @@ const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicCompone
 
 const getDynamicDefaultValue = (field: DynamicComponentTypes, value: any) => {
   const types: Record<DynamicComponentTypes, any> = {
-    Float: value,
-    Decimal: value,
-    Integer: value,
+    Float: !value ? null : value,
+    Decimal: !value ? null : value,
+    Integer: !value ? null : value,
     Boolean: value,
-    Selection: value,
-    String: value == null ? "" : value,
-    Date: value == null ? new Date() : new Date(String(value)),
-    Time: value == null ? parse("00:00", "HH:mm", new Date()) : parse(String(value), "HH:mm", new Date()),
-    DateTime: value == null ? new Date() : new Date(String(value)),
+    Selection: !value ? null : value,
+    String: !value ? "" : value,
+    Date: value ? null : new Date(String(value)),
+    Time: value ? null : parse(String(value), "HH:mm", new Date()),
+    DateTime: value ? null : new Date(String(value)),
   };
 
   return types?.[field] ? types[field] : "";
@@ -185,7 +189,7 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
     const validated = await triggerFields();
     const { setValue, getValues } = form;
 
-    if (validated) {
+    if (validated && onNext) {
       const values = getValues();
       const data: Partial<IApplicationSchema> = {
         id: values.id,
@@ -197,10 +201,9 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
+        onNext();
       }
     }
-
-    if (onNext != null && validated) onNext();
   };
 
   return (
@@ -215,51 +218,53 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
                     ? group?.["groupName_" + locale]
                     : getDynamicDefaultGroupName(group?.groupName)}
                 </Typography>
+
                 <Grid key={index} container spacing={2}>
-                  {group?.fields?.map((item: Record<string, any>, index: number) => {
-                    let name = item?.fieldName ?? "";
-                    if (item?.path != null) name = `${item.path}.${item.fieldName}`;
+                  {group?.fields?.map((item: Record<string, any>, index: number) => (
+                    <Grid item md={12} key={index}>
+                      <Controller
+                        control={control}
+                        name={item?.path != null ? `${item.path}.${item.fieldName}` : item?.fieldName ?? ""}
+                        defaultValue={getDynamicDefaultValue(item?.fieldType, item?.defaultValue)}
+                        rules={{ required: !!item?.required ? "required" : false }}
+                        render={({ field, fieldState }) => {
+                          let errorMessage = fieldState.error?.message
+                            ? t(fieldState.error.message)
+                            : fieldState.error?.message;
 
-                    return (
-                      <Grid item md={12} key={index}>
-                        <Controller
-                          control={control}
-                          name={name}
-                          defaultValue={getDynamicDefaultValue(item?.fieldType, item?.defaultValue)}
-                          rules={{ required: !!item?.required ? "required" : false }}
-                          render={({ field, fieldState }) => {
-                            const errorMessage = fieldState.error?.message
-                              ? t(fieldState.error?.message)
-                              : fieldState.error?.message;
-
-                            let data: Record<string, any>[] = [];
-                            const { data: selectionData } = useFetch(
-                              `/api/dictionaries/selection/${item.selection}`,
-                              "POST"
-                            );
-
-                            if (selectionData?.data != null) {
-                              data = selectionData.data;
+                          if (["Date", "DateTime", "Time"].includes(item.fieldType)) {
+                            if (typeof field.value === "object" && field.value == "Invalid Date") {
+                              errorMessage = t("invalid format");
                             }
+                          }
 
-                            return (
-                              <Box display="flex" flexDirection="column" gap="10px">
-                                <InputLabel>{item?.fieldTitles?.[locale ?? ""] ?? ""}</InputLabel>
-                                {getDynamicComponent(item.fieldType, {
-                                  locale: locale ?? "ru",
-                                  field,
-                                  fieldState,
-                                  errorMessage,
-                                  data,
-                                  trigger,
-                                })}
-                              </Box>
-                            );
-                          }}
-                        />
-                      </Grid>
-                    );
-                  })}
+                          let data: Record<string, any>[] = [];
+                          const { data: selectionData } = useFetch(
+                            `/api/dictionaries/selection/${item.selection}`,
+                            "POST"
+                          );
+
+                          if (selectionData?.data != null) {
+                            data = selectionData.data;
+                          }
+
+                          return (
+                            <Box display="flex" flexDirection="column" gap="10px">
+                              <InputLabel>{item?.fieldTitles?.[locale ?? ""] ?? ""}</InputLabel>
+                              {getDynamicComponent(item.fieldType, {
+                                locale: locale ?? "ru",
+                                field,
+                                fieldState,
+                                errorMessage,
+                                data,
+                                trigger,
+                              })}
+                            </Box>
+                          );
+                        }}
+                      />
+                    </Grid>
+                  ))}
                 </Grid>
               </Box>
             ))}

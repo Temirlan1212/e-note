@@ -2,11 +2,12 @@ import { DatePicker as MUIDatePicker, DatePickerProps } from "@mui/x-date-picker
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { useLocale } from "next-intl";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { enUS, ru } from "date-fns/locale";
+import { enUS as en, ru } from "date-fns/locale";
 import { FormControl, FormHelperText } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { forwardRef } from "react";
 import { useTheme } from "@mui/material/styles";
+import { ruRU, enUS } from "@mui/x-date-pickers/locales";
 
 enum types {
   error = "error.main",
@@ -28,7 +29,11 @@ const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProp
   const locale = useLocale();
   const theme = useTheme();
 
-  const adapterLocale = locale === "en" ? enUS : ru;
+  const adapterLocale = locale === "en" ? en : ru;
+  const localeText =
+    locale === "en"
+      ? enUS.components.MuiLocalizationProvider.defaultProps.localeText
+      : ruRU.components.MuiLocalizationProvider.defaultProps.localeText;
 
   const palettes: Record<string, any> = theme.palette;
   const splittedType = types[type].trim().split(".");
@@ -48,7 +53,7 @@ const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProp
     ".MuiOutlinedInput-notchedOutline": {
       borderColor: palette,
     },
-    "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    ".Mui-focused .MuiOutlinedInput-notchedOutline": {
       borderColor: palette,
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
@@ -60,7 +65,7 @@ const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProp
 
   return (
     <FormControl error={type === "error"} ref={ref}>
-      <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={adapterLocale}>
+      <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={adapterLocale} localeText={localeText}>
         <MUIDatePicker
           views={["day", "month", "year"]}
           format="dd.MM.yy"
