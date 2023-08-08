@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
+import { format } from "date-fns";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
@@ -24,10 +25,12 @@ export interface IStepFieldsProps {
 export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
 
-  const { trigger, control, watch, resetField } = form;
+  const { trigger, control, watch, resetField, getValues, setValue } = form;
 
   const cityId = watch("city");
   const notaryDistrictId = watch("notaryDistrict");
+
+  const { update: applicationCreate } = useFetch("", "POST");
 
   const triggerFields = async () => {
     return await trigger(["region", "district", "city", "notaryDistrict", "company"]);
@@ -39,6 +42,21 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
   const handleNextClick = async () => {
     const validated = await triggerFields();
+
+    if (validated) {
+      const values = getValues();
+      const data: Partial<IApplicationSchema> & { creationDate: string } = {
+        company: values.company,
+        creationDate: format(new Date(), "yyyy-MM-dd"),
+      };
+
+      const result = await applicationCreate("/api/applications/create", data);
+      if (result != null && result.data != null && result.data[0]?.id != null) {
+        setValue("id", result.data[0].id);
+        setValue("version", result.data[0].version);
+      }
+    }
+
     if (onNext != null && validated) onNext();
   };
 
