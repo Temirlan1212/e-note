@@ -9,9 +9,7 @@ export const personSchema = object().shape({
     .nullable()
     .test("nullable-required", "required", (v) => v != null)
     .transform((value) => (isNaN(value) ? null : value)),
-  partner: object({
-    foreigner: boolean(),
-  }),
+  foreigner: boolean(),
   lastName: string()
     .trim()
     .required("required")
@@ -33,7 +31,7 @@ export const personSchema = object().shape({
       .integer()
       .nullable()
       .transform((value) => (isNaN(value) ? null : value)),
-  }),
+  }).nullable(),
   identityDocument: number()
     .integer()
     .nullable()
@@ -50,7 +48,8 @@ export const personSchema = object().shape({
     .trim()
     .matches(/^[0-9]*$/, "onlyNumbers"),
   dateOfIssue: date().nullable(),
-  partnerAddressList: array().of(addressSchema),
+  mainAddress: addressSchema,
+  actualResidenceAddress: addressSchema,
   emailAddress: object({
     address: string().trim().email("email"),
   }),
