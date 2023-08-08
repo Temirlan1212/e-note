@@ -153,7 +153,7 @@ const getDynamicDefaultValue = (field: DynamicComponentTypes, value: any) => {
 
 const getDynamicDefaultGroupName = (name: string) => (name === "null" ? "" : name ?? "");
 
-export default function SixthStepFields({ form, dynamicForm, onPrev, onNext }: IStepFieldsProps) {
+export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
   const { trigger, control } = dynamicForm;
