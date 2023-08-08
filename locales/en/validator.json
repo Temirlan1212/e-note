@@ -2,5 +2,6 @@
   "required": "This field is required!",
   "email": "This field must be a valid email",
   "onlyLetters": "This field must contain only letters",
-  "onlyNumbers": "This field must contain only numbers"
+  "onlyNumbers": "This field must contain only numbers",
+  "invalid format": "Invalid format"
 }
