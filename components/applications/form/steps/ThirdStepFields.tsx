@@ -22,19 +22,19 @@ export interface IStepFieldsProps {
 export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
 
-  const { trigger, getValues, setValue } = form;
+  const { trigger, resetField, getValues, setValue } = form;
 
   const { update: applicationUpdate } = useFetch("", "PUT");
 
   const getPersonalDataNames = (index: number) => ({
     type: `requester.${index}.partnerTypeSelect`,
-    foreigner: `requester.${index}.partner.foreigner`,
+    foreigner: `requester.${index}.foreigner`,
     lastName: `requester.${index}.lastName`,
     firstName: `requester.${index}.name`,
     middleName: `requester.${index}.middleName`,
     pin: `requester.${index}.personalNumber`,
     birthDate: `requester.${index}.birthDate`,
-    citizenship: `requester.${index}.citizenship.id`,
+    citizenship: `requester.${index}.citizenship`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -47,21 +47,21 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
   });
 
   const getAddressNames = (index: number) => ({
-    region: `requester.${index}.partnerAddressList.0.address.region.id`,
-    district: `requester.${index}.partnerAddressList.0.address.district.id`,
-    city: `requester.${index}.partnerAddressList.0.address.city.id`,
-    street: `requester.${index}.partnerAddressList.0.address.addressL4`,
-    house: `requester.${index}.partnerAddressList.0.address.addressL3`,
-    apartment: `requester.${index}.partnerAddressList.0.address.addressL2`,
+    region: `requester.${index}.mainAddress.region`,
+    district: `requester.${index}.mainAddress.district`,
+    city: `requester.${index}.mainAddress.city`,
+    street: `requester.${index}.mainAddress.addressL4`,
+    house: `requester.${index}.mainAddress.addressL3`,
+    apartment: `requester.${index}.mainAddress.addressL2`,
   });
 
   const getActualAddressNames = (index: number) => ({
-    region: `requester.${index}.partnerAddressList.1.address.region.id`,
-    district: `requester.${index}.partnerAddressList.1.address.district.id`,
-    city: `requester.${index}.partnerAddressList.1.address.city.id`,
-    street: `requester.${index}.partnerAddressList.1.address.addressL4`,
-    house: `requester.${index}.partnerAddressList.1.address.addressL3`,
-    apartment: `requester.${index}.partnerAddressList.1.address.addressL2`,
+    region: `requester.${index}.actualResidenceAddress.region`,
+    district: `requester.${index}.actualResidenceAddress.district`,
+    city: `requester.${index}.actualResidenceAddress.city`,
+    street: `requester.${index}.actualResidenceAddress.addressL4`,
+    house: `requester.${index}.actualResidenceAddress.addressL3`,
+    apartment: `requester.${index}.actualResidenceAddress.addressL2`,
   });
 
   const getContactNames = (index: number) => ({
@@ -101,6 +101,15 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
+      } else {
+        const index = 0;
+        return [
+          ...Object.values(getPersonalDataNames(index)),
+          ...Object.values(getIdentityDocumentNames(index)),
+          ...Object.values(getAddressNames(index)),
+          ...Object.values(getActualAddressNames(index)),
+          ...Object.values(getContactNames(index)),
+        ].map((item) => resetField(item as any));
       }
     }
 

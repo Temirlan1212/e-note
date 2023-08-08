@@ -32,6 +32,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
   const {
     control,
     trigger,
+    resetField,
     getValues,
     setValue,
     formState: { errors },
@@ -46,13 +47,13 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
   const getPersonalDataNames = (index: number) => ({
     type: `members.${index}.partnerTypeSelect`,
-    foreigner: `members.${index}.partner.foreigner`,
+    foreigner: `members.${index}.foreigner`,
     lastName: `members.${index}.lastName`,
     firstName: `members.${index}.name`,
     middleName: `members.${index}.middleName`,
     pin: `members.${index}.personalNumber`,
     birthDate: `members.${index}.birthDate`,
-    citizenship: `members.${index}.citizenship.id`,
+    citizenship: `members.${index}.citizenship`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -65,21 +66,21 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
   });
 
   const getAddressNames = (index: number) => ({
-    region: `members.${index}.partnerAddressList.0.address.region.id`,
-    district: `members.${index}.partnerAddressList.0.address.district.id`,
-    city: `members.${index}.partnerAddressList.0.address.city.id`,
-    street: `members.${index}.partnerAddressList.0.address.addressL4`,
-    house: `members.${index}.partnerAddressList.0.address.addressL3`,
-    apartment: `members.${index}.partnerAddressList.0.address.addressL2`,
+    region: `members.${index}.mainAddress.region`,
+    district: `members.${index}.mainAddress.district`,
+    city: `members.${index}.mainAddress.city`,
+    street: `members.${index}.mainAddress.addressL4`,
+    house: `members.${index}.mainAddress.addressL3`,
+    apartment: `members.${index}.mainAddress.addressL2`,
   });
 
   const getActualAddressNames = (index: number) => ({
-    region: `members.${index}.partnerAddressList.1.address.region.id`,
-    district: `members.${index}.partnerAddressList.1.address.district.id`,
-    city: `members.${index}.partnerAddressList.1.address.city.id`,
-    street: `members.${index}.partnerAddressList.1.address.addressL4`,
-    house: `members.${index}.partnerAddressList.1.address.addressL3`,
-    apartment: `members.${index}.partnerAddressList.1.address.addressL2`,
+    region: `members.${index}.actualResidenceAddress.region`,
+    district: `members.${index}.actualResidenceAddress.district`,
+    city: `members.${index}.actualResidenceAddress.city`,
+    street: `members.${index}.actualResidenceAddress.addressL4`,
+    house: `members.${index}.actualResidenceAddress.addressL3`,
+    apartment: `members.${index}.actualResidenceAddress.addressL2`,
   });
 
   const getContactNames = (index: number) => ({
@@ -167,6 +168,19 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
+      } else {
+        return members
+          .reduce((acc: string[], _, index: number) => {
+            return [
+              ...acc,
+              ...Object.values(getPersonalDataNames(index)),
+              ...Object.values(getIdentityDocumentNames(index)),
+              ...Object.values(getAddressNames(index)),
+              ...Object.values(getActualAddressNames(index)),
+              ...Object.values(getContactNames(index)),
+            ];
+          }, [])
+          .map((item) => resetField(item as any));
       }
     }
 
