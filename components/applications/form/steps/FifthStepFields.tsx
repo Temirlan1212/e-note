@@ -147,9 +147,9 @@ const getDynamicDefaultValue = (field: DynamicComponentTypes, value: any) => {
     Boolean: value,
     Selection: !value ? null : value,
     String: !value ? "" : value,
-    Date: value ? null : new Date(String(value)),
-    Time: value ? null : parse(String(value), "HH:mm", new Date()),
-    DateTime: value ? null : new Date(String(value)),
+    Date: !value ? null : new Date(String(value)),
+    Time: !value ? null : parse(String(value), "HH:mm", new Date()),
+    DateTime: !value ? null : new Date(String(value)),
   };
 
   return types?.[field] ? types[field] : "";
