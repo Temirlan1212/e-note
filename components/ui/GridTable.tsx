@@ -394,14 +394,22 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
                   }}
                 >
                   {dictionaryList.map((item, index) => (
-                    <MenuItem key={index} sx={{ padding: 0, margin: "0 0 10px 0" }}>
+                    <MenuItem
+                      key={index}
+                      sx={{
+                        padding: 0,
+                        margin: "0 0 10px 0",
+                        display: "flex",
+                        ".MuiFormControl-root": { flex: 1 },
+                        ".css-rcgqur-MuiFormControlLabel-root": { margin: 0 },
+                      }}
+                    >
                       <Checkbox
                         sx={{ px: "10px" }}
                         name={String(item[valueField])}
                         register={register}
-                        label={item[labelField]}
+                        label={"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"}
                         checked={!!formValues?.[String(item[valueField])]}
-                        width={"100%"}
                       />
                     </MenuItem>
                   ))}
