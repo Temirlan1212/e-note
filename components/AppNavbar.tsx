@@ -50,7 +50,7 @@ const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) 
     setOpenedGroup(group === openedGroup ? null : group);
   };
 
-  const path = routes.find((route) => router.route.includes(route.link));
+  const path = routes.find((route) => route.link && router.route.includes(route.link));
 
   return (
     <>
@@ -72,7 +72,7 @@ const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) 
                         justifyContent: open ? "initial" : "center",
                         color: "#fff",
                         backgroundColor: (theme) =>
-                          path.link === route.link ? darken(theme.palette.success.main, 0.15) : "success",
+                          path?.link === route.link ? darken(theme.palette.success.main, 0.15) : "success",
                       }}
                     >
                       {route.icon && (
