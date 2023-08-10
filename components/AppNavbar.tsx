@@ -50,7 +50,7 @@ const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) 
     setOpenedGroup(group === openedGroup ? null : group);
   };
 
-  const path = routes.find((route) => router.route.includes(route.link));
+  const path = routes.find((route) => route.link && router.route.includes(route.link));
 
   return (
     <>
