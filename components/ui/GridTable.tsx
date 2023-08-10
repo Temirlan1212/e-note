@@ -401,7 +401,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
                         margin: "0 0 10px 0",
                         display: "flex",
                         ".MuiFormControl-root": { flex: 1 },
-                        ".css-rcgqur-MuiFormControlLabel-root": { margin: 0 },
+                        ".MuiFormControlLabel-root": { margin: 0 },
                       }}
                     >
                       <Checkbox

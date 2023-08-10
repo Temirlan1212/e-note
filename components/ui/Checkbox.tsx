@@ -29,6 +29,11 @@ const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, ICheckboxProps>
   return (
     <FormControl error={type === "error"} ref={ref}>
       <FormControlLabel
+        sx={{
+          ".MuiFormControlLabel-label": {
+            whiteSpace: "wrap",
+          },
+        }}
         control={<MUICheckbox {...rest} {...(register && name && register(name))} sx={combineStyles} />}
         label={label}
       />
