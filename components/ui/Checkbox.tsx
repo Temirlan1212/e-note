@@ -17,7 +17,7 @@ interface ICheckboxProps extends Omit<CheckboxProps, "ref"> {
 }
 
 const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, ICheckboxProps> = (
-  { label, register, width, type = "secondary", helperText, name, ...rest },
+  { label, register, type = "secondary", helperText, name, ...rest },
   ref
 ) => {
   const styles = {
@@ -30,7 +30,6 @@ const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, ICheckboxProps>
     <FormControl error={type === "error"} ref={ref}>
       <FormControlLabel
         sx={{
-          width,
           ".MuiFormControlLabel-label": {
             whiteSpace: "wrap",
           },
