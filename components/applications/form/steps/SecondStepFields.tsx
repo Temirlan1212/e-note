@@ -17,16 +17,15 @@ export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   onPrev?: Function | null;
   onNext?: Function | null;
-  step: number;
 }
 
-function SecondStepFields({ form, step, onPrev, onNext }: IStepFieldsProps) {
+export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
 
   const { data: notarialData, loading } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
 
-  const { trigger, control, watch, resetField, getValues, setValue, unregister } = form;
+  const { trigger, control, watch, resetField, getValues, setValue } = form;
 
   const objectVal = watch("object");
   const objectTypeVal = watch("objectType");
@@ -328,53 +327,3 @@ function SecondStepFields({ form, step, onPrev, onNext }: IStepFieldsProps) {
     </Box>
   );
 }
-let prevProps: any;
-
-const SecondStepFieldsMemo = memo(SecondStepFields, (_, nextProps) => {
-  function deepEqual(object1: any, object2: any) {
-    const keys1 = Object.keys(object1);
-    const keys2 = Object.keys(object2);
-
-    if (keys1.length !== keys2.length) {
-      return false;
-    }
-
-    for (const key of keys1) {
-      const val1 = object1[key];
-      const val2 = object2[key];
-      const areObjects = val1 instanceof Object && val2 instanceof Object;
-      if ((areObjects && !deepEqual(val1, val2)) || (!areObjects && val1 !== val2)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  const getValues = (formValues: IApplicationSchema) => {
-    const values = {
-      object: formValues?.object,
-      objectType: formValues?.objectType,
-      notarialAction: formValues?.notarialAction,
-      typeNotarialAction: formValues?.typeNotarialAction,
-      action: formValues?.action,
-    };
-
-    return values;
-  };
-
-  const prevValues = getValues(prevProps?.form.getValues());
-  const currValues = getValues(nextProps.form.getValues());
-
-  if (!deepEqual(prevValues, currValues)) {
-    prevProps = nextProps;
-    return false;
-  }
-
-  if (prevProps?.step !== nextProps.step) {
-    return false;
-  }
-
-  return true;
-});
-export default SecondStepFieldsMemo;
