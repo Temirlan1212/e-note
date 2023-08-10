@@ -408,7 +408,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
                         sx={{ px: "10px" }}
                         name={String(item[valueField])}
                         register={register}
-                        label={"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"}
+                        label={item[labelField]}
                         checked={!!formValues?.[String(item[valueField])]}
                       />
                     </MenuItem>
