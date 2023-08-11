@@ -32,9 +32,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
   const [loading, setLoading] = useState(true);
   const [step, setStep] = useState(0);
-  const [userData, setUserData]: [IUserData | null, (userData: IUserData | null) => void] = useState<IUserData | null>(
-    null
-  );
+  const [userData, setUserData] = useState<IUserData | null>(null);
 
   const { data, update } = useFetch("", "POST");
 
