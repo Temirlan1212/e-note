@@ -22,12 +22,14 @@ import NotaryThirdStepFields from "./notary-steps/ThirdStepFields";
 import NotaryFourthStepFields from "./notary-steps/FourthStepFields";
 import NotaryFifthStepFields from "./notary-steps/FifthStepFields";
 import NotarySixthStepFields from "./notary-steps/SixthStepFields";
+import { useRouter } from "next/router";
 
 export interface IApplicationFormProps {
   id?: number | null;
 }
 
 export default function ApplicationForm({ id }: IApplicationFormProps) {
+  const router = useRouter();
   const profile = useProfileStore.getState();
 
   const [loading, setLoading] = useState(true);
@@ -61,7 +63,11 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           <NotaryThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
           <NotaryFourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
           <NotaryFifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-          <NotarySixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
+          <NotarySixthStepFields
+            form={form}
+            onPrev={() => setStep(step - 1)}
+            onNext={() => router.push("/applications")}
+          />,
         ]
       : [
           <FirstStepFields form={form} onNext={() => setStep(step + 1)} />,
@@ -69,7 +75,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           <ThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
           <FourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
           <FifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-          <SixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
+          <SixthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => router.push("/applications")} />,
         ];
 
   const onSubmit = async (data: IApplicationSchema) => {};
