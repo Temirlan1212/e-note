@@ -9,6 +9,7 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -21,12 +22,12 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
   const { trigger, control, watch, resetField } = form;
 
-  const handlePrevClick = () => {
-    if (onPrev != null) onPrev();
-  };
-
   const triggerFields = async () => {
     return await trigger([]);
+  };
+
+  const handlePrevClick = () => {
+    if (onPrev != null) onPrev();
   };
 
   const handleNextClick = async () => {
@@ -43,8 +44,18 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography variant="h4" whiteSpace="nowrap">
-          6
+          Просмотр документа
         </Typography>
+      </Box>
+
+      <Box display="flex" justifyContent="space-between">
+        <Typography variant="h5" whiteSpace="nowrap">
+          Предпросмотр документа
+        </Typography>
+
+        <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
+          {t("Download PDF")}
+        </Button>
       </Box>
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>

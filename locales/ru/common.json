@@ -15,6 +15,15 @@
   "Usability": "Удобство использования",
   "Marketplace": "Торговая площадка",
   "Design & Dev": "Дизайн & разработка",
+  "Verification of the power of attorney": "Проверка доверенности",
+  "Search for heirs": "Поиск наследников",
+  "Hereditary affairs": "Наследственные дела",
+  "Register of Notaries of the KR": "Реестр нотариусов КР",
+  "Black list": "Черный список",
+  "Registries": "Реестры",
+  "Who created": "Кем создан",
+  "Search by criteria": "Поиск по критериям",
+  "Register of notarial acts": "Реестр нотариальных действий",
   "Services and public registries": "Сервисы и публичные реестры",
   "This field is required!": "Это поле обязательно!",
   "The password must be at least 6 characters long": "Пароль должен содержать не менее 6 символов",
@@ -129,5 +138,9 @@
   "Actual place of residence": "Фактическая места жительства",
   "Files to upload": "Файлы для загрузки",
   "Action": "Действие",
-  "Member": "Участник"
+  "FromTo": "по",
+  "Member": "Участник",
+  "InformationAboutStatusApplication": "Информация о статусе заявки",
+  "Viewing a document": "Просмотр документа",
+  "Download PDF": "Скачать PDF"
 }
