@@ -84,6 +84,7 @@ export default function PersonalData({ form, names, defaultValues, fields }: IPe
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 {...field}
+                checked={!!field.value}
               />
             )}
           />
@@ -175,7 +176,7 @@ export default function PersonalData({ form, names, defaultValues, fields }: IPe
                 <DatePicker
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  {...field}
+                  value={field.value != null ? new Date(field.value) : null}
                   onChange={(...event: any[]) => {
                     field.onChange(...event);
                     trigger(field.name);

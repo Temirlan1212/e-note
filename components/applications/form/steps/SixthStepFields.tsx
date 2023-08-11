@@ -4,9 +4,9 @@ import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, InputLabel, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
+import PDFViewer from "@/components/PDFViewer";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
@@ -21,6 +21,18 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
+
+  const id = watch("id");
+  const version = watch("version");
+
+  const { update: getDocument } = useFetch("", "GET");
+
+  useEffectOnce(async () => {
+    if (id != null && version != null) {
+      const res = await getDocument(`/api/files/prepare/${id}`);
+      console.log(res, id);
+    }
+  }, [id, version]);
 
   const triggerFields = async () => {
     return await trigger([]);
@@ -57,6 +69,8 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
           {t("Download PDF")}
         </Button>
       </Box>
+
+      <PDFViewer fileUrl="downloadUrl" />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (

@@ -11,6 +11,8 @@ export default function EditApplication() {
   const router = useRouter();
   const t = useTranslations();
 
+  const { id } = router.query;
+
   const handleCancelClick = () => {
     router.push("/applications");
   };
@@ -32,7 +34,7 @@ export default function EditApplication() {
             </Button>
           </Box>
         </Box>
-        <ApplicationForm />
+        <ApplicationForm id={parseInt(typeof id === "string" ? id : "")} />
       </Container>
     </>
   );
