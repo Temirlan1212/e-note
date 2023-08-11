@@ -17,7 +17,7 @@ interface IProfilePasswordFormProps {}
 interface IUserPasswords {
   oldPassword: string;
   newPassword: string;
-  confirmNewpassword: string;
+  confirmNewPassword: string;
 }
 
 const ProfilePasswordForm = (props: IProfilePasswordFormProps) => {
@@ -32,24 +32,31 @@ const ProfilePasswordForm = (props: IProfilePasswordFormProps) => {
     setIsVisible(!isVisible);
   };
 
-  const { data, loading, update } = useFetch<Response>("", "POST", {
-    useEffectOnce: false,
-    returnResponse: true,
-  });
+  const { data, loading, update, error } = useFetch("", "POST");
 
   const form = useForm<IUserPasswords>({
     resolver: yupResolver(userProfilePasswordSchema),
   });
-
-  const onSubmit = (data: IUserPasswords) => {
-    console.log(data);
-  };
 
   const {
     formState: { errors },
     setError,
     reset,
   } = form;
+
+  const onSubmit = async (data: IUserPasswords) => {
+    await update("/api/profile/update/" + userData?.id, {
+      id: userData?.id,
+      version: userData?.version,
+      oldPassword: data.oldPassword,
+      newPassword: data.newPassword,
+      chkPassword: data.confirmNewPassword,
+    }).then((data) => {
+      console.log(data);
+    });
+    reset();
+  };
+
   return (
     <Box component="form" display="flex" flexDirection="column" gap="30px" onSubmit={form.handleSubmit(onSubmit)}>
       <Button
@@ -103,8 +110,11 @@ const ProfilePasswordForm = (props: IProfilePasswordFormProps) => {
           </InputLabel>
           <Input
             fullWidth
-            error={!!errors.oldPassword?.message ?? false}
-            helperText={errors.oldPassword?.message}
+            error={(!!errors.oldPassword?.message || data?.status === -1) ?? false}
+            helperText={
+              (errors.oldPassword?.message && t(errors.oldPassword?.message)) ||
+              (data?.status === -1 && data.data.message && t(data.data.message))
+            }
             register={form.register}
             name="oldPassword"
             type="password"
@@ -136,11 +146,12 @@ const ProfilePasswordForm = (props: IProfilePasswordFormProps) => {
             </InputLabel>
             <Input
               fullWidth
-              error={!!errors.confirmNewpassword?.message ?? false}
-              helperText={errors.confirmNewpassword?.message}
+              error={(!!errors.newPassword?.message || data?.status === -1) ?? false}
+              helperText={errors.newPassword?.message ? t(errors.newPassword?.message) : ""}
               register={form.register}
               name="newPassword"
               type="password"
+              key="password"
             />
           </FormControl>
           <FormControl sx={{ width: "100%" }}>
@@ -159,11 +170,12 @@ const ProfilePasswordForm = (props: IProfilePasswordFormProps) => {
             </InputLabel>
             <Input
               fullWidth
-              error={!!errors.confirmNewpassword?.message ?? false}
-              helperText={errors.confirmNewpassword?.message}
+              error={(!!errors.confirmNewPassword?.message || data?.status === -1) ?? false}
+              helperText={errors.confirmNewPassword?.message ? t(errors.confirmNewPassword?.message) : ""}
               register={form.register}
-              name="confirmNewpassword"
+              name="confirmNewPassword"
               type="password"
+              key="password"
             />
           </FormControl>
         </Box>

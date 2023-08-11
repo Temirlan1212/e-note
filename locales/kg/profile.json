@@ -8,5 +8,15 @@
   "Enter password": "Сырсөз",
   "Confirm password": "Сырсөздү ырастоо",
   "Old password": "Эски сырсөз",
-  "Change password": "Сырсөздү өзгөртүү"
+  "Change password": "Сырсөздү өзгөртүү",
+  "Full name is required!": "ФИО талап кылынат!",
+  "Login is required!": "Логин талап кылынат!",
+  "E-mail is required!": "Электрондук почта талап кылынат!",
+  "Please enter valid number": "Туура номерди териңиз",
+  "Mobile is required!": "Мобилдик номер талап кылынат!",
+  "Password is required": "Сырсөз талап кылынат",
+  "New Password is required": "Жаңы сырсөз талап кылынат",
+  "Password length should be more than 4 characters": "Сырсөз узундугу 4 символдон көп болуу керек",
+  "Confirm Password is required": "Сырсөздү растоо талап кылынат",
+  "Passwords do not match": "Сырсөздөр туура эмес"
 }

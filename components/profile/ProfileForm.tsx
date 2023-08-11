@@ -23,10 +23,7 @@ interface IUserProfile {
   fullName: string;
   login: string;
   email: string;
-  mobilePhone: string | undefined;
-  // password: string;
-  // cpassword: string;
-  // oldpassword: string;
+  mobilePhone: string;
 }
 
 async function blobToFile(blob: Blob, fileName: string): Promise<File> {
@@ -40,14 +37,13 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const { data, loading, update } = useFetch<Response>("", "POST", {
-    useEffectOnce: false,
+  const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
     returnResponse: true,
   });
 
   const {
     data: imageData,
-    loading: isLoading,
+    loading: isImageLoading,
     update: getImage,
   } = useFetch<Response>("/api/profile/download-image/" + userData?.id, "GET", {
     returnResponse: true,
@@ -58,6 +54,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
     const convertedFile = await blobToFile(image, "avatar-image.png");
     const url = URL.createObjectURL(convertedFile);
+
     setImagePreview(url);
     setSelectedImage(convertedFile);
   }, [imageData]);
@@ -69,9 +66,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
       login: userData?.code,
       email: userData?.email,
       mobilePhone: userData?.["partner.mobilePhone"],
-      // password: "",
-      // cpassword: "",
-      // oldpassword: "",
     },
   });
 
@@ -96,25 +90,55 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   };
 
   const onSubmit = async (data: IUserProfile) => {
-    if (userData?.id != null) {
-      await update("/api/profile/update/" + userData?.id, {
-        id: userData?.id,
-        version: userData?.version,
-        email: data.email,
-        name: data.fullName,
-        partner: {
-          id: userData?.partner.id,
-          version: userData?.partner.$version,
-          mobilePhone: data.mobilePhone,
-        },
-      }).then((res) => {
-        if (res.ok) {
-          profile.loadUserData({
-            username: userData.code,
+    if (selectedImage) {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        if (userData?.id != null && reader.result) {
+          await update("/api/profile/update/" + userData?.id, {
+            id: userData?.id,
+            version: userData?.version,
+            email: data.email,
+            name: data.fullName,
+            image: reader.result.toString(),
+            partner: {
+              id: userData?.partner.id,
+              version: userData?.partner.$version,
+              mobilePhone: data.mobilePhone,
+            },
+          }).then((res) => {
+            if (res.ok) {
+              profile.loadUserData({
+                username: userData.code,
+              });
+              getImage();
+            }
           });
-          getImage();
         }
-      });
+      };
+      reader.readAsDataURL(selectedImage);
+    }
+    if (!imagePreview) {
+      if (userData?.id != null) {
+        await update("/api/profile/update/" + userData?.id, {
+          id: userData?.id,
+          version: userData?.version,
+          email: data.email,
+          name: data.fullName,
+          image: null,
+          partner: {
+            id: userData?.partner.id,
+            version: userData?.partner.$version,
+            mobilePhone: data.mobilePhone,
+          },
+        }).then((res) => {
+          if (res.ok) {
+            profile.loadUserData({
+              username: userData.code,
+            });
+            getImage();
+          }
+        });
+      }
     }
   };
 
@@ -161,7 +185,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             }}
             aria-label="recipe"
           >
-            {isLoading ? (
+            {isImageLoading ? (
               <CircularProgress color="inherit" style={{ width: "28px", height: "28px" }} />
             ) : (
               <PermIdentity
@@ -243,7 +267,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               <Input
                 fullWidth
                 error={!!errors.fullName?.message ?? false}
-                helperText={errors.fullName?.message}
+                helperText={errors.fullName?.message ? t(errors.fullName?.message) : ""}
                 register={form.register}
                 name="fullName"
               />
@@ -262,14 +286,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               >
                 {t("Username")}
               </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.login?.message ?? false}
-                helperText={errors.login?.message}
-                register={form.register}
-                name="login"
-                disabled
-              />
+              <Input fullWidth register={form.register} name="login" disabled />
             </FormControl>
           </Box>
         </Box>
@@ -316,7 +333,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               <Input
                 fullWidth
                 error={!!errors.email?.message ?? false}
-                helperText={errors.email?.message}
+                helperText={errors.email?.message ? t(errors.email?.message) : ""}
                 register={form.register}
                 name="email"
                 type="email"
@@ -339,7 +356,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               <Input
                 fullWidth
                 error={!!errors.mobilePhone?.message ?? false}
-                helperText={errors.mobilePhone?.message}
+                helperText={errors.mobilePhone?.message ? t(errors.mobilePhone?.message) : ""}
                 register={form.register}
                 name="mobilePhone"
               />
@@ -361,7 +378,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             sx={{
               maxWidth: "320px",
             }}
-            loading={loading}
+            loading={isDataLoading}
             type="submit"
           >
             {t("Save")}
@@ -374,7 +391,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 background: "#3f5984",
               },
             }}
-            loading={loading}
+            loading={isDataLoading}
           >
             {t("Cancel")}
           </Button>
