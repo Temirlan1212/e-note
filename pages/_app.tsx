@@ -47,15 +47,20 @@ function Layout({ children }: { children: JSX.Element }) {
 
 export default function App({ Component, pageProps }: AppProps) {
   const notification = useNotificationStore((state) => state.notification);
-  const clearNotification = useNotificationStore((state) => state.clearNotification);
+  const open = useNotificationStore((state) => state.open);
+  const setOpenNotification = useNotificationStore((state) => state.setOpenNotification);
+
+  const handleCloseNotification = () => {
+    setOpenNotification(false);
+  };
 
   return (
     <NextIntlClientProvider messages={pageProps.messages}>
       <ThemeProvider theme={theme}>
         <Layout>
           <Notification
-            open={!!notification}
-            onClose={clearNotification}
+            open={open}
+            onClose={handleCloseNotification}
             title={notification}
             anchorOrigin={{ horizontal: "right", vertical: "top" }}
             variant="filled"
