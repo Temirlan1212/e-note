@@ -5,6 +5,8 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema, applicationSchema } from "@/validator-schemas/application";
 import { IApplication } from "@/models/application";
+import { useProfileStore } from "@/stores/profile";
+import { IUserData } from "@/models/profile/user";
 import { Box, Step, StepIcon, Stepper, StepConnector } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
@@ -26,10 +28,19 @@ export interface IApplicationFormProps {
 }
 
 export default function ApplicationForm({ id }: IApplicationFormProps) {
+  const profile = useProfileStore.getState();
+
   const [loading, setLoading] = useState(true);
   const [step, setStep] = useState(0);
+  const [userData, setUserData]: [IUserData | null, (userData: IUserData | null) => void] = useState<IUserData | null>(
+    null
+  );
 
   const { data, update } = useFetch("", "POST");
+
+  useEffectOnce(async () => {
+    setUserData(profile.getUserData());
+  }, [profile]);
 
   useEffectOnce(async () => {
     if (Number.isInteger(id)) {
@@ -44,23 +55,24 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     values: data?.status === 0 && data?.data[0]?.id != null ? data.data[0] : undefined,
   });
 
-  const steps = true
-    ? [
-        <FirstStepFields form={form} onNext={() => setStep(step + 1)} />,
-        <SecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <ThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <FourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <FifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <SixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
-      ]
-    : [
-        <NotaryFirstStepFields form={form} onNext={() => setStep(step + 1)} />,
-        <NotarySecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <NotaryThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <NotaryFourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <NotaryFifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-        <NotarySixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
-      ];
+  const steps =
+    userData?.group?.id === 4
+      ? [
+          <NotaryFirstStepFields form={form} onNext={() => setStep(step + 1)} />,
+          <NotarySecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <NotaryThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <NotaryFourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <NotaryFifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <NotarySixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
+        ]
+      : [
+          <FirstStepFields form={form} onNext={() => setStep(step + 1)} />,
+          <SecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <ThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <FourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <FifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <SixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
+        ];
 
   const onSubmit = async (data: IApplicationSchema) => {};
 

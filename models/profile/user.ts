@@ -6,8 +6,14 @@ export interface IUserCredentials extends IUser {
   password: string;
 }
 
+export interface IUserGroup {
+  id: number;
+  name: string;
+  $version: number;
+}
+
 export interface IUserRole {
-  id: string;
+  id: number;
   name: string;
   $version: number;
 }
@@ -18,5 +24,6 @@ export interface IUserData extends IUser {
   email: string;
   "partner.mobilePhone": string;
   version: number;
+  group: IUserGroup;
   roles: IUserRole[];
 }
