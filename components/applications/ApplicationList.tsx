@@ -24,9 +24,9 @@ interface IAppQueryParams {
 export default function ApplicationList() {
   const t = useTranslations();
   const { locale } = useRouter();
-  const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
-  const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
-  const { data: statusData } = useFetch("/api/dictionaries/status", "POST");
+  const { data: actionTypeData } = useFetch("/api/dictionqwearies/action-type", "POST");
+  const { data: documentTypeData } = useFetch("/api/dictioqwenaries/document-type", "POST");
+  const { data: statusData } = useFetch("/api/dictionarqweies/status", "POST");
 
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { useSnackbar } from "notistack";
 import useEffectOnce from "./useEffectOnce";
 import { useProfileStore } from "@/stores/profile";
+import useErrorStore from "@/stores/notification";
+import useNotificationStore from "@/stores/notification";
 
 const cache: Record<string, { date: Date; data: any }> = {};
 
@@ -29,8 +30,7 @@ export default function useFetch<T = FetchResponseBody>(
 ) {
   const router = useRouter();
   const profile = useProfileStore.getState();
-
-  const { enqueueSnackbar } = useSnackbar();
+  const setNotification = useNotificationStore((state) => state.setNotification);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<FetchError | null>(null);
@@ -89,14 +89,7 @@ export default function useFetch<T = FetchResponseBody>(
           return router.push("/login");
         }
 
-        return enqueueSnackbar(error.message, {
-          variant: "error",
-          autoHideDuration: 3000,
-          anchorOrigin: { vertical: "top", horizontal: "right" },
-          hideIconVariant: true,
-          preventDuplicate: true,
-          maxSnack: 2,
-        });
+        setNotification(error.message);
       })
       .finally(() => setLoading(false));
   };
