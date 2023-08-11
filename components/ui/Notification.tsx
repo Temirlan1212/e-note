@@ -1,12 +1,27 @@
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, Snackbar, SnackbarProps } from "@mui/material";
 import useNotificationStore from "@/stores/notification";
 
-const Notification = () => {
-  const notification = useNotificationStore((state) => state.notification);
+export interface INotificationProps extends SnackbarProps {
+  title: string | null;
+  severity?: "error" | "warning" | "info" | "success";
+  variant?: "filled" | "outlined" | "standard";
+  onClose?: () => void;
+}
+
+const Notification = ({
+  title,
+  autoHideDuration = 3000,
+  onClose,
+  open,
+  severity,
+  variant,
+  anchorOrigin,
+  ...rest
+}: INotificationProps) => {
   return (
-    <Snackbar open={!!notification} autoHideDuration={3000} anchorOrigin={{ horizontal: "right", vertical: "top" }}>
-      <Alert severity="error" variant="filled">
-        {notification}
+    <Snackbar open={open} autoHideDuration={autoHideDuration} anchorOrigin={anchorOrigin} onClose={onClose} {...rest}>
+      <Alert severity={severity} variant={variant} onClose={onClose}>
+        {title}
       </Alert>
     </Snackbar>
   );

@@ -11,6 +11,7 @@ import { useProfileStore } from "@/stores/profile";
 import { IRoute, useRouteStore } from "@/stores/route";
 import { IUser } from "@/models/profile/user";
 import Notification from "@/components/ui/Notification";
+import useNotificationStore from "@/stores/notification";
 
 function Layout({ children }: { children: JSX.Element }) {
   const router = useRouter();
@@ -45,11 +46,21 @@ function Layout({ children }: { children: JSX.Element }) {
 }
 
 export default function App({ Component, pageProps }: AppProps) {
+  const notification = useNotificationStore((state) => state.notification);
+  const clearNotification = useNotificationStore((state) => state.clearNotification);
+
   return (
     <NextIntlClientProvider messages={pageProps.messages}>
       <ThemeProvider theme={theme}>
         <Layout>
-          <Notification />
+          <Notification
+            open={!!notification}
+            onClose={clearNotification}
+            title={notification}
+            anchorOrigin={{ horizontal: "right", vertical: "top" }}
+            variant="filled"
+            severity="error"
+          />
           <Component {...pageProps} />
         </Layout>
       </ThemeProvider>
