@@ -189,7 +189,7 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={!documentType}
-                  {...field}
+                  value={field.value != null ? new Date(field.value) : null}
                   onChange={(...event: any[]) => {
                     field.onChange(...event);
                     trigger(field.name);

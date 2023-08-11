@@ -13,6 +13,11 @@ import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import UploadFiles from "@/components/fields/UploadFiles";
 
+interface IVersionFields {
+  version?: number;
+  $version?: number;
+}
+
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   onPrev?: Function | null;
@@ -24,7 +29,10 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
   const { trigger, resetField, getValues, setValue } = form;
 
+  const [loading, setLoading] = useState(false);
+
   const { update: applicationUpdate } = useFetch("", "PUT");
+  const { update: applicationFetch } = useFetch("", "POST");
 
   const getPersonalDataNames = (index: number) => ({
     type: `requester.${index}.partnerTypeSelect`,
@@ -90,6 +98,8 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
     const validated = await triggerFields();
 
     if (validated) {
+      setLoading(true);
+
       const values = getValues();
       const data: Partial<IApplicationSchema> = {
         id: values.id,
@@ -99,21 +109,47 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
-        setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
-      } else {
-        const index = 0;
-        return [
-          ...Object.values(getPersonalDataNames(index)),
-          ...Object.values(getIdentityDocumentNames(index)),
-          ...Object.values(getAddressNames(index)),
-          ...Object.values(getActualAddressNames(index)),
-          ...Object.values(getContactNames(index)),
-        ].map((item) => resetField(item as any));
-      }
-    }
 
-    if (onNext != null && validated) onNext();
+        const applicationData = await applicationFetch(`/api/applications/${values.id}`, {
+          fields: ["version"],
+          related: {
+            requester: ["version", "emailAddress.version", "mainAddress.version", "actualResidenceAddress.version"],
+          },
+        });
+
+        if (applicationData?.status === 0 && applicationData?.data[0]?.id != null) {
+          applicationData.data[0]?.requester?.map(
+            (
+              item: IVersionFields & {
+                mainAddress?: IVersionFields;
+                actualResidenceAddress?: IVersionFields;
+                emailAddress?: IVersionFields;
+              },
+              index: number
+            ) => {
+              setValue(`requester.${index}.version`, item.version ?? item.$version);
+              setValue(
+                `requester.${index}.mainAddress.version`,
+                item.mainAddress?.version ?? item?.mainAddress?.$version
+              );
+              setValue(
+                `requester.${index}.actualResidenceAddress.version`,
+                item?.actualResidenceAddress?.version ?? item?.actualResidenceAddress?.$version
+              );
+              setValue(
+                `requester.${index}.emailAddress.version`,
+                item?.emailAddress?.version ?? item?.emailAddress?.$version
+              );
+            }
+          );
+        }
+
+        if (onNext != null) onNext();
+      }
+
+      setLoading(false);
+    }
   };
 
   return (
@@ -154,7 +190,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
           </Button>
         )}
         {onNext != null && (
-          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
             {t("Next")}
           </Button>
         )}

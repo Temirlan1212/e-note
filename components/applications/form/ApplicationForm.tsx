@@ -1,9 +1,13 @@
 import { useState } from "react";
-import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import useEffectOnce from "@/hooks/useEffectOnce";
+import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema, applicationSchema } from "@/validator-schemas/application";
 import { IApplication } from "@/models/application";
+import { Box, Step, StepIcon, Stepper, StepConnector } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import FirstStepFields from "./steps/FirstStepFields";
 import SecondStepFields from "./steps/SecondStepFields";
 import ThirdStepFields from "./steps/ThirdStepFields";
@@ -16,25 +20,29 @@ import NotaryThirdStepFields from "./notary-steps/ThirdStepFields";
 import NotaryFourthStepFields from "./notary-steps/FourthStepFields";
 import NotaryFifthStepFields from "./notary-steps/FifthStepFields";
 import NotarySixthStepFields from "./notary-steps/SixthStepFields";
-import { Box, Step, StepIcon, Stepper, StepConnector } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
-import Button from "@/components/ui/Button";
 
-export default function ApplicationForm() {
-  const t = useTranslations();
+export interface IApplicationFormProps {
+  id?: number | null;
+}
+
+export default function ApplicationForm({ id }: IApplicationFormProps) {
+  const [loading, setLoading] = useState(true);
+  const [step, setStep] = useState(0);
+
+  const { data, update } = useFetch("", "POST");
+
+  useEffectOnce(async () => {
+    if (Number.isInteger(id)) {
+      await update(`/api/applications/${id}`);
+    }
+    setLoading(false);
+  });
 
   const form = useForm<IApplicationSchema>({
     mode: "onTouched",
     resolver: yupResolver<IApplicationSchema>(applicationSchema),
+    values: data?.status === 0 && data?.data[0]?.id != null ? data.data[0] : undefined,
   });
-
-  const {
-    formState: { errors },
-    reset,
-  } = form;
-
-  const [step, setStep] = useState(0);
 
   const steps = true
     ? [
@@ -54,9 +62,7 @@ export default function ApplicationForm() {
         <NotarySixthStepFields form={form} onPrev={() => setStep(step - 1)} />,
       ];
 
-  const onSubmit = async (data: IApplicationSchema) => {
-    console.log(data);
-  };
+  const onSubmit = async (data: IApplicationSchema) => {};
 
   return (
     <Box>
@@ -96,12 +102,15 @@ export default function ApplicationForm() {
         boxShadow={4}
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        {steps.map((component, index) => (
-          <Box key={index} sx={{ display: step != index ? "none" : "block" }}>
-            {component}
-          </Box>
-        ))}
-        {step === steps.length - 1 && <Button type="submit">{t("Submit")}</Button>}
+        {!loading &&
+          steps.map(
+            (component, index) =>
+              step === index && (
+                <Box key={index} sx={{ display: step != index ? "none" : "block" }}>
+                  {component}
+                </Box>
+              )
+          )}
       </Box>
     </Box>
   );
