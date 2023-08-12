@@ -1,6 +1,9 @@
 {
   "Create application": "Create application",
+  "Edit application": "Edit application",
   "Choose notary": "Choose notary",
+  "Choose requester": "Choose requester",
+  "Choose document": "Choose document",
   "Form first step hint text": "You can also go directly to the “Notary” search form if you know a specific notary, ignoring the previous fields.",
   "Type of action": "Type of action",
   "Type of document": "Type of document",
@@ -25,5 +28,6 @@
   "Type of notarial action": "Type of notarial action",
   "Document selection": "Document selection",
   "Searched document": "Searched document",
-  "fifth-step-title": "Party 2 (other members)"
+  "fifth-step-title": "Party 2 (other members)",
+  "Sorry, such pin not found": "Sorry, such pin not found"
 }
