@@ -5,7 +5,6 @@ import {
   ControllerRenderProps,
   UseFormReturn,
   UseFormTrigger,
-  useForm,
 } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -25,6 +24,7 @@ import DateTimePicker from "@/components/ui/DateTimePicker";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
+  dynamicForm: UseFormReturn<any>;
   onPrev?: Function | null;
   onNext?: Function | null;
 }
@@ -38,21 +38,9 @@ interface IDynamicComponentProps {
   trigger: UseFormTrigger<any>;
 }
 
-type DynamicComponentTypes =
-  | "String"
-  | "Float"
-  | "Decimal"
-  | "Integer"
-  | "Selection"
-  | "Time"
-  | "Date"
-  | "Boolean"
-  | "DateTime";
-
-const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicComponentProps) => {
-  const { locale, field, data, errorMessage, trigger } = props;
-
-  const componentTypes = {
+const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentProps) => {
+  const { locale, field, data, errorMessage, fieldState, trigger } = props;
+  const types = {
     String: (
       <Input
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
@@ -103,7 +91,7 @@ const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicCompone
     Date: (
       <DatePicker
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={field.value == "" ? null : field.value}
+        value={getDateDynamicValue("Date", field.value)}
         helperText={errorMessage}
         onChange={(...event: any[]) => {
           field.onChange(...event);
@@ -115,7 +103,7 @@ const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicCompone
     Time: (
       <TimePicker
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={field.value == "" ? null : field.value}
+        value={getDateDynamicValue("Time", field.value)}
         helperText={errorMessage}
         onChange={(...event: any[]) => {
           field.onChange(...event);
@@ -126,7 +114,7 @@ const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicCompone
     DateTime: (
       <DateTimePicker
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={field.value == "" ? null : field.value}
+        value={getDateDynamicValue("DateTime", field.value)}
         helperText={errorMessage}
         onChange={(...event: any[]) => {
           field.onChange(...event);
@@ -136,11 +124,11 @@ const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicCompone
     ),
   };
 
-  return componentTypes[type];
+  return types[type];
 };
 
-const getDynamicDefaultValue = (field: DynamicComponentTypes, value: any) => {
-  const types: Record<DynamicComponentTypes, any> = {
+const getDynamicDefaultValue = (field: keyof typeof types, value: any) => {
+  const types = {
     Float: !value ? null : value,
     Decimal: !value ? null : value,
     Integer: !value ? null : value,
@@ -152,19 +140,26 @@ const getDynamicDefaultValue = (field: DynamicComponentTypes, value: any) => {
     DateTime: !value ? null : new Date(String(value)),
   };
 
-  return types?.[field] ? types[field] : "";
+  return types[field];
+};
+
+const getDateDynamicValue = (field: keyof typeof types, value: any) => {
+  const isDate = value instanceof Date;
+  const types = {
+    Date: isDate ? value : !value ? null : new Date(String(value)),
+    Time: isDate ? value : !value ? null : parse(String(value), "HH:mm", new Date()),
+    DateTime: isDate ? value : !value ? null : new Date(String(value)),
+  };
+
+  return types[field];
 };
 
 const getDynamicDefaultGroupName = (name: string) => (name === "null" ? "" : name ?? "");
 
-export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
+export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
-
-  const dynamicForm = useForm({
-    mode: "onTouched",
-  });
 
   const { trigger, control } = dynamicForm;
 
@@ -172,8 +167,13 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
     if (onPrev != null) onPrev();
   };
 
-  const { update, data: documentTemplateData } = useFetch("", "GET");
-  const { update: applicationUpdate } = useFetch("", "POST");
+  const { update: applicationUpdate, loading } = useFetch("", "POST");
+
+  const {
+    update: getDocumentTemplateData,
+    data: documentTemplateData,
+    loading: documentTemplateLoading,
+  } = useFetch("", "GET");
 
   const triggerFields = async () => {
     return await trigger();
@@ -181,7 +181,7 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
   useEffectOnce(async () => {
     if (productId != null) {
-      update("/api/dictionaries/document-type/template/" + productId);
+      getDocumentTemplateData("/api/dictionaries/document-type/template/" + productId);
     }
   }, [productId]);
 
@@ -205,6 +205,8 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
       }
     }
   };
+
+  if (documentTemplateLoading) return <></>;
 
   return (
     <Box>
@@ -276,7 +278,7 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
               {t("Prev")}
             </Button>
           )}
-          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
             {t("Next")}
           </Button>
         </Box>
