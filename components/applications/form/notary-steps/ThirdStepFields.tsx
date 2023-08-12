@@ -26,9 +26,6 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   const { trigger, control, watch, resetField, getValues, setValue } = form;
 
   const objectVal = watch("object");
-  const objectTypeVal = watch("objectType");
-  const notarialActionVal = watch("notarialAction");
-  const typeNotarialActionVal = watch("typeNotarialAction");
   const actionVal = watch("action");
 
   const [loading, setLoading] = useState(false);
@@ -57,7 +54,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   }, [actionVal]);
 
   const triggerFields = async () => {
-    return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action"]);
+    return await trigger(["object", "objectType"]);
   };
 
   const handlePrevClick = () => {
@@ -118,7 +115,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
               <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
                 <InputLabel>{t("Object")}</InputLabel>
                 <Hint type="hint" maxWidth="520px">
-                  {t("second-step-hint-title")}
+                  {t("third-step-hint-title")}
                 </Hint>
               </Box>
 
@@ -160,7 +157,12 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Object type")}</InputLabel>
+              <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
+                <InputLabel>{t("Object type")}</InputLabel>
+                <Hint type="hint" maxWidth="520px">
+                  {t("third-step-hint-title")}
+                </Hint>
+              </Box>
               <Select
                 disabled={!objectVal}
                 selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -168,159 +170,6 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
                 labelField={"title_" + locale}
                 valueField="value"
                 helperText={!!objectVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
-
-      <Controller
-        control={control}
-        name="notarialAction"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-          const notarialActionList = notarialData?.notarialAction.filter((item) =>
-            item["parent.value"].join(",").includes(String(objectTypeVal))
-          );
-
-          useEffectOnce(() => {
-            if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
-              resetField(field.name, { defaultValue: null });
-            }
-          }, ["notarialAction", objectTypeVal]);
-
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Notarial action")}</InputLabel>
-              <Select
-                disabled={!objectTypeVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={notarialActionList ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!objectTypeVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
-
-      <Controller
-        control={control}
-        name="typeNotarialAction"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-          const typeNotarialActionList = notarialData?.typeNotarialAction.filter((item) =>
-            item["parent.value"].join(",").includes(String(notarialActionVal))
-          );
-
-          useEffectOnce(() => {
-            if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
-              resetField(field.name, { defaultValue: null });
-            }
-          }, ["typeNotarialAction", notarialActionVal]);
-
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Type of notarial action")}</InputLabel>
-              <Select
-                disabled={!notarialActionVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={typeNotarialActionList ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!notarialActionVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
-
-      <Controller
-        control={control}
-        name="action"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-          const actionList = notarialData?.action.filter((item) =>
-            item["parent.value"].join(",").includes(String(typeNotarialActionVal))
-          );
-
-          useEffectOnce(() => {
-            if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
-              resetField(field.name, { defaultValue: null });
-            }
-          }, ["action", typeNotarialActionVal]);
-
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Action")}</InputLabel>
-              <Select
-                disabled={!typeNotarialActionVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={actionList ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!typeNotarialActionVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
-
-      <Controller
-        control={control}
-        name="product.id"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-
-          useEffectOnce(() => {
-            if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
-              resetField(field.name, { defaultValue: null });
-            }
-          }, ["product", actionVal]);
-
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Searched document")}</InputLabel>
-              <Select
-                disabled={!actionVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={searchedDocData?.data ?? []}
-                labelField="name"
-                valueField="id"
-                helperText={!!actionVal && errorMessage ? t(errorMessage) : ""}
                 value={field.value == null ? "" : field.value}
                 onBlur={field.onBlur}
                 loading={loading}
