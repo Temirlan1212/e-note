@@ -19,7 +19,7 @@ export interface IStepFieldsProps {
   onNext?: Function | null;
 }
 
-export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
+export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
 
@@ -99,7 +99,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography variant="h4" whiteSpace="nowrap">
-          {t("Choose notary")}
+          {t("Choose object")}
         </Typography>
       </Box>
 
