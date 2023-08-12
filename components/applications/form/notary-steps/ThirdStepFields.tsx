@@ -117,7 +117,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
               <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
                 <InputLabel>{t("Object")}</InputLabel>
                 <Hint type="hint" maxWidth="520px">
-                  {t("third-step-hint-title")}
+                  {t("second-step-hint-title")}
                 </Hint>
               </Box>
 
