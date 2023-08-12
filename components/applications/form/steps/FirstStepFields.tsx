@@ -5,15 +5,15 @@ import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { format } from "date-fns";
 import { IApplicationSchema } from "@/validator-schemas/application";
+import { INotaryDistrict } from "@/models/dictionaries/notary-district";
+import { ICompany } from "@/models/company";
 import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Hint from "@/components/ui/Hint";
 import Autocomplete from "@/components/ui/Autocomplete";
 import Area from "@/components/fields/Area";
-import { ICompany } from "@/models/company";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { INotaryDistrict } from "@/models/dictionaries/notary-district";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
