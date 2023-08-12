@@ -55,7 +55,7 @@ const Radio: React.ForwardRefRenderFunction<HTMLDivElement, IRadioProps> = (
   return (
     <FormControl error={type === "error"} ref={ref}>
       <RadioGroup row={row} defaultValue={defaultValue} value={value != null ? value : ""}>
-        {data.map(
+        {data?.map(
           (item) =>
             item[labelField] != null &&
             item[valueField] != null && (
