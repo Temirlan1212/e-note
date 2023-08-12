@@ -99,7 +99,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography variant="h4" whiteSpace="nowrap">
-          {t("Choose object")}
+          {t("Choose document")}
         </Typography>
       </Box>
 
