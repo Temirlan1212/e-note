@@ -19,7 +19,7 @@ export interface IStepFieldsProps {
   onNext?: Function | null;
 }
 
-export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
+export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
 
@@ -117,7 +117,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
               <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
                 <InputLabel>{t("Object")}</InputLabel>
                 <Hint type="hint" maxWidth="520px">
-                  {t("second-step-hint-title")}
+                  {t("third-step-hint-title")}
                 </Hint>
               </Box>
 
