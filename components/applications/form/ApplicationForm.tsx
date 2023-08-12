@@ -59,7 +59,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     userData?.group?.id === 4
       ? [
           <NotaryFirstStepFields form={form} onNext={() => setStep(step + 1)} />,
-          <NotarySecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          // <NotarySecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
           <NotaryThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
           <NotaryFourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
           <NotaryFifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
