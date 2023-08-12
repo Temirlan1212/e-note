@@ -84,7 +84,6 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
-        setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
         if (onNext != null) onNext();
       }
@@ -102,7 +101,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography variant="h4" whiteSpace="nowrap">
-          {t("Choose notary")}
+          {t("Choose document")}
         </Typography>
       </Box>
 

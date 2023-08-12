@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
+import useEffectOnce from "@/hooks/useEffectOnce";
 import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box, Typography } from "@mui/material";
@@ -15,7 +16,6 @@ import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import UploadFiles from "@/components/fields/UploadFiles";
-import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface IVersionFields {
   version?: number;
@@ -50,6 +50,34 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
   });
 
   const [loading, setLoading] = useState(false);
+  const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
+  const [items, setItems] = useState<ITabListItem[]>([
+    {
+      getElement(index: number) {
+        return (
+          <Box display="flex" gap="20px" flexDirection="column">
+            <Typography variant="h5">{t("Personal data")}</Typography>
+            <PersonalData form={form} names={getPersonalDataNames(index)} />
+
+            <Typography variant="h5">{t("Identity document")}</Typography>
+            <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
+
+            <Typography variant="h5">{t("Place of residence")}</Typography>
+            <Address form={form} names={getAddressNames(index)} />
+
+            <Typography variant="h5">{t("Actual place of residence")}</Typography>
+            <Address form={form} names={getActualAddressNames(index)} />
+
+            <Typography variant="h5">{t("Contacts")}</Typography>
+            <Contact form={form} names={getContactNames(index)} />
+
+            <Typography variant="h5">{t("Files to upload")}</Typography>
+            <UploadFiles />
+          </Box>
+        );
+      },
+    },
+  ]);
 
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
@@ -97,48 +125,18 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     phone: `members.${index}.mobilePhone`,
   });
 
-  const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
-
-  const [members, setMembers] = useState<ITabListItem[]>([
-    {
-      getElement(index: number) {
-        return (
-          <Box display="flex" gap="20px" flexDirection="column">
-            <Typography variant="h5">{t("Personal data")}</Typography>
-            <PersonalData form={form} names={getPersonalDataNames(index)} />
-
-            <Typography variant="h5">{t("Identity document")}</Typography>
-            <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
-
-            <Typography variant="h5">{t("Place of residence")}</Typography>
-            <Address form={form} names={getAddressNames(index)} />
-
-            <Typography variant="h5">{t("Actual place of residence")}</Typography>
-            <Address form={form} names={getActualAddressNames(index)} />
-
-            <Typography variant="h5">{t("Contacts")}</Typography>
-            <Contact form={form} names={getContactNames(index)} />
-
-            <Typography variant="h5">{t("Files to upload")}</Typography>
-            <UploadFiles />
-          </Box>
-        );
-      },
-    },
-  ]);
-
   useEffectOnce(() => {
     const values = getValues();
-    const membersLength = values.members?.length ?? 1;
-    if (membersLength > 1) {
-      for (let i = 0; i < membersLength - 1; i++) {
+    const itemsLength = values.members?.length ?? 1;
+    if (itemsLength > 1) {
+      for (let i = 0; i < itemsLength - 1; i++) {
         handleAddTabClick();
       }
     }
   });
 
   const triggerFields = async () => {
-    const allFields = members.reduce((acc: string[], _, index: number) => {
+    const allFields = items.reduce((acc: string[], _, index: number) => {
       return [
         ...acc,
         ...Object.values(getPersonalDataNames(index)),
@@ -154,9 +152,9 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     if (!validated && errors?.members != null) {
       const tabsErrorsCounts: Record<number, number> = {};
 
-      for (const [index, member] of Object.entries(errors.members)) {
-        if (member == null) continue;
-        const count = Object.keys(member);
+      for (const [index, item] of Object.entries(errors.members)) {
+        if (item == null) continue;
+        const count = Object.keys(item);
         tabsErrorsCounts[parseInt(index)] = count.length;
       }
 
@@ -231,7 +229,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
   };
 
   const handleAddTabClick = () => {
-    setMembers((prev) => {
+    setItems((prev) => {
       const lastItem = prev[prev.length - 1];
 
       if (lastItem == null) return [...prev];
@@ -243,7 +241,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
   };
 
   const handleRemoveTabClick = () => {
-    setMembers((prev) => {
+    setItems((prev) => {
       if (prev.length <= 1) return [...prev];
 
       remove(prev.length - 1);
@@ -268,11 +266,11 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
       </Box>
 
       <Tabs
-        data={members.map((member, index) => {
+        data={items.map(({ getElement }, index) => {
           return {
             tabErrorsCount: tabsErrorsCounts[index] ?? 0,
             tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: member.getElement(index) ?? <></>,
+            tabPanelContent: getElement(index) ?? <></>,
           };
         })}
         actionsContent={
