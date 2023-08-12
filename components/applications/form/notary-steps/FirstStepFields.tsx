@@ -5,7 +5,9 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import useFetch from "@/hooks/useFetch";
 import { format } from "date-fns";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Typography } from "@mui/material";
+import { useProfileStore } from "@/stores/profile";
+import { IUserData } from "@/models/profile/user";
+import { Alert, Box, Collapse, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Tabs from "@/components/ui/Tabs";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -17,8 +19,10 @@ import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import UploadFiles from "@/components/fields/UploadFiles";
-import { useProfileStore } from "@/stores/profile";
-import { IUserData } from "@/models/profile/user";
+
+enum tundukFieldNames {
+  name = "firstName",
+}
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 
@@ -56,6 +60,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
   });
 
   const [loading, setLoading] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
@@ -152,10 +157,20 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
           pin = pin[item];
         });
 
-        if (pin) {
-          const personalData = await tundukPersonalDataFetch(`/api/tunduk/personal-data/${pin}`);
-          console.log(personalData);
+        if (!pin) {
+          setAlertOpen(true);
+          return;
         }
+
+        const personalData = await tundukPersonalDataFetch(`/api/tunduk/personal-data/${pin}`);
+
+        if (personalData?.status !== 0 || personalData?.data == null) {
+          setAlertOpen(true);
+          return;
+        }
+
+        setAlertOpen(false);
+        setTundukValues(personalData.data);
       }, 1111);
     });
     return () => subscription.unsubscribe();
@@ -170,6 +185,28 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
       }
     }
   });
+
+  const setTundukValues = (values: Record<string, any>) => {
+    const allFields = items.reduce((acc: string[], _, index: number) => {
+      return [
+        ...acc,
+        ...Object.values(getPersonalDataNames(index)),
+        ...Object.values(getIdentityDocumentNames(index)),
+        ...Object.values(getAddressNames(index)),
+        ...Object.values(getActualAddressNames(index)),
+        ...Object.values(getContactNames(index)),
+      ];
+    }, []);
+
+    allFields.map((field: any) => {
+      const fieldPath = field.split(".");
+      const fieldLastItem = fieldPath[fieldPath.length - 1];
+      const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
+      if (values[tundukField ?? fieldLastItem] != null && fieldLastItem !== "personalNumber") {
+        setValue(field, values[tundukField ?? fieldLastItem]);
+      }
+    });
+  };
 
   const triggerFields = async () => {
     const allFields = items.reduce((acc: string[], _, index: number) => {
@@ -310,6 +347,12 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
           {t("Choose requester")}
         </Typography>
       </Box>
+
+      <Collapse in={alertOpen}>
+        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+          {t("Sorry, such pin not found")}
+        </Alert>
+      </Collapse>
 
       <Tabs
         data={items.map(({ getElement }, index) => {
