@@ -1,6 +1,9 @@
 {
   "Create application": "Өтүнмө түзүү",
+  "Edit application": "Өтүнмөнү өзгөртүү",
   "Choose notary": "Нотариус тандоо",
+  "Choose requester": "Өтүнүүчүнү тандоо",
+  "Choose document": "Документти тандоо",
   "Form first step hint text": "Мурунку талааларды эске албай, белгилүү бир нотариусту билсеңиз, “Нотариус“ издөө формасына түз өтсөңүз болот.",
   "Type of action": "Иш-аракеттердин түрү",
   "Type of document": "Документтин түрү",
