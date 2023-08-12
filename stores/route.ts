@@ -117,7 +117,7 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
       icon: "Description",
       children: [
         {
-          title: "Template list",
+          title: "System templates",
           link: "/templates",
           type: "menu",
           icon: "LibraryBooks",
