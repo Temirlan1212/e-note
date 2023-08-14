@@ -32,21 +32,22 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
   const actionVal = watch("action");
 
   const [loading, setLoading] = useState(false);
-  const [formValues, setformValues] = useState<{ formValues: Record<string, any> | null }>({ formValues: null });
+  const [formValues, setformValues] = useState<Record<string, any>>({});
 
   const { data: notarialData, loading: notarialLoading } = useFetch<INotarialActionData>(
     "/api/dictionaries/notarial-action",
     "GET"
   );
-  const { data: searchedDocData, loading: searchedDocLoading } = useFetch("/api/dictionaries/document-type", "POST", {
+  const { data: searchedDocData } = useFetch("/api/dictionaries/document-type", "POST", {
     body: formValues,
   });
 
   const { update: applicationUpdate } = useFetch("", "PUT");
 
   useEffectOnce(() => {
-    if (actionVal) {
-      setformValues({ formValues: getValues() });
+    if (actionVal != null) {
+      const values = getValues();
+      setformValues({ formValues: values });
     }
   }, [actionVal]);
 
@@ -85,8 +86,6 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
       setLoading(false);
     }
   };
-
-  if (searchedDocLoading || notarialLoading) return <></>;
 
   return (
     <Box display="flex" flexDirection="column" gap="30px">
