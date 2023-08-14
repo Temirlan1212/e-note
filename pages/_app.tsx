@@ -58,16 +58,16 @@ export default function App({ Component, pageProps }: AppProps) {
     <NextIntlClientProvider messages={pageProps.messages}>
       <ThemeProvider theme={theme}>
         <NavigationLoading>
+          <Notification
+            open={!!notification}
+            onClose={handleCloseNotification}
+            onCloseAlert={handleCloseNotification}
+            title={notification ?? "Oops"}
+            anchorOrigin={{ horizontal: "right", vertical: "top" }}
+            variant="filled"
+            severity="error"
+          />
           <Layout>
-            <Notification
-              open={!!notification}
-              onClose={handleCloseNotification}
-              onCloseAlert={handleCloseNotification}
-              title={notification}
-              anchorOrigin={{ horizontal: "right", vertical: "top" }}
-              variant="filled"
-              severity="error"
-            />
             <Component {...pageProps} />
           </Layout>
         </NavigationLoading>
