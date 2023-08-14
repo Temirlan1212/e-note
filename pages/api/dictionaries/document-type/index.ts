@@ -10,11 +10,11 @@ enum criteriaFieldNames {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<IDocumentType | null>) {
-  if (req.method !== "POST") {
+  const formValues = req.body?.["formValues"];
+  if (req.method !== "POST" || formValues === null) {
     return res.status(400).json(null);
   }
 
-  const formValues = req.body?.["formValues"];
   let body: any = {};
 
   if (formValues != null) {
