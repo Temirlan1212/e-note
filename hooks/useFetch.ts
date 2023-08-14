@@ -30,7 +30,6 @@ export default function useFetch<T = FetchResponseBody>(
   const router = useRouter();
   const profile = useProfileStore.getState();
   const setNotification = useNotificationStore((state) => state.setNotification);
-  const setOpenNotification = useNotificationStore((state) => state.setOpenNotification);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<FetchError | null>(null);
@@ -89,7 +88,6 @@ export default function useFetch<T = FetchResponseBody>(
           return router.push("/login");
         }
 
-        setOpenNotification(true);
         setNotification(error.message);
       })
       .finally(() => setLoading(false));
