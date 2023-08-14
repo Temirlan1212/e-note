@@ -172,6 +172,18 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
 
   const { update: applicationUpdate, loading } = useFetch("", "POST");
 
+  const { data: selectionData, loading: selectionLoading, update: selectionUpdate } = useFetch("", "POST");
+
+  const getSelectionData = (data: any) => {
+    if (Array.isArray(data) && data.length > 0) {
+      const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
+      fieldsProps.map((fieldProps: Record<string, any>) => {
+        const model = fieldProps?.selection;
+        if (!!model) selectionUpdate(`/api/dictionaries/selection/${model}`);
+      });
+    }
+  };
+
   const {
     update: getDocumentTemplateData,
     data: documentTemplateData,
@@ -184,7 +196,8 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
 
   useEffectOnce(async () => {
     if (productId != null) {
-      getDocumentTemplateData("/api/dictionaries/document-type/template/" + productId);
+      const { data } = await getDocumentTemplateData("/api/dictionaries/document-type/template/" + productId);
+      getSelectionData(data);
     }
   }, [productId]);
 
@@ -210,7 +223,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
     }
   };
 
-  if (documentTemplateLoading) return <></>;
+  if (documentTemplateLoading && selectionLoading) return <></>;
 
   return (
     <Box>
@@ -244,16 +257,6 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
                             }
                           }
 
-                          let data: Record<string, any>[] = [];
-                          const { data: selectionData } = useFetch(
-                            `/api/dictionaries/selection/${item.selection}`,
-                            "POST"
-                          );
-
-                          if (selectionData?.data != null) {
-                            data = selectionData.data;
-                          }
-
                           return (
                             <Box display="flex" flexDirection="column" gap="10px">
                               <InputLabel>{item?.fieldTitles?.[locale ?? ""] ?? ""}</InputLabel>
@@ -262,7 +265,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
                                 field,
                                 fieldState,
                                 errorMessage,
-                                data,
+                                data: selectionData?.data ?? [],
                                 trigger,
                               })}
                             </Box>
