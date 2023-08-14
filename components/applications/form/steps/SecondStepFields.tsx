@@ -19,8 +19,6 @@ export interface IStepFieldsProps {
   onNext?: Function | null;
 }
 
-const stepFields = ["object", "objectType", "notarialAction", "typeNotarialAction", "action"] as const;
-
 export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
@@ -40,6 +38,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
     "/api/dictionaries/notarial-action",
     "GET"
   );
+
   const { data: searchedDocData, loading: searchedDocLoading } = useFetch("/api/dictionaries/document-type", "POST", {
     body: formValues,
   });
@@ -47,13 +46,13 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   const { update: applicationUpdate } = useFetch("", "PUT");
 
   useEffectOnce(() => {
-    if (stepFields.every((val) => val != null)) {
+    if (actionVal) {
       setformValues({ formValues: getValues() });
     }
-  }, stepFields);
+  }, [actionVal]);
 
   const triggerFields = async () => {
-    return await trigger(stepFields);
+    return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action"]);
   };
 
   const handlePrevClick = () => {

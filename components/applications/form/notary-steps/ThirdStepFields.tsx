@@ -19,8 +19,6 @@ export interface IStepFieldsProps {
   onNext?: Function | null;
 }
 
-const stepFields = ["object", "objectType", "notarialAction", "typeNotarialAction", "action"] as const;
-
 export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
@@ -47,13 +45,13 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
   const { update: applicationUpdate } = useFetch("", "PUT");
 
   useEffectOnce(() => {
-    if (stepFields.every((val) => val != null)) {
+    if (actionVal) {
       setformValues({ formValues: getValues() });
     }
-  }, stepFields);
+  }, [actionVal]);
 
   const triggerFields = async () => {
-    return await trigger(stepFields);
+    return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action"]);
   };
 
   const handlePrevClick = () => {
