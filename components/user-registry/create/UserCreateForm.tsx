@@ -112,7 +112,7 @@ const UserCreateForm: FC<IUserCreateFormProps> = (props) => {
           <Typography>от</Typography>
           <DatePicker
             onChange={handleDateChange}
-            value={date}
+            value={date != null ? new Date(date) : null}
             sx={{
               width: {
                 xs: "100%",

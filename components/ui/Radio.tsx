@@ -1,5 +1,6 @@
 import React, { forwardRef } from "react";
 import { UseFormRegister } from "react-hook-form";
+import useEffectOnce from "@/hooks/useEffectOnce";
 import {
   RadioProps,
   Radio as MUIRadio,
@@ -43,6 +44,8 @@ const Radio: React.ForwardRefRenderFunction<HTMLDivElement, IRadioProps> = (
   },
   ref
 ) => {
+  const [valueState, setValueState] = React.useState(value);
+
   const styles = {
     color: types["secondary"],
     "&.Mui-checked": {
@@ -52,9 +55,22 @@ const Radio: React.ForwardRefRenderFunction<HTMLDivElement, IRadioProps> = (
 
   const combineStyles = { ...styles, ...rest.sx };
 
+  useEffectOnce(() => {
+    setValueState(value);
+  }, [value]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValueState((event.target as HTMLInputElement).value);
+  };
+
   return (
     <FormControl error={type === "error"} ref={ref}>
-      <RadioGroup row={row} defaultValue={defaultValue} value={value != null ? value : ""}>
+      <RadioGroup
+        row={row}
+        defaultValue={defaultValue}
+        value={valueState != null ? valueState : ""}
+        onChange={handleChange}
+      >
         {data?.map(
           (item) =>
             item[labelField] != null &&

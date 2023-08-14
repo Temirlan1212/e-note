@@ -145,5 +145,8 @@
   "Templates": "Шаблоны",
   "My templates": "Мои шаблоны",
   "System templates": "Системные шаблоны",
-  "Download PDF": "Скачать PDF"
+  "Download PDF": "Скачать PDF",
+  "Individual person": "Физическое лицо",
+  "Juridical person": "Юридическое лицо",
+  "Foreign person": "Иностранное лицо"
 }

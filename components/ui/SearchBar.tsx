@@ -14,7 +14,7 @@ type ISearchBarProps = TextFieldProps & {
   error?: any;
   helperText?: any;
   boxSx?: any;
-  onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
 
 const SearchBar: React.FC<ISearchBarProps> = (props) => {
