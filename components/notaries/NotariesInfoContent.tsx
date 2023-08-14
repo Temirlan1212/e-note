@@ -53,19 +53,19 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: [],
     },
     {
-      text: "+996 700 000 000, 555 000 000",
+      text: notaryData[0]?.partner?.mobilePhone || "+996 700 000 000, 555 000 000",
       icon: <PhoneEnabledOutlinedIcon />,
       type: "text",
       array: [],
     },
     {
-      text: "+996 700 000 000",
+      text: notaryData[0]?.partner?.mobilePhone || "+996 700 000 000",
       icon: <WhatsAppIcon />,
       type: "link",
       array: [],
     },
     {
-      text: "balancha@gmail.com",
+      text: notaryData[0]?.partner?.email || "balancha@gmail.com",
       icon: <EmailOutlinedIcon />,
       type: "link",
       array: [],
