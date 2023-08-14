@@ -204,7 +204,6 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
 
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
-        console.log("version update");
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
         onNext();
