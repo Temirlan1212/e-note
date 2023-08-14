@@ -38,18 +38,17 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
     "/api/dictionaries/notarial-action",
     "GET"
   );
-  const { data: searchedDocData } = useFetch("/api/dictionaries/document-type", "POST", {
+  const { data: searchedDocData, loading: searchedDocLoading } = useFetch("/api/dictionaries/document-type", "POST", {
     body: formValues,
   });
 
   const { update: applicationUpdate } = useFetch("", "PUT");
 
   useEffectOnce(() => {
-    if (actionVal != null) {
-      const values = getValues();
-      setformValues({ formValues: values });
+    if ([actionVal, objectVal, objectTypeVal, notarialActionVal, typeNotarialActionVal].every((val) => val != null)) {
+      setformValues({ formValues: getValues() });
     }
-  }, [actionVal]);
+  }, [actionVal, objectVal, objectTypeVal, notarialActionVal, typeNotarialActionVal]);
 
   const triggerFields = async () => {
     return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action"]);
@@ -86,6 +85,8 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
       setLoading(false);
     }
   };
+
+  if (searchedDocLoading || notarialLoading) return <></>;
 
   return (
     <Box display="flex" flexDirection="column" gap="30px">
