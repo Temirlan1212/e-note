@@ -15,7 +15,7 @@ export default async function handler(req: NextRequest) {
     process.env.BACKEND_API_URL +
       `/ws/rest/com.axelor.auth.db.User/` +
       searchParams.get("id") +
-      `/image/download?v=20&parentId=1&parentModel=com.axelor.auth.db.User&image=true`,
+      `/image/download?v=20&image=true`,
     {
       method: "GET",
       headers: {
