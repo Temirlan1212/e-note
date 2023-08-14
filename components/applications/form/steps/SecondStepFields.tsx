@@ -19,6 +19,8 @@ export interface IStepFieldsProps {
   onNext?: Function | null;
 }
 
+const stepFields = ["object", "objectType", "notarialAction", "typeNotarialAction", "action"] as const;
+
 export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
@@ -32,7 +34,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   const actionVal = watch("action");
 
   const [loading, setLoading] = useState(false);
-  const [formValues, setformValues] = useState<Record<string, any>>({});
+  const [formValues, setformValues] = useState<{ formValues: Record<string, any> | null }>({ formValues: null });
 
   const { data: notarialData, loading: notarialLoading } = useFetch<INotarialActionData>(
     "/api/dictionaries/notarial-action",
@@ -45,13 +47,13 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   const { update: applicationUpdate } = useFetch("", "PUT");
 
   useEffectOnce(() => {
-    if ([actionVal, objectVal, objectTypeVal, notarialActionVal, typeNotarialActionVal].every((val) => val != null)) {
+    if (stepFields.every((val) => val != null)) {
       setformValues({ formValues: getValues() });
     }
-  }, [actionVal, objectVal, objectTypeVal, notarialActionVal, typeNotarialActionVal]);
+  }, stepFields);
 
   const triggerFields = async () => {
-    return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action"]);
+    return await trigger(stepFields);
   };
 
   const handlePrevClick = () => {
