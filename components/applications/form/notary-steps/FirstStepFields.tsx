@@ -26,7 +26,8 @@ enum tundukFieldNames {
 
 let timer: ReturnType<typeof setTimeout> | null = null;
 
-interface IVersionFields {
+interface IBaseEntityFields {
+  id?: number;
   version?: number;
   $version?: number;
 }
@@ -270,7 +271,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
 
-        const applicationData = await applicationFetch(`/api/applications/${values.id}`, {
+        const applicationData = await applicationFetch(`/api/applications/${result.data[0].id}`, {
           fields: ["version"],
           related: {
             requester: ["version", "emailAddress.version", "mainAddress.version", "actualResidenceAddress.version"],
@@ -280,26 +281,39 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         if (applicationData?.status === 0 && applicationData?.data[0]?.id != null) {
           applicationData.data[0]?.requester?.map(
             (
-              item: IVersionFields & {
-                mainAddress?: IVersionFields;
-                actualResidenceAddress?: IVersionFields;
-                emailAddress?: IVersionFields;
+              item: IBaseEntityFields & {
+                mainAddress?: IBaseEntityFields;
+                actualResidenceAddress?: IBaseEntityFields;
+                emailAddress?: IBaseEntityFields;
               },
               index: number
             ) => {
+              setValue(`requester.${index}.id`, item.id);
               setValue(`requester.${index}.version`, item.version ?? item.$version);
-              setValue(
-                `requester.${index}.mainAddress.version`,
-                item.mainAddress?.version ?? item?.mainAddress?.$version
-              );
-              setValue(
-                `requester.${index}.actualResidenceAddress.version`,
-                item?.actualResidenceAddress?.version ?? item?.actualResidenceAddress?.$version
-              );
-              setValue(
-                `requester.${index}.emailAddress.version`,
-                item?.emailAddress?.version ?? item?.emailAddress?.$version
-              );
+
+              if (item.mainAddress?.id != null) {
+                setValue(`requester.${index}.mainAddress.id`, item.mainAddress.id);
+                setValue(
+                  `requester.${index}.mainAddress.version`,
+                  item.mainAddress?.version ?? item?.mainAddress?.$version
+                );
+              }
+
+              if (item.actualResidenceAddress?.id != null) {
+                setValue(`requester.${index}.actualResidenceAddress.id`, item.actualResidenceAddress.id);
+                setValue(
+                  `requester.${index}.actualResidenceAddress.version`,
+                  item.actualResidenceAddress?.version ?? item?.actualResidenceAddress?.$version
+                );
+              }
+
+              if (item.emailAddress?.id != null) {
+                setValue(`requester.${index}.emailAddress.id`, item.emailAddress.id);
+                setValue(
+                  `requester.${index}.emailAddress.version`,
+                  item.emailAddress?.version ?? item?.emailAddress?.$version
+                );
+              }
             }
           );
         }
