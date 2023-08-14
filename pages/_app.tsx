@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import PublicLayout from "@/layouts/Public";
 import PrivateLayout from "@/layouts/Private";
