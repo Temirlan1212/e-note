@@ -23,6 +23,7 @@ import NotaryFourthStepFields from "./notary-steps/FourthStepFields";
 import NotaryFifthStepFields from "./notary-steps/FifthStepFields";
 import NotarySixthStepFields from "./notary-steps/SixthStepFields";
 import { useRouter } from "next/router";
+import useNavigationConfirmation from "@/hooks/useNavigationConfirmation";
 
 export interface IApplicationFormProps {
   id?: number | null;
@@ -56,6 +57,8 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     values:
       dynamicFormAppData?.status === 0 && dynamicFormAppData?.data[0] != null ? dynamicFormAppData.data[0] : undefined,
   });
+
+  useNavigationConfirmation(form.formState.isDirty);
 
   useEffectOnce(async () => {
     setUserData(profile.getUserData());
