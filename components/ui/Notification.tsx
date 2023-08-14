@@ -1,5 +1,6 @@
 import { Alert, Slide, Snackbar, SnackbarCloseReason, SnackbarProps } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
+import { SyntheticEvent } from "react";
 
 export interface INotificationProps extends SnackbarProps {
   title: string;
@@ -8,7 +9,7 @@ export interface INotificationProps extends SnackbarProps {
   onCloseAlert: () => void;
 }
 
-const SlideTransition = (props: TransitionProps) => <Slide {...props} direction="down" />;
+// const SlideTransition = (props: TransitionProps) => <Slide {...props} direction="down" />;
 
 const Notification = ({
   title,
@@ -21,7 +22,7 @@ const Notification = ({
   onCloseAlert,
   ...rest
 }: INotificationProps) => {
-  const handleCloseSnackbar = (event: Event, reason: SnackbarCloseReason): void => {
+  const handleCloseSnackbar = (event: Event | SyntheticEvent<any, Event>, reason: SnackbarCloseReason): void => {
     if (reason === "clickaway") {
       return;
     }
@@ -34,7 +35,7 @@ const Notification = ({
       autoHideDuration={autoHideDuration}
       anchorOrigin={anchorOrigin}
       onClose={handleCloseSnackbar}
-      TransitionComponent={SlideTransition}
+      // TransitionComponent={SlideTransition}
       {...rest}
     >
       <Alert severity={severity} variant={variant} onClose={onCloseAlert}>

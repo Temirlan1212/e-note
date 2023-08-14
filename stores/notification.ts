@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 interface INotificationState {
-  notification: string;
+  notification: string | null;
   setNotification: (notification: string | null) => void;
 }
 
