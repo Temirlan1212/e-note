@@ -32,7 +32,6 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   const actionVal = watch("action");
 
   const [loading, setLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [formValues, setformValues] = useState<Record<string, any>>({});
 
   const { data: notarialData, loading: notarialLoading } = useFetch<INotarialActionData>(
@@ -44,10 +43,6 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   });
 
   const { update: applicationUpdate } = useFetch("", "PUT");
-
-  useEffectOnce(() => {
-    setMounted(true);
-  });
 
   useEffectOnce(() => {
     if (actionVal != null) {
