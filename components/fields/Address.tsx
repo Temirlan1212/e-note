@@ -15,9 +15,9 @@ export interface IAddressProps extends IAreaProps {
     apartment: string;
   };
   defaultValues?: {
-    region?: number | null;
-    district?: number | null;
-    city?: number | null;
+    region?: { id: number } | null;
+    district?: { id: number } | null;
+    city?: { id: number } | null;
     street?: string;
     house?: string;
     apartment?: string;
@@ -28,6 +28,8 @@ export default function Address({ form, names, defaultValues }: IAddressProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
+
+  const city = watch(names.city);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -44,6 +46,7 @@ export default function Address({ form, names, defaultValues }: IAddressProps) {
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={!city}
                 {...field}
               />
             </Box>
@@ -59,6 +62,7 @@ export default function Address({ form, names, defaultValues }: IAddressProps) {
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={!city}
                 {...field}
               />
             </Box>
@@ -74,6 +78,7 @@ export default function Address({ form, names, defaultValues }: IAddressProps) {
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={!city}
                 {...field}
               />
             </Box>

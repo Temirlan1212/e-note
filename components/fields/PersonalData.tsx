@@ -48,6 +48,11 @@ export default function PersonalData({ form, names, defaultValues, fields }: IPe
 
   const { trigger, control, watch, resetField } = form;
 
+  const { data: citizenshipDictionary, loading: citizenshipDictionaryLoading } = useFetch(
+    `/api/dictionaries/citizenship`,
+    "GET"
+  );
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
@@ -191,32 +196,34 @@ export default function PersonalData({ form, names, defaultValues, fields }: IPe
             control={control}
             name={names.citizenship}
             defaultValue={defaultValues?.citizenship ?? null}
-            render={({ field, fieldState }) => {
-              const { data, loading } = useFetch(`/api/dictionaries/citizenship`, "GET");
-
-              return (
-                <Box display="flex" flexDirection="column" width="100%">
-                  <InputLabel>{t("Citizenship")}</InputLabel>
-                  <Autocomplete
-                    labelField="name"
-                    type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                    options={data?.status === 0 ? (data?.data as Record<string, any>[]) ?? [] : []}
-                    loading={loading}
-                    value={
-                      field.value != null
-                        ? (data?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ?? null
-                        : null
-                    }
-                    onBlur={field.onBlur}
-                    onChange={(event, value) => {
-                      field.onChange(value?.id != null ? { id: value.id } : null);
-                      trigger(field.name);
-                    }}
-                  />
-                </Box>
-              );
-            }}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel>{t("Citizenship")}</InputLabel>
+                <Autocomplete
+                  labelField="name"
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  options={
+                    citizenshipDictionary?.status === 0
+                      ? (citizenshipDictionary?.data as Record<string, any>[]) ?? []
+                      : []
+                  }
+                  loading={citizenshipDictionaryLoading}
+                  value={
+                    field.value != null
+                      ? (citizenshipDictionary?.data ?? []).find(
+                          (item: Record<string, any>) => item.id == field.value.id
+                        ) ?? null
+                      : null
+                  }
+                  onBlur={field.onBlur}
+                  onChange={(event, value) => {
+                    field.onChange(value?.id != null ? { id: value.id } : null);
+                    trigger(field.name);
+                  }}
+                />
+              </Box>
+            )}
           />
         )}
       </Box>

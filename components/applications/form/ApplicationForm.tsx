@@ -74,25 +74,38 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const steps =
     userData?.group?.id === 4
       ? [
-          <NotaryFirstStepFields form={form} onNext={() => setStep(step + 1)} />,
-          // <NotarySecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-          <NotaryThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-          <NotaryFourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <NotaryFirstStepFields key={0} form={form} onNext={() => setStep(step + 1)} />,
+          // <NotarySecondStepFields key={1} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <NotaryThirdStepFields
+            key={2}
+            form={form}
+            onPrev={() => setStep(step - 1)}
+            onNext={() => setStep(step + 1)}
+          />,
+          <NotaryFourthStepFields
+            key={3}
+            form={form}
+            onPrev={() => setStep(step - 1)}
+            onNext={() => setStep(step + 1)}
+          />,
           <NotaryFifthStepFields
+            key={4}
             dynamicForm={dynamicForm}
             form={form}
             onPrev={() => setStep(step - 1)}
             onNext={() => setStep(step + 1)}
           />,
           <NotarySixthStepFields
+            key={5}
             form={form}
             onPrev={() => setStep(step - 1)}
             onNext={() => router.push("/applications")}
           />,
         ]
       : [
-          <FirstStepFields form={form} onNext={() => setStep(step + 1)} />,
+          <FirstStepFields key={0} form={form} onNext={() => setStep(step + 1)} />,
           <SecondStepFields
+            key={1}
             form={form}
             onPrev={() => setStep(step - 1)}
             onNext={async () => {
@@ -113,15 +126,21 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
               setStep(step + 1);
             }}
           />,
-          <ThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-          <FourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <ThirdStepFields key={2} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <FourthStepFields key={3} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
           <FifthStepFields
+            key={4}
             form={form}
             dynamicForm={dynamicForm}
             onPrev={() => setStep(step - 1)}
             onNext={() => setStep(step + 1)}
           />,
-          <SixthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => router.push("/applications")} />,
+          <SixthStepFields
+            key={5}
+            form={form}
+            onPrev={() => setStep(step - 1)}
+            onNext={() => router.push("/applications")}
+          />,
         ];
 
   const onSubmit = async (data: IApplicationSchema) => {};
@@ -168,7 +187,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
         boxShadow={4}
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        {steps.map((component, index) => step === index && <Box key={index}>{component}</Box>)}
+        {steps.map((component, index) => step === index && component)}
       </Box>
     </Box>
   );

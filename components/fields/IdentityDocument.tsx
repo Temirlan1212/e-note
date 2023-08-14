@@ -35,6 +35,15 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
 
   const documentType = watch(names.documentType);
 
+  const { data: identityDocumentDictionary, loading: identityDocumentDictionaryLoading } = useFetch(
+    `/api/dictionaries/identity-document`,
+    "GET"
+  );
+  const { data: identityDocumentSeriesDictionary, loading: identityDocumentSeriesDictionaryLoading } = useFetch(
+    `/api/dictionaries/identity-document/series`,
+    "GET"
+  );
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
@@ -43,8 +52,6 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
           name={names.documentType}
           defaultValue={defaultValues?.documentType ?? null}
           render={({ field, fieldState }) => {
-            const { data: identityDocumentDictionary } = useFetch(`/api/dictionaries/identity-document`, "GET");
-
             return (
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("Document")}</InputLabel>
@@ -59,8 +66,20 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
                   selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   data={identityDocumentDictionary?.status === 0 ? identityDocumentDictionary?.data ?? [] : []}
+                  loading={identityDocumentDictionaryLoading}
                   {...field}
                   value={field.value != null ? field.value : ""}
+                  onChange={(...event: any[]) => {
+                    field.onChange(...event);
+                    trigger(field.name);
+                    [
+                      names.documentSeries,
+                      names.documentNumber,
+                      names.organType,
+                      names.organNumber,
+                      names.issueDate,
+                    ].map((item) => resetField(item));
+                  }}
                 />
               </Box>
             );
@@ -70,61 +89,45 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
           control={control}
           name={names.documentSeries}
           defaultValue={defaultValues?.documentSeries ?? null}
-          render={({ field, fieldState }) => {
-            const { data: identityDocumentSeriesDictionary } = useFetch(
-              `/api/dictionaries/identity-document/series`,
-              "GET"
-            );
-
-            useEffectOnce(() => {
-              resetField(field.name);
-            }, [documentType]);
-
-            return (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Series")}</InputLabel>
-                <Select
-                  labelField={
-                    identityDocumentSeriesDictionary?.data?.length > 0 &&
-                    identityDocumentSeriesDictionary?.data[0][`title_${locale}`]
-                      ? `title_${locale}`
-                      : "title"
-                  }
-                  valueField="value"
-                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!documentType}
-                  data={
-                    identityDocumentSeriesDictionary?.status === 0 ? identityDocumentSeriesDictionary?.data ?? [] : []
-                  }
-                  {...field}
-                  value={field.value != null ? field.value : ""}
-                />
-              </Box>
-            );
-          }}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Series")}</InputLabel>
+              <Select
+                labelField={
+                  identityDocumentSeriesDictionary?.data?.length > 0 &&
+                  identityDocumentSeriesDictionary?.data[0][`title_${locale}`]
+                    ? `title_${locale}`
+                    : "title"
+                }
+                valueField="value"
+                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={!documentType}
+                data={
+                  identityDocumentSeriesDictionary?.status === 0 ? identityDocumentSeriesDictionary?.data ?? [] : []
+                }
+                loading={identityDocumentSeriesDictionaryLoading}
+                {...field}
+                value={field.value != null ? field.value : ""}
+              />
+            </Box>
+          )}
         />
         <Controller
           control={control}
           name={names.documentNumber}
           defaultValue={defaultValues?.documentNumber ?? ""}
-          render={({ field, fieldState }) => {
-            useEffectOnce(() => {
-              resetField(field.name);
-            }, [documentType]);
-
-            return (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Number")}</InputLabel>
-                <Input
-                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!documentType}
-                  {...field}
-                />
-              </Box>
-            );
-          }}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Number")}</InputLabel>
+              <Input
+                inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={!documentType}
+                {...field}
+              />
+            </Box>
+          )}
         />
       </Box>
 
@@ -133,71 +136,53 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
           control={control}
           name={names.organType}
           defaultValue={defaultValues?.organType ?? ""}
-          render={({ field, fieldState }) => {
-            useEffectOnce(() => {
-              resetField(field.name);
-            }, [documentType]);
-
-            return (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Organ")}</InputLabel>
-                <Input
-                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!documentType}
-                  {...field}
-                />
-              </Box>
-            );
-          }}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Organ")}</InputLabel>
+              <Input
+                inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={!documentType}
+                {...field}
+              />
+            </Box>
+          )}
         />
         <Controller
           control={control}
           name={names.organNumber}
           defaultValue={defaultValues?.organNumber ?? ""}
-          render={({ field, fieldState }) => {
-            useEffectOnce(() => {
-              resetField(field.name);
-            }, [documentType]);
-
-            return (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Number")}</InputLabel>
-                <Input
-                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!documentType}
-                  {...field}
-                />
-              </Box>
-            );
-          }}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Number")}</InputLabel>
+              <Input
+                inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={!documentType}
+                {...field}
+              />
+            </Box>
+          )}
         />
         <Controller
           control={control}
           name={names.issueDate}
           defaultValue={defaultValues?.issueDate ?? null}
-          render={({ field, fieldState }) => {
-            useEffectOnce(() => {
-              resetField(field.name);
-            }, [documentType]);
-
-            return (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Date of issue")}</InputLabel>
-                <DatePicker
-                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!documentType}
-                  value={field.value != null ? new Date(field.value) : null}
-                  onChange={(...event: any[]) => {
-                    field.onChange(...event);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            );
-          }}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Date of issue")}</InputLabel>
+              <DatePicker
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={!documentType}
+                value={field.value != null ? new Date(field.value) : null}
+                onChange={(...event: any[]) => {
+                  field.onChange(...event);
+                  trigger(field.name);
+                }}
+              />
+            </Box>
+          )}
         />
       </Box>
     </Box>
