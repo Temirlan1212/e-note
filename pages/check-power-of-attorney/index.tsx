@@ -5,11 +5,11 @@ import Grid from "@mui/material/Grid";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 
-import Button from "../../components/ui/Button";
-import CheckByID from "../../components/check-power-of-attorney/CheckByID";
-import CheckByQR from "../../components/check-power-of-attorney/CheckByQR";
+import Button from "@/components/ui/Button";
+import CheckByID from "@/components/check-power-of-attorney/CheckByID";
+import CheckByQR from "@/components/check-power-of-attorney/CheckByQR";
 
-export default function index() {
+export default function CheckPowerOfAttorney() {
   const [isVariantClicked, setIsVariantClicked] = useState(false);
   const [showRemind, setShowRemind] = useState(true);
   const [isCheckByID, setIsCheckByID] = useState(true);
