@@ -1,9 +1,10 @@
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { InputLabel, Box } from "@mui/material";
-import Select from "@/components/ui/Select";
+import Autocomplete from "../ui/Autocomplete";
 
 export interface IAreaProps {
   form: UseFormReturn<any>;
@@ -13,9 +14,9 @@ export interface IAreaProps {
     city: string;
   };
   defaultValues?: {
-    region?: number | null;
-    district?: number | null;
-    city?: number | null;
+    region?: { id: number } | null;
+    district?: { id: number } | null;
+    city?: { id: number } | null;
   };
 }
 
@@ -24,9 +25,15 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
 
   const { trigger, control, watch, resetField } = form;
 
-  const regionId = watch(names.region);
-  const districtId = watch(names.district);
-  const cityId = watch(names.city);
+  const region = watch(names.region);
+  const district = watch(names.district);
+  const city = watch(names.city);
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffectOnce(() => {
+    setMounted(true);
+  });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -36,19 +43,27 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
           name={names.region}
           defaultValue={defaultValues?.region ?? null}
           render={({ field, fieldState }) => {
-            const { data: regionsDictionary } = useFetch("/api/dictionaries/regions", "GET");
+            const { data, loading } = useFetch("/api/dictionaries/regions", "GET");
 
             return (
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("Region")}</InputLabel>
-                <Select
+                <Autocomplete
                   labelField="name"
-                  valueField="id"
-                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  data={regionsDictionary?.status === 0 ? regionsDictionary?.data ?? [] : []}
-                  {...field}
-                  value={field.value != null ? field.value : ""}
+                  options={data?.status === 0 ? (data?.data as Record<string, any>[]) ?? [] : []}
+                  loading={loading}
+                  value={
+                    field.value != null
+                      ? (data?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ?? null
+                      : null
+                  }
+                  onBlur={field.onBlur}
+                  onChange={(event, value) => {
+                    field.onChange(value?.id != null ? { id: value.id } : null);
+                    trigger(field.name);
+                  }}
                 />
               </Box>
             );
@@ -59,24 +74,37 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
           name={names.district}
           defaultValue={defaultValues?.district ?? null}
           render={({ field, fieldState }) => {
-            const { data: districtsDictionary } = useFetch(`/api/dictionaries/districts?regionId=${regionId}`, "GET");
+            const { data, loading } = useFetch(
+              region != null ? `/api/dictionaries/districts?regionId=${region.id}` : "",
+              "GET"
+            );
 
             useEffectOnce(() => {
-              resetField(field.name);
-            }, [regionId]);
+              if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
+                resetField(field.name, { defaultValue: defaultValues?.district ?? null });
+              }
+            }, [names.district, region]);
 
             return (
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("District")}</InputLabel>
-                <Select
+                <Autocomplete
                   labelField="name"
-                  valueField="id"
-                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!regionId}
-                  data={districtsDictionary?.status === 0 ? districtsDictionary?.data ?? [] : []}
-                  {...field}
-                  value={field.value != null ? field.value : ""}
+                  disabled={!region}
+                  options={data?.status === 0 ? (data?.data as Record<string, any>[]) ?? [] : []}
+                  loading={loading}
+                  value={
+                    field.value != null
+                      ? (data?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ?? null
+                      : null
+                  }
+                  onBlur={field.onBlur}
+                  onChange={(event, value) => {
+                    field.onChange(value?.id != null ? { id: value.id } : null);
+                    trigger(field.name);
+                  }}
                 />
               </Box>
             );
@@ -87,24 +115,37 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
           name={names.city}
           defaultValue={defaultValues?.city ?? null}
           render={({ field, fieldState }) => {
-            const { data: citiesDictionary } = useFetch(`/api/dictionaries/cities?districtId=${districtId}`, "GET");
+            const { data, loading } = useFetch(
+              district != null ? `/api/dictionaries/cities?districtId=${district.id}` : "",
+              "GET"
+            );
 
             useEffectOnce(() => {
-              resetField(field.name);
-            }, [districtId]);
+              if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
+                resetField(field.name, { defaultValue: defaultValues?.city ?? null });
+              }
+            }, [names.city, district]);
 
             return (
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("City")}</InputLabel>
-                <Select
+                <Autocomplete
                   labelField="name"
-                  valueField="id"
-                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!districtId}
-                  data={citiesDictionary?.status === 0 ? citiesDictionary?.data ?? [] : []}
-                  {...field}
-                  value={field.value != null ? field.value : ""}
+                  disabled={!district}
+                  options={data?.status === 0 ? (data?.data as Record<string, any>[]) ?? [] : []}
+                  loading={loading}
+                  value={
+                    field.value != null
+                      ? (data?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ?? null
+                      : null
+                  }
+                  onBlur={field.onBlur}
+                  onChange={(event, value) => {
+                    field.onChange(value?.id != null ? { id: value.id } : null);
+                    trigger(field.name);
+                  }}
                 />
               </Box>
             );

@@ -19,10 +19,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const _domain = Object.keys(filterValues)
       .map((key) => `self.${key} in :${key.replace(/[.\s]/g, "")}`)
       .join(" and ");
-    requestBody.data = {
-      _domain,
-      _domainContext: filterValues,
-    };
+
+    const _domainContext = Object.fromEntries(
+      Object.entries(filterValues).map(([key, value]) => [key.replace(/[.\s]/g, ""), value])
+    ) as IApplicationsQueryParamsData["_domainContext"];
+
+    requestBody.data = { _domain, _domainContext };
   }
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.sale.db.SaleOrder/search", {

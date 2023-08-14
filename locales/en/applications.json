@@ -1,6 +1,9 @@
 {
   "Create application": "Create application",
+  "Edit application": "Edit application",
   "Choose notary": "Choose notary",
+  "Choose requester": "Choose requester",
+  "Choose document": "Choose document",
   "Form first step hint text": "You can also go directly to the “Notary” search form if you know a specific notary, ignoring the previous fields.",
   "Type of action": "Type of action",
   "Type of document": "Type of document",
@@ -9,6 +12,12 @@
   "Executor": "Executor",
   "Deleting an application": "Deleting an application",
   "Do you really want to remove the application from the platform?": "Do you really want to remove the application from the platform?",
+  "StatusApplication": "Status",
+  "Signature status": "Signature status",
+  "Date of the action": "Date of the action",
+  "Notary's full name": "Notary's full name",
+  "Unique registry number": "Unique registry number",
+  "Sides": "Sides",
   "Object": "Object",
   "Object type": "Object type",
   "Object selection": "Object selection",
@@ -18,5 +27,9 @@
   "Notarial action": "Notarial action",
   "Type of notarial action": "Type of notarial action",
   "Document selection": "Document selection",
-  "Searched document": "Searched document"
+  "Searched document": "Searched document",
+  "fifth-step-title": "Party 2 (other members)",
+  "Sorry, such pin not found": "Sorry, such pin not found",
+  "View document": "View document",
+  "Edit document": "Edit document"
 }

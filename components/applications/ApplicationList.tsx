@@ -83,8 +83,13 @@ export default function ApplicationList() {
   const handleDelete = async () => {
     const res = await update();
     if (res?.total) {
-      const page = Math.ceil(res.total / appQueryParams.pageSize);
-      updateAppQueryParams("page", page);
+      const pageQuantity = Math.ceil(res.total / appQueryParams.pageSize);
+      const page = appQueryParams.page;
+      if (pageQuantity >= page) {
+        updateAppQueryParams("page", page);
+      } else {
+        updateAppQueryParams("page", pageQuantity);
+      }
     }
   };
 
@@ -119,7 +124,8 @@ export default function ApplicationList() {
             valueGetter: (params: GridValueGetterParams) => {
               if (actionTypeData?.data != null) {
                 const matchedItem = actionTypeData?.data.find((item: IActionType) => item.value == params.value);
-                return matchedItem?.[("title_" + locale) as keyof IActionType];
+                const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
+                return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
               }
               return params.value;
             },
@@ -155,7 +161,8 @@ export default function ApplicationList() {
             valueGetter: (params: GridValueGetterParams) => {
               if (statusData != null) {
                 const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(1));
-                return matchedItem?.[("title_" + locale) as keyof IStatus];
+                const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
+                return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
               }
               return params.value;
             },

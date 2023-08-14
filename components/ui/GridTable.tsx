@@ -236,7 +236,8 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
   let labelField: string = "";
 
   if (type === "dictionary") {
-    dictionaryList = rowParams.colDef.filter?.data as Record<string, any>[];
+    const data = rowParams.colDef.filter?.data;
+    if (Array.isArray(data)) dictionaryList = data as Record<string, any>[];
     valueField = rowParams.colDef.filter?.valueField as string;
     labelField = rowParams.colDef.filter?.labelField as string;
   }
@@ -393,13 +394,22 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
                   }}
                 >
                   {dictionaryList.map((item, index) => (
-                    <MenuItem key={index} sx={{ padding: 0, margin: "0 0 10px 0", px: "20px" }}>
+                    <MenuItem
+                      key={index}
+                      sx={{
+                        padding: 0,
+                        margin: "0 0 10px 0",
+                        display: "flex",
+                        ".MuiFormControl-root": { flex: 1 },
+                        ".MuiFormControlLabel-root": { margin: 0 },
+                      }}
+                    >
                       <Checkbox
+                        sx={{ px: "10px" }}
                         name={String(item[valueField])}
                         register={register}
                         label={item[labelField]}
                         checked={!!formValues?.[String(item[valueField])]}
-                        width={"100%"}
                       />
                     </MenuItem>
                   ))}

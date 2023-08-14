@@ -14,7 +14,7 @@ type ISearchBarProps = TextFieldProps & {
   error?: any;
   helperText?: any;
   boxSx?: any;
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 };
 
 const SearchBar: React.FC<ISearchBarProps> = (props) => {
@@ -33,13 +33,7 @@ const SearchBar: React.FC<ISearchBarProps> = (props) => {
         error={error}
         helperText={helperText}
       />
-      <Button
-        sx={{ width: "80px", boxShadow: "none" }}
-        type="submit"
-        color="success"
-        loading={loading}
-        onClick={onClick}
-      >
+      <Button sx={{ width: "80px" }} type="submit" color="success" loading={loading} onClick={onClick}>
         <SearchOutlined />
       </Button>
     </Box>

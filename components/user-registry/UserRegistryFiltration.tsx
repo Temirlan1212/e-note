@@ -29,14 +29,11 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = (props) => {
   const t = useTranslations();
 
   const handleFromDateChange = (from: string) => {
-    // Try to parse the date manually
     const parsedDate = parse(from, "yyyy-MM-dd", new Date());
 
     if (!isNaN(parsedDate.getTime())) {
-      // The parsing was successful
       setFromDate(format(parsedDate, "yyyy-MM-dd"));
     } else {
-      // Invalid date format
       setFromDate(null);
     }
   };
@@ -45,10 +42,8 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = (props) => {
     const parsedDate = parse(to, "yyyy-MM-dd", new Date());
 
     if (!isNaN(parsedDate.getTime())) {
-      // The parsing was successful
       setToDate(format(parsedDate, "yyyy-MM-dd"));
     } else {
-      // Invalid date format
       setToDate(null);
     }
   };
@@ -137,18 +132,25 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = (props) => {
           >
             <DatePicker
               sx={{
-                ".MuiInputBase-root": {
-                  width: {
-                    xs: "100%",
-                    md: "150px",
-                  },
+                width: {
+                  xs: "100%",
+                  md: "150px",
                 },
               }}
               onChange={handleFromDateChange}
               placeholder="__/__/____"
             />
             <Typography>{t("FromTo")}</Typography>
-            <DatePicker onChange={handleToDateChange} placeholder="__/__/____" />
+            <DatePicker
+              sx={{
+                width: {
+                  xs: "100%",
+                  md: "150px",
+                },
+              }}
+              onChange={handleToDateChange}
+              placeholder="__/__/____"
+            />
           </Box>
         </Box>
         <Box

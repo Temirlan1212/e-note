@@ -60,7 +60,7 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
 
   return (
     <MuiAutocomplete
-      options={options}
+      options={options ?? []}
       getOptionLabel={(option) => option[labelField]}
       sx={combineStyles}
       ref={ref}

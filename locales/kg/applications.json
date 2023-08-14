@@ -1,6 +1,9 @@
 {
   "Create application": "Өтүнмө түзүү",
+  "Edit application": "Өтүнмөнү өзгөртүү",
   "Choose notary": "Нотариус тандоо",
+  "Choose requester": "Өтүнүүчүнү тандоо",
+  "Choose document": "Документти тандоо",
   "Form first step hint text": "Мурунку талааларды эске албай, белгилүү бир нотариусту билсеңиз, “Нотариус“ издөө формасына түз өтсөңүз болот.",
   "Type of action": "Иш-аракеттердин түрү",
   "Type of document": "Документтин түрү",
@@ -10,6 +13,12 @@
   "Deleting an application": "Өтүнмөнү алып салуу",
   "Do you really want to remove the application from the platform?": "Колдонмоңузду платформадан алып салгыңыз келеби?",
   "Your applications": "Сиздин өтүнмө",
+  "StatusApplication": "Статусу",
+  "Signature status": "Кол коюу статусу",
+  "Date of the action": "Иш-аракет датасы",
+  "Notary's full name": "Нотариустун аты-жөнү",
+  "Unique registry number": "Уникалдуу реестр номери",
+  "Sides": "Тараптар",
   "Object": "Объект",
   "Object type": "Объекттин түрү",
   "Object selection": "Объект тандоо",
@@ -18,5 +27,9 @@
   "Notarial action": "Нотариалдык иш-аракет",
   "Type of notarial action": "Нотариалдык иш-аракеттердин түрү",
   "Document selection": "Документти тандоо",
-  "Searched document": "Изделген документ"
+  "Searched document": "Изделген документ",
+  "fifth-step-title": "2 тарап (башка мүчөлөрү)",
+  "Sorry, such pin not found": "Кечиресиз, мындай ИНН табылган жок",
+  "View document": "Документти көрүү",
+  "Edit document": "Документти өзгөртүү"
 }

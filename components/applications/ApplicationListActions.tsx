@@ -19,7 +19,6 @@ export const ApplicationListActions = ({
 }) => {
   const t = useTranslations();
   const { update } = useFetch<Response>("", "DELETE", {
-    useEffectOnce: false,
     returnResponse: true,
   });
 
@@ -41,7 +40,7 @@ export const ApplicationListActions = ({
         </Tooltip>
       </Link>
 
-      <Link href={"applications"}>
+      <Link href={`/applications/edit/${params.row.id}`}>
         <Tooltip title={t("Edit")} arrow>
           <IconButton>
             <ModeEditIcon />
