@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
+import useEffectOnce from "@/hooks/useEffectOnce";
 import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box, Typography } from "@mui/material";
@@ -15,6 +16,11 @@ import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import UploadFiles from "@/components/fields/UploadFiles";
+
+interface IVersionFields {
+  version?: number;
+  $version?: number;
+}
 
 export interface ITabListItem {
   getElement: (index: number) => JSX.Element;
@@ -43,7 +49,38 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     name: "members",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
+  const [items, setItems] = useState<ITabListItem[]>([
+    {
+      getElement(index: number) {
+        return (
+          <Box display="flex" gap="20px" flexDirection="column">
+            <Typography variant="h5">{t("Personal data")}</Typography>
+            <PersonalData form={form} names={getPersonalDataNames(index)} />
+
+            <Typography variant="h5">{t("Identity document")}</Typography>
+            <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
+
+            <Typography variant="h5">{t("Place of residence")}</Typography>
+            <Address form={form} names={getAddressNames(index)} />
+
+            <Typography variant="h5">{t("Actual place of residence")}</Typography>
+            <Address form={form} names={getActualAddressNames(index)} />
+
+            <Typography variant="h5">{t("Contacts")}</Typography>
+            <Contact form={form} names={getContactNames(index)} />
+
+            <Typography variant="h5">{t("Files to upload")}</Typography>
+            <UploadFiles />
+          </Box>
+        );
+      },
+    },
+  ]);
+
   const { update: applicationUpdate } = useFetch("", "PUT");
+  const { update: applicationFetch } = useFetch("", "POST");
 
   const getPersonalDataNames = (index: number) => ({
     type: `members.${index}.partnerTypeSelect`,
@@ -88,38 +125,18 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     phone: `members.${index}.mobilePhone`,
   });
 
-  const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
-
-  const [members, setMembers] = useState<ITabListItem[]>([
-    {
-      getElement(index: number) {
-        return (
-          <Box display="flex" gap="20px" flexDirection="column">
-            <Typography variant="h5">{t("Personal data")}</Typography>
-            <PersonalData form={form} names={getPersonalDataNames(index)} />
-
-            <Typography variant="h5">{t("Identity document")}</Typography>
-            <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
-
-            <Typography variant="h5">{t("Place of residence")}</Typography>
-            <Address form={form} names={getAddressNames(index)} />
-
-            <Typography variant="h5">{t("Actual place of residence")}</Typography>
-            <Address form={form} names={getActualAddressNames(index)} />
-
-            <Typography variant="h5">{t("Contacts")}</Typography>
-            <Contact form={form} names={getContactNames(index)} />
-
-            <Typography variant="h5">{t("Files to upload")}</Typography>
-            <UploadFiles />
-          </Box>
-        );
-      },
-    },
-  ]);
+  useEffectOnce(() => {
+    const values = getValues();
+    const itemsLength = values.members?.length ?? 1;
+    if (itemsLength > 1) {
+      for (let i = 0; i < itemsLength - 1; i++) {
+        handleAddTabClick();
+      }
+    }
+  });
 
   const triggerFields = async () => {
-    const allFields = members.reduce((acc: string[], _, index: number) => {
+    const allFields = items.reduce((acc: string[], _, index: number) => {
       return [
         ...acc,
         ...Object.values(getPersonalDataNames(index)),
@@ -135,9 +152,9 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     if (!validated && errors?.members != null) {
       const tabsErrorsCounts: Record<number, number> = {};
 
-      for (const [index, member] of Object.entries(errors.members)) {
-        if (member == null) continue;
-        const count = Object.keys(member);
+      for (const [index, item] of Object.entries(errors.members)) {
+        if (item == null) continue;
+        const count = Object.keys(item);
         tabsErrorsCounts[parseInt(index)] = count.length;
       }
 
@@ -157,6 +174,8 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     const validated = await triggerFields();
 
     if (validated) {
+      setLoading(true);
+
       const values = getValues();
       const data: Partial<IApplicationSchema> = {
         id: values.id,
@@ -166,29 +185,51 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
-        setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
-      } else {
-        return members
-          .reduce((acc: string[], _, index: number) => {
-            return [
-              ...acc,
-              ...Object.values(getPersonalDataNames(index)),
-              ...Object.values(getIdentityDocumentNames(index)),
-              ...Object.values(getAddressNames(index)),
-              ...Object.values(getActualAddressNames(index)),
-              ...Object.values(getContactNames(index)),
-            ];
-          }, [])
-          .map((item) => resetField(item as any));
-      }
-    }
 
-    if (onNext != null && validated) onNext();
+        const applicationData = await applicationFetch(`/api/applications/${values.id}`, {
+          fields: ["version"],
+          related: {
+            members: ["version", "emailAddress.version", "mainAddress.version", "actualResidenceAddress.version"],
+          },
+        });
+
+        if (applicationData?.status === 0 && applicationData?.data[0]?.id != null) {
+          applicationData.data[0]?.members?.map(
+            (
+              item: IVersionFields & {
+                mainAddress?: IVersionFields;
+                actualResidenceAddress?: IVersionFields;
+                emailAddress?: IVersionFields;
+              },
+              index: number
+            ) => {
+              setValue(`members.${index}.version`, item.version ?? item.$version);
+              setValue(
+                `members.${index}.mainAddress.version`,
+                item.mainAddress?.version ?? item?.mainAddress?.$version
+              );
+              setValue(
+                `members.${index}.actualResidenceAddress.version`,
+                item?.actualResidenceAddress?.version ?? item?.actualResidenceAddress?.$version
+              );
+              setValue(
+                `members.${index}.emailAddress.version`,
+                item?.emailAddress?.version ?? item?.emailAddress?.$version
+              );
+            }
+          );
+        }
+
+        if (onNext != null) onNext();
+      }
+
+      setLoading(false);
+    }
   };
 
   const handleAddTabClick = () => {
-    setMembers((prev) => {
+    setItems((prev) => {
       const lastItem = prev[prev.length - 1];
 
       if (lastItem == null) return [...prev];
@@ -200,7 +241,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
   };
 
   const handleRemoveTabClick = () => {
-    setMembers((prev) => {
+    setItems((prev) => {
       if (prev.length <= 1) return [...prev];
 
       remove(prev.length - 1);
@@ -225,11 +266,11 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
       </Box>
 
       <Tabs
-        data={members.map((member, index) => {
+        data={items.map(({ getElement }, index) => {
           return {
             tabErrorsCount: tabsErrorsCounts[index] ?? 0,
             tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: member.getElement(index) ?? <></>,
+            tabPanelContent: getElement(index) ?? <></>,
           };
         })}
         actionsContent={
@@ -259,7 +300,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
           </Button>
         )}
         {onNext != null && (
-          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
             {t("Next")}
           </Button>
         )}

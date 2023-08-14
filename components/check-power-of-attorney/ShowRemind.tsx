@@ -27,7 +27,7 @@ export default function ShowRemind({ closeRemind, documentFound, remindTitle, re
       }}
     >
       {!documentFound ? (
-        <Typography color="textSecondary" display="flex" flexDirection="column">
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Typography fontWeight={400} color="#687C9B">
             {t("Each notarial document has its unique number, consisting of n-characters. Click on the ")}
             <Link href="/unique-number" color="#1BAA75">
@@ -35,12 +35,16 @@ export default function ShowRemind({ closeRemind, documentFound, remindTitle, re
             </Link>
             {t(" to find out how to get it.")}
           </Typography>
-        </Typography>
+        </Box>
       ) : (
-        <Typography color="textSecondary" display="flex" flexDirection="column">
-          <Typography fontWeight={600}>{remindTitle}</Typography>
-          <Typography fontWeight={400}>{remindText}</Typography>
-        </Typography>
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Typography color="secondary" fontWeight={600}>
+            {remindTitle}
+          </Typography>
+          <Typography color="#687C9B" fontWeight={400}>
+            {remindText}
+          </Typography>
+        </Box>
       )}
 
       {!documentFound ? (

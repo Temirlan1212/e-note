@@ -4,6 +4,8 @@ import { addressSchema } from "./address";
 export type IPersonSchema = InferType<typeof personSchema>;
 
 export const personSchema = object().shape({
+  id: number().integer().positive().nullable(),
+  version: number().integer().positive().nullable(),
   partnerTypeSelect: number()
     .integer()
     .nullable()
@@ -27,11 +29,10 @@ export const personSchema = object().shape({
     .matches(/^[0-9]*$/, "onlyNumbers"),
   birthDate: date().nullable(),
   citizenship: object({
-    id: number()
-      .integer()
-      .nullable()
-      .transform((value) => (isNaN(value) ? null : value)),
-  }).nullable(),
+    id: number().integer().positive(),
+  })
+    .nullable()
+    .default(null),
   identityDocument: number()
     .integer()
     .nullable()
@@ -51,10 +52,12 @@ export const personSchema = object().shape({
   mainAddress: addressSchema,
   actualResidenceAddress: addressSchema,
   emailAddress: object({
+    id: number().integer().positive().nullable(),
+    version: number().integer().positive().nullable(),
     address: string().trim().email("email"),
   }),
   mobilePhone: string()
     .trim()
     .required("required")
-    .matches(/^[0-9\+\s]*$/, "onlyNumbers"),
+    .matches(/^[0-9\+\-\s]*$/, "onlyNumbers"),
 });

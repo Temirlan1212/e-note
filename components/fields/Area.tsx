@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
@@ -13,9 +14,9 @@ export interface IAreaProps {
     city: string;
   };
   defaultValues?: {
-    region?: number | null;
-    district?: number | null;
-    city?: number | null;
+    region?: { id: number } | null;
+    district?: { id: number } | null;
+    city?: { id: number } | null;
   };
 }
 
@@ -27,6 +28,12 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
   const region = watch(names.region);
   const district = watch(names.district);
   const city = watch(names.city);
+
+  const [mounted, setMounted] = useState(false);
+
+  useEffectOnce(() => {
+    setMounted(true);
+  });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -68,13 +75,15 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
           defaultValue={defaultValues?.district ?? null}
           render={({ field, fieldState }) => {
             const { data, loading } = useFetch(
-              region != null ? `/api/dictionaries/districts?regionId=${region?.id}` : "",
+              region != null ? `/api/dictionaries/districts?regionId=${region.id}` : "",
               "GET"
             );
 
             useEffectOnce(() => {
-              resetField(field.name);
-            }, [region]);
+              if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
+                resetField(field.name, { defaultValue: defaultValues?.district ?? null });
+              }
+            }, [names.district, region]);
 
             return (
               <Box display="flex" flexDirection="column" width="100%">
@@ -112,8 +121,10 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
             );
 
             useEffectOnce(() => {
-              resetField(field.name);
-            }, [district]);
+              if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
+                resetField(field.name, { defaultValue: defaultValues?.city ?? null });
+              }
+            }, [names.city, district]);
 
             return (
               <Box display="flex" flexDirection="column" width="100%">

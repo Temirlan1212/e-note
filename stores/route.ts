@@ -110,6 +110,26 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
         },
       ],
     },
+    {
+      title: "Templates",
+      link: "",
+      type: "group",
+      icon: "Description",
+      children: [
+        {
+          title: "System templates",
+          link: "/templates",
+          type: "menu",
+          icon: "LibraryBooks",
+        },
+        {
+          title: "My templates",
+          link: "",
+          type: "menu",
+          icon: "CollectionsBookmark",
+        },
+      ],
+    },
   ],
   notaryRoutes: [],
   getRoutes: (routeList, type, rootOnly = false) => {

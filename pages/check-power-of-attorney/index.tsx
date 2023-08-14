@@ -60,6 +60,7 @@ export default function index() {
                 sx={{
                   boxShadow: isVariantClicked ? "" : "0px 10px 20px 0px #99DBAF",
                   background: isVariantClicked ? "#EFEFEF" : "",
+                  padding: "10px 0",
                 }}
                 color={isVariantClicked ? "inherit" : "success"}
                 onClick={handleVariantClick}
@@ -79,6 +80,7 @@ export default function index() {
                 sx={{
                   boxShadow: !isVariantClicked ? "" : "0px 10px 20px 0px #99DBAF",
                   background: !isVariantClicked ? "#EFEFEF" : "",
+                  padding: "10px 0",
                 }}
                 color={!isVariantClicked ? "inherit" : "success"}
                 onClick={handleVariantClick}

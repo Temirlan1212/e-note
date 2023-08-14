@@ -1,6 +1,9 @@
 {
   "Create application": "Создать заявку",
+  "Edit application": "Редактировать заявку",
   "Choose notary": "Выбор нотариуса",
+  "Choose requester": "Выбор заявителя",
+  "Choose document": "Выбор документа",
   "Form first step hint text": "Вы также можете сразу перейти к поисковой форме “Нотариус” если знаете конкретного нотариуса, игнорируя предшествующие поля.",
   "Type of action": "Вид действия",
   "Type of document": "Вид документа",
@@ -25,5 +28,8 @@
   "Type of notarial action": "Вид нотариального действия",
   "Document selection": "Выбор документа",
   "Searched document": "Искомый документ",
-  "fifth-step-title": "Сторона 2 (другие участники)"
+  "fifth-step-title": "Сторона 2 (другие участники)",
+  "Sorry, such pin not found": "Извините, такой инн не найден",
+  "View document": "Просмотр документа",
+  "Edit document": "Редактирование документа"
 }

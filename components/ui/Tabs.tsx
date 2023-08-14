@@ -57,7 +57,7 @@ export default function Tabs({ color = "primary", actionsContent = <></>, data, 
           allowScrollButtonsMobile
           sx={combineStyles}
         >
-          {data.map(({ tabErrorsCount, tabLabel }, index) => (
+          {data?.map(({ tabErrorsCount, tabLabel }, index) => (
             <Tab
               key={index}
               label={

@@ -268,17 +268,17 @@ export default function InheritanceCases() {
             variant="outlined"
             color="success"
             sx={{
-              height: "43px",
+              height: "auto",
               gap: "10px",
-              padding: "14px 24px",
+              padding: "10px 22px",
               "&:hover": { color: "#F6F6F6" },
             }}
             fullWidth
+            endIcon={<ExcelIcon />}
           >
             <Typography fontWeight={600} fontSize={14}>
               {t("Export to excel")}
             </Typography>
-            <ExcelIcon />
           </Button>
         </Grid>
       </Grid>
@@ -290,12 +290,12 @@ export default function InheritanceCases() {
             gap: "10px",
             boxShadow: "0px 10px 20px 0px #99DBAF",
             width: { xs: "100%", sm: "100%", md: "243px" },
-            padding: "10px 0",
+            padding: "9.5px 0",
           }}
           onClick={toggleFilter}
         >
           <FilterAltOffIcon />
-          <Typography fontWeight={600} fontSize={16}>
+          <Typography fontWeight={600} fontSize={15}>
             {filterVisible ? t("Collapse filter") : t("Expand filter")}
           </Typography>
         </Button>

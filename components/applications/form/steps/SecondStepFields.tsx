@@ -23,8 +23,6 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   const t = useTranslations();
   const { locale } = useRouter();
 
-  const { data: notarialData, loading } = useFetch<INotarialActionData>("/api/dictionaries/notarial-action", "GET");
-
   const { trigger, control, watch, resetField, getValues, setValue } = form;
 
   const objectVal = watch("object");
@@ -33,13 +31,23 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   const typeNotarialActionVal = watch("typeNotarialAction");
   const actionVal = watch("action");
 
+  const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [formValues, setformValues] = useState<Record<string, any>>({});
 
+  const { data: notarialData, loading: notarialLoading } = useFetch<INotarialActionData>(
+    "/api/dictionaries/notarial-action",
+    "GET"
+  );
   const { data: searchedDocData } = useFetch("/api/dictionaries/document-type", "POST", {
     body: formValues,
   });
 
   const { update: applicationUpdate } = useFetch("", "PUT");
+
+  useEffectOnce(() => {
+    setMounted(true);
+  });
 
   useEffectOnce(() => {
     if (actionVal != null) {
@@ -49,7 +57,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
   }, [actionVal]);
 
   const triggerFields = async () => {
-    return await trigger(["object", "objectType"]);
+    return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action"]);
   };
 
   const handlePrevClick = () => {
@@ -60,6 +68,8 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
     const validated = await triggerFields();
 
     if (validated) {
+      setLoading(true);
+
       const values = getValues();
       const data: Partial<IApplicationSchema> = {
         id: values.id,
@@ -69,16 +79,17 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
         notarialAction: values.notarialAction,
         typeNotarialAction: values.typeNotarialAction,
         action: values.action,
+        product: values.product,
       };
 
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
-        setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
+        if (onNext != null) onNext();
       }
-    }
 
-    if (onNext != null && validated) onNext();
+      setLoading(false);
+    }
   };
 
   return (
@@ -90,7 +101,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography variant="h4" whiteSpace="nowrap">
-          {t("Choose notary")}
+          {t("Choose document")}
         </Typography>
       </Box>
 
@@ -119,7 +130,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
                 helperText={errorMessage ? t(errorMessage) : ""}
                 value={field.value == null ? "" : field.value}
                 onBlur={field.onBlur}
-                loading={loading}
+                loading={notarialLoading}
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
@@ -141,8 +152,10 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           );
 
           useEffectOnce(() => {
-            resetField(field.name);
-          }, [objectVal]);
+            if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
+              resetField(field.name, { defaultValue: null });
+            }
+          }, ["objectType", objectVal]);
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
@@ -178,8 +191,10 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           );
 
           useEffectOnce(() => {
-            resetField(field.name);
-          }, [objectTypeVal]);
+            if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
+              resetField(field.name, { defaultValue: null });
+            }
+          }, ["notarialAction", objectTypeVal]);
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
@@ -215,8 +230,10 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           );
 
           useEffectOnce(() => {
-            resetField(field.name);
-          }, [notarialActionVal]);
+            if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
+              resetField(field.name, { defaultValue: null });
+            }
+          }, ["typeNotarialAction", notarialActionVal]);
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
@@ -252,8 +269,10 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           );
 
           useEffectOnce(() => {
-            resetField(field.name);
-          }, [typeNotarialActionVal]);
+            if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
+              resetField(field.name, { defaultValue: null });
+            }
+          }, ["action", typeNotarialActionVal]);
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
@@ -286,8 +305,10 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           const errorMessage = fieldState.error?.message;
 
           useEffectOnce(() => {
-            resetField(field.name);
-          }, [actionVal]);
+            if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
+              resetField(field.name, { defaultValue: null });
+            }
+          }, ["product", actionVal]);
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
@@ -319,7 +340,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           </Button>
         )}
         {onNext != null && (
-          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
             {t("Next")}
           </Button>
         )}

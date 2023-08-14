@@ -5,14 +5,13 @@ import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { format } from "date-fns";
 import { IApplicationSchema } from "@/validator-schemas/application";
+import { INotaryDistrict } from "@/models/dictionaries/notary-district";
+import { ICompany } from "@/models/company";
 import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
-import Select from "@/components/ui/Select";
 import Hint from "@/components/ui/Hint";
 import Autocomplete from "@/components/ui/Autocomplete";
 import Area from "@/components/fields/Area";
-import { ICompany } from "@/models/company";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
@@ -27,10 +26,17 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
   const { trigger, control, watch, resetField, getValues, setValue } = form;
 
-  const cityId = watch("city");
-  const notaryDistrictId = watch("notaryDistrict");
+  const city = watch("city");
+  const notaryDistrict = watch("notaryDistrict");
+
+  const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const { update: applicationCreate } = useFetch("", "POST");
+
+  useEffectOnce(() => {
+    setMounted(true);
+  });
 
   const triggerFields = async () => {
     return await trigger(["region", "district", "city", "notaryDistrict", "company"]);
@@ -44,20 +50,30 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
     const validated = await triggerFields();
 
     if (validated) {
+      setLoading(true);
+
       const values = getValues();
       const data: Partial<IApplicationSchema> & { creationDate: string } = {
         company: values.company,
         creationDate: format(new Date(), "yyyy-MM-dd"),
       };
 
-      const result = await applicationCreate("/api/applications/create", data);
+      let url = "/api/applications/create";
+      if (values.id != null) {
+        url = `/api/applications/update/${values.id}`;
+        data.id = values.id;
+        data.version = values.version;
+      }
+
+      const result = await applicationCreate(url, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
+        if (onNext != null) onNext();
       }
-    }
 
-    if (onNext != null && validated) onNext();
+      setLoading(false);
+    }
   };
 
   return (
@@ -82,44 +98,57 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
           name="notaryDistrict"
           defaultValue={null}
           render={({ field, fieldState }) => {
-            const { data: notaryDistrictsDictionary } = useFetch(
-              `/api/dictionaries/notary-districts?cityId=${cityId}`,
+            const { data, loading } = useFetch(
+              city != null ? `/api/dictionaries/notary-districts?cityId=${city.id}` : "",
               "GET"
             );
 
             useEffectOnce(() => {
-              resetField(field.name);
-            }, [cityId]);
+              if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
+                resetField(field.name, { defaultValue: null });
+              }
+            }, ["notaryDistrict", city]);
 
             return (
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("Notary district")}</InputLabel>
-                <Select
+                <Autocomplete
                   labelField="name"
-                  valueField="id"
-                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!cityId}
-                  data={notaryDistrictsDictionary?.status === 0 ? notaryDistrictsDictionary?.data ?? [] : []}
-                  {...field}
-                  value={field.value != null ? field.value : ""}
-                ></Select>
+                  disabled={!city}
+                  options={data?.status === 0 ? (data?.data as INotaryDistrict[]) ?? [] : []}
+                  loading={loading}
+                  value={
+                    field.value != null
+                      ? (data?.data ?? []).find((item: INotaryDistrict) => item.id == field.value?.id) ?? null
+                      : null
+                  }
+                  onBlur={field.onBlur}
+                  onChange={(event, value) => {
+                    field.onChange(value?.id != null ? { id: value.id } : null);
+                    trigger(field.name);
+                  }}
+                />
               </Box>
             );
           }}
         />
         <Controller
           control={control}
-          name="company.id"
+          name="company"
+          defaultValue={null}
           render={({ field, fieldState }) => {
-            const { data: companyData, loading: companyLoading } = useFetch(
-              `/api/companies${notaryDistrictId != null ? "?notaryDistrictId=" + notaryDistrictId : ""}`,
+            const { data, loading } = useFetch(
+              `/api/companies${notaryDistrict != null ? "?notaryDistrictId=" + notaryDistrict.id : ""}`,
               "GET"
             );
 
             useEffectOnce(() => {
-              resetField(field.name);
-            }, [notaryDistrictId]);
+              if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
+                resetField(field.name, { defaultValue: null });
+              }
+            }, ["company", notaryDistrict]);
 
             return (
               <Box display="flex" flexDirection="column" width="100%">
@@ -128,16 +157,17 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   labelField="name"
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  options={companyData?.status === 0 ? (companyData?.data as ICompany[]) ?? [] : []}
-                  loading={companyLoading}
+                  disabled={loading}
+                  options={data?.status === 0 ? (data?.data as ICompany[]) ?? [] : []}
+                  loading={loading}
                   value={
                     field.value != null
-                      ? (companyData?.data ?? []).find((item: ICompany) => item.id == field.value)
+                      ? (data?.data ?? []).find((item: ICompany) => item.id == field.value?.id) ?? null
                       : null
                   }
                   onBlur={field.onBlur}
                   onChange={(event, value) => {
-                    field.onChange(value != null ? value.id : undefined);
+                    field.onChange(value?.id != null ? { id: value.id } : null);
                     trigger(field.name);
                   }}
                 />
@@ -154,7 +184,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
           </Button>
         )}
         {onNext != null && (
-          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
             {t("Next")}
           </Button>
         )}
