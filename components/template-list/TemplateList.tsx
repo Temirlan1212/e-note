@@ -61,7 +61,7 @@ function GridTableActionsCell({ row }: { row: Record<string, any> }) {
 export default function TemplateList() {
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const [keywordValue, setKeywordValue] = useState<string>("");
-  const [rowData, setRowData] = useState<IRowData>({});
+  const [rowData, setRowData] = useState<IRowData | null>(null);
   const t = useTranslations();
 
   const columns: IGridColDef[] = [
@@ -131,7 +131,7 @@ export default function TemplateList() {
   });
 
   const itemsPerPage = 6;
-  const totalPages = Array.isArray(allData?.data) ? Math.ceil(allData?.data.length / itemsPerPage) : 1;
+  const totalPages = allData != null && Array.isArray(allData.data) ? Math.ceil(allData.data.length / itemsPerPage) : 1;
 
   const onPageChange = (page: number) => {
     setSelectedPage(page);

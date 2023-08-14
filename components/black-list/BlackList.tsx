@@ -113,7 +113,7 @@ export default function BlackList() {
   const [reasonValue, setReasonValue] = useState<string>("");
   const [pinValue, setPinValue] = useState<string>("");
   const [fullNameValue, setFullNameValue] = useState<string>("");
-  const [rowData, setRowData] = useState<IRowData>({});
+  const [rowData, setRowData] = useState<IRowData | null>(null);
   const t = useTranslations();
   const locale = useLocale();
 
@@ -176,7 +176,7 @@ export default function BlackList() {
   });
 
   const itemsPerPage = 6;
-  const totalPages = Array.isArray(allData?.data) ? Math.ceil(allData?.data.length / itemsPerPage) : 1;
+  const totalPages = allData != null && Array.isArray(allData.data) ? Math.ceil(allData.data.length / itemsPerPage) : 1;
 
   const onPageChange = (page: number) => {
     setSelectedPage(page);

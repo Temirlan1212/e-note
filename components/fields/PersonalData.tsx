@@ -69,8 +69,8 @@ export default function PersonalData({ form, names, defaultValues, fields }: IPe
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 data={[
-                  { id: 2, name: "Физическое лицо" },
-                  { id: 1, name: "Юридическое лицо" },
+                  { id: 2, name: t("Individual person") },
+                  { id: 1, name: t("Juridical person") },
                 ]}
                 {...field}
                 value={field.value != null ? field.value : ""}
@@ -85,7 +85,7 @@ export default function PersonalData({ form, names, defaultValues, fields }: IPe
             defaultValue={defaultValues?.foreigner ?? false}
             render={({ field, fieldState }) => (
               <Checkbox
-                label="Иностранное лицо"
+                label={t("Foreign person")}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 {...field}

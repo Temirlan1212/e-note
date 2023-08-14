@@ -4,6 +4,7 @@ import { MenuItem } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
 enum types {
+  primary = "primary.main",
   error = "error.main",
   success = "success.main",
   secondary = "secondary.main",

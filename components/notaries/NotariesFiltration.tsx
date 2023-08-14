@@ -315,15 +315,14 @@ const NotariesFiltration = (props: INotariesFiltrationProps) => {
         >
           <NotariesMultipleSelects option={optionSelectData} setFilters={setFilters} />
         </Box>
-        <RadioGroup
-          sx={{ display: "flex", flexDirection: "row" }}
-          aria-labelledby="filter-radio-buttons-group-label"
-          defaultValue="krug"
-          name="radio-buttons-group"
-        >
-          <Radio label={t("Around the clock")} value="krug" />
-          <Radio label={t("Visiting")} value="vyesd" />
-        </RadioGroup>
+        <Radio
+          row
+          data={[
+            { label: t("Around the clock"), value: "krug" },
+            { label: t("Visiting"), value: "vyesd" },
+          ]}
+          value="krug"
+        />
         <Box
           display="flex"
           gap="30px"

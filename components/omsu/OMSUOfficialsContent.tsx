@@ -163,19 +163,7 @@ const OMSUOfficialsContent: FC<IOMSUOfficialsContentProps> = (props) => {
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <Box>
-          <GridTable
-            rows={rows}
-            columns={columns}
-            sx={dataGridStyles}
-            filterData={{
-              data: {
-                position: rows ?? [],
-              },
-              filterField: {
-                position: { field: "title_ru", outputField: "value" },
-              },
-            }}
-          />
+          <GridTable rows={rows} columns={columns} sx={dataGridStyles} />
         </Box>
       </Box>
     </Box>
