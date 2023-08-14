@@ -78,7 +78,12 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           // <NotarySecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
           <NotaryThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
           <NotaryFourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-          <NotaryFifthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <NotaryFifthStepFields
+            dynamicForm={dynamicForm}
+            form={form}
+            onPrev={() => setStep(step - 1)}
+            onNext={() => setStep(step + 1)}
+          />,
           <NotarySixthStepFields
             form={form}
             onPrev={() => setStep(step - 1)}
