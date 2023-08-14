@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import PublicLayout from "@/layouts/Public";
 import PrivateLayout from "@/layouts/Private";
@@ -10,6 +10,7 @@ import theme from "@/themes/default";
 import { useProfileStore } from "@/stores/profile";
 import { IRoute, useRouteStore } from "@/stores/route";
 import { IUser } from "@/models/profile/user";
+import NavigationLoading from "@/components/ui/NavigationLoading";
 
 function Layout({ children }: { children: JSX.Element }) {
   const router = useRouter();
@@ -47,9 +48,11 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <NextIntlClientProvider messages={pageProps.messages}>
       <ThemeProvider theme={theme}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <NavigationLoading>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </NavigationLoading>
       </ThemeProvider>
     </NextIntlClientProvider>
   );
