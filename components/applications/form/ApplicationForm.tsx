@@ -42,6 +42,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     update: getDynamicFormAppData,
     loading: dynamicFormAppLoading,
   } = useFetch("", "POST");
+
   const { update: getDocumentTemplateData, loading: documentTemplateDataLoading } = useFetch("", "GET");
 
   const form = useForm<IApplicationSchema>({
@@ -66,18 +67,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     }
     setLoading(false);
   });
-
-  if (loading || dynamicFormAppLoading || documentTemplateDataLoading) {
-    return (
-      <Box width={"100%"} marginTop={"150px"}>
-        <Skeleton width={"100%"} height={"10vh"} />
-        <Skeleton width={"100%"} height={"5vh"} />
-        <Skeleton width={"100%"} height={"5vh"} />
-        <Skeleton width={"100%"} height={"5vh"} />
-        <Skeleton width={"100%"} height={"5vh"} />
-      </Box>
-    );
-  }
 
   const steps =
     userData?.group?.id === 4
@@ -111,8 +100,9 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
                 });
 
                 getDynamicFormAppData(`/api/applications/${id}`, { fields: fields });
-                setStep(step + 1);
               }
+
+              setStep(step + 1);
             }}
           />,
           <ThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
@@ -127,6 +117,10 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
         ];
 
   const onSubmit = async (data: IApplicationSchema) => {};
+
+  if (loading || dynamicFormAppLoading || documentTemplateDataLoading) {
+    return <></>;
+  }
 
   return (
     <Box>

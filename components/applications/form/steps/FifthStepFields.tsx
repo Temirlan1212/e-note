@@ -128,6 +128,8 @@ const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentP
 };
 
 const getDynamicDefaultValue = (field: keyof typeof types, value: any) => {
+  const isInvalidDate = isNaN(new Date(String(value)).getDate());
+
   const types = {
     Float: !value ? null : value,
     Decimal: !value ? null : value,
@@ -135,9 +137,9 @@ const getDynamicDefaultValue = (field: keyof typeof types, value: any) => {
     Boolean: value,
     Selection: !value ? null : value,
     String: !value ? "" : value,
-    Date: !value ? null : new Date(String(value)),
-    Time: !value ? null : parse(String(value), "HH:mm", new Date()),
-    DateTime: !value ? null : new Date(String(value)),
+    Date: isInvalidDate ? null : new Date(String(value)),
+    Time: isInvalidDate ? null : new Date(Date.parse(value)),
+    DateTime: isInvalidDate ? null : new Date(String(value)),
   };
 
   return types[field];
@@ -145,10 +147,12 @@ const getDynamicDefaultValue = (field: keyof typeof types, value: any) => {
 
 const getDateDynamicValue = (field: keyof typeof types, value: any) => {
   const isDate = value instanceof Date;
+  const isInvalidDate = isNaN(new Date(String(value)).getDate());
+
   const types = {
-    Date: isDate ? value : !value ? null : new Date(String(value)),
-    Time: isDate ? value : !value ? null : parse(String(value), "HH:mm", new Date()),
-    DateTime: isDate ? value : !value ? null : new Date(String(value)),
+    Date: isDate ? value : isInvalidDate ? null : new Date(String(value)),
+    Time: isDate ? value : isInvalidDate ? null : new Date(Date.parse(value)),
+    DateTime: isDate ? value : isInvalidDate ? null : new Date(String(value)),
   };
 
   return types[field];
@@ -191,14 +195,16 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
 
     if (validated && onNext) {
       const values = getValues();
+
       const data: Partial<IApplicationSchema> = {
+        ...dynamicForm.getValues(),
         id: values.id,
         version: values.version,
-        ...dynamicForm.getValues(),
       };
 
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
+        console.log("version update");
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
         onNext();
