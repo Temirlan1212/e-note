@@ -30,13 +30,21 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
   const notaryDistrict = watch("notaryDistrict");
 
   const [loading, setLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
+
+  const { data: notaryDistrictDictionary, loading: notaryDistrictDictionaryLoading } = useFetch(
+    city != null ? `/api/dictionaries/notary-districts?cityId=${city.id}` : "",
+    "GET"
+  );
+  const { data: companyDictionary, loading: companyDictionaryLoading } = useFetch(
+    `/api/companies${notaryDistrict != null ? "?notaryDistrictId=" + notaryDistrict.id : ""}`,
+    "GET"
+  );
 
   const { update: applicationCreate } = useFetch("", "POST");
 
   useEffectOnce(() => {
-    setMounted(true);
-  });
+    resetField("notaryDistrict", { defaultValue: null });
+  }, [city]);
 
   const triggerFields = async () => {
     return await trigger(["region", "district", "city", "notaryDistrict", "company"]);
@@ -97,83 +105,64 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
           control={control}
           name="notaryDistrict"
           defaultValue={null}
-          render={({ field, fieldState }) => {
-            const { data, loading } = useFetch(
-              city != null ? `/api/dictionaries/notary-districts?cityId=${city.id}` : "",
-              "GET"
-            );
-
-            useEffectOnce(() => {
-              if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
-                resetField(field.name, { defaultValue: null });
-              }
-            }, ["notaryDistrict", city]);
-
-            return (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Notary district")}</InputLabel>
-                <Autocomplete
-                  labelField="name"
-                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!city}
-                  options={data?.status === 0 ? (data?.data as INotaryDistrict[]) ?? [] : []}
-                  loading={loading}
-                  value={
-                    field.value != null
-                      ? (data?.data ?? []).find((item: INotaryDistrict) => item.id == field.value?.id) ?? null
-                      : null
-                  }
-                  onBlur={field.onBlur}
-                  onChange={(event, value) => {
-                    field.onChange(value?.id != null ? { id: value.id } : null);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            );
-          }}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Notary district")}</InputLabel>
+              <Autocomplete
+                labelField="name"
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={!city}
+                options={
+                  notaryDistrictDictionary?.status === 0
+                    ? (notaryDistrictDictionary?.data as INotaryDistrict[]) ?? []
+                    : []
+                }
+                loading={notaryDistrictDictionaryLoading}
+                value={
+                  field.value != null
+                    ? (notaryDistrictDictionary?.data ?? []).find(
+                        (item: INotaryDistrict) => item.id == field.value?.id
+                      ) ?? null
+                    : null
+                }
+                onBlur={field.onBlur}
+                onChange={(event, value) => {
+                  field.onChange(value?.id != null ? { id: value.id } : null);
+                  trigger(field.name);
+                  resetField("company", { defaultValue: null });
+                }}
+              />
+            </Box>
+          )}
         />
         <Controller
           control={control}
           name="company"
           defaultValue={null}
-          render={({ field, fieldState }) => {
-            const { data, loading } = useFetch(
-              `/api/companies${notaryDistrict != null ? "?notaryDistrictId=" + notaryDistrict.id : ""}`,
-              "GET"
-            );
-
-            useEffectOnce(() => {
-              if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
-                resetField(field.name, { defaultValue: null });
-              }
-            }, ["company", notaryDistrict]);
-
-            return (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Notary")}</InputLabel>
-                <Autocomplete
-                  labelField="name"
-                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={loading}
-                  options={data?.status === 0 ? (data?.data as ICompany[]) ?? [] : []}
-                  loading={loading}
-                  value={
-                    field.value != null
-                      ? (data?.data ?? []).find((item: ICompany) => item.id == field.value?.id) ?? null
-                      : null
-                  }
-                  onBlur={field.onBlur}
-                  onChange={(event, value) => {
-                    field.onChange(value?.id != null ? { id: value.id } : null);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            );
-          }}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Notary")}</InputLabel>
+              <Autocomplete
+                labelField="name"
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={loading}
+                options={companyDictionary?.status === 0 ? (companyDictionary?.data as ICompany[]) ?? [] : []}
+                loading={companyDictionaryLoading}
+                value={
+                  field.value != null
+                    ? (companyDictionary?.data ?? []).find((item: ICompany) => item.id == field.value?.id) ?? null
+                    : null
+                }
+                onBlur={field.onBlur}
+                onChange={(event, value) => {
+                  field.onChange(value?.id != null ? { id: value.id } : null);
+                  trigger(field.name);
+                }}
+              />
+            </Box>
+          )}
         />
       </Box>
 

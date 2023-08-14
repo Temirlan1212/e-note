@@ -29,11 +29,15 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
   const district = watch(names.district);
   const city = watch(names.city);
 
-  const [mounted, setMounted] = useState(false);
-
-  useEffectOnce(() => {
-    setMounted(true);
-  });
+  const { data: regionDictionary, loading: regionDictionaryLoading } = useFetch("/api/dictionaries/regions", "GET");
+  const { data: districtDictionary, loading: districtDictionaryLoading } = useFetch(
+    region != null ? `/api/dictionaries/districts?regionId=${region.id}` : "",
+    "GET"
+  );
+  const { data: cityDictionary, loading: cityDictionaryLoading } = useFetch(
+    district != null ? `/api/dictionaries/cities?districtId=${district.id}` : "",
+    "GET"
+  );
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -42,114 +46,91 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
           control={control}
           name={names.region}
           defaultValue={defaultValues?.region ?? null}
-          render={({ field, fieldState }) => {
-            const { data, loading } = useFetch("/api/dictionaries/regions", "GET");
-
-            return (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Region")}</InputLabel>
-                <Autocomplete
-                  labelField="name"
-                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  options={data?.status === 0 ? (data?.data as Record<string, any>[]) ?? [] : []}
-                  loading={loading}
-                  value={
-                    field.value != null
-                      ? (data?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ?? null
-                      : null
-                  }
-                  onBlur={field.onBlur}
-                  onChange={(event, value) => {
-                    field.onChange(value?.id != null ? { id: value.id } : null);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            );
-          }}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Region")}</InputLabel>
+              <Autocomplete
+                labelField="name"
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                options={regionDictionary?.status === 0 ? (regionDictionary?.data as Record<string, any>[]) ?? [] : []}
+                loading={regionDictionaryLoading}
+                value={
+                  field.value != null
+                    ? (regionDictionary?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ??
+                      null
+                    : null
+                }
+                onBlur={field.onBlur}
+                onChange={(event, value) => {
+                  field.onChange(value?.id != null ? { id: value.id } : null);
+                  trigger(field.name);
+                  [names.district, names.city].map((item) => resetField(item, { defaultValue: null }));
+                }}
+              />
+            </Box>
+          )}
         />
         <Controller
           control={control}
           name={names.district}
           defaultValue={defaultValues?.district ?? null}
-          render={({ field, fieldState }) => {
-            const { data, loading } = useFetch(
-              region != null ? `/api/dictionaries/districts?regionId=${region.id}` : "",
-              "GET"
-            );
-
-            useEffectOnce(() => {
-              if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
-                resetField(field.name, { defaultValue: defaultValues?.district ?? null });
-              }
-            }, [names.district, region]);
-
-            return (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("District")}</InputLabel>
-                <Autocomplete
-                  labelField="name"
-                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!region}
-                  options={data?.status === 0 ? (data?.data as Record<string, any>[]) ?? [] : []}
-                  loading={loading}
-                  value={
-                    field.value != null
-                      ? (data?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ?? null
-                      : null
-                  }
-                  onBlur={field.onBlur}
-                  onChange={(event, value) => {
-                    field.onChange(value?.id != null ? { id: value.id } : null);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            );
-          }}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("District")}</InputLabel>
+              <Autocomplete
+                labelField="name"
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={!region}
+                options={
+                  districtDictionary?.status === 0 ? (districtDictionary?.data as Record<string, any>[]) ?? [] : []
+                }
+                loading={districtDictionaryLoading}
+                value={
+                  field.value != null
+                    ? (districtDictionary?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ??
+                      null
+                    : null
+                }
+                onBlur={field.onBlur}
+                onChange={(event, value) => {
+                  field.onChange(value?.id != null ? { id: value.id } : null);
+                  trigger(field.name);
+                  [names.city].map((item) => resetField(item, { defaultValue: null }));
+                }}
+              />
+            </Box>
+          )}
         />
         <Controller
           control={control}
           name={names.city}
           defaultValue={defaultValues?.city ?? null}
-          render={({ field, fieldState }) => {
-            const { data, loading } = useFetch(
-              district != null ? `/api/dictionaries/cities?districtId=${district.id}` : "",
-              "GET"
-            );
-
-            useEffectOnce(() => {
-              if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
-                resetField(field.name, { defaultValue: defaultValues?.city ?? null });
-              }
-            }, [names.city, district]);
-
-            return (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("City")}</InputLabel>
-                <Autocomplete
-                  labelField="name"
-                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!district}
-                  options={data?.status === 0 ? (data?.data as Record<string, any>[]) ?? [] : []}
-                  loading={loading}
-                  value={
-                    field.value != null
-                      ? (data?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ?? null
-                      : null
-                  }
-                  onBlur={field.onBlur}
-                  onChange={(event, value) => {
-                    field.onChange(value?.id != null ? { id: value.id } : null);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            );
-          }}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("City")}</InputLabel>
+              <Autocomplete
+                labelField="name"
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={!district}
+                options={cityDictionary?.status === 0 ? (cityDictionary?.data as Record<string, any>[]) ?? [] : []}
+                loading={cityDictionaryLoading}
+                value={
+                  field.value != null
+                    ? (cityDictionary?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ??
+                      null
+                    : null
+                }
+                onBlur={field.onBlur}
+                onChange={(event, value) => {
+                  field.onChange(value?.id != null ? { id: value.id } : null);
+                  trigger(field.name);
+                }}
+              />
+            </Box>
+          )}
         />
       </Box>
     </Box>

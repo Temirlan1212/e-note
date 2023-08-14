@@ -115,6 +115,7 @@ export default function BlackList() {
   const [fullNameValue, setFullNameValue] = useState<string>("");
   const [rowData, setRowData] = useState<IRowData>({});
   const t = useTranslations();
+  const locale = useLocale();
 
   const columns: IGridColDef[] = [
     {
@@ -136,7 +137,7 @@ export default function BlackList() {
       field: "createdOn",
       headerName: "Entry date",
       width: 180,
-      renderCell: ({ value }) => new Date(value).toLocaleDateString(useLocale()),
+      renderCell: ({ value }) => new Date(value).toLocaleDateString(locale),
     },
     {
       field: "createdBy.fullName",
