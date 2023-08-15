@@ -4,6 +4,7 @@ import { MenuItem } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
 enum types {
+  primary = "primary.main",
   error = "error.main",
   success = "success.main",
   secondary = "secondary.main",
@@ -80,7 +81,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
         >
           ---
         </MenuItem>
-        {data.map((item) => (
+        {data?.map((item) => (
           <MenuItem
             sx={{
               "&.Mui-selected": {

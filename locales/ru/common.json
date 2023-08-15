@@ -142,5 +142,11 @@
   "Member": "Участник",
   "InformationAboutStatusApplication": "Информация о статусе заявки",
   "Viewing a document": "Просмотр документа",
-  "Download PDF": "Скачать PDF"
+  "Templates": "Шаблоны",
+  "My templates": "Мои шаблоны",
+  "System templates": "Системные шаблоны",
+  "Download PDF": "Скачать PDF",
+  "Individual person": "Физическое лицо",
+  "Juridical person": "Юридическое лицо",
+  "Foreign person": "Иностранное лицо"
 }

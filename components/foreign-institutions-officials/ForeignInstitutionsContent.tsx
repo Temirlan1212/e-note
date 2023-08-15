@@ -2,7 +2,7 @@ import React, { FC, useState } from "react";
 
 import { useTranslations } from "next-intl";
 
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import Button from "../ui/Button";
 import SearchBar from "../ui/SearchBar";
@@ -148,30 +148,20 @@ const ForeignInstitutionsOfficialsContent: FC<IForeignInstitutionsOfficialsConte
               xs: "100%",
               md: "20%",
             },
-            padding: "13px 10px",
+            padding: "10px 10px",
           }}
           color="primary"
           variant="outlined"
           endIcon={<ExcelIcon />}
         >
-          {t("Export to Excel")}
+          <Typography fontWeight={600} fontSize={14}>
+            {t("Export to excel")}
+          </Typography>
         </Button>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <Box>
-          <GridTable
-            rows={rows}
-            columns={columns}
-            sx={dataGridStyles}
-            filterData={{
-              data: {
-                position: rows ?? [],
-              },
-              filterField: {
-                position: { field: "title_ru", outputField: "value" },
-              },
-            }}
-          />
+          <GridTable rows={rows} columns={columns} sx={dataGridStyles} />
         </Box>
       </Box>
     </Box>

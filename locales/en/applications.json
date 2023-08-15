@@ -31,5 +31,10 @@
   "Searched document": "Searched document",
   "fifth-step-title": "Party 2 (other members)",
   "Notary form first step hint text": "You can choose a document from ready-made templates in “My Templates“ or choose from system templates. If you didn't find what you were looking for, go to the next step. The system will help you find the right document",
-  "Sorry, such pin not found": "Sorry, such pin not found"
+  "Sorry, such pin not found": "Sorry, such pin not found",
+  "View document": "View document",
+  "Edit document": "Edit document",
+  "Choose step by step": "Choose step by step",
+  "Select document from my templates": "Select document from «My templates»",
+  "Select document from system templates": "Select document from «System templates»"
 }

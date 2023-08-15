@@ -5,7 +5,6 @@ import {
   ControllerRenderProps,
   UseFormReturn,
   UseFormTrigger,
-  useForm,
 } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -19,12 +18,12 @@ import Select from "@/components/ui/Select";
 import { useRouter } from "next/router";
 import DatePicker from "@/components/ui/DatePicker";
 import CheckBox from "@/components/ui/Checkbox";
-import { parse } from "date-fns";
 import TimePicker from "@/components/ui/TimePicker";
 import DateTimePicker from "@/components/ui/DateTimePicker";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
+  dynamicForm: UseFormReturn<any>;
   onPrev?: Function | null;
   onNext?: Function | null;
 }
@@ -38,21 +37,9 @@ interface IDynamicComponentProps {
   trigger: UseFormTrigger<any>;
 }
 
-type DynamicComponentTypes =
-  | "String"
-  | "Float"
-  | "Decimal"
-  | "Integer"
-  | "Selection"
-  | "Time"
-  | "Date"
-  | "Boolean"
-  | "DateTime";
-
-const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicComponentProps) => {
-  const { locale, field, data, errorMessage, trigger } = props;
-
-  const componentTypes = {
+const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentProps) => {
+  const { locale, field, data, errorMessage, fieldState, trigger } = props;
+  const types = {
     String: (
       <Input
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
@@ -103,7 +90,7 @@ const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicCompone
     Date: (
       <DatePicker
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={field.value == "" ? null : field.value}
+        value={getDateDynamicValue("Date", field.value)}
         helperText={errorMessage}
         onChange={(...event: any[]) => {
           field.onChange(...event);
@@ -115,7 +102,7 @@ const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicCompone
     Time: (
       <TimePicker
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={field.value == "" ? null : field.value}
+        value={getDateDynamicValue("Time", field.value)}
         helperText={errorMessage}
         onChange={(...event: any[]) => {
           field.onChange(...event);
@@ -126,7 +113,7 @@ const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicCompone
     DateTime: (
       <DateTimePicker
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={field.value == "" ? null : field.value}
+        value={getDateDynamicValue("DateTime", field.value)}
         helperText={errorMessage}
         onChange={(...event: any[]) => {
           field.onChange(...event);
@@ -136,35 +123,46 @@ const getDynamicComponent = (type: DynamicComponentTypes, props: IDynamicCompone
     ),
   };
 
-  return componentTypes[type];
+  return types[type];
 };
 
-const getDynamicDefaultValue = (field: DynamicComponentTypes, value: any) => {
-  const types: Record<DynamicComponentTypes, any> = {
+const getDynamicDefaultValue = (field: keyof typeof types, value: any) => {
+  const isInvalidDate = isNaN(new Date(String(value)).getDate());
+
+  const types = {
     Float: !value ? null : value,
     Decimal: !value ? null : value,
     Integer: !value ? null : value,
     Boolean: value,
     Selection: !value ? null : value,
     String: !value ? "" : value,
-    Date: !value ? null : new Date(String(value)),
-    Time: !value ? null : parse(String(value), "HH:mm", new Date()),
-    DateTime: !value ? null : new Date(String(value)),
+    Date: isInvalidDate ? null : new Date(String(value)),
+    Time: isInvalidDate ? null : new Date(Date.parse(value)),
+    DateTime: isInvalidDate ? null : new Date(String(value)),
   };
 
-  return types?.[field] ? types[field] : "";
+  return types[field];
+};
+
+const getDateDynamicValue = (field: keyof typeof types, value: any) => {
+  const isDate = value instanceof Date;
+  const isInvalidDate = isNaN(new Date(String(value)).getDate());
+
+  const types = {
+    Date: isDate ? value : isInvalidDate ? null : new Date(String(value)),
+    Time: isDate ? value : isInvalidDate ? null : new Date(Date.parse(value)),
+    DateTime: isDate ? value : isInvalidDate ? null : new Date(String(value)),
+  };
+
+  return types[field];
 };
 
 const getDynamicDefaultGroupName = (name: string) => (name === "null" ? "" : name ?? "");
 
-export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
+export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
-
-  const dynamicForm = useForm({
-    mode: "onTouched",
-  });
 
   const { trigger, control } = dynamicForm;
 
@@ -172,8 +170,25 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
     if (onPrev != null) onPrev();
   };
 
-  const { update, data: documentTemplateData } = useFetch("", "GET");
-  const { update: applicationUpdate } = useFetch("", "POST");
+  const { update: applicationUpdate, loading } = useFetch("", "POST");
+
+  const { data: selectionData, loading: selectionLoading, update: selectionUpdate } = useFetch("", "POST");
+
+  const getSelectionData = (data: any) => {
+    if (Array.isArray(data) && data.length > 0) {
+      const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
+      fieldsProps.map((fieldProps: Record<string, any>) => {
+        const model = fieldProps?.selection;
+        if (!!model) selectionUpdate(`/api/dictionaries/selection/${model}`);
+      });
+    }
+  };
+
+  const {
+    update: getDocumentTemplateData,
+    data: documentTemplateData,
+    loading: documentTemplateLoading,
+  } = useFetch("", "GET");
 
   const triggerFields = async () => {
     return await trigger();
@@ -181,7 +196,8 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
   useEffectOnce(async () => {
     if (productId != null) {
-      update("/api/dictionaries/document-type/template/" + productId);
+      const { data } = await getDocumentTemplateData("/api/dictionaries/document-type/template/" + productId);
+      getSelectionData(data);
     }
   }, [productId]);
 
@@ -191,10 +207,11 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
     if (validated && onNext) {
       const values = getValues();
+
       const data: Partial<IApplicationSchema> = {
+        ...dynamicForm.getValues(),
         id: values.id,
         version: values.version,
-        ...dynamicForm.getValues(),
       };
 
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
@@ -205,6 +222,8 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
       }
     }
   };
+
+  if (documentTemplateLoading && selectionLoading) return <></>;
 
   return (
     <Box>
@@ -238,16 +257,6 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
                             }
                           }
 
-                          let data: Record<string, any>[] = [];
-                          const { data: selectionData } = useFetch(
-                            `/api/dictionaries/selection/${item.selection}`,
-                            "POST"
-                          );
-
-                          if (selectionData?.data != null) {
-                            data = selectionData.data;
-                          }
-
                           return (
                             <Box display="flex" flexDirection="column" gap="10px">
                               <InputLabel>{item?.fieldTitles?.[locale ?? ""] ?? ""}</InputLabel>
@@ -256,7 +265,7 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
                                 field,
                                 fieldState,
                                 errorMessage,
-                                data,
+                                data: selectionData?.data ?? [],
                                 trigger,
                               })}
                             </Box>
@@ -276,7 +285,7 @@ export default function FifthStepFields({ form, onPrev, onNext }: IStepFieldsPro
               {t("Prev")}
             </Button>
           )}
-          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
             {t("Next")}
           </Button>
         </Box>

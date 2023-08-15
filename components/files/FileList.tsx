@@ -62,6 +62,7 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
 
 export default function FileList() {
   const t = useTranslations();
+  const locale = useLocale();
 
   const [pagination, setPagination] = useState<{ pageSize: number; page: number; sortBy: string[] }>({
     pageSize: 12,
@@ -131,7 +132,7 @@ export default function FileList() {
             field: "metaFile.createdOn",
             headerName: "Upload date",
             width: 200,
-            renderCell: ({ value }) => new Date(value).toLocaleDateString(useLocale()),
+            renderCell: ({ value }) => new Date(value).toLocaleDateString(locale),
           },
           {
             field: "metaFile.sizeText",

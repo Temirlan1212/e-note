@@ -142,5 +142,11 @@
   "Member": "Member",
   "InformationAboutStatusApplication": "Information about the status of the application",
   "Viewing a document": "Viewing a document",
-  "Download PDF": "Download PDF"
+  "Templates": "Templates",
+  "My templates": "My templates",
+  "System templates": "System templates",
+  "Download PDF": "Download PDF",
+  "Individual person": "Individual person",
+  "Juridical person": "Juridical person",
+  "Foreign person": "Foreign person"
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
@@ -15,50 +15,44 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  onPrev?: Function | null;
-  onNext?: Function | null;
+  stepState: [number, Dispatch<SetStateAction<number>>];
+  onPrev?: Function;
+  onNext?: Function;
 }
 
-export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
+export default function SecondStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
   const profile = useProfileStore.getState();
   const t = useTranslations();
 
-  const { trigger, control, getValues, setValue } = form;
+  const { trigger, control, getValues, setValue, watch } = form;
+  const [step, setStep] = stepState;
+
+  const productId = watch("product.id");
 
   const [loading, setLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [myDocumentFilter, setMyDocumentFilter] = useState<Record<string, any>>({});
-  const [systemDocumentFilter, setSystemMyDocumentFilter] = useState<Record<string, any>>({});
+  const [selectedInput, setSelectedInput] = useState<"my" | "system" | null>(null);
 
-  const { data: myDocuments, loading: myDocumentsLoading } = useFetch("/api/dictionaries/document-type", "POST", {
-    body: myDocumentFilter,
-  });
-  const { data: systemDocuments, loading: systemDocumentsLoading } = useFetch(
-    "/api/dictionaries/document-type",
-    "POST",
-    {
-      body: systemDocumentFilter,
-    }
-  );
+  const { data: myDocuments, loading: myDocumentsLoading, update: getMyDocuments } = useFetch("", "POST");
+  const { data: systemDocuments, loading: systemDocumentsLoading, update: getSystemDocuments } = useFetch("", "POST");
 
   const { update: applicationUpdate } = useFetch("", "PUT");
 
   useEffectOnce(() => {
-    setMounted(true);
-    setSystemMyDocumentFilter({ formValues: { isSystem: true } });
-  });
-
-  useEffectOnce(() => {
-    setMyDocumentFilter({ formValues: { createdBy: profile.userData?.id } });
+    getSystemDocuments("/api/dictionaries/document-type", {});
+    getMyDocuments("/api/dictionaries/document-type", { formValues: { createdBy: profile.userData?.id } });
   }, [profile]);
 
   useEffectOnce(() => {
     console.log(myDocuments);
-  }, [myDocuments]);
+    const isMy =
+      myDocuments?.data?.length > 0 ? myDocuments?.data?.find((item: { id: number }) => item.id === productId) : false;
+    const isSystem =
+      systemDocuments?.data?.length > 0
+        ? systemDocuments?.data?.find((item: { id: number }) => item.id === productId)
+        : false;
 
-  useEffectOnce(() => {
-    console.log(systemDocuments);
-  }, [systemDocuments]);
+    setSelectedInput(isMy ? "my" : isSystem ? "system" : null);
+  }, [productId]);
 
   const triggerFields = async () => {
     return await trigger(["product"]);
@@ -84,7 +78,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("version", result.data[0].version);
-        if (onNext != null) onNext();
+        if (onNext != null) setStep(step + 2);
       }
 
       setLoading(false);
@@ -113,11 +107,12 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           render={({ field, fieldState }) => {
             return (
               <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                <InputLabel>{t("Searched document")}</InputLabel>
+                <InputLabel>{t("Select document from my templates")}</InputLabel>
                 <Select
-                  selectType={field.value ? "success" : "secondary"}
                   labelField="name"
                   valueField="id"
+                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  disabled={selectedInput !== "my" && selectedInput !== null}
                   data={myDocuments?.status === 0 ? (myDocuments?.data as IProduct[]) ?? [] : []}
                   loading={myDocumentsLoading}
                   value={field.value == null ? "" : field.value}
@@ -138,11 +133,12 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           render={({ field, fieldState }) => {
             return (
               <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                <InputLabel>{t("Searched document")}</InputLabel>
+                <InputLabel>{t("Select document from system templates")}</InputLabel>
                 <Select
-                  selectType={field.value ? "success" : "secondary"}
                   labelField="name"
                   valueField="id"
+                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  disabled={selectedInput !== "system" && selectedInput !== null}
                   data={systemDocuments?.status === 0 ? (systemDocuments?.data as IProduct[]) ?? [] : []}
                   loading={systemDocumentsLoading}
                   value={field.value == null ? "" : field.value}
@@ -160,15 +156,23 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
+          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
           </Button>
         )}
         {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
             {t("Next")}
           </Button>
         )}
+        <Button
+          onClick={() => onNext && onNext()}
+          endIcon={<ArrowForwardIcon />}
+          buttonType="secondary"
+          sx={{ width: "auto" }}
+        >
+          {t("Choose step by step")}
+        </Button>
       </Box>
     </Box>
   );

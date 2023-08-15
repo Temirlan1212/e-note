@@ -113,8 +113,9 @@ export default function BlackList() {
   const [reasonValue, setReasonValue] = useState<string>("");
   const [pinValue, setPinValue] = useState<string>("");
   const [fullNameValue, setFullNameValue] = useState<string>("");
-  const [rowData, setRowData] = useState<IRowData>({});
+  const [rowData, setRowData] = useState<IRowData | null>(null);
   const t = useTranslations();
+  const locale = useLocale();
 
   const columns: IGridColDef[] = [
     {
@@ -136,7 +137,7 @@ export default function BlackList() {
       field: "createdOn",
       headerName: "Entry date",
       width: 180,
-      renderCell: ({ value }) => new Date(value).toLocaleDateString(useLocale()),
+      renderCell: ({ value }) => new Date(value).toLocaleDateString(locale),
     },
     {
       field: "createdBy.fullName",
@@ -175,7 +176,7 @@ export default function BlackList() {
   });
 
   const itemsPerPage = 6;
-  const totalPages = Array.isArray(allData?.data) ? Math.ceil(allData?.data.length / itemsPerPage) : 1;
+  const totalPages = allData != null && Array.isArray(allData.data) ? Math.ceil(allData.data.length / itemsPerPage) : 1;
 
   const onPageChange = (page: number) => {
     setSelectedPage(page);
@@ -266,9 +267,9 @@ export default function BlackList() {
             variant="contained"
             color="success"
             sx={{
-              height: "56px",
+              height: "auto",
               gap: "8px",
-              padding: "13px 22px",
+              padding: "9.5px 22px",
             }}
             fullWidth
             startIcon={<PostAddIcon />}
@@ -280,7 +281,7 @@ export default function BlackList() {
 
       <Grid container spacing={{ xs: 2.5, sm: 3.75, md: 3.75 }} sx={{ alignItems: "end" }}>
         <Grid item xs={12} sm={12} md={3}>
-          <InputLabel htmlFor="input-reason" sx={{ fontSize: "14px", fontWeight: "500" }}>
+          <InputLabel htmlFor="input-reason" sx={{ fontSize: "14px", fontWeight: "500", color: "#24334B" }}>
             {t("Reason")}
           </InputLabel>
           <Input
@@ -292,7 +293,7 @@ export default function BlackList() {
           />
         </Grid>
         <Grid item xs={12} sm={12} md={3}>
-          <InputLabel htmlFor="input-pin" sx={{ fontSize: "14px", fontWeight: "500" }}>
+          <InputLabel htmlFor="input-pin" sx={{ fontSize: "14px", fontWeight: "500", color: "#24334B" }}>
             {t("Subject PIN")}
           </InputLabel>
           <Input
@@ -304,7 +305,7 @@ export default function BlackList() {
           />
         </Grid>
         <Grid item xs={12} sm={12} md={3}>
-          <InputLabel htmlFor="input-full-name" sx={{ fontSize: "14px", fontWeight: "500" }}>
+          <InputLabel htmlFor="input-full-name" sx={{ fontSize: "14px", fontWeight: "500", color: "#24334B" }}>
             {t("Subject full name")}
           </InputLabel>
           <Input
@@ -321,9 +322,9 @@ export default function BlackList() {
             variant="contained"
             color="success"
             sx={{
-              height: "56px",
+              height: "auto",
               gap: "8px",
-              padding: "13px 22px",
+              padding: "9.5px 22px",
             }}
             fullWidth
             startIcon={<ContentPasteSearchIcon />}

@@ -56,21 +56,17 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography variant="h4" whiteSpace="nowrap">
-          Просмотр документа
+          {t("View document")}
         </Typography>
       </Box>
 
-      <Box display="flex" justifyContent="space-between">
-        <Typography variant="h5" whiteSpace="nowrap">
-          Предпросмотр документа
-        </Typography>
-
+      <Box display="flex" justifyContent="end">
         <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
           {t("Download PDF")}
         </Button>
       </Box>
 
-      <PDFViewer fileUrl="downloadUrl" />
+      <PDFViewer fileUrl="/documents/example.pdf" />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
