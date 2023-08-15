@@ -38,7 +38,7 @@ export default function SecondStepFields({ form, stepState, onPrev, onNext }: IS
   const { update: applicationUpdate } = useFetch("", "PUT");
 
   useEffectOnce(() => {
-    getSystemDocuments("/api/dictionaries/document-type", {});
+    getSystemDocuments("/api/dictionaries/document-type", { formValues: { isSystem: true } });
     getMyDocuments("/api/dictionaries/document-type", { formValues: { createdBy: profile.userData?.id } });
   }, [profile]);
 
