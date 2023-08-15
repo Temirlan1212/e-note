@@ -74,17 +74,25 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const steps =
     userData?.group?.id === 4
       ? [
-          <NotaryFirstStepFields key={0} form={form} onNext={() => setStep(step + 1)} />,
-          // <NotarySecondStepFields key={1} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <NotaryFirstStepFields key={0} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
+          <NotarySecondStepFields
+            key={1}
+            form={form}
+            stepState={[step, setStep]}
+            onPrev={() => setStep(step - 1)}
+            onNext={() => setStep(step + 1)}
+          />,
           <NotaryThirdStepFields
             key={2}
             form={form}
+            stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
             onNext={() => setStep(step + 1)}
           />,
           <NotaryFourthStepFields
             key={3}
             form={form}
+            stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
             onNext={() => setStep(step + 1)}
           />,
@@ -92,12 +100,14 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             key={4}
             dynamicForm={dynamicForm}
             form={form}
+            stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
             onNext={() => setStep(step + 1)}
           />,
           <NotarySixthStepFields
             key={5}
             form={form}
+            stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
             onNext={() => router.push("/applications")}
           />,

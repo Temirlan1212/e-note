@@ -4,6 +4,7 @@
   "Choose notary": "Выбор нотариуса",
   "Choose requester": "Выбор заявителя",
   "Choose document": "Выбор документа",
+  "Choose document from templates": "Выбор документа из шаблонов",
   "Form first step hint text": "Вы также можете сразу перейти к поисковой форме “Нотариус” если знаете конкретного нотариуса, игнорируя предшествующие поля.",
   "Type of action": "Вид действия",
   "Type of document": "Вид документа",
@@ -29,7 +30,11 @@
   "Document selection": "Выбор документа",
   "Searched document": "Искомый документ",
   "fifth-step-title": "Сторона 2 (другие участники)",
+  "Notary form first step hint text": "Вы можете выбрать документ из готовых шаблонов в “Мои шаблоны” либо выбрать из системных шаблонов. Если Вы не нашли то что искали, то перейдите в следующий шаг. Система поможет вам найти нужный документ",
   "Sorry, such pin not found": "Извините, такой инн не найден",
   "View document": "Просмотр документа",
-  "Edit document": "Редактирование документа"
+  "Edit document": "Редактирование документа",
+  "Choose step by step": "Выберите пошагово",
+  "Select document from my templates": "Выбрать документ из «Мои шаблоны»",
+  "Select document from system templates": "Выбрать документ из «Системные шаблоны»"
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
@@ -13,11 +13,12 @@ import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  onPrev?: Function | null;
-  onNext?: Function | null;
+  stepState: [number, Dispatch<SetStateAction<number>>];
+  onPrev?: Function;
+  onNext?: Function;
 }
 
-export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
+export default function SixthStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
@@ -70,12 +71,12 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
+          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
           </Button>
         )}
         {onNext != null && (
-          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
             {t("Next")}
           </Button>
         )}
