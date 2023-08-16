@@ -7,7 +7,10 @@ import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";
 import Checkbox from "@/components/ui/Checkbox";
 import Radio from "@/components/ui/Radio";
-import Autocomplete from "../ui/Autocomplete";
+import Autocomplete from "@/components/ui/Autocomplete";
+import Button from "@/components/ui/Button";
+import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
+import { MouseEventHandler } from "react";
 
 export interface IPersonalDataProps {
   form: UseFormReturn<any>;
@@ -41,9 +44,10 @@ export interface IPersonalDataProps {
     birthDate?: boolean;
     citizenship?: boolean;
   };
+  onPinCheck?: MouseEventHandler<HTMLButtonElement>;
 }
 
-export default function PersonalData({ form, names, defaultValues, fields }: IPersonalDataProps) {
+export default function PersonalData({ form, names, defaultValues, fields, onPinCheck }: IPersonalDataProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
@@ -93,6 +97,38 @@ export default function PersonalData({ form, names, defaultValues, fields }: IPe
               />
             )}
           />
+        )}
+      </Box>
+
+      <Box display="flex" gap="20px" alignItems="center" flexDirection={{ xs: "column", md: "row" }}>
+        {(fields?.pin == null || !!fields?.pin) && (
+          <>
+            <Controller
+              control={control}
+              name={names.pin}
+              defaultValue={defaultValues?.pin ?? ""}
+              render={({ field, fieldState }) => (
+                <Box display="flex" flexDirection="column" width="100%" height="90px">
+                  <InputLabel>{t("PIN")}</InputLabel>
+                  <Input
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    {...field}
+                    value={field.value != null ? field.value : ""}
+                  />
+                </Box>
+              )}
+            />
+            {onPinCheck && (
+              <Button
+                endIcon={<ContentPasteSearchIcon />}
+                sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
+                onClick={onPinCheck}
+              >
+                {t("Check")}
+              </Button>
+            )}
+          </>
         )}
       </Box>
 
@@ -149,25 +185,6 @@ export default function PersonalData({ form, names, defaultValues, fields }: IPe
           />
         )}
       </Box>
-
-      {(fields?.pin == null || !!fields?.pin) && (
-        <Controller
-          control={control}
-          name={names.pin}
-          defaultValue={defaultValues?.pin ?? ""}
-          render={({ field, fieldState }) => (
-            <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("PIN")}</InputLabel>
-              <Input
-                inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                {...field}
-                value={field.value != null ? field.value : ""}
-              />
-            </Box>
-          )}
-        />
-      )}
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {(fields?.birthDate == null || !!fields?.birthDate) && (

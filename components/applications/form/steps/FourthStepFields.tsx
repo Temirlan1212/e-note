@@ -290,14 +290,14 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         actionsContent={
           <>
             <Button
-              buttonType={"primary"}
+              buttonType="primary"
               sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
               onClick={handleAddTabClick}
             >
               <AddIcon />
             </Button>
             <Button
-              buttonType={"secondary"}
+              buttonType="secondary"
               sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
               onClick={handleRemoveTabClick}
             >
