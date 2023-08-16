@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
 
@@ -36,36 +36,25 @@ function GridTableActionsCell({ row }: { row: Record<string, any> }) {
 
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <Button
-        variant="text"
+      <IconButton
         sx={{
           width: "44px",
-          minWidth: "44px",
           height: "44px",
-          "&:hover": {
-            backgroundColor: "inherit",
-          },
         }}
         onClick={handleNewApplicationClick}
       >
-        <PostAddIcon />
-      </Button>
+        <PostAddIcon color={"success"} />
+      </IconButton>
 
-      <Button
-        variant="text"
-        buttonType={"secondary"}
+      <IconButton
         sx={{
           width: "44px",
-          minWidth: "44px",
           height: "44px",
-          "&:hover": {
-            backgroundColor: "inherit",
-          },
         }}
         onClick={handleDelete}
       >
-        <DeleteOutlineIcon color={"action"} />
-      </Button>
+        <DeleteOutlineIcon sx={{ color: "#24334B" }} />
+      </IconButton>
     </Box>
   );
 }
