@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import { FC, PropsWithChildren } from "react";
 
 interface IFingerprintScannerProps extends PropsWithChildren<BoxProps> {
+  onClick?: () => void;
   duration?: number;
   loading?: boolean;
   type?: "primary" | "error" | "success" | "signed";
@@ -47,7 +48,7 @@ const state = {
   },
 };
 
-const FingerprintScanner: FC<IFingerprintScannerProps> = ({ loading = false, type = "error", ...rest }) => {
+const FingerprintScanner: FC<IFingerprintScannerProps> = ({ loading = false, type = "primary", onClick, ...rest }) => {
   const t = useTranslations();
   const Icon = loading ? state["loading"].Icon : state[type].Icon;
   const text = loading ? state["loading"].text : state[type].text;
@@ -57,7 +58,7 @@ const FingerprintScanner: FC<IFingerprintScannerProps> = ({ loading = false, typ
   return (
     <Box display="flex" px="5px" flexDirection="column" alignItems="center" width="fit-content" gap="50px 0" {...rest}>
       <Box margin={1} position="relative" width="100px" height="100px">
-        <Fab color={fabColor} sx={{ p: "20px", ...fullWidth }}>
+        <Fab onClick={onClick} color={fabColor} sx={{ p: "20px", ...fullWidth }}>
           <Icon sx={{ color: "white", ...fullWidth }} />
         </Fab>
         {loading && (

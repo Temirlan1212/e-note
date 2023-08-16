@@ -8,6 +8,9 @@ import { useTranslations } from "next-intl";
 
 export interface IConfirmationModal extends ModalProps {
   onConfirm: (callback: Dispatch<SetStateAction<boolean>>) => void;
+  onToggle: (callback: Dispatch<SetStateAction<boolean>>) => void;
+  onButtonSlots: (callback: Dispatch<SetStateAction<boolean>>) => React.ReactNode;
+  onBodySlots: (callback: Dispatch<SetStateAction<boolean>>) => React.ReactNode;
   hintTitle: string;
   hintText: string;
   type: "warning" | "error";
@@ -16,11 +19,14 @@ export interface IConfirmationModal extends ModalProps {
 
 export const ConfirmationModal = ({
   onConfirm,
+  onButtonSlots,
+  onBodySlots,
   children,
   hintTitle = "Do you really want to delete this record?",
   hintText = "",
   type = "error",
   title = "Deleting the record",
+  onToggle,
   ...rest
 }: Partial<IConfirmationModal>) => {
   const t = useTranslations();
@@ -32,7 +38,10 @@ export const ConfirmationModal = ({
     onConfirm && onConfirm(setOpen);
   };
 
-  const handleToggle = () => setOpen(!open);
+  const handleToggle = () => {
+    setOpen(!open);
+    onToggle && onToggle(setOpen);
+  };
 
   return (
     <Box>
@@ -62,13 +71,21 @@ export const ConfirmationModal = ({
               )}
             </Hint>
 
+            {onBodySlots && <Box>{onBodySlots(setOpen)}</Box>}
+
             <Box display="flex" gap="20px">
-              <Button buttonType={type === "warning" ? "warning" : "danger"} onClick={handleConfirm}>
-                {t("Yes")}
-              </Button>
-              <Button buttonType="secondary" onClick={handleToggle}>
-                {t("No")}
-              </Button>
+              {onButtonSlots ? (
+                onButtonSlots(setOpen)
+              ) : (
+                <>
+                  <Button buttonType={type === "warning" ? "warning" : "danger"} onClick={handleConfirm}>
+                    {t("Yes")}
+                  </Button>
+                  <Button buttonType="secondary" onClick={handleToggle}>
+                    {t("No")}
+                  </Button>
+                </>
+              )}
             </Box>
           </Box>
         </Box>
