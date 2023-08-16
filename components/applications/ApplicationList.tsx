@@ -29,8 +29,7 @@ export default function ApplicationList() {
   const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
   const { data: statusData } = useFetch("/api/dictionaries/status", "POST");
 
-  const profileStore = useProfileStore();
-  const userData = profileStore.getUserData();
+  const userData = useProfileStore((state) => state.userData);
 
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,
@@ -101,11 +100,11 @@ export default function ApplicationList() {
     <Box height={{ xs: "600px", md: "700px" }}>
       <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
         <Typography variant="h4" color="text.primary">
-          {t("Your applications")}
+          {userData?.group.id === 4 ? t("Notarial actions") : t("Your applications")}
         </Typography>
         <Link href="applications/create">
           <Button sx={{ py: "10px", px: "20px" }} component="label" startIcon={<PostAddIcon />}>
-            {userData?.group.id === 4 ? t("Notarial action") : t("Create application")}
+            {userData?.group.id === 4 ? t("Create notarial action") : t("Create application")}
           </Button>
         </Link>
       </Box>

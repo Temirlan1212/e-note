@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
+import { useProfileStore } from "@/stores/profile";
 import { GetStaticPathsContext, GetStaticPropsContext } from "next";
 import { Box, Container, Typography } from "@mui/material";
 import ApplicationForm from "@/components/applications/form/ApplicationForm";
@@ -13,6 +14,8 @@ export default function EditApplication() {
 
   const { id } = router.query;
 
+  const userData = useProfileStore((state) => state.userData);
+
   const handleCancelClick = () => {
     router.push("/applications");
   };
@@ -20,13 +23,13 @@ export default function EditApplication() {
   return (
     <>
       <Head>
-        <title>{t("Edit application")}</title>
+        <title>{userData?.group.id === 4 ? t("Edit notarial actions") : t("Edit application")}</title>
       </Head>
 
       <Container maxWidth="xl">
         <Box display="flex" alignItems="center" justifyContent="space-between" my={2}>
           <Typography variant="h4" color="success.main">
-            {t("Edit application")}
+            {userData?.group.id === 4 ? t("Edit notarial action") : t("Edit application")}
           </Typography>
           <Box>
             <Button buttonType="secondary" startIcon={<CloseIcon />} onClick={handleCancelClick}>
