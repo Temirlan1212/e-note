@@ -8,6 +8,7 @@
   "Action type": "Иш-аракет түрү",
   "Document type": "Документтин түрү",
   "Object type": "Объект түрү",
+  "Object": "Объект",
   "Actions": "Аракетти аткаруу",
   "In my templates": "Менин шаблондорума",
   "New application": "Жаңы колдонмо",
@@ -23,5 +24,8 @@
   "Resolution on the appointment of an expert examination": "Экспертиза дайындоо жөнүндө токтом",
   "Apartments": "Квартира",
   "Salary": "Эмгек акы",
-  "Residential building": "Турак үй"
+  "Residential building": "Турак үй",
+  "Select action": "Аракет тандаңыз",
+  "Create new template": "Жаңы шаблон түзүү",
+  "Hand templates": "Rол шаблондору"
 }
