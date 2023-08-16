@@ -35,5 +35,8 @@
   "Edit document": "Edit document",
   "Choose step by step": "Choose step by step",
   "Select document from my templates": "Select document from «My templates»",
-  "Select document from system templates": "Select document from «System templates»"
+  "Select document from system templates": "Select document from «System templates»",
+  "To enter a document into the registry and assign a unique document number, you need confirmation of your fingerprints and your EDS": "To enter a document into the registry and assign a unique document number, you need confirmation of your fingerprints and your EDS",
+  "Entry into the register": "Entry into the register",
+  "Assign a unique number and enter it in the registry": "Assign a unique number and enter it in the registry"
 }
