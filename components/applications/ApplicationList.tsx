@@ -13,6 +13,7 @@ import Link from "@/components/ui/Link";
 import { useTranslations } from "next-intl";
 import { ApplicationListActions } from "./ApplicationListActions";
 import { IStatus } from "@/models/dictionaries/status";
+import { useProfileStore } from "@/stores/profile";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -27,6 +28,9 @@ export default function ApplicationList() {
   const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
   const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
   const { data: statusData } = useFetch("/api/dictionaries/status", "POST");
+
+  const profileStore = useProfileStore();
+  const userData = profileStore.getUserData();
 
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,
@@ -101,7 +105,7 @@ export default function ApplicationList() {
         </Typography>
         <Link href="applications/create">
           <Button sx={{ py: "10px", px: "20px" }} component="label" startIcon={<PostAddIcon />}>
-            {t("Create application")}
+            {userData?.group.id === 4 ? t("Notarial action") : t("Create application")}
           </Button>
         </Link>
       </Box>
