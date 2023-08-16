@@ -1,53 +1,71 @@
 import React, { useRef, useState } from "react";
 
 import { useTranslations } from "next-intl";
-import { PermIdentity, Visibility, VisibilityOff } from "@mui/icons-material";
-import { Avatar, Box, Divider, FormControl, IconButton, InputAdornment, InputLabel, Typography } from "@mui/material";
+import { PermIdentity } from "@mui/icons-material";
+import { Avatar, Box, CircularProgress, Divider, FormControl, InputLabel, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 
 import Button from "../ui/Button";
 import Input from "../ui/Input";
+import ProfilePasswordForm from "./ProfilePasswordForm";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { userProfileSchema } from "@/validator-schemas/profile";
 import { useProfileStore } from "@/stores/profile";
 import { IUserData } from "@/models/profile/user";
 
+import useFetch from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
+
 interface IProfileFormProps {}
 
 interface IUserProfile {
-  name: string;
-  username: string;
+  fullName: string;
+  login: string;
   email: string;
-  "partner.mobilePhone": string;
-  password: string;
-  cpassword: string;
+  mobilePhone: string;
+}
+
+async function blobToFile(blob: Blob, fileName: string): Promise<File> {
+  return new File([blob], fileName, { type: blob?.type });
 }
 
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
+  const profile = useProfileStore((state) => state);
+  const userData: IUserData | null = profile.getUserData();
+
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [showFirstPassword, setShowPassword] = useState(false);
-  const [showSecondPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const profile = useProfileStore((state) => state);
+  const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
+    returnResponse: true,
+  });
 
-  const login = profile.getUser();
+  const {
+    data: imageData,
+    loading: isImageLoading,
+    update: getImage,
+  } = useFetch<Response>("/api/profile/download-image/" + userData?.id, "GET", {
+    returnResponse: true,
+  });
 
-  const userData = profile.getUserData();
+  useEffectOnce(async () => {
+    const image: any = await imageData?.blob();
 
-  console.log(login);
+    const convertedFile = await blobToFile(image, "avatar-image.png");
+    const url = URL.createObjectURL(convertedFile);
+
+    setImagePreview(url);
+    setSelectedImage(convertedFile);
+  }, [imageData]);
 
   const form = useForm<IUserProfile>({
     resolver: yupResolver(userProfileSchema),
     defaultValues: {
-      name: userData?.name,
-      username: login?.username,
+      fullName: userData?.name,
+      login: userData?.code,
       email: userData?.email,
-      "partner.mobilePhone": userData?.["partner.mobilePhone"] || "996",
-      password: "",
-      cpassword: "",
+      mobilePhone: userData?.["partner.mobilePhone"],
     },
   });
 
@@ -72,7 +90,56 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   };
 
   const onSubmit = async (data: IUserProfile) => {
-    console.log(data, selectedImage);
+    if (selectedImage) {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        if (userData?.id != null && reader.result) {
+          await update("/api/profile/update/" + userData?.id, {
+            id: userData?.id,
+            version: userData?.version,
+            email: data.email,
+            name: data.fullName,
+            image: reader.result.toString(),
+            partner: {
+              id: userData?.partner.id,
+              version: userData?.partner.$version,
+              mobilePhone: data.mobilePhone,
+            },
+          }).then((res) => {
+            if (res.ok) {
+              profile.loadUserData({
+                username: userData.code,
+              });
+              getImage();
+            }
+          });
+        }
+      };
+      reader.readAsDataURL(selectedImage);
+    }
+    if (!imagePreview) {
+      if (userData?.id != null) {
+        await update("/api/profile/update/" + userData?.id, {
+          id: userData?.id,
+          version: userData?.version,
+          email: data.email,
+          name: data.fullName,
+          image: null,
+          partner: {
+            id: userData?.partner.id,
+            version: userData?.partner.$version,
+            mobilePhone: data.mobilePhone,
+          },
+        }).then((res) => {
+          if (res.ok) {
+            profile.loadUserData({
+              username: userData.code,
+            });
+            getImage();
+          }
+        });
+      }
+    }
   };
 
   const handleButtonClick = () => {
@@ -80,10 +147,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
       inputRef.current.click();
     }
   };
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-
-  const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
 
   const handleDeleteClick = () => {
     setSelectedImage(null);
@@ -122,12 +185,16 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             }}
             aria-label="recipe"
           >
-            <PermIdentity
-              sx={{
-                width: "50px",
-                height: "50px",
-              }}
-            />
+            {isImageLoading ? (
+              <CircularProgress color="inherit" style={{ width: "28px", height: "28px" }} />
+            ) : (
+              <PermIdentity
+                sx={{
+                  width: "50px",
+                  height: "50px",
+                }}
+              />
+            )}
           </Avatar>
         )}
         <Box display="flex" gap="20px" alignItems="center">
@@ -199,10 +266,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               </InputLabel>
               <Input
                 fullWidth
-                error={!!errors.username?.message ?? false}
-                helperText={errors.username?.message}
+                error={!!errors.fullName?.message ?? false}
+                helperText={errors.fullName?.message ? t(errors.fullName?.message) : ""}
                 register={form.register}
-                name="username"
+                name="fullName"
               />
             </FormControl>
             <FormControl sx={{ width: "100%" }}>
@@ -219,13 +286,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               >
                 {t("Username")}
               </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.name?.message ?? false}
-                helperText={errors.name?.message}
-                register={form.register}
-                name="name"
-              />
+              <Input fullWidth register={form.register} name="login" disabled />
             </FormControl>
           </Box>
         </Box>
@@ -272,7 +333,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               <Input
                 fullWidth
                 error={!!errors.email?.message ?? false}
-                helperText={errors.email?.message}
+                helperText={errors.email?.message ? t(errors.email?.message) : ""}
                 register={form.register}
                 name="email"
                 type="email"
@@ -294,111 +355,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               </InputLabel>
               <Input
                 fullWidth
-                error={!!errors["partner.mobilePhone"]?.message ?? false}
-                helperText={errors["partner.mobilePhone"]?.message}
+                error={!!errors.mobilePhone?.message ?? false}
+                helperText={errors.mobilePhone?.message ? t(errors.mobilePhone?.message) : ""}
                 register={form.register}
-                name="partner.mobilePhone"
-              />
-            </FormControl>
-          </Box>
-        </Box>
-        <Divider
-          sx={{
-            borderColor: "#CDCDCD",
-          }}
-        />
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "15px",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "#687C9B",
-              fontSize: "16px",
-              fontWeight: "600",
-            }}
-          >
-            {t("Password")}
-          </Typography>
-          <Box
-            display="flex"
-            gap="20px"
-            sx={{
-              flexDirection: {
-                xs: "column",
-                sm: "row",
-              },
-            }}
-          >
-            <FormControl sx={{ width: "100%" }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Enter password")}
-              </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.password?.message ?? false}
-                helperText={errors.password?.message}
-                register={form.register}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} edge="end">
-                        {showFirstPassword ? <VisibilityOff color="success" /> : <Visibility color="success" />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                type={showFirstPassword ? "text" : "password"}
-                name="password"
-              />
-            </FormControl>
-            <FormControl sx={{ width: "100%" }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Confirm password")}
-              </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.cpassword?.message ?? false}
-                helperText={errors.cpassword?.message}
-                register={form.register}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowConfirmPassword}
-                        edge="end"
-                      >
-                        {showSecondPassword ? <VisibilityOff color="success" /> : <Visibility color="success" />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                type={showSecondPassword ? "text" : "password"}
-                name="cpassword"
+                name="mobilePhone"
               />
             </FormControl>
           </Box>
@@ -418,7 +378,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             sx={{
               maxWidth: "320px",
             }}
-            loading={loading}
+            loading={isDataLoading}
             type="submit"
           >
             {t("Save")}
@@ -431,12 +391,18 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 background: "#3f5984",
               },
             }}
-            loading={loading}
+            loading={isDataLoading}
           >
             {t("Cancel")}
           </Button>
         </Box>
+        <Divider
+          sx={{
+            borderColor: "#CDCDCD",
+          }}
+        />
       </Box>
+      <ProfilePasswordForm />
     </Box>
   );
 };

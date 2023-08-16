@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
@@ -15,15 +15,17 @@ import { INotarialActionData } from "@/models/dictionaries/notarial-action";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  onPrev?: Function | null;
-  onNext?: Function | null;
+  stepState: [number, Dispatch<SetStateAction<number>>];
+  onPrev?: Function;
+  onNext?: Function;
 }
 
-export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
+export default function ThirdStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
 
   const { trigger, control, watch, resetField, getValues, setValue } = form;
+  const [step, setStep] = stepState;
 
   const objectVal = watch("object");
   const objectTypeVal = watch("objectType");
@@ -311,12 +313,12 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
+          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
           </Button>
         )}
         {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
             {t("Next")}
           </Button>
         )}

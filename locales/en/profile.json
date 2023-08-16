@@ -6,5 +6,17 @@
   "Fullname": "Full name",
   "Phone number": "Phone number",
   "Enter password": "Enter password",
-  "Confirm password": "Confirm password"
+  "Confirm password": "Confirm password",
+  "Old password": "Old password",
+  "Change password": "Change password",
+  "Full name is required!": "Full name is required!",
+  "Login is required!": "Login is required!",
+  "E-mail is required!": "E-mail is required!",
+  "Please enter valid number": "Please enter a valid number.",
+  "Mobile is required!": "Mobile is required!",
+  "Password is required": "Password is required",
+  "New Password is required": "New Password is required",
+  "Password length should be more than 4 characters": "Password length should be more than 4 characters",
+  "Confirm Password is required": "Confirm Password is required",
+  "Passwords do not match": "Passwords do not match"
 }

@@ -1,19 +1,24 @@
 import * as yup from "yup";
 
 export const userProfileSchema = yup.object().shape({
-  username: yup.string().required("Full name is required!"),
-  name: yup.string().required("Login is required!"),
+  fullName: yup.string().required("Full name is required!"),
+  login: yup.string().required("Login is required!"),
   email: yup.string().email().required("E-mail is required!"),
-  "partner.mobilePhone": yup.string().length(12, "Введите номер телефона").required("Введите номер телефона"),
-  password: yup
+  mobilePhone: yup
     .string()
-    .required("Password is required")
-    .min(4, "Password length should be at least 4 characters")
-    .max(16, "Password cannot exceed more than 16 characters"),
-  cpassword: yup
+    .required("Mobile is required!")
+    .matches(/^[996]\d{11}$/, { message: "Please enter valid number.", excludeEmptyString: false }),
+});
+
+export const userProfilePasswordSchema = yup.object().shape({
+  oldPassword: yup.string().required("Password is required").min(4, "Password length should be more than 4 characters"),
+  newPassword: yup
+    .string()
+    .required("New Password is required")
+    .min(4, "Password length should be more than 4 characters"),
+  confirmNewPassword: yup
     .string()
     .required("Confirm Password is required")
-    .min(4, "Password length should be at least 4 characters")
-    .max(16, "Password cannot exceed more than 16 characters")
-    .oneOf([yup.ref("password")], "Passwords do not match"),
+    .min(4, "Password length should be more than 4 characters")
+    .oneOf([yup.ref("newPassword")], "Passwords do not match"),
 });

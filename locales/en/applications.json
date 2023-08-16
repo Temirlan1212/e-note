@@ -4,6 +4,7 @@
   "Choose notary": "Choose notary",
   "Choose requester": "Choose requester",
   "Choose document": "Choose document",
+  "Choose document from templates": "Choose document from templates",
   "Form first step hint text": "You can also go directly to the “Notary” search form if you know a specific notary, ignoring the previous fields.",
   "Type of action": "Type of action",
   "Type of document": "Type of document",
@@ -24,12 +25,15 @@
   "second-step-hint-title": "You need to choose the object and its type regarding what you want to make a notarial document. Choosing an object will help you quickly find the notarial document you need.",
   "Your applications": "Your applications",
   "fourth-step-title": "Party 1 (personal data)",
-  "Notarial action": "Notarial action",
   "Type of notarial action": "Type of notarial action",
   "Document selection": "Document selection",
   "Searched document": "Searched document",
   "fifth-step-title": "Party 2 (other members)",
+  "Notary form first step hint text": "You can choose a document from ready-made templates in “My Templates“ or choose from system templates. If you didn't find what you were looking for, go to the next step. The system will help you find the right document",
   "Sorry, such pin not found": "Sorry, such pin not found",
   "View document": "View document",
-  "Edit document": "Edit document"
+  "Edit document": "Edit document",
+  "Choose step by step": "Choose step by step",
+  "Select document from my templates": "Select document from «My templates»",
+  "Select document from system templates": "Select document from «System templates»"
 }

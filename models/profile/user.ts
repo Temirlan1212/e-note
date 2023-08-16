@@ -17,13 +17,21 @@ export interface IUserRole {
   name: string;
   $version: number;
 }
+export interface IPartner {
+  mobilePhone: string;
+  $version: number;
+  fullName: string;
+  id: number;
+}
 
 export interface IUserData extends IUser {
   id: number;
   name: string;
   email: string;
+  partner: IPartner;
   "partner.mobilePhone": string;
   version: number;
+  code: string;
   group: IUserGroup;
   roles: IUserRole[];
 }

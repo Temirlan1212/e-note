@@ -6,5 +6,17 @@
   "Fullname": "ФИО",
   "Phone number": "Номер телефона",
   "Enter password": "Введите пароль",
-  "Confirm password": "Подтвердите пароль"
+  "Confirm password": "Подтвердите пароль",
+  "Old password": "Старый пароль",
+  "Change password": "Сменить пароль",
+  "Full name is required!": "ФИО обязательно!",
+  "Login is required!": "Логин обязателен!",
+  "E-mail is required!": "E-mail обязателен!",
+  "Please enter valid number": "Пожалуйста, введите корректный номер.",
+  "Mobile is required!": "Требуется указать номер мобильного!",
+  "Password is required": "Пароль обязателен",
+  "New Password is required": "Новый пароль обязателен",
+  "Password length should be more than 4 characters": "Длина пароля должна быть больше 4 символов",
+  "Confirm Password is required": "Требуется подтвердить пароль",
+  "Passwords do not match": "Пароли не совпадают"
 }
