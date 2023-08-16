@@ -147,16 +147,25 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
 
       if (rootOnly && val.children != null) {
         val.children.map((item) => {
-          if (role == null || val.role == null || role === val.role || type == null || type === item.type)
+          if (
+            (role == null || val.role == null || role === val.role) &&
+            (type == null || type === "rendered" || type === item.type)
+          )
             acc.push(item);
         });
       } else {
         const childRoutes = val.children?.filter(
-          (item) => role == null || item.role == null || role === item.role || type == null || type === item.type
+          (item) =>
+            (role == null || item.role == null || role === item.role) &&
+            (type == null || type === "rendered" || type === item.type)
         );
         const route = { ...val, children: childRoutes };
 
-        if (role == null || val.role == null || role === val.role || type == null || type === val.type) acc.push(route);
+        if (
+          (role == null || val.role == null || role === val.role) &&
+          (type == null || type === "rendered" || type === val.type)
+        )
+          acc.push(route);
       }
 
       return acc;

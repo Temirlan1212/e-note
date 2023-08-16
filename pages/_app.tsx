@@ -36,7 +36,7 @@ function Layout({ children }: { children: JSX.Element }) {
   }, [profile.user, router.route]);
 
   useEffect(() => {
-    setGuestRoutes(routes.getRoutes(routes.guestRoutes, "all"));
+    setGuestRoutes(routes.getRoutes(routes.guestRoutes, "rendered"));
   }, [routes.guestRoutes]);
 
   if (user != null && !guestRoutes.map((r) => r.link).includes(router.route)) {
