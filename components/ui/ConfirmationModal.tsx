@@ -6,21 +6,28 @@ import Button from "@/components/ui/Button";
 import Hint from "@/components/ui/Hint";
 import { useTranslations } from "next-intl";
 
-export interface IConfirmationModal extends ModalProps {
+export interface IConfirmationModal extends Omit<ModalProps, "slots"> {
   onConfirm: (callback: Dispatch<SetStateAction<boolean>>) => void;
+  onToggle: (callback: Dispatch<SetStateAction<boolean>>) => void;
   hintTitle: string;
   hintText: string;
-  type: "warning" | "error";
+  type: "warning" | "error" | "hint";
   title: string;
+  slots?: {
+    button?: (callback: Dispatch<SetStateAction<boolean>>) => React.ReactNode;
+    body?: (callback: Dispatch<SetStateAction<boolean>>) => React.ReactNode;
+  };
 }
 
 export const ConfirmationModal = ({
   onConfirm,
+  slots,
   children,
   hintTitle = "Do you really want to delete this record?",
   hintText = "",
   type = "error",
   title = "Deleting the record",
+  onToggle,
   ...rest
 }: Partial<IConfirmationModal>) => {
   const t = useTranslations();
@@ -32,7 +39,10 @@ export const ConfirmationModal = ({
     onConfirm && onConfirm(setOpen);
   };
 
-  const handleToggle = () => setOpen(!open);
+  const handleToggle = () => {
+    setOpen(!open);
+    onToggle && onToggle(setOpen);
+  };
 
   return (
     <Box>
@@ -50,25 +60,35 @@ export const ConfirmationModal = ({
           </Box>
 
           <Box>
-            <Hint type={type === "warning" ? "warning" : "error"} sx={{ mb: "20px" }}>
-              <Typography fontSize={16} fontWeight={600} color="text.primary">
-                {t(hintTitle)}
-              </Typography>
+            <Hint type={type} sx={{ mb: "20px", display: "flex", gap: "10px" }}>
+              {hintTitle && (
+                <Typography fontSize={16} fontWeight={600} color="text.primary">
+                  {t(hintTitle)}
+                </Typography>
+              )}
 
               {hintText && (
-                <Typography fontSize={14} color="text.primary" marginTop="10px">
+                <Typography fontSize={14} color="text.primary">
                   {t(hintText)}
                 </Typography>
               )}
             </Hint>
 
+            {slots?.body && <Box>{slots.body(setOpen)}</Box>}
+
             <Box display="flex" gap="20px">
-              <Button buttonType={type === "warning" ? "warning" : "danger"} onClick={handleConfirm}>
-                {t("Yes")}
-              </Button>
-              <Button buttonType="secondary" onClick={handleToggle}>
-                {t("No")}
-              </Button>
+              {slots?.button ? (
+                slots.button(setOpen)
+              ) : (
+                <>
+                  <Button buttonType={type === "warning" ? "warning" : "danger"} onClick={handleConfirm}>
+                    {t("Yes")}
+                  </Button>
+                  <Button buttonType="secondary" onClick={handleToggle}>
+                    {t("No")}
+                  </Button>
+                </>
+              )}
             </Box>
           </Box>
         </Box>
