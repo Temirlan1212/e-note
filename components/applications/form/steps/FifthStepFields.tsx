@@ -281,11 +281,11 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
 
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
           {onPrev != null && (
-            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
+            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
               {t("Prev")}
             </Button>
           )}
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
             {t("Next")}
           </Button>
         </Box>

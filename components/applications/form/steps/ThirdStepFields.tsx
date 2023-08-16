@@ -199,12 +199,12 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
+          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
           </Button>
         )}
         {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
             {t("Next")}
           </Button>
         )}
