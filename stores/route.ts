@@ -1,4 +1,7 @@
 import { create } from "zustand";
+import { useProfileStore } from "./profile";
+
+const userData = useProfileStore.getState().userData;
 
 export interface IChildRoute {
   title: string;
@@ -60,7 +63,7 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
   ],
   userRoutes: [
     {
-      title: "Applications",
+      title: userData?.group.id === 4 ? "Notarial action" : "Applications",
       link: "/applications",
       type: "menu",
       icon: "BorderColor",
