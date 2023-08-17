@@ -4,12 +4,12 @@ import { useTranslations } from "next-intl";
 import { useProfileStore } from "@/stores/profile";
 import { GetStaticPropsContext } from "next";
 import ApplicationList from "@/components/applications/ApplicationList";
-import { IProfileState, IUserData } from "@/models/profile/user";
+import { IUserData } from "@/models/profile/user";
 
 export default function Applications() {
   const t = useTranslations();
 
-  const userData: IUserData | null = useProfileStore((state: IProfileState) => state.getUserData());
+  const userData: IUserData | null = useProfileStore((state) => state.getUserData());
 
   return (
     <>

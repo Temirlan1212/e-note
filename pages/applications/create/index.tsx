@@ -7,13 +7,13 @@ import { Box, Container, Typography } from "@mui/material";
 import ApplicationForm from "@/components/applications/form/ApplicationForm";
 import Button from "@/components/ui/Button";
 import CloseIcon from "@mui/icons-material/Close";
-import { IProfileState, IUserData } from "@/models/profile/user";
+import { IUserData } from "@/models/profile/user";
 
 export default function CreateApplication() {
   const router = useRouter();
   const t = useTranslations();
 
-  const userData: IUserData | null = useProfileStore((state: IProfileState) => state.getUserData());
+  const userData: IUserData | null = useProfileStore((state) => state.getUserData());
 
   const handleCancelClick = () => {
     router.push("/applications");
