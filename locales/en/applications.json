@@ -3,6 +3,7 @@
   "Edit application": "Edit application",
   "Choose notary": "Choose notary",
   "Choose requester": "Choose requester",
+  "Choose object": "Choose object",
   "Choose document": "Choose document",
   "Choose document from templates": "Choose document from templates",
   "Form first step hint text": "You can also go directly to the “Notary” search form if you know a specific notary, ignoring the previous fields.",
@@ -38,5 +39,15 @@
   "Select document from system templates": "Select document from «System templates»",
   "To enter a document into the registry and assign a unique document number, you need confirmation of your fingerprints and your EDS": "To enter a document into the registry and assign a unique document number, you need confirmation of your fingerprints and your EDS",
   "Entry into the register": "Entry into the register",
-  "Assign a unique number and enter it in the registry": "Assign a unique number and enter it in the registry"
+  "Assign a unique number and enter it in the registry": "Assign a unique number and enter it in the registry",
+  "Knowledge of russian/kyrgyz": "Knowledge of russian/kyrgyz",
+  "Foreign participation": "Foreign participation",
+  "Name of organization/translation company in russian": "Name of organization/translation company in russian",
+  "Name of organization/translation company in kyrgyz": "Name of organization/translation company in kyrgyz",
+  "Full name of the representative": "Full name of the representative",
+  "Registration number": "Registration number",
+  "OKPO code": "OKPO code",
+  "Number of founders (participants) of individuals": "Number of founders (participants) of individuals",
+  "Number of founders (participants) of legal entities": "Number of founders (participants) of legal entities",
+  "Total number (participants)": "Total number (participants)"
 }

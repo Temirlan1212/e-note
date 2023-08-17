@@ -98,7 +98,7 @@ export default function ThirdStepFields({ form, stepState, onPrev, onNext }: ISt
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography variant="h4" whiteSpace="nowrap">
-          {t("Choose document")}
+          {t("Choose object")}
         </Typography>
       </Box>
 
@@ -176,6 +176,8 @@ export default function ThirdStepFields({ form, stepState, onPrev, onNext }: ISt
           );
         }}
       />
+
+      <Typography variant="h4">{t("Choose document")}</Typography>
 
       <Controller
         control={control}
