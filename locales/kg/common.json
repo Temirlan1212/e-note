@@ -150,5 +150,11 @@
   "Juridical person": "Юридикалык адам",
   "Foreign person": "Чет өлкөлүк адам",
   "Notarial action": "Нотариалдык иш-аракет",
-  "Check": "Текшерүү"
+  "Check": "Текшерүү",
+  "Fingerprint verification": "Манжа изин тастыктоо",
+  "Unable to identify fingerprint, Place your finger on the scanner again": "Манжа изин аныктоо мүмкүн эмес. Манжаңызды кайра сканерге коюңуз",
+  "Fingerprint verification successful": "Манжа изин текшерүү ийгиликтүү болду",
+  "Confirm fingerprint": "Манжа изин тастыктоо",
+  "Sign": "Кол кою",
+  "Signed": "Кол коюлду"
 }

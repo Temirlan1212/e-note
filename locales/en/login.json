@@ -41,8 +41,5 @@
   "Fingerprint Login": "Fingerprint Login",
   "You need to verify your fingerprint to sign in": "You need to verify your fingerprint to sign in",
   "Confirm": "Confirm",
-  "Fingerprint verification": "Fingerprint verification",
-  "Unsuccessful login attempt": "Unsuccessful login attempt",
-  "Unable to identify fingerprint, Place your finger on the scanner again": "Unable to identify fingerprint. Place your finger on the scanner again",
-  "Fingerprint verification successful": "Fingerprint verification successful"
+  "Unsuccessful login attempt": "Unsuccessful login attempt"
 }

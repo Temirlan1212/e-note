@@ -101,6 +101,16 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
     pin: `requester.${index}.personalNumber`,
     birthDate: `requester.${index}.birthDate`,
     citizenship: `requester.${index}.citizenship`,
+    knowledgeLanguage: `requester.${index}.knowledgeLanguage`,
+    nameOfCompanyOfficial: `requester.${index}.nameOfCompanyOfficial`,
+    nameOfCompanyGov: `requester.${index}.nameOfCompanyGov`,
+    representativesName: `requester.${index}.representativesName`,
+    notaryForeignParticipation: `requester.${index}.notaryForeignParticipation`,
+    notaryRegistrationNumber: `requester.${index}.notaryRegistrationNumber`,
+    notaryOKPONumber: `requester.${index}.notaryOKPONumber`,
+    notaryPhysicalParticipantsQty: `requester.${index}.notaryPhysicalParticipantsQty`,
+    notaryLegalParticipantsQty: `requester.${index}.notaryLegalParticipantsQty`,
+    notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -146,16 +156,17 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
   });
 
   const triggerFields = async () => {
-    const allFields = items.reduce((acc: string[], _, index: number) => {
-      return [
+    const allFields = items.reduce(
+      (acc: string[], _, index: number) => [
         ...acc,
         ...Object.values(getPersonalDataNames(index)),
         ...Object.values(getIdentityDocumentNames(index)),
         ...Object.values(getAddressNames(index)),
         ...Object.values(getActualAddressNames(index)),
         ...Object.values(getContactNames(index)),
-      ];
-    }, []);
+      ],
+      []
+    );
 
     const validated = await trigger(allFields as any);
 
@@ -288,6 +299,9 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
   const handlePinCheck = async (index: number) => {
     const values = getValues();
 
+    setValue(`requester.${index}.id`, null);
+    setValue(`requester.${index}.version`, null);
+
     if (values.requester != null && values.requester[index].personalNumber) {
       const pin = values.requester[index].personalNumber;
       const personalData = await tundukPersonalDataFetch(`/api/tunduk/personal-data/${pin}`);
@@ -298,17 +312,20 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
       }
 
       setAlertOpen(false);
+      setValue(`requester.${index}.id`, personalData.data["id"]);
+      setValue(`requester.${index}.version`, personalData.data["version"]);
 
-      const allFields = items.reduce((acc: string[], _, index: number) => {
-        return [
+      const allFields = items.reduce(
+        (acc: string[], _, index: number) => [
           ...acc,
           ...Object.values(getPersonalDataNames(index)),
           ...Object.values(getIdentityDocumentNames(index)),
           ...Object.values(getAddressNames(index)),
           ...Object.values(getActualAddressNames(index)),
           ...Object.values(getContactNames(index)),
-        ];
-      }, []);
+        ],
+        []
+      );
 
       allFields.map((field: any) => {
         const fieldPath = field.split(".");

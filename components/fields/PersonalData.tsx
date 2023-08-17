@@ -23,6 +23,16 @@ export interface IPersonalDataProps {
     pin: string;
     birthDate: string;
     citizenship: string;
+    knowledgeLanguage: string;
+    nameOfCompanyOfficial: string;
+    nameOfCompanyGov: string;
+    representativesName: string;
+    notaryForeignParticipation: string;
+    notaryRegistrationNumber: string;
+    notaryOKPONumber: string;
+    notaryPhysicalParticipantsQty: string;
+    notaryLegalParticipantsQty: string;
+    notaryTotalParticipantsQty: string;
   };
   defaultValues?: {
     type?: number | null;
@@ -33,6 +43,16 @@ export interface IPersonalDataProps {
     pin?: number;
     birthDate?: Date;
     citizenship?: number | null;
+    knowledgeLanguage?: boolean;
+    nameOfCompanyOfficial?: string;
+    nameOfCompanyGov?: string;
+    representativesName?: string;
+    notaryForeignParticipation?: boolean;
+    notaryRegistrationNumber?: number;
+    notaryOKPONumber?: number;
+    notaryPhysicalParticipantsQty?: number;
+    notaryLegalParticipantsQty?: number;
+    notaryTotalParticipantsQty?: number;
   };
   fields?: {
     type?: boolean;
@@ -43,6 +63,16 @@ export interface IPersonalDataProps {
     pin?: boolean;
     birthDate?: boolean;
     citizenship?: boolean;
+    knowledgeLanguage?: boolean;
+    nameOfCompanyOfficial?: boolean;
+    nameOfCompanyGov?: boolean;
+    representativesName?: boolean;
+    notaryForeignParticipation?: boolean;
+    notaryRegistrationNumber?: boolean;
+    notaryOKPONumber?: boolean;
+    notaryPhysicalParticipantsQty?: boolean;
+    notaryLegalParticipantsQty?: boolean;
+    notaryTotalParticipantsQty?: boolean;
   };
   onPinCheck?: MouseEventHandler<HTMLButtonElement>;
 }
@@ -51,6 +81,9 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
+
+  const foreigner = watch(names.foreigner);
+  const type = watch(names.type);
 
   const { data: citizenshipDictionary, loading: citizenshipDictionaryLoading } = useFetch(
     `/api/dictionaries/citizenship`,
@@ -82,6 +115,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
             )}
           />
         )}
+
         {(fields?.foreigner == null || !!fields?.foreigner) && (
           <Controller
             control={control}
@@ -119,7 +153,8 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 </Box>
               )}
             />
-            {onPinCheck && (
+
+            {onPinCheck && !foreigner && (
               <Button
                 endIcon={<ContentPasteSearchIcon />}
                 sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
@@ -150,6 +185,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
             )}
           />
         )}
+
         {(fields?.firstName == null || !!fields?.firstName) && (
           <Controller
             control={control}
@@ -167,6 +203,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
             )}
           />
         )}
+
         {(fields?.middleName == null || !!fields?.middleName) && (
           <Controller
             control={control}
@@ -208,6 +245,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
             )}
           />
         )}
+
         {(fields?.citizenship == null || !!fields?.citizenship) && (
           <Controller
             control={control}
@@ -244,6 +282,199 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
           />
         )}
       </Box>
+
+      {type == 1 && (
+        <>
+          <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+            {(fields?.knowledgeLanguage == null || !!fields?.knowledgeLanguage) && (
+              <Controller
+                control={control}
+                name={names.knowledgeLanguage}
+                defaultValue={defaultValues?.knowledgeLanguage ?? false}
+                render={({ field, fieldState }) => (
+                  <Checkbox
+                    label={t("Knowledge of russian/kyrgyz")}
+                    type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    {...field}
+                    checked={!!field.value}
+                  />
+                )}
+              />
+            )}
+
+            {(fields?.notaryForeignParticipation == null || !!fields?.notaryForeignParticipation) && (
+              <Controller
+                control={control}
+                name={names.notaryForeignParticipation}
+                defaultValue={defaultValues?.notaryForeignParticipation ?? false}
+                render={({ field, fieldState }) => (
+                  <Checkbox
+                    label={t("Foreign participation")}
+                    type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    {...field}
+                    checked={!!field.value}
+                  />
+                )}
+              />
+            )}
+          </Box>
+
+          {(fields?.nameOfCompanyOfficial == null || !!fields?.nameOfCompanyOfficial) && (
+            <Controller
+              control={control}
+              name={names.nameOfCompanyOfficial}
+              defaultValue={defaultValues?.nameOfCompanyOfficial ?? ""}
+              render={({ field, fieldState }) => (
+                <Box display="flex" flexDirection="column" width="100%">
+                  <InputLabel>{t("Name of organization/translation company in russian")}</InputLabel>
+                  <Input
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    {...field}
+                  />
+                </Box>
+              )}
+            />
+          )}
+
+          {(fields?.nameOfCompanyGov == null || !!fields?.nameOfCompanyGov) && (
+            <Controller
+              control={control}
+              name={names.nameOfCompanyGov}
+              defaultValue={defaultValues?.nameOfCompanyGov ?? ""}
+              render={({ field, fieldState }) => (
+                <Box display="flex" flexDirection="column" width="100%">
+                  <InputLabel>{t("Name of organization/translation company in kyrgyz")}</InputLabel>
+                  <Input
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    {...field}
+                  />
+                </Box>
+              )}
+            />
+          )}
+
+          {(fields?.representativesName == null || !!fields?.representativesName) && (
+            <Controller
+              control={control}
+              name={names.representativesName}
+              defaultValue={defaultValues?.representativesName ?? ""}
+              render={({ field, fieldState }) => (
+                <Box display="flex" flexDirection="column" width="100%">
+                  <InputLabel>{t("Full name of the representative")}</InputLabel>
+                  <Input
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    {...field}
+                  />
+                </Box>
+              )}
+            />
+          )}
+
+          <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+            {(fields?.notaryRegistrationNumber == null || !!fields?.notaryRegistrationNumber) && (
+              <Controller
+                control={control}
+                name={names.notaryRegistrationNumber}
+                defaultValue={defaultValues?.notaryRegistrationNumber ?? ""}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Registration number")}</InputLabel>
+                    <Input
+                      type="number"
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      {...field}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+
+            {(fields?.notaryOKPONumber == null || !!fields?.notaryOKPONumber) && (
+              <Controller
+                control={control}
+                name={names.notaryOKPONumber}
+                defaultValue={defaultValues?.notaryOKPONumber ?? ""}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("OKPO code")}</InputLabel>
+                    <Input
+                      type="number"
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      {...field}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+          </Box>
+
+          <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+            {(fields?.notaryPhysicalParticipantsQty == null || !!fields?.notaryPhysicalParticipantsQty) && (
+              <Controller
+                control={control}
+                name={names.notaryPhysicalParticipantsQty}
+                defaultValue={defaultValues?.notaryPhysicalParticipantsQty ?? ""}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Number of founders (participants) of individuals")}</InputLabel>
+                    <Input
+                      type="number"
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      {...field}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+
+            {(fields?.notaryLegalParticipantsQty == null || !!fields?.notaryLegalParticipantsQty) && (
+              <Controller
+                control={control}
+                name={names.notaryLegalParticipantsQty}
+                defaultValue={defaultValues?.notaryLegalParticipantsQty ?? ""}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Number of founders (participants) of legal entities")}</InputLabel>
+                    <Input
+                      type="number"
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      {...field}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+          </Box>
+
+          {(fields?.notaryTotalParticipantsQty == null || !!fields?.notaryTotalParticipantsQty) && (
+            <Controller
+              control={control}
+              name={names.notaryTotalParticipantsQty}
+              defaultValue={defaultValues?.notaryTotalParticipantsQty ?? ""}
+              render={({ field, fieldState }) => (
+                <Box display="flex" flexDirection="column" width="100%">
+                  <InputLabel>{t("Total number (participants)")}</InputLabel>
+                  <Input
+                    type="number"
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    {...field}
+                  />
+                </Box>
+              )}
+            />
+          )}
+        </>
+      )}
     </Box>
   );
 }
