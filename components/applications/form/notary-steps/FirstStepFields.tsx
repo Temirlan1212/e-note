@@ -301,6 +301,10 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
 
     setValue(`requester.${index}.id`, null);
     setValue(`requester.${index}.version`, null);
+    setValue(`requester.${index}.mainAddress.id`, null);
+    setValue(`requester.${index}.mainAddress.version`, null);
+    setValue(`requester.${index}.actualResidenceAddress.id`, null);
+    setValue(`requester.${index}.actualResidenceAddress.version`, null);
 
     if (values.requester != null && values.requester[index].personalNumber) {
       const pin = values.requester[index].personalNumber;
@@ -311,28 +315,52 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
         return;
       }
 
+      const partner = personalData.data.partner;
+      const mainAddress = personalData.data.mainAddress;
+      const actualAddress = personalData.data.actualAddress;
+
+      if (partner == null || partner.id == null) {
+        setAlertOpen(true);
+        return;
+      }
+
       setAlertOpen(false);
-      setValue(`requester.${index}.id`, personalData.data["id"]);
-      setValue(`requester.${index}.version`, personalData.data["version"]);
+      setValue(`requester.${index}.id`, partner?.id);
+      setValue(`requester.${index}.version`, partner?.version);
+      setValue(`requester.${index}.mainAddress.id`, mainAddress?.id);
+      setValue(`requester.${index}.mainAddress.version`, mainAddress?.version);
+      setValue(`requester.${index}.actualResidenceAddress.id`, actualAddress?.id);
+      setValue(`requester.${index}.actualResidenceAddress.version`, actualAddress?.version);
 
-      const allFields = items.reduce(
-        (acc: string[], _, index: number) => [
-          ...acc,
-          ...Object.values(getPersonalDataNames(index)),
-          ...Object.values(getIdentityDocumentNames(index)),
-          ...Object.values(getAddressNames(index)),
-          ...Object.values(getActualAddressNames(index)),
-          ...Object.values(getContactNames(index)),
-        ],
-        []
-      );
-
-      allFields.map((field: any) => {
+      const baseFields = [
+        ...Object.values(getPersonalDataNames(index)),
+        ...Object.values(getIdentityDocumentNames(index)),
+        ...Object.values(getContactNames(index)),
+      ];
+      baseFields.map((field: any) => {
         const fieldPath = field.split(".");
         const fieldLastItem = fieldPath[fieldPath.length - 1];
         const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
-        if (personalData.data[tundukField ?? fieldLastItem] != null && fieldLastItem !== "personalNumber") {
-          setValue(field, personalData.data[tundukField ?? fieldLastItem]);
+        if (partner[tundukField ?? fieldLastItem] != null && fieldLastItem !== "personalNumber") {
+          setValue(field, partner[tundukField ?? fieldLastItem]);
+        }
+      });
+
+      const mainAddressFields = [...Object.values(getAddressNames(index))];
+      mainAddressFields.map((field: any) => {
+        const fieldPath = field.split(".");
+        const fieldLastItem = fieldPath[fieldPath.length - 1];
+        if (mainAddress[fieldLastItem] != null) {
+          setValue(field, mainAddress[fieldLastItem]);
+        }
+      });
+
+      const actualAddressFields = [...Object.values(getActualAddressNames(index))];
+      actualAddressFields.map((field: any) => {
+        const fieldPath = field.split(".");
+        const fieldLastItem = fieldPath[fieldPath.length - 1];
+        if (actualAddress[fieldLastItem] != null) {
+          setValue(field, actualAddress[fieldLastItem]);
         }
       });
     }

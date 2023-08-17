@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const criteria: Record<string, string | number>[] = [];
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/selection/notary.request.passport-series.select", {
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/selection/notary.passport-series.select", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
