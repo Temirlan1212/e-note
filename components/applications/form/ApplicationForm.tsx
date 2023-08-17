@@ -193,8 +193,10 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
         display="flex"
         flexDirection="column"
         gap="30px"
+        mb={3}
         p={2}
         boxShadow={4}
+        borderRadius={1}
         onSubmit={form.handleSubmit(onSubmit)}
       >
         {steps.map((component, index) => step === index && component)}

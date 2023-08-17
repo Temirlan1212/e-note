@@ -1,22 +1,23 @@
-import { DependencyList, useEffect, useId, useMemo } from "react";
+import { DependencyList, useEffect, useId } from "react";
 
 let hookId: string | null = null;
 let timer: ReturnType<typeof setTimeout> | null = null;
 const setTimer = (t: ReturnType<typeof setTimeout> | null) => (timer = t);
 
 export default function useEffectOnce(callback: Function, deps: DependencyList = []) {
-  const id = useId();
-  const memoId = useMemo(() => (deps?.length > 0 ? JSON.stringify(deps) : id), []);
+  const newId = useId();
+  const id = deps?.length > 0 ? JSON.stringify(deps) : newId;
 
   useEffect(() => {
-    if (timer != null && memoId === hookId) clearTimeout(timer);
+    if (timer != null && id === hookId) clearTimeout(timer);
 
-    hookId = memoId;
+    hookId = id;
 
     setTimer(
       setTimeout(() => {
         callback();
       }, 0)
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 }

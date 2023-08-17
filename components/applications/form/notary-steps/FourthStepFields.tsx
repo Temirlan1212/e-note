@@ -98,6 +98,16 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
     pin: `members.${index}.personalNumber`,
     birthDate: `members.${index}.birthDate`,
     citizenship: `members.${index}.citizenship`,
+    knowledgeLanguage: `requester.${index}.knowledgeLanguage`,
+    nameOfCompanyOfficial: `requester.${index}.nameOfCompanyOfficial`,
+    nameOfCompanyGov: `requester.${index}.nameOfCompanyGov`,
+    representativesName: `requester.${index}.representativesName`,
+    notaryForeignParticipation: `requester.${index}.notaryForeignParticipation`,
+    notaryRegistrationNumber: `requester.${index}.notaryRegistrationNumber`,
+    notaryOKPONumber: `requester.${index}.notaryOKPONumber`,
+    notaryPhysicalParticipantsQty: `requester.${index}.notaryPhysicalParticipantsQty`,
+    notaryLegalParticipantsQty: `requester.${index}.notaryLegalParticipantsQty`,
+    notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({

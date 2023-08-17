@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
 import Button from "@/components/ui/Button";
 import { useProfileStore } from "../../stores/profile";
-import { IProfileState, IUserData } from "@/models/profile/user";
+import { IUserData } from "@/models/profile/user";
 
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CircleIcon from "@mui/icons-material/Circle";
@@ -35,7 +35,7 @@ export default function PopupNotifications() {
     body: requestBody,
   });
 
-  const user: IUserData | null = useProfileStore((state: IProfileState) => state.getUserData());
+  const user: IUserData | null = useProfileStore((state) => state.getUserData());
 
   const handleNotificationPopupToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setAnchorEl(anchorEl == null ? event.currentTarget : null);
