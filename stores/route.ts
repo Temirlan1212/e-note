@@ -133,7 +133,7 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
         },
         {
           title: "My templates",
-          link: "",
+          link: "my-templates",
           type: "menu",
           icon: "CollectionsBookmark",
         },
