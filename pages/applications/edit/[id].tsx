@@ -24,7 +24,7 @@ export default function EditApplication() {
   return (
     <>
       <Head>
-        <title>{userData?.group.id === 4 ? t("Edit notarial actions") : t("Edit application")}</title>
+        <title>{userData?.group.id === 4 ? t("Edit notarial action") : t("Edit application")}</title>
       </Head>
 
       <Container maxWidth="xl">

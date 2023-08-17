@@ -22,7 +22,7 @@ export default function CreateApplication() {
   return (
     <>
       <Head>
-        <title>{userData?.group.id === 4 ? t("Create notarial actions") : t("Create application")}</title>
+        <title>{userData?.group.id === 4 ? t("Create notarial action") : t("Create application")}</title>
       </Head>
 
       <Container maxWidth="xl">
