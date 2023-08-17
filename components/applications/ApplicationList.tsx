@@ -14,6 +14,7 @@ import { useTranslations } from "next-intl";
 import { ApplicationListActions } from "./ApplicationListActions";
 import { IStatus } from "@/models/dictionaries/status";
 import { useProfileStore } from "@/stores/profile";
+import { IProfileState, IUserData } from "@/models/profile/user";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -29,7 +30,7 @@ export default function ApplicationList() {
   const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
   const { data: statusData } = useFetch("/api/dictionaries/status", "POST");
 
-  const userData = useProfileStore((state) => state.userData);
+  const userData: IUserData | null = useProfileStore((state: IProfileState) => state.getUserData());
 
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,
