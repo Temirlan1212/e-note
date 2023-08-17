@@ -6,7 +6,6 @@ import useFetch from "@/hooks/useFetch";
 import { format } from "date-fns";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { useProfileStore } from "@/stores/profile";
-import { IUserData } from "@/models/profile/user";
 import { Alert, Box, Collapse, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Tabs from "@/components/ui/Tabs";
@@ -23,8 +22,6 @@ import UploadFiles from "@/components/fields/UploadFiles";
 enum tundukFieldNames {
   name = "firstName",
 }
-
-let timer: ReturnType<typeof setTimeout> | null = null;
 
 interface IBaseEntityFields {
   id?: number;
@@ -44,13 +41,12 @@ export interface IStepFieldsProps {
 }
 
 export default function FourthStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
-  const profile = useProfileStore.getState();
+  const userData = useProfileStore((state) => state.userData);
   const t = useTranslations();
 
   const {
     control,
     trigger,
-    watch,
     getValues,
     setValue,
     formState: { errors },
@@ -63,7 +59,6 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
 
   const [loading, setLoading] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
-  const [userData, setUserData] = useState<IUserData | null>(null);
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
@@ -71,7 +66,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
         return (
           <Box display="flex" gap="20px" flexDirection="column">
             <Typography variant="h5">{t("Personal data")}</Typography>
-            <PersonalData form={form} names={getPersonalDataNames(index)} />
+            <PersonalData form={form} names={getPersonalDataNames(index)} onPinCheck={() => handlePinCheck(index)} />
 
             <Typography variant="h5">{t("Identity document")}</Typography>
             <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
@@ -106,6 +101,16 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
     pin: `requester.${index}.personalNumber`,
     birthDate: `requester.${index}.birthDate`,
     citizenship: `requester.${index}.citizenship`,
+    knowledgeLanguage: `requester.${index}.knowledgeLanguage`,
+    nameOfCompanyOfficial: `requester.${index}.nameOfCompanyOfficial`,
+    nameOfCompanyGov: `requester.${index}.nameOfCompanyGov`,
+    representativesName: `requester.${index}.representativesName`,
+    notaryForeignParticipation: `requester.${index}.notaryForeignParticipation`,
+    notaryRegistrationNumber: `requester.${index}.notaryRegistrationNumber`,
+    notaryOKPONumber: `requester.${index}.notaryOKPONumber`,
+    notaryPhysicalParticipantsQty: `requester.${index}.notaryPhysicalParticipantsQty`,
+    notaryLegalParticipantsQty: `requester.${index}.notaryLegalParticipantsQty`,
+    notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -141,44 +146,6 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
   });
 
   useEffectOnce(() => {
-    setUserData(profile.getUserData());
-  }, [profile]);
-
-  useEffectOnce(() => {
-    const subscription = watch(({ requester }, { name }) => {
-      const path = name?.split(".");
-
-      if (!path || (path && (path[0] !== "requester" || path[path.length - 1] !== "personalNumber"))) return;
-
-      if (timer != null) clearTimeout(timer);
-
-      timer = setTimeout(async () => {
-        let pin: any = requester;
-
-        path.slice(1).map((item: string) => {
-          pin = pin[item];
-        });
-
-        if (!pin) {
-          setAlertOpen(true);
-          return;
-        }
-
-        const personalData = await tundukPersonalDataFetch(`/api/tunduk/personal-data/${pin}`);
-
-        if (personalData?.status !== 0 || personalData?.data == null) {
-          setAlertOpen(true);
-          return;
-        }
-
-        setAlertOpen(false);
-        setTundukValues(personalData.data);
-      }, 1111);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-  useEffectOnce(() => {
     const values = getValues();
     const itemsLength = values.requester?.length ?? 1;
     if (itemsLength > 1) {
@@ -188,39 +155,18 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
     }
   });
 
-  const setTundukValues = (values: Record<string, any>) => {
-    const allFields = items.reduce((acc: string[], _, index: number) => {
-      return [
-        ...acc,
-        ...Object.values(getPersonalDataNames(index)),
-        ...Object.values(getIdentityDocumentNames(index)),
-        ...Object.values(getAddressNames(index)),
-        ...Object.values(getActualAddressNames(index)),
-        ...Object.values(getContactNames(index)),
-      ];
-    }, []);
-
-    allFields.map((field: any) => {
-      const fieldPath = field.split(".");
-      const fieldLastItem = fieldPath[fieldPath.length - 1];
-      const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
-      if (values[tundukField ?? fieldLastItem] != null && fieldLastItem !== "personalNumber") {
-        setValue(field, values[tundukField ?? fieldLastItem]);
-      }
-    });
-  };
-
   const triggerFields = async () => {
-    const allFields = items.reduce((acc: string[], _, index: number) => {
-      return [
+    const allFields = items.reduce(
+      (acc: string[], _, index: number) => [
         ...acc,
         ...Object.values(getPersonalDataNames(index)),
         ...Object.values(getIdentityDocumentNames(index)),
         ...Object.values(getAddressNames(index)),
         ...Object.values(getActualAddressNames(index)),
         ...Object.values(getContactNames(index)),
-      ];
-    }, []);
+      ],
+      []
+    );
 
     const validated = await trigger(allFields as any);
 
@@ -350,6 +296,48 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
     });
   };
 
+  const handlePinCheck = async (index: number) => {
+    const values = getValues();
+
+    setValue(`requester.${index}.id`, null);
+    setValue(`requester.${index}.version`, null);
+
+    if (values.requester != null && values.requester[index].personalNumber) {
+      const pin = values.requester[index].personalNumber;
+      const personalData = await tundukPersonalDataFetch(`/api/tunduk/personal-data/${pin}`);
+
+      if (personalData?.status !== 0 || personalData?.data == null) {
+        setAlertOpen(true);
+        return;
+      }
+
+      setAlertOpen(false);
+      setValue(`requester.${index}.id`, personalData.data["id"]);
+      setValue(`requester.${index}.version`, personalData.data["version"]);
+
+      const allFields = items.reduce(
+        (acc: string[], _, index: number) => [
+          ...acc,
+          ...Object.values(getPersonalDataNames(index)),
+          ...Object.values(getIdentityDocumentNames(index)),
+          ...Object.values(getAddressNames(index)),
+          ...Object.values(getActualAddressNames(index)),
+          ...Object.values(getContactNames(index)),
+        ],
+        []
+      );
+
+      allFields.map((field: any) => {
+        const fieldPath = field.split(".");
+        const fieldLastItem = fieldPath[fieldPath.length - 1];
+        const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
+        if (personalData.data[tundukField ?? fieldLastItem] != null && fieldLastItem !== "personalNumber") {
+          setValue(field, personalData.data[tundukField ?? fieldLastItem]);
+        }
+      });
+    }
+  };
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box
@@ -380,14 +368,14 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
         actionsContent={
           <>
             <Button
-              buttonType={"primary"}
+              buttonType="primary"
               sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
               onClick={handleAddTabClick}
             >
               <AddIcon />
             </Button>
             <Button
-              buttonType={"secondary"}
+              buttonType="secondary"
               sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
               onClick={handleRemoveTabClick}
             >

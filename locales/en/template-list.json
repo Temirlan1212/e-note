@@ -8,6 +8,7 @@
   "Action type": "Action type",
   "Document type": "Document type",
   "Object type": "Object type",
+  "Object": "Объект",
   "Actions": "Actions",
   "In my templates": "In my templates",
   "New application": "New application",
@@ -23,5 +24,8 @@
   "Resolution on the appointment of an expert examination": "Resolution on the appointment of an expert examination",
   "Apartments": "Apartments",
   "Salary": "Salary",
-  "Residential building": "Residential building"
+  "Residential building": "Residential building",
+  "Select action": "Select action",
+  "Create new template": "Create new template",
+  "Hand templates": "Hand templates"
 }

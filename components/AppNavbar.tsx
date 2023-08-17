@@ -143,6 +143,17 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
             justifyContent: "space-between",
             backgroundColor: "white",
             pl: { xs: 2, sm: 3, md: type === "private" ? 10 : 3 },
+            transition: theme.transitions.create("margin", {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.leavingScreen,
+            }),
+            ...(open && {
+              transition: theme.transitions.create("margin", {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+              marginLeft: { xs: 0, md: "224px" },
+            }),
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
@@ -243,7 +254,23 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
         </List>
       </Drawer>
 
-      <Box component="main" sx={{ pl: { xs: 0, md: type === "private" ? 7 : 0 } }}>
+      <Box
+        component="main"
+        sx={{
+          pl: { xs: 0, md: type === "private" ? 7 : 0 },
+          transition: theme.transitions.create("margin", {
+            easing: theme.transitions.easing.sharp,
+            duration: theme.transitions.duration.leavingScreen,
+          }),
+          ...(open && {
+            transition: theme.transitions.create("margin", {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+            marginLeft: { xs: 0, md: "224px" },
+          }),
+        }}
+      >
         {children}
       </Box>
     </Box>

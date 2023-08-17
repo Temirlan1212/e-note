@@ -96,7 +96,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
         flexDirection={{ xs: "column", md: "row" }}
       >
         <Typography variant="h4" whiteSpace="nowrap">
-          {t("Choose document")}
+          {t("Choose object")}
         </Typography>
       </Box>
 
@@ -174,6 +174,8 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           );
         }}
       />
+
+      <Typography variant="h4">{t("Choose document")}</Typography>
 
       <Controller
         control={control}
@@ -311,12 +313,12 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
+          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
           </Button>
         )}
         {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
             {t("Next")}
           </Button>
         )}

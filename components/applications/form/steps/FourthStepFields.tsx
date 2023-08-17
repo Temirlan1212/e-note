@@ -92,6 +92,16 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     pin: `members.${index}.personalNumber`,
     birthDate: `members.${index}.birthDate`,
     citizenship: `members.${index}.citizenship`,
+    knowledgeLanguage: `requester.${index}.knowledgeLanguage`,
+    nameOfCompanyOfficial: `requester.${index}.nameOfCompanyOfficial`,
+    nameOfCompanyGov: `requester.${index}.nameOfCompanyGov`,
+    representativesName: `requester.${index}.representativesName`,
+    notaryForeignParticipation: `requester.${index}.notaryForeignParticipation`,
+    notaryRegistrationNumber: `requester.${index}.notaryRegistrationNumber`,
+    notaryOKPONumber: `requester.${index}.notaryOKPONumber`,
+    notaryPhysicalParticipantsQty: `requester.${index}.notaryPhysicalParticipantsQty`,
+    notaryLegalParticipantsQty: `requester.${index}.notaryLegalParticipantsQty`,
+    notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -290,14 +300,14 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         actionsContent={
           <>
             <Button
-              buttonType={"primary"}
+              buttonType="primary"
               sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
               onClick={handleAddTabClick}
             >
               <AddIcon />
             </Button>
             <Button
-              buttonType={"secondary"}
+              buttonType="secondary"
               sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
               onClick={handleRemoveTabClick}
             >
@@ -309,12 +319,12 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
+          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
           </Button>
         )}
         {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
             {t("Next")}
           </Button>
         )}

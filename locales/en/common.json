@@ -149,5 +149,12 @@
   "Individual person": "Individual person",
   "Juridical person": "Juridical person",
   "Foreign person": "Foreign person",
-  "Notarial action": "Notarial action"
+  "Notarial action": "Notarial action",
+  "Check": "Check",
+  "Fingerprint verification": "Fingerprint verification",
+  "Unable to identify fingerprint, Place your finger on the scanner again": "Unable to identify fingerprint. Place your finger on the scanner again",
+  "Fingerprint verification successful": "Fingerprint verification successful",
+  "Confirm fingerprint": "Confirm fingerprint",
+  "Sign": "Sign",
+  "Signed": "Signed"
 }

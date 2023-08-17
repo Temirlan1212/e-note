@@ -44,6 +44,16 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
     pin: `requester.${index}.personalNumber`,
     birthDate: `requester.${index}.birthDate`,
     citizenship: `requester.${index}.citizenship`,
+    knowledgeLanguage: `requester.${index}.knowledgeLanguage`,
+    nameOfCompanyOfficial: `requester.${index}.nameOfCompanyOfficial`,
+    nameOfCompanyGov: `requester.${index}.nameOfCompanyGov`,
+    representativesName: `requester.${index}.representativesName`,
+    notaryForeignParticipation: `requester.${index}.notaryForeignParticipation`,
+    notaryRegistrationNumber: `requester.${index}.notaryRegistrationNumber`,
+    notaryOKPONumber: `requester.${index}.notaryOKPONumber`,
+    notaryPhysicalParticipantsQty: `requester.${index}.notaryPhysicalParticipantsQty`,
+    notaryLegalParticipantsQty: `requester.${index}.notaryLegalParticipantsQty`,
+    notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -199,12 +209,12 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
+          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
           </Button>
         )}
         {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
             {t("Next")}
           </Button>
         )}

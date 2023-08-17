@@ -149,5 +149,12 @@
   "Individual person": "Физическое лицо",
   "Juridical person": "Юридическое лицо",
   "Foreign person": "Иностранное лицо",
-  "Notarial action": "Нотариальное действие"
+  "Notarial action": "Нотариальное действие",
+  "Check": "Проверить",
+  "Fingerprint verification": "Подтверждение отпечатка пальца",
+  "Unable to identify fingerprint, Place your finger on the scanner again": "Не удается идентифицировать отпечаток пальца. Приложите палец к сканеру повторно",
+  "Fingerprint verification successful": "Проверка отпечатка пальца прошла успешно",
+  "Confirm fingerprint": "Подтвердить отпечаток пальца",
+  "Sign": "Подписать",
+  "Signed": "Подписано"
 }

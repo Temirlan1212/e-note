@@ -6,6 +6,7 @@
   "Notarial actions": "Нотариалдык иш-аракеттер",
   "Choose notary": "Нотариус тандоо",
   "Choose requester": "Өтүнүүчүнү тандоо",
+  "Choose object": "Объектти тандоо",
   "Choose document": "Документти тандоо",
   "Choose document from templates": "Документти үлгүлөрдөн тандоо",
   "Form first step hint text": "Мурунку талааларды эске албай, белгилүү бир нотариусту билсеңиз, “Нотариус“ издөө формасына түз өтсөңүз болот.",
@@ -38,5 +39,18 @@
   "Edit document": "Документти өзгөртүү",
   "Choose step by step": "Кийинки кадам аркылуу тандаңыз",
   "Select document from my templates": "Документти «Менин үлгүлөрүм» тандаңыз",
-  "Select document from system templates": "Документти «Системдик үлгүлөр» тандаңыз"
+  "Select document from system templates": "Документти «Системдик үлгүлөр» тандаңыз",
+  "To enter a document into the registry and assign a unique document number, you need confirmation of your fingerprints and your EDS": "Документти реестрге киргизүү жана документтин уникалдуу номерин ыйгаруу үчүн сиздин манжа изиңизди жана ЭСКны тастыктоо керек",
+  "Entry into the register": "Реестрге киргизүү",
+  "Assign a unique number and enter it in the registry": "Уникалдуу номер ыйгаруу жана реестрге киргизүү",
+  "Knowledge of russian/kyrgyz": "Орус/кыргыз тилдерин билүү",
+  "Foreign participation": "Чет элдик катышуу",
+  "Name of organization/translation company in russian": "Уюмдун/котормочу компаниянын орусча аталышы",
+  "Name of organization/translation company in kyrgyz": "Уюмдун/котормочу компаниянын кыргызча аталышы",
+  "Full name of the representative": "Өкүлдүн толук аты-жөнү",
+  "Registration number": "Каттоо номери",
+  "OKPO code": "ОКПО коду",
+  "Number of founders (participants) of individuals": "Жеке жактардын уюштуруучуларынын (катышуучуларынын) саны",
+  "Number of founders (participants) of legal entities": "Юридикалык жактардын уюштуруучуларынын (катышуучуларынын) саны",
+  "Total number (participants)": "Жалпы саны (катышуучулар)"
 }
