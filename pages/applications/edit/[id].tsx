@@ -7,6 +7,7 @@ import { Box, Container, Typography } from "@mui/material";
 import ApplicationForm from "@/components/applications/form/ApplicationForm";
 import Button from "@/components/ui/Button";
 import CloseIcon from "@mui/icons-material/Close";
+import { IProfileState, IUserData } from "@/models/profile/user";
 
 export default function EditApplication() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function EditApplication() {
 
   const { id } = router.query;
 
-  const userData = useProfileStore((state) => state.userData);
+  const userData: IUserData | null = useProfileStore((state: IProfileState) => state.getUserData());
 
   const handleCancelClick = () => {
     router.push("/applications");
