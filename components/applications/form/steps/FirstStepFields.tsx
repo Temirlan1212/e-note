@@ -86,6 +86,16 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
     }
   };
 
+  const getLabelField = (data) => {
+    if (locale === "ru" || locale === "kg") {
+      if (data?.status === 0 && Array.isArray(data?.data)) {
+        const item = data.data.find((item) => item.hasOwnProperty("$t:name"));
+        return item ? "$t:name" : "name";
+      }
+    }
+    return "name";
+  };
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box
@@ -111,7 +121,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Notary district")}</InputLabel>
               <Autocomplete
-                labelField={locale === "ru" || locale === "kg" ? "$t:name" : "name"}
+                labelField={getLabelField(notaryDistrictDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={!city}
@@ -146,7 +156,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Notary")}</InputLabel>
               <Autocomplete
-                labelField="name"
+                labelField={getLabelField(notaryDistrictDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={loading}
