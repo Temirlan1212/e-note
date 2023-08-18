@@ -20,14 +20,12 @@ import DatePicker from "@/components/ui/DatePicker";
 import CheckBox from "@/components/ui/Checkbox";
 import TimePicker from "@/components/ui/TimePicker";
 import DateTimePicker from "@/components/ui/DateTimePicker";
-import { Dispatch, SetStateAction } from "react";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   dynamicForm: UseFormReturn<any>;
-  stepState: [number, Dispatch<SetStateAction<number>>];
-  onPrev?: Function;
-  onNext?: Function;
+  onPrev?: Function | null;
+  onNext?: Function | null;
 }
 
 interface IDynamicComponentProps {
@@ -159,7 +157,26 @@ const getDateDynamicValue = (field: keyof typeof types, value: any) => {
   return types[field];
 };
 
-const getDynamicDefaultGroupName = (name: string) => (name === "null" ? "" : name ?? "");
+const getDynamicGroupName = (group: Record<string, any>, locale: string | undefined) => {
+  const groupName = group?.groupName === "null" ? "" : group?.groupName ?? "";
+  const groupNameLocale = group?.["groupName_" + locale];
+
+  return groupNameLocale ? groupNameLocale : groupName;
+};
+
+const getDynamicName = (path: string | null, name: string | null) => {
+  if (path != null && name != null) {
+    const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson)(?:\.|$)/;
+    if (regex.test(name)) {
+      const index = 0;
+      return `${path}.${index}.${name}`;
+    }
+
+    return `${path}.${name}`;
+  }
+
+  return name ?? "";
+};
 
 export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
@@ -225,7 +242,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
     }
   };
 
-  if (documentTemplateLoading || selectionLoading) return <></>;
+  if (documentTemplateLoading && selectionLoading) return <></>;
 
   return (
     <Box>
@@ -234,18 +251,14 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
           {documentTemplateData?.data &&
             documentTemplateData?.data.map((group: Record<string, any>, index: number) => (
               <Box display="flex" flexDirection="column" gap="20px" key={index}>
-                <Typography variant="h4">
-                  {group?.["groupName_" + locale]
-                    ? group?.["groupName_" + locale]
-                    : getDynamicDefaultGroupName(group?.groupName)}
-                </Typography>
+                <Typography variant="h4">{getDynamicGroupName(group, locale)}</Typography>
 
                 <Grid key={index} container spacing={2}>
                   {group?.fields?.map((item: Record<string, any>, index: number) => (
                     <Grid item md={12} key={index}>
                       <Controller
                         control={control}
-                        name={item?.path != null ? `${item.path}.${item.fieldName}` : item?.fieldName ?? ""}
+                        name={getDynamicName(item?.path, item?.fieldName)}
                         defaultValue={getDynamicDefaultValue(item?.fieldType, item?.defaultValue)}
                         rules={{ required: !!item?.required ? "required" : false }}
                         render={({ field, fieldState }) => {
