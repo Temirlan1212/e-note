@@ -45,7 +45,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     data: imageData,
     loading: isImageLoading,
     update: getImage,
-  } = useFetch<Response>("/api/profile/download-image/" + userData?.id, "GET", {
+  } = useFetch<Response>(userData?.id != undefined ? "/api/profile/download-image/" + userData?.id : "", "GET", {
     returnResponse: true,
   });
 
