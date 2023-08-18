@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -22,6 +22,8 @@ export interface IAreaProps {
 
 export default function Area({ form, names, defaultValues }: IAreaProps) {
   const t = useTranslations();
+
+  const locale = useLocale();
 
   const { trigger, control, watch, resetField } = form;
 
@@ -50,7 +52,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Region")}</InputLabel>
               <Autocomplete
-                labelField="name"
+                labelField={locale === "ru" || locale === "kg" ? "$t:name" : "name"}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 options={regionDictionary?.status === 0 ? (regionDictionary?.data as Record<string, any>[]) ?? [] : []}
@@ -79,7 +81,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("District")}</InputLabel>
               <Autocomplete
-                labelField="name"
+                labelField={locale === "ru" || locale === "kg" ? "$t:name" : "name"}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={!region}
@@ -111,7 +113,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("City")}</InputLabel>
               <Autocomplete
-                labelField="name"
+                labelField={locale === "ru" || locale === "kg" ? "$t:name" : "name"}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={!district}
