@@ -156,7 +156,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Notary")}</InputLabel>
               <Autocomplete
-                labelField={getLabelField(notaryDistrictDictionary)}
+                labelField={getLabelField(companyDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={loading}

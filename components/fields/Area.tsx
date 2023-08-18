@@ -91,7 +91,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("District")}</InputLabel>
               <Autocomplete
-                labelField={getLabelField(regionDictionary)}
+                labelField={getLabelField(districtDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={!region}
@@ -123,7 +123,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("City")}</InputLabel>
               <Autocomplete
-                labelField={getLabelField(regionDictionary)}
+                labelField={getLabelField(cityDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={!district}
