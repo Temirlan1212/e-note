@@ -46,8 +46,8 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
   useEffectOnce(() => {
     if (actionVal != null) {
-      const values = getValues();
-      setformValues({ formValues: values });
+      const { object, objectType, notarialAction, typeNotarialAction, action } = getValues();
+      setformValues({ formValues: { object, objectType, notarialAction, typeNotarialAction, action } });
     }
   }, [actionVal]);
 

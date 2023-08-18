@@ -20,12 +20,14 @@ import DatePicker from "@/components/ui/DatePicker";
 import CheckBox from "@/components/ui/Checkbox";
 import TimePicker from "@/components/ui/TimePicker";
 import DateTimePicker from "@/components/ui/DateTimePicker";
+import { Dispatch, SetStateAction } from "react";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   dynamicForm: UseFormReturn<any>;
-  onPrev?: Function | null;
-  onNext?: Function | null;
+  stepState: [number, Dispatch<SetStateAction<number>>];
+  onPrev?: Function;
+  onNext?: Function;
 }
 
 interface IDynamicComponentProps {
@@ -242,7 +244,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
     }
   };
 
-  if (documentTemplateLoading && selectionLoading) return <></>;
+  if (documentTemplateLoading || selectionLoading) return <></>;
 
   return (
     <Box>

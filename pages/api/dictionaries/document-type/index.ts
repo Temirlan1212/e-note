@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 enum criteriaFieldNames {
   isSystem = "isSystem",
-  "createdBy.id" = "createdBy.id",
+  createdBy = "createdBy.id",
   object = "notaryObject",
   objectType = "notaryObjectType",
   notarialAction = "notaryAction",
