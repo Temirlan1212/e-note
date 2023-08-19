@@ -10,6 +10,7 @@ import PDFViewer from "@/components/PDFViewer";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import Link from "@/components/ui/Link";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -21,19 +22,17 @@ export interface IStepFieldsProps {
 export default function SixthStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
 
-  const { trigger, control, watch, resetField } = form;
+  const { trigger, control, watch, setValue } = form;
 
   const id = watch("id");
-  const version = watch("version");
 
-  const { update: getDocument } = useFetch("", "GET");
+  const { data } = useFetch(id != null ? `/api/files/prepare/${id}` : "", "GET");
 
-  useEffectOnce(async () => {
-    if (id != null && version != null) {
-      const res = await getDocument(`/api/files/prepare/${id}`);
-      console.log(res, id);
+  useEffectOnce(() => {
+    if (data?.data?.saleOrderVersion != null) {
+      setValue("version", data.data.saleOrderVersion);
     }
-  }, [id, version]);
+  }, [data]);
 
   const triggerFields = async () => {
     return await trigger([]);
@@ -62,12 +61,23 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
       </Box>
 
       <Box display="flex" justifyContent="end">
-        <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
-          {t("Download PDF")}
-        </Button>
+        <Link
+          href={`/api/iframe?url=${data?.data?.downloadUrl}&token=${data?.data?.token}`}
+          download={data?.data?.fileName}
+          target="_blank"
+        >
+          <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
+            {t("Download PDF")}
+          </Button>
+        </Link>
       </Box>
 
-      <PDFViewer fileUrl="/documents/example.pdf" />
+      {data?.data?.editUrl != null && (
+        <iframe
+          src={`/api/iframe?url=${"https://cloud-test.sanarip.org/index.php/f/248959"}&token=${data?.data?.token}`}
+          style={{ minHeight: "500px" }}
+        ></iframe>
+      )}
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
