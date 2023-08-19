@@ -20,6 +20,7 @@ import DatePicker from "@/components/ui/DatePicker";
 import CheckBox from "@/components/ui/Checkbox";
 import TimePicker from "@/components/ui/TimePicker";
 import DateTimePicker from "@/components/ui/DateTimePicker";
+import { useState } from "react";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -189,16 +190,25 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
     if (onPrev != null) onPrev();
   };
 
+  const [selectDatas, setSelectDatas] = useState<Record<string, any[]>>({});
+
   const { update: applicationUpdate, loading } = useFetch("", "POST");
 
-  const { data: selectionData, loading: selectionLoading, update: selectionUpdate } = useFetch("", "POST");
+  const { loading: selectionLoading, update: selectionUpdate } = useFetch("", "POST");
 
-  const getSelectionData = (data: any) => {
+  const getSelectData = async (data: any) => {
     if (Array.isArray(data) && data.length > 0) {
       const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
-      fieldsProps.map((fieldProps: Record<string, any>) => {
-        const model = fieldProps?.selection;
-        if (!!model) selectionUpdate(`/api/dictionaries/selection/${model}`);
+      fieldsProps.map(async (item: Record<string, any>) => {
+        const fieldName = getDynamicName(item?.path, item?.fieldName);
+        const model = item?.selection;
+
+        if (!!fieldName && !!model) {
+          const { data } = await selectionUpdate(`/api/dictionaries/selection/${model}`);
+          setSelectDatas((prev) => {
+            return { ...prev, [fieldName]: data };
+          });
+        }
       });
     }
   };
@@ -216,7 +226,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
   useEffectOnce(async () => {
     if (productId != null) {
       const { data } = await getDocumentTemplateData("/api/dictionaries/document-type/template/" + productId);
-      getSelectionData(data);
+      getSelectData(data);
     }
   }, [productId]);
 
@@ -272,6 +282,10 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
                             }
                           }
 
+                          const data = Array.isArray(selectDatas[getDynamicName(item?.path, item?.fieldName)])
+                            ? selectDatas[getDynamicName(item?.path, item?.fieldName)]
+                            : [];
+
                           return (
                             <Box display="flex" flexDirection="column" gap="10px">
                               <InputLabel>{item?.fieldTitles?.[locale ?? ""] ?? ""}</InputLabel>
@@ -280,7 +294,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
                                 field,
                                 fieldState,
                                 errorMessage,
-                                data: selectionData?.data ?? [],
+                                data,
                                 trigger,
                               })}
                             </Box>
