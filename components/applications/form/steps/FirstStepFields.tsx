@@ -71,6 +71,8 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
         url = `/api/applications/update/${values.id}`;
         data.id = values.id;
         data.version = values.version;
+      } else {
+        data.statusSelect = 2;
       }
 
       const result = await applicationCreate(url, data);
