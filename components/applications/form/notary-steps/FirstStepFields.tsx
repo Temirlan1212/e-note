@@ -202,7 +202,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
         id: values.id,
         version: values.version,
         creationDate: format(new Date(), "yyyy-MM-dd"),
-        company: { id: userData?.id },
+        company: { id: userData?.activeCompany?.id },
         requester: values.requester,
       };
 
@@ -298,16 +298,17 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
 
   const handlePinCheck = async (index: number) => {
     const values = getValues();
+    const entity = "requester";
 
-    setValue(`requester.${index}.id`, null);
-    setValue(`requester.${index}.version`, null);
-    setValue(`requester.${index}.mainAddress.id`, null);
-    setValue(`requester.${index}.mainAddress.version`, null);
-    setValue(`requester.${index}.actualResidenceAddress.id`, null);
-    setValue(`requester.${index}.actualResidenceAddress.version`, null);
+    setValue(`${entity}.${index}.id`, null);
+    setValue(`${entity}.${index}.version`, null);
+    setValue(`${entity}.${index}.mainAddress.id`, null);
+    setValue(`${entity}.${index}.mainAddress.version`, null);
+    setValue(`${entity}.${index}.actualResidenceAddress.id`, null);
+    setValue(`${entity}.${index}.actualResidenceAddress.version`, null);
 
-    if (values.requester != null && values.requester[index].personalNumber) {
-      const pin = values.requester[index].personalNumber;
+    if (values[entity] != null && values[entity][index].personalNumber) {
+      const pin = values[entity][index].personalNumber;
       const personalData = await tundukPersonalDataFetch(`/api/tunduk/personal-data/${pin}`);
 
       if (personalData?.status !== 0 || personalData?.data == null) {
@@ -325,12 +326,12 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
       }
 
       setAlertOpen(false);
-      setValue(`requester.${index}.id`, partner?.id);
-      setValue(`requester.${index}.version`, partner?.version);
-      setValue(`requester.${index}.mainAddress.id`, mainAddress?.id);
-      setValue(`requester.${index}.mainAddress.version`, mainAddress?.version);
-      setValue(`requester.${index}.actualResidenceAddress.id`, actualAddress?.id);
-      setValue(`requester.${index}.actualResidenceAddress.version`, actualAddress?.version);
+      setValue(`${entity}.${index}.id`, partner?.id);
+      setValue(`${entity}.${index}.version`, partner?.version);
+      setValue(`${entity}.${index}.mainAddress.id`, mainAddress?.id);
+      setValue(`${entity}.${index}.mainAddress.version`, mainAddress?.version);
+      setValue(`${entity}.${index}.actualResidenceAddress.id`, actualAddress?.id);
+      setValue(`${entity}.${index}.actualResidenceAddress.version`, actualAddress?.version);
 
       const baseFields = [
         ...Object.values(getPersonalDataNames(index)),

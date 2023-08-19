@@ -17,6 +17,10 @@ import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import UploadFiles from "@/components/fields/UploadFiles";
 
+enum tundukFieldNames {
+  name = "firstName",
+}
+
 interface IBaseEntityFields {
   id?: number;
   version?: number;
@@ -57,6 +61,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
   const object = watch("object");
 
   const [loading, setLoading] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
@@ -64,7 +69,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
         return (
           <Box display="flex" gap="20px" flexDirection="column">
             <Typography variant="h5">{t("Personal data")}</Typography>
-            <PersonalData form={form} names={getPersonalDataNames(index)} />
+            <PersonalData form={form} names={getPersonalDataNames(index)} onPinCheck={() => handlePinCheck(index)} />
 
             <Typography variant="h5">{t("Identity document")}</Typography>
             <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
@@ -88,6 +93,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
 
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
+  const { update: tundukPersonalDataFetch } = useFetch("", "POST");
 
   const getPersonalDataNames = (index: number) => ({
     type: `members.${index}.partnerTypeSelect`,
@@ -280,6 +286,77 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
 
       return [...next];
     });
+  };
+
+  const handlePinCheck = async (index: number) => {
+    const values = getValues();
+    const entity = "members";
+
+    setValue(`${entity}.${index}.id`, null);
+    setValue(`${entity}.${index}.version`, null);
+    setValue(`${entity}.${index}.mainAddress.id`, null);
+    setValue(`${entity}.${index}.mainAddress.version`, null);
+    setValue(`${entity}.${index}.actualResidenceAddress.id`, null);
+    setValue(`${entity}.${index}.actualResidenceAddress.version`, null);
+
+    if (values[entity] != null && values[entity][index].personalNumber) {
+      const pin = values[entity][index].personalNumber;
+      const personalData = await tundukPersonalDataFetch(`/api/tunduk/personal-data/${pin}`);
+
+      if (personalData?.status !== 0 || personalData?.data == null) {
+        setAlertOpen(true);
+        return;
+      }
+
+      const partner = personalData.data.partner;
+      const mainAddress = personalData.data.mainAddress;
+      const actualAddress = personalData.data.actualAddress;
+
+      if (partner == null || partner.id == null) {
+        setAlertOpen(true);
+        return;
+      }
+
+      setAlertOpen(false);
+      setValue(`${entity}.${index}.id`, partner?.id);
+      setValue(`${entity}.${index}.version`, partner?.version);
+      setValue(`${entity}.${index}.mainAddress.id`, mainAddress?.id);
+      setValue(`${entity}.${index}.mainAddress.version`, mainAddress?.version);
+      setValue(`${entity}.${index}.actualResidenceAddress.id`, actualAddress?.id);
+      setValue(`${entity}.${index}.actualResidenceAddress.version`, actualAddress?.version);
+
+      const baseFields = [
+        ...Object.values(getPersonalDataNames(index)),
+        ...Object.values(getIdentityDocumentNames(index)),
+        ...Object.values(getContactNames(index)),
+      ];
+      baseFields.map((field: any) => {
+        const fieldPath = field.split(".");
+        const fieldLastItem = fieldPath[fieldPath.length - 1];
+        const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
+        if (partner[tundukField ?? fieldLastItem] != null && fieldLastItem !== "personalNumber") {
+          setValue(field, partner[tundukField ?? fieldLastItem]);
+        }
+      });
+
+      const mainAddressFields = [...Object.values(getAddressNames(index))];
+      mainAddressFields.map((field: any) => {
+        const fieldPath = field.split(".");
+        const fieldLastItem = fieldPath[fieldPath.length - 1];
+        if (mainAddress[fieldLastItem] != null) {
+          setValue(field, mainAddress[fieldLastItem]);
+        }
+      });
+
+      const actualAddressFields = [...Object.values(getActualAddressNames(index))];
+      actualAddressFields.map((field: any) => {
+        const fieldPath = field.split(".");
+        const fieldLastItem = fieldPath[fieldPath.length - 1];
+        if (actualAddress[fieldLastItem] != null) {
+          setValue(field, actualAddress[fieldLastItem]);
+        }
+      });
+    }
   };
 
   return (

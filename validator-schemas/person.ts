@@ -15,14 +15,14 @@ export const personSchema = object().shape({
   lastName: string()
     .trim()
     .required("required")
-    .matches(/^[aA-zZаА-яЯ\s]*$/, "onlyLetters"),
+    .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
   name: string()
     .trim()
     .required("required")
-    .matches(/^[aA-zZаА-яЯ\s]*$/, "onlyLetters"),
+    .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
   middleName: string()
     .trim()
-    .matches(/^[aA-zZаА-яЯ\s]*$/, "onlyLetters"),
+    .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
   personalNumber: string()
     .trim()
     .required("required")

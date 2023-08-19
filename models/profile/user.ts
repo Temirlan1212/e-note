@@ -34,4 +34,5 @@ export interface IUserData extends IUser {
   code: string;
   group: IUserGroup;
   roles: IUserRole[];
+  activeCompany: { id: number };
 }
