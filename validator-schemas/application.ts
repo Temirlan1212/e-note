@@ -8,6 +8,7 @@ export const applicationSchema = object()
   .shape({
     id: number().integer().positive().nullable(),
     version: number().integer().positive().nullable(),
+    statusSelect: number().integer().positive().nullable(),
     notaryDistrict: object({
       id: number().integer().positive(),
     })
