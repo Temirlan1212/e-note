@@ -87,11 +87,9 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
   };
 
   const getLabelField = (data) => {
-    if (locale === "ru" || locale === "kg") {
-      if (data?.status === 0 && Array.isArray(data?.data)) {
-        const item = data.data.find((item) => item.hasOwnProperty("$t:name"));
-        return item ? "$t:name" : "name";
-      }
+    if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
+      const item = data.data.find((item) => item.hasOwnProperty("$t:name"));
+      return item != null ? "$t:name" : "name";
     }
     return "name";
   };
