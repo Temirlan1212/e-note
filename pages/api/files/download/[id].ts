@@ -7,7 +7,7 @@ export const config = {
 export default async function handler(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
-  if (req.method !== "GET" && searchParams.get("id") == null) {
+  if (req.method !== "GET" || searchParams.get("id") == null) {
     return new Response(null, { status: 400 });
   }
 

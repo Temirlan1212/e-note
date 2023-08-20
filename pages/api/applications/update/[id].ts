@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
-  if (req.method !== "PUT" && id == null) {
+  if (req.method !== "PUT" || id == null) {
     return res.status(400).json(null);
   }
 

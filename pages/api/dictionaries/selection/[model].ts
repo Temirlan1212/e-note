@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { model } = req.query;
 
-  if (req.method !== "POST" && model == null) {
+  if (req.method !== "POST" || model == null) {
     return res.status(400).json(null);
   }
 
