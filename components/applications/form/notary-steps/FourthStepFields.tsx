@@ -93,7 +93,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
 
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
-  const { update: tundukPersonalDataFetch } = useFetch("", "POST");
+  const { update: tundukPersonalDataFetch } = useFetch("", "GET");
 
   const getPersonalDataNames = (index: number) => ({
     type: `members.${index}.partnerTypeSelect`,
