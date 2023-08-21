@@ -26,7 +26,7 @@ export interface IContact {
 }
 
 const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
-  const [activeContactId, setActiveContactId] = useState<number | null>(null);
+  const [activeContactId, setActiveContactId] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState("");
 
   const t = useTranslations();
@@ -37,14 +37,17 @@ const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
     contact.appName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const activeContact = contacts?.data.find((contact) => contact.notary.id === activeContactId) || null;
+  const { data: contact, update } = useFetch("", "POST");
 
-  const handleContactClick = (contactId: number) => {
+  const activeContact = contacts?.data.find((contact) => contact.notary.id === activeContactId);
+
+  const handleContactClick = async (contactId: number) => {
+    await update(`/api/chat/create/${contactId}`, { id: contactId });
     setActiveContactId(contactId);
   };
 
   const onBackToContacts = () => {
-    setActiveContactId(null);
+    setActiveContactId(0);
   };
 
   return (
@@ -88,9 +91,9 @@ const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
 
         {activeContact ? (
           <ChatMessageBoard
-            name={activeContact.appName}
-            sourceLink={activeContact.chatRoomLink}
-            activeContactId={activeContact?.notary.id}
+            name={contact?.data.appName}
+            sourceLink={contact?.data.chatRoomLink}
+            activeContactId={contact?.data.notary.id}
           />
         ) : (
           <Box
