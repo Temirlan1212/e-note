@@ -54,7 +54,10 @@
   "Total number (participants)": "Total number (participants)",
   "The notarial action is entered in the register": "The notarial action is entered in the register",
   "Add to my templates": "Add to my Templates",
-  "Write a message to the applicant": "Write a message to the applicant",
-  "Issue a new action": "Issue a new action",
-  "Go to notary actions": "Go to notary Actions"
+  "Make a new action": "Make a new action",
+  "Go to notary actions": "Go to notary actions",
+  "Applicant": "Applicant",
+  "Your application has been successfully sent to the notary": "Your application has been successfully sent to the notary",
+  "Make a new application": "Make a new application",
+  "Go to applications": "Go to applications"
 }

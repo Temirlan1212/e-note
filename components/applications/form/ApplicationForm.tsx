@@ -16,15 +16,16 @@ import ThirdStepFields from "./steps/ThirdStepFields";
 import FourthStepFields from "./steps/FourthStepFields";
 import FifthStepFields from "./steps/FifthStepFields";
 import SixthStepFields from "./steps/SixthStepFields";
+import SuccessStepFields from "./steps/SuccessStepFields";
 import NotaryFirstStepFields from "./notary-steps/FirstStepFields";
 import NotarySecondStepFields from "./notary-steps/SecondStepFields";
 import NotaryThirdStepFields from "./notary-steps/ThirdStepFields";
 import NotaryFourthStepFields from "./notary-steps/FourthStepFields";
 import NotaryFifthStepFields from "./notary-steps/FifthStepFields";
 import NotarySixthStepFields from "./notary-steps/SixthStepFields";
+import NotarySuccessStepFields from "./notary-steps/SuccessStepFields";
 import { useRouter } from "next/router";
 import useNavigationConfirmation from "@/hooks/useNavigationConfirmation";
-import SuccessStepFields from "./notary-steps/SuccessStepFields";
 
 export interface IApplicationFormProps {
   id?: number | null;
@@ -75,7 +76,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const steps =
     userData?.group?.id === 4
       ? [
-          <SuccessStepFields key={9} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
           <NotaryFirstStepFields key={0} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
           <NotarySecondStepFields
             key={1}
@@ -128,6 +128,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             onPrev={() => setStep(step - 1)}
             onNext={() => setStep(step + 1)}
           />,
+
           <NotaryFifthStepFields
             key={4}
             dynamicForm={dynamicForm}
@@ -141,8 +142,9 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             form={form}
             stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
-            onNext={() => router.push("/applications")}
+            onNext={() => setStep(step + 1)}
           />,
+          <NotarySuccessStepFields key={9} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
         ]
       : [
           <FirstStepFields key={0} form={form} onNext={() => setStep(step + 1)} />,
@@ -177,12 +179,8 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             onPrev={() => setStep(step - 1)}
             onNext={() => setStep(step + 1)}
           />,
-          <SixthStepFields
-            key={5}
-            form={form}
-            onPrev={() => setStep(step - 1)}
-            onNext={() => router.push("/applications")}
-          />,
+          <SixthStepFields key={5} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <SuccessStepFields key={8} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
         ];
 
   const onSubmit = async (data: IApplicationSchema) => {};

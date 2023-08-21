@@ -1,15 +1,19 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useId } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn } from "react-hook-form";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Alert, AlertProps, Box, Collapse, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Hint from "@/components/ui/Hint";
 import { GridTable } from "@/components/ui/GridTable";
-import Input from "@/components/ui/Input";
-import SendIcon from "@mui/icons-material/Send";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import useFetch from "@/hooks/useFetch";
+import { GridValueGetterParams } from "@mui/x-data-grid";
+import { IStatus } from "@/models/dictionaries/status";
+import { IActionType } from "@/models/dictionaries/action-type";
+import { useRouter } from "next/router";
+import Link from "@/components/ui/Link";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -18,31 +22,19 @@ export interface IStepFieldsProps {
   onNext?: Function;
 }
 
-const alertStatusText = {
-  error: "Произошла ошибка, попробуйте отправить заново.",
-  success: "Сообщение успешно отправлено.",
-  info: "",
-  warning: "",
+const getFullName = (name: string | null, lastName: string | null) => {
+  if (name && lastName) {
+    return name + " " + lastName;
+  }
+  return name ? name : lastName ? lastName : "";
 };
 
 export default function SuccessStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
-  const [alert, setAlert] = useState<AlertProps & { open: boolean }>({
-    open: false,
-    severity: "warning",
-  });
-
-  const {
-    trigger,
-    register,
-    formState: {
-      errors: { textAreaMessage },
-    },
-  } = form;
-
-  const triggerFields = async () => {
-    return await trigger(["textAreaMessage"]);
-  };
+  const { locale } = useRouter();
+  const { data: statusData } = useFetch("/api/dictionaries/status", "POST");
+  const { data, loading } = useFetch(`/api/applications/${form.getValues().id ?? ""}`, "POST");
+  const dataItem = data?.data?.[0];
 
   return (
     <Box display="flex" gap="30px" flexDirection="column">
@@ -53,52 +45,74 @@ export default function SuccessStepFields({ form, stepState, onPrev, onNext }: I
       </Hint>
 
       <Box display="flex" flexDirection="column" gap="30px">
-        <GridTable rows={[]} columns={[]} />
+        <GridTable
+          loading={loading}
+          rows={[
+            {
+              name: dataItem?.product?.fullName || "",
+              date: dataItem?.creationDate || "",
+              requester: getFullName(dataItem?.requester?.[0]?.name, dataItem?.requester?.[0]?.lastName),
+              status: dataItem?.statusSelect || 0,
+              id: useId(),
+            },
+          ]}
+          columns={[
+            {
+              field: "name",
+              headerName: "Type of action",
+              width: 200,
+              editable: false,
+              sortable: false,
+            },
+            {
+              field: "status",
+              headerName: "Status",
+              width: 200,
+              editable: false,
+              sortable: false,
+              valueGetter: (params: GridValueGetterParams) => {
+                if (statusData != null) {
+                  const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(params.value));
+                  const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
+                  return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
+                }
+                return params.value;
+              },
+            },
+            {
+              field: "date",
+              headerName: "Date",
+              width: 200,
+              editable: false,
+              sortable: false,
+            },
+            {
+              field: "requester",
+              headerName: "Applicant",
+              width: 200,
+              editable: false,
+              sortable: false,
+            },
+          ]}
+        />
 
         <Box width={{ xs: "100%", sm: "fit-content" }}>
           <Button>{t("Add to my templates")}</Button>
         </Box>
-
-        <Box>
-          <Typography>{t("Write a message to the applicant")}</Typography>
-
-          <Box display="flex" alignItems="start">
-            <Box minHeight="80px" width="100%" borderRadius="0px !important">
-              <Input
-                multiline
-                register={register}
-                name="textAreaMessage"
-                error={!!textAreaMessage?.message}
-                helperText={textAreaMessage?.message}
-              />
-            </Box>
-
-            <Button sx={{ height: "75px", width: "auto", mb: "5px" }} onClick={triggerFields}>
-              <SendIcon />
-            </Button>
-          </Box>
-          <Collapse in={alert.open}>
-            <Alert
-              severity={alert.severity}
-              onClose={() =>
-                setAlert((prev) => {
-                  return { ...prev, open: false };
-                })
-              }
-            >
-              {alertStatusText[alert.severity ?? "info"]}
-            </Alert>
-          </Collapse>
-        </Box>
       </Box>
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        <Button startIcon={<PostAddIcon />} sx={{ width: "auto", height: "50px" }}>
-          <Typography>{t("Issue a new action")}</Typography>
-        </Button>
-        <Button startIcon={<ModeEditIcon />} sx={{ width: "auto", height: "50px" }} buttonType="secondary">
-          <Typography>{t("Go to notary actions")}</Typography>
-        </Button>
+        <Link href="/applications/create">
+          <Button startIcon={<PostAddIcon />} sx={{ width: "auto", height: "50px" }}>
+            <Typography>{t("Make a new action")}</Typography>
+          </Button>
+        </Link>
+
+        <Link href="/applications">
+          <Button startIcon={<ModeEditIcon />} sx={{ width: "auto", height: "50px" }} buttonType="secondary">
+            <Typography>{t("Go to notary actions")}</Typography>
+          </Button>
+        </Link>
       </Box>
     </Box>
   );

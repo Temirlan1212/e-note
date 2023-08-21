@@ -54,7 +54,10 @@
   "Total number (participants)": "Жалпы саны (катышуучулар)",
   "The notarial action is entered in the register": "Нотариалдык иш-аракет реестрге киргизилди",
   "Add to my templates": "Менин шаблондорума кошуу",
-  "Write a message to the applicant": "Арыз ээсине билдирүү жазыңыз",
-  "Issue a new action": "Жаны иш-аракет түзүү",
-  "Go to notary actions": "Нотариалдык иш-аракетке өтүү"
+  "Make a new action": "Жаны иш-аракет түзүү",
+  "Go to notary actions": "Нотариалдык иш-аракетке өтүү",
+  "Applicant": "Арыз ээси",
+  "Your application has been successfully sent to the notary": "Сиздин арызыңыз нотариуска ийгиликтүү жөнөтүлдү",
+  "Make a new application": "Жаңы арыз түзүү",
+  "Go to applications": "Арыз баракчасына өтүү"
 }

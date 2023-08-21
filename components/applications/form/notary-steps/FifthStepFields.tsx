@@ -157,6 +157,12 @@ const getDateDynamicValue = (field: keyof typeof types, value: any) => {
     Date: isDate ? value : isInvalidDate ? null : new Date(String(value)),
     Time: isDate ? value : isInvalidDate ? null : new Date(Date.parse(value)),
     DateTime: isDate ? value : isInvalidDate ? null : new Date(String(value)),
+    Float: !value ? null : value,
+    Decimal: !value ? null : value,
+    Integer: !value ? null : value,
+    Boolean: value,
+    Selection: !value ? null : value,
+    String: !value ? "" : value,
   };
 
   return types[field];
