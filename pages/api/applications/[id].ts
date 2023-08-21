@@ -85,7 +85,7 @@ const related: Record<string, typeof fields> = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
-  if (req.method !== "POST" && id == null) {
+  if (req.method !== "POST" || id == null) {
     return res.status(400).json(null);
   }
 

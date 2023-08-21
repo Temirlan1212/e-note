@@ -4,7 +4,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export default async function handler(req: NextApiRequest, res: NextApiResponse<IApplication | null>) {
   const { id, version } = req.query;
 
-  if (req.method !== "DELETE" && id == null && version == null) {
+  if (req.method !== "DELETE" || id == null || version == null) {
     return res.status(400).json(null);
   }
 
