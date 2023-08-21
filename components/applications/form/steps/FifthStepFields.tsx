@@ -54,6 +54,7 @@ const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentP
         type="number"
         helperText={errorMessage}
         {...field}
+        onChange={(e) => field.onChange(parseInt(e.target.value))}
       />
     ),
     Decimal: (
@@ -62,6 +63,7 @@ const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentP
         type="number"
         helperText={errorMessage}
         {...field}
+        onChange={(e) => field.onChange(parseInt(e.target.value))}
       />
     ),
     Integer: (
@@ -70,6 +72,7 @@ const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentP
         type="number"
         helperText={errorMessage}
         {...field}
+        onChange={(e) => field.onChange(parseInt(e.target.value))}
       />
     ),
     Selection: (
