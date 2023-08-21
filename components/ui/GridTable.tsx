@@ -123,6 +123,9 @@ export const GridTable: React.FC<IGridTableProps> = ({
     ".MuiDataGrid-virtualScroller": {
       scrollBehavior: "smooth",
     },
+    ".MuiDataGrid-virtualScrollerContent": {
+      margin: "5px 0px",
+    },
     border: "none",
     background: "#F6F6F6",
   };

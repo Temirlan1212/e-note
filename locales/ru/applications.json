@@ -51,5 +51,13 @@
   "OKPO code": "Код ОКПО",
   "Number of founders (participants) of individuals": "Кол-во учредителей (участников) физических лиц",
   "Number of founders (participants) of legal entities": "Кол-во учредителей (участников) юридических лиц",
-  "Total number (participants)": "Общее кол-во (участников)"
+  "Total number (participants)": "Общее кол-во (участников)",
+  "The notarial action is entered in the register": "Нотариальное действие внесено в реестр",
+  "Add to my templates": "Добавить в мои шаблоны",
+  "Make a new action": "Оформить новое действие",
+  "Go to notary actions": "Перейти в нотариальные действия",
+  "Applicant": "Заявитель",
+  "Your application has been successfully sent to the notary": "Ваша заявка успешно отправлена нотариусу",
+  "Make a new application": "Оформить новую заявку",
+  "Go to applications": "Перейти в заявки"
 }
