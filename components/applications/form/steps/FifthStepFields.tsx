@@ -192,7 +192,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
 
   const [selectDatas, setSelectDatas] = useState<Record<string, any[]>>({});
 
-  const { update: applicationUpdate, loading } = useFetch("", "POST");
+  const { update: applicationUpdate, loading } = useFetch("", "PUT");
 
   const { loading: selectionLoading, update: selectionUpdate } = useFetch("", "POST");
 
