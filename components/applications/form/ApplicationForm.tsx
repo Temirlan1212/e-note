@@ -144,7 +144,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             onPrev={() => setStep(step - 1)}
             onNext={() => setStep(step + 1)}
           />,
-          <NotarySuccessStepFields key={9} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
+          <NotarySuccessStepFields key={7} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
         ]
       : [
           <FirstStepFields key={0} form={form} onNext={() => setStep(step + 1)} />,
@@ -180,7 +180,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             onNext={() => setStep(step + 1)}
           />,
           <SixthStepFields key={5} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-          <SuccessStepFields key={8} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <SuccessStepFields key={7} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
         ];
 
   const onSubmit = async (data: IApplicationSchema) => {};
