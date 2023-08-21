@@ -1,9 +1,9 @@
 import { Box, Typography } from "@mui/material";
-import { useRouter } from "next/router";
 import Image from "next/image";
 
 import Button from "../ui/Button";
 import Rating from "../ui/Rating";
+import Link from "@/components/ui/Link";
 
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import PhoneEnabledOutlinedIcon from "@mui/icons-material/PhoneEnabledOutlined";
@@ -74,12 +74,6 @@ interface INotariesInfoContentProps {}
 
 const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const t = useTranslations();
-
-  const router = useRouter();
-
-  const redirectTo = (pageRoute: string) => {
-    router.push(pageRoute);
-  };
 
   return (
     <Box
@@ -212,20 +206,21 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
           gap: "30px",
         }}
       >
-        <Button
-          startIcon={<ContentPlusIcon />}
-          color="success"
-          sx={{
-            width: {
-              sx: "100%",
-              md: "320px",
-            },
-            padding: "10px 0",
-          }}
-          onClick={() => redirectTo("/applications/create")}
-        >
-          {t("Create application")}
-        </Button>
+        <Link href="/applications/create">
+          <Button
+            startIcon={<ContentPlusIcon />}
+            color="success"
+            sx={{
+              width: {
+                sx: "100%",
+                md: "320px",
+              },
+              padding: "10px 0",
+            }}
+          >
+            {t("Create application")}
+          </Button>
+        </Link>
         <Button
           startIcon={<CloudMessageIcon />}
           buttonType="secondary"
