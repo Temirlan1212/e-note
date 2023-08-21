@@ -1,22 +1,14 @@
-import Image, { StaticImageData } from "next/image";
-import { useTranslations } from "next-intl";
-
 import { Avatar, Box, Typography } from "@mui/material";
 
 interface IChatListItemProps {
-  activeContact: any;
+  activeContact?: number;
   onContactClick: (contactId: number) => void;
   contactId: number;
   contactName: string;
-  contactOnline: boolean;
-  avatar: StaticImageData;
-  isRead: boolean;
 }
 
 const ChatListItem = (props: IChatListItemProps) => {
-  const { activeContact, onContactClick, contactId, contactName, contactOnline, avatar, isRead } = props;
-
-  const t = useTranslations();
+  const { activeContact, onContactClick, contactId, contactName } = props;
 
   return (
     <Box
@@ -47,29 +39,15 @@ const ChatListItem = (props: IChatListItemProps) => {
           gap: "16px",
         }}
       >
-        {avatar ? (
-          <Avatar
-            sizes="100"
-            sx={{
-              bgcolor: "success.main",
-              width: "40px",
-              height: "40px",
-            }}
-            aria-label="recipe"
-          >
-            <Image src={avatar} alt="contact-profile" />
-          </Avatar>
-        ) : (
-          <Avatar
-            sizes="100"
-            sx={{
-              bgcolor: "success.main",
-              width: "40px",
-              height: "40px",
-            }}
-            aria-label="recipe"
-          />
-        )}
+        <Avatar
+          sizes="100"
+          sx={{
+            bgcolor: "success.main",
+            width: "40px",
+            height: "40px",
+          }}
+          aria-label="recipe"
+        />
 
         <Box
           sx={{
@@ -86,29 +64,8 @@ const ChatListItem = (props: IChatListItemProps) => {
           >
             {contactName}
           </Typography>
-          <Typography
-            sx={{
-              color: contactOnline ? "#1BAA75" : "#BDBDBD",
-              fontSize: "14px",
-            }}
-          >
-            {contactOnline ? t("online") : t("offline")}
-          </Typography>
         </Box>
       </Box>
-
-      {isRead ? (
-        ""
-      ) : (
-        <Box
-          sx={{
-            width: "10px",
-            height: "10px",
-            background: "#1BAA75",
-            borderRadius: "50%",
-          }}
-        />
-      )}
     </Box>
   );
 };

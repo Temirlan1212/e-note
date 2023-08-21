@@ -28,7 +28,7 @@ const ChatListBoard: FC<IChatListBoardProps> = (props) => {
       flexDirection="column"
       sx={{
         display: {
-          xs: activeContact?.id ? "none" : "flex",
+          xs: activeContact?.notary.id ? "none" : "flex",
           md: "flex",
         },
         width: {
@@ -81,17 +81,14 @@ const ChatListBoard: FC<IChatListBoardProps> = (props) => {
           overflowY: "auto",
         }}
       >
-        {filteredContacts.map((contact) => {
+        {filteredContacts?.map((contact) => {
           return (
             <ChatListItem
-              activeContact={activeContact?.id}
-              key={contact.id}
-              avatar={contact.avatar}
-              contactName={contact.name}
-              contactOnline={contact.online}
-              contactId={contact.id}
-              isRead={contact.isRead}
-              onContactClick={() => handleContactClick(contact.id)}
+              activeContact={activeContact?.notary.id}
+              key={contact.notary.id}
+              contactName={contact.appName}
+              contactId={contact.notary.id}
+              onContactClick={() => handleContactClick(contact.notary.id)}
             />
           );
         })}

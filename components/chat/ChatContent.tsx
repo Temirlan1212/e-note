@@ -1,6 +1,5 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 
-import { StaticImageData } from "next/image";
 import { useTranslations } from "next-intl";
 
 import { Box, Button, Typography } from "@mui/material";
@@ -9,85 +8,22 @@ import KeyboardBackspaceOutlinedIcon from "@mui/icons-material/KeyboardBackspace
 import ChatListBoard from "./contact-list/ChatListBoard";
 import ChatMessageBoard from "./message/ChatMessageBoard";
 
-import AvatarContact from "@/public/images/avatar-contact.png";
+import useFetch from "@/hooks/useFetch";
 
 interface IChatContentProps {}
 
 export interface IContact {
-  id: number;
-  name: string;
-  phoneNumber: string;
-  online: boolean;
-  avatar: StaticImageData;
-  messages?: Message[];
-  isRead: boolean;
+  appName: string;
+  chatCreator: string;
+  chatId: number;
+  chatRoomLink: string;
+  guestEmail: null;
+  guestId: number;
+  notary: {
+    id: number;
+  };
+  userToken: string;
 }
-
-export interface Message {
-  id: number;
-  text: string;
-  sender: string;
-  createAt: string;
-}
-
-const contacts: IContact[] = [
-  {
-    id: 1,
-    name: "Баланчаева Б.Б.",
-    phoneNumber: "123-456-7890",
-    isRead: true,
-    online: true,
-    avatar: AvatarContact,
-    messages: [
-      { id: 1, text: "Hello there!", sender: "other", createAt: "14:15" },
-      { id: 2, text: "Hi! How are you?", sender: "user", createAt: "14:18" },
-      { id: 3, text: "I'm doing well. Thanks!", sender: "other", createAt: "14:23" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Баланчаева Б.Б.",
-    phoneNumber: "987-654-3210",
-    isRead: false,
-    online: false,
-    avatar: AvatarContact,
-    messages: [{ id: 1, text: "Hello there!", sender: "other", createAt: "14:15" }],
-  },
-  {
-    id: 3,
-    name: "Баланчаева Б.Б.",
-    phoneNumber: "987-654-3210",
-    isRead: true,
-    online: false,
-    avatar: AvatarContact,
-    messages: [
-      { id: 1, text: "Hello there!", sender: "other", createAt: "14:15" },
-      { id: 2, text: "Hi! How are you?", sender: "user", createAt: "14:18" },
-    ],
-  },
-  {
-    id: 4,
-    name: "Баланчаева Б.Б.",
-    phoneNumber: "987-654-3210",
-    isRead: false,
-    online: true,
-    avatar: AvatarContact,
-    messages: [
-      { id: 1, text: "Hello there!", sender: "other", createAt: "14:15" },
-      { id: 2, text: "Hi! How are you?", sender: "user", createAt: "14:18" },
-      { id: 3, text: "I'm doing well. Thanks!", sender: "other", createAt: "14:23" },
-    ],
-  },
-  {
-    id: 5,
-    name: "Алапаев Н.К.",
-    isRead: false,
-    phoneNumber: "987-654-3210",
-    online: false,
-    avatar: AvatarContact,
-    messages: [],
-  },
-];
 
 const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
   const [activeContactId, setActiveContactId] = useState<number | null>(null);
@@ -95,38 +31,16 @@ const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
 
   const t = useTranslations();
 
-  const filteredContacts = contacts.filter((contact) => contact.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const { data: contacts } = useFetch("/api/chat", "GET");
 
-  const activeContact = contacts.find((contact) => contact.id === activeContactId) || null;
+  const filteredContacts: IContact[] = contacts?.data.filter((contact) =>
+    contact.appName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-  const [messages, setMessages] = useState<Message[]>(activeContact?.messages || []);
-
-  useEffect(() => {
-    setMessages(activeContact?.messages || []);
-  }, [activeContact]);
-
-  const handleSendMessage = (text: string) => {
-    const now = new Date();
-
-    const hoursAndMinutes = now.getHours() + ":" + now.getMinutes();
-
-    const newMessage: Message = { id: contacts.length + 1, text, sender: "user", createAt: hoursAndMinutes };
-
-    setMessages((prevMessages) => {
-      return [...prevMessages, newMessage];
-    });
-  };
+  const activeContact = contacts?.data.find((contact) => contact.notary.id === activeContactId) || null;
 
   const handleContactClick = (contactId: number) => {
     setActiveContactId(contactId);
-
-    const contact: any = contacts.find((contact) => contact.id === activeContactId);
-
-    const updatedContact: IContact = { ...contact, isRead: true };
-
-    const contactIndex = contacts.findIndex((c) => c.id === updatedContact.id);
-
-    contacts[contactIndex] = updatedContact;
   };
 
   const onBackToContacts = () => {
@@ -174,12 +88,9 @@ const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
 
         {activeContact ? (
           <ChatMessageBoard
-            activeContactId={activeContact?.id}
-            avatar={activeContact?.avatar}
-            contactOnline={activeContact?.online}
-            name={activeContact?.name}
-            messages={messages}
-            onSend={handleSendMessage}
+            name={activeContact.appName}
+            sourceLink={activeContact.chatRoomLink}
+            activeContactId={activeContact?.notary.id}
           />
         ) : (
           <Box
