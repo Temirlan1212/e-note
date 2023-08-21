@@ -88,8 +88,8 @@ export default function SecondStepFields({ form, stepState, onPrev, onNext }: IS
     }
   };
 
-  const handleNextByStep = () => {
-    if (onNext) {
+  const handleStepByStepClick = () => {
+    if (onNext != null) {
       onNext();
       setStep(step + 1);
     }
@@ -175,7 +175,12 @@ export default function SecondStepFields({ form, stepState, onPrev, onNext }: IS
             {t("Next")}
           </Button>
         )}
-        <Button onClick={handleNextByStep} endIcon={<ArrowForwardIcon />} buttonType="secondary" sx={{ width: "auto" }}>
+        <Button
+          onClick={handleStepByStepClick}
+          endIcon={<ArrowForwardIcon />}
+          buttonType="secondary"
+          sx={{ width: "auto" }}
+        >
           {t("Choose step by step")}
         </Button>
       </Box>
