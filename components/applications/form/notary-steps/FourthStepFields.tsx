@@ -4,7 +4,7 @@ import { UseFormReturn, useFieldArray } from "react-hook-form";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Typography } from "@mui/material";
+import { Alert, Box, Collapse, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Tabs from "@/components/ui/Tabs";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -371,6 +371,12 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
           {t("fifth-step-title")}
         </Typography>
       </Box>
+
+      <Collapse in={alertOpen}>
+        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+          {t("Sorry, such pin not found")}
+        </Alert>
+      </Collapse>
 
       <Tabs
         data={items.map(({ getElement }, index) => {
