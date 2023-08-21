@@ -52,6 +52,7 @@ export const applicationSchema = object()
         .nullable()
         .test("nullable-required", "required", (v) => v != null),
     }),
+    textAreaMessage: string().min(1),
     requester: array().of(personSchema),
     members: array().of(personSchema),
   })

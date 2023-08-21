@@ -24,6 +24,7 @@ import NotaryFifthStepFields from "./notary-steps/FifthStepFields";
 import NotarySixthStepFields from "./notary-steps/SixthStepFields";
 import { useRouter } from "next/router";
 import useNavigationConfirmation from "@/hooks/useNavigationConfirmation";
+import SuccessStepFields from "./notary-steps/SuccessStepFields";
 
 export interface IApplicationFormProps {
   id?: number | null;
@@ -74,6 +75,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const steps =
     userData?.group?.id === 4
       ? [
+          <SuccessStepFields key={9} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
           <NotaryFirstStepFields key={0} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
           <NotarySecondStepFields
             key={1}
