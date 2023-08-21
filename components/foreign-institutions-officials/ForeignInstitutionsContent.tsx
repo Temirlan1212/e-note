@@ -114,6 +114,9 @@ const ForeignInstitutionsOfficialsContent: FC<IForeignInstitutionsOfficialsConte
         gap: "40px",
       }}
     >
+      <Typography typography="h4" color={"#1BAA75"}>
+        {t("ForeignInstitutions")}
+      </Typography>
       <Box
         sx={{
           display: "flex",
