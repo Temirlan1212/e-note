@@ -41,6 +41,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
   );
 
   const { update: applicationCreate } = useFetch("", "POST");
+  const { update: applicationUpdate } = useFetch("", "PUT");
 
   useEffectOnce(() => {
     resetField("notaryDistrict", { defaultValue: null });
@@ -66,16 +67,16 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
         creationDate: format(new Date(), "yyyy-MM-dd"),
       };
 
-      let url = "/api/applications/create";
+      let result = null;
       if (values.id != null) {
-        url = `/api/applications/update/${values.id}`;
         data.id = values.id;
         data.version = values.version;
+        result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       } else {
         data.statusSelect = 2;
+        result = await applicationCreate("/api/applications/create", data);
       }
 
-      const result = await applicationCreate(url, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
