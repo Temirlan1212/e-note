@@ -249,6 +249,9 @@ export default function InheritanceCases() {
 
   return (
     <>
+      <Typography typography="h4" color={"#1BAA75"}>
+        {t("Register of inheritance cases")}
+      </Typography>
       <Grid
         container
         spacing={{ xs: 2.5, sm: 3.75, md: 3.75 }}

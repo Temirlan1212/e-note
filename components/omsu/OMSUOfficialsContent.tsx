@@ -116,6 +116,9 @@ const OMSUOfficialsContent: FC<IOMSUOfficialsContentProps> = (props) => {
         gap: "40px",
       }}
     >
+      <Typography typography="h4" color={"#1BAA75"}>
+        {t("OMSUOfficials")}
+      </Typography>
       <Box
         sx={{
           display: "flex",
