@@ -1,4 +1,5 @@
 import { Box, Typography } from "@mui/material";
+import { useRouter } from "next/router";
 import Image from "next/image";
 
 import Button from "../ui/Button";
@@ -73,6 +74,13 @@ interface INotariesInfoContentProps {}
 
 const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const t = useTranslations();
+
+  const router = useRouter();
+
+  const redirectTo = (pageRoute: string) => {
+    router.push(pageRoute);
+  };
+
   return (
     <Box
       sx={{
@@ -214,6 +222,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
             },
             padding: "10px 0",
           }}
+          onClick={() => redirectTo("/applications/create")}
         >
           {t("Create application")}
         </Button>
