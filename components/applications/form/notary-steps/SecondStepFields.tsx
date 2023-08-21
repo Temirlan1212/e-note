@@ -78,10 +78,20 @@ export default function SecondStepFields({ form, stepState, onPrev, onNext }: IS
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("version", result.data[0].version);
-        if (onNext != null) setStep(step + 2);
+        if (onNext != null) {
+          setStep(step + 2);
+          onNext();
+        }
       }
 
       setLoading(false);
+    }
+  };
+
+  const handleStepByStepClick = () => {
+    if (onNext != null) {
+      onNext();
+      setStep(step + 1);
     }
   };
 
@@ -166,7 +176,7 @@ export default function SecondStepFields({ form, stepState, onPrev, onNext }: IS
           </Button>
         )}
         <Button
-          onClick={() => onNext && onNext()}
+          onClick={handleStepByStepClick}
           endIcon={<ArrowForwardIcon />}
           buttonType="secondary"
           sx={{ width: "auto" }}
