@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box, Typography } from "@mui/material";
@@ -26,13 +26,32 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
 
   const id = watch("id");
 
-  const { data } = useFetch(id != null ? `/api/files/prepare/${id}` : "", "GET");
+  const [iframeContent, setIframeContent] = useState("");
 
-  useEffectOnce(() => {
+  const { data } = useFetch(id != null ? `/api/files/prepare/${id}` : "", "GET");
+  const { data: iframeContentResponse } = useFetch<Response>(
+    data?.data?.token != null
+      ? `/api/iframe?url=${process.env.NEXT_PUBLIC_NEXTCLOUD_URL + "/index.php/f/248959"}&token=${data?.data?.token}`
+      : "",
+    "GET",
+    { returnResponse: true }
+  );
+
+  useEffectOnce(async () => {
     if (data?.data?.saleOrderVersion != null) {
       setValue("version", data.data.saleOrderVersion);
     }
   }, [data]);
+
+  useEffectOnce(async () => {
+    if (iframeContentResponse != null) {
+      let iframeContent = (await iframeContentResponse.text())
+        .replaceAll(/href="/g, 'href="' + process.env.NEXT_PUBLIC_NEXTCLOUD_URL)
+        .replaceAll(/src="/g, 'src="' + process.env.NEXT_PUBLIC_NEXTCLOUD_URL);
+      console.log(iframeContent);
+      setIframeContent(iframeContent);
+    }
+  }, [iframeContentResponse]);
 
   const triggerFields = async () => {
     return await trigger([]);
@@ -72,12 +91,7 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
         </Link>
       </Box>
 
-      {data?.data?.editUrl != null && (
-        <iframe
-          src={`/api/iframe?url=${"https://cloud-test.sanarip.org/index.php/f/248959"}&token=${data?.data?.token}`}
-          style={{ minHeight: "500px" }}
-        ></iframe>
-      )}
+      {iframeContent && <iframe srcDoc={iframeContent} style={{ minHeight: "500px" }}></iframe>}
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
