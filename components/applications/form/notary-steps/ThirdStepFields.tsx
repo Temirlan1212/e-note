@@ -261,7 +261,7 @@ export default function ThirdStepFields({ form, stepState, onPrev, onNext }: ISt
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Action")}</InputLabel>
+              <InputLabel>{t("Purpose of action")}</InputLabel>
               <Select
                 disabled={!typeNotarialActionVal}
                 selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
