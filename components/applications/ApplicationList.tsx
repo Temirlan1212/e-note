@@ -101,7 +101,7 @@ export default function ApplicationList() {
         </Typography>
         <Link href="applications/create">
           <Button sx={{ py: "10px", px: "20px" }} component="label" startIcon={<PostAddIcon />}>
-            {t("Create notarial action")}
+            {t("Create")}
           </Button>
         </Link>
       </Box>
