@@ -76,28 +76,28 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const steps =
     userData?.group?.id === 4
       ? [
-          // <NotaryFirstStepFields key={0} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
-          // <NotarySecondStepFields
-          //   key={1}
-          //   form={form}
-          //   stepState={[step, setStep]}
-          //   onPrev={() => setStep(step - 1)}
-          //   onNext={async () => {
-          //     const { data } = await getDocumentTemplateData(
-          //       "/api/dictionaries/document-type/template/" + form.watch("product.id")
-          //     );
-          //
-          //     if (Array.isArray(data) && data.length > 0 && id) {
-          //       const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
-          //       const fields = fieldsProps.map((fieldProps: Record<string, any>) => {
-          //         const fieldName = fieldProps?.fieldName ?? "";
-          //         return !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
-          //       });
-          //
-          //       getDynamicFormAppData(`/api/applications/${id}`, { fields: fields });
-          //     }
-          //   }}
-          // />,
+          <NotaryFirstStepFields key={0} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
+          <NotarySecondStepFields
+            key={1}
+            form={form}
+            stepState={[step, setStep]}
+            onPrev={() => setStep(step - 1)}
+            onNext={async () => {
+              const { data } = await getDocumentTemplateData(
+                "/api/dictionaries/document-type/template/" + form.watch("product.id")
+              );
+
+              if (Array.isArray(data) && data.length > 0 && id) {
+                const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
+                const fields = fieldsProps.map((fieldProps: Record<string, any>) => {
+                  const fieldName = fieldProps?.fieldName ?? "";
+                  return !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
+                });
+
+                getDynamicFormAppData(`/api/applications/${id}`, { fields: fields });
+              }
+            }}
+          />,
           <NotaryThirdStepFields
             key={2}
             form={form}
