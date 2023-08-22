@@ -72,6 +72,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     }
     setLoading(false);
   });
+  console.log(dynamicFormAppData);
 
   const steps =
     userData?.group?.id === 4
@@ -89,12 +90,24 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
               if (Array.isArray(data) && data.length > 0 && id) {
                 const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
-                const fields = fieldsProps.map((fieldProps: Record<string, any>) => {
+                let related: Record<string, string[]> = {};
+                let fields: string[] = [];
+                const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson)\b/;
+
+                fieldsProps.map((fieldProps: Record<string, any>) => {
                   const fieldName = fieldProps?.fieldName ?? "";
-                  return !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
+                  const match = fieldProps?.path?.match(regex);
+
+                  if (match) {
+                    const relatedFields = related?.[match?.[0]] ?? [];
+                    related[match?.[0] ?? ""] = [...relatedFields, fieldName];
+                  } else {
+                    const field = !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
+                    fields.push(String(field));
+                  }
                 });
 
-                getDynamicFormAppData(`/api/applications/${id}`, { fields: fields });
+                getDynamicFormAppData(`/api/applications/${id}`, { related, fields });
               }
             }}
           />,
@@ -110,12 +123,20 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
               if (Array.isArray(data) && data.length > 0 && id) {
                 const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
-                const fields = fieldsProps.map((fieldProps: Record<string, any>) => {
+                let related: Record<string, string[]> = {};
+                const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson)\b/;
+
+                fieldsProps.map((fieldProps: Record<string, any>) => {
                   const fieldName = fieldProps?.fieldName ?? "";
-                  return !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
+                  const match = fieldProps?.path?.match(regex);
+
+                  if (match) {
+                    const relatedFields = related?.[match?.[0]] ?? [];
+                    related[match?.[0] ?? ""] = [...relatedFields, fieldName];
+                  }
                 });
 
-                getDynamicFormAppData(`/api/applications/${id}`, { fields: fields });
+                getDynamicFormAppData(`/api/applications/${id}`, { related: related });
               }
 
               setStep(step + 1);
@@ -159,12 +180,20 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
               if (Array.isArray(data) && data.length > 0 && id) {
                 const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
-                const fields = fieldsProps.map((fieldProps: Record<string, any>) => {
+                let related: Record<string, string[]> = {};
+                const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson)\b/;
+
+                fieldsProps.map((fieldProps: Record<string, any>) => {
                   const fieldName = fieldProps?.fieldName ?? "";
-                  return !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
+                  const match = fieldProps?.path?.match(regex);
+
+                  if (match) {
+                    const relatedFields = related?.[match?.[0]] ?? [];
+                    related[match?.[0] ?? ""] = [...relatedFields, fieldName];
+                  }
                 });
 
-                getDynamicFormAppData(`/api/applications/${id}`, { fields: fields });
+                getDynamicFormAppData(`/api/applications/${id}`, { related: related });
               }
 
               setStep(step + 1);
