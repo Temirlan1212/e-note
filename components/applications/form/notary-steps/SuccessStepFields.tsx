@@ -24,7 +24,7 @@ export interface IStepFieldsProps {
 
 const getFullName = (name: string | null, lastName: string | null) => {
   if (name && lastName) {
-    return name + " " + lastName;
+    return lastName + " " + name;
   }
   return name ? name : lastName ? lastName : "";
 };
