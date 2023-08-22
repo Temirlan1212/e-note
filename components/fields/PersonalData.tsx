@@ -23,11 +23,9 @@ export interface IPersonalDataProps {
     pin: string;
     birthDate: string;
     citizenship: string;
-    knowledgeLanguage: string;
     nameOfCompanyOfficial: string;
     nameOfCompanyGov: string;
     representativesName: string;
-    notaryForeignParticipation: string;
     notaryRegistrationNumber: string;
     notaryOKPONumber: string;
     notaryPhysicalParticipantsQty: string;
@@ -43,11 +41,9 @@ export interface IPersonalDataProps {
     pin?: number;
     birthDate?: Date;
     citizenship?: number | null;
-    knowledgeLanguage?: boolean;
     nameOfCompanyOfficial?: string;
     nameOfCompanyGov?: string;
     representativesName?: string;
-    notaryForeignParticipation?: boolean;
     notaryRegistrationNumber?: number;
     notaryOKPONumber?: number;
     notaryPhysicalParticipantsQty?: number;
@@ -63,11 +59,9 @@ export interface IPersonalDataProps {
     pin?: boolean;
     birthDate?: boolean;
     citizenship?: boolean;
-    knowledgeLanguage?: boolean;
     nameOfCompanyOfficial?: boolean;
     nameOfCompanyGov?: boolean;
     representativesName?: boolean;
-    notaryForeignParticipation?: boolean;
     notaryRegistrationNumber?: boolean;
     notaryOKPONumber?: boolean;
     notaryPhysicalParticipantsQty?: boolean;
@@ -167,160 +161,128 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
         )}
       </Box>
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {(fields?.lastName == null || !!fields?.lastName) && (
-          <Controller
-            control={control}
-            name={names.lastName}
-            defaultValue={defaultValues?.lastName ?? ""}
-            render={({ field, fieldState }) => (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Last name")}</InputLabel>
-                <Input
-                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  {...field}
-                />
-              </Box>
-            )}
-          />
-        )}
-
-        {(fields?.firstName == null || !!fields?.firstName) && (
-          <Controller
-            control={control}
-            name={names.firstName}
-            defaultValue={defaultValues?.firstName ?? ""}
-            render={({ field, fieldState }) => (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("First name")}</InputLabel>
-                <Input
-                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  {...field}
-                />
-              </Box>
-            )}
-          />
-        )}
-
-        {(fields?.middleName == null || !!fields?.middleName) && (
-          <Controller
-            control={control}
-            name={names.middleName}
-            defaultValue={defaultValues?.middleName ?? ""}
-            render={({ field, fieldState }) => (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Middle name")}</InputLabel>
-                <Input
-                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  {...field}
-                />
-              </Box>
-            )}
-          />
-        )}
-      </Box>
-
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {(fields?.birthDate == null || !!fields?.birthDate) && (
-          <Controller
-            control={control}
-            name={names.birthDate}
-            defaultValue={defaultValues?.birthDate ?? null}
-            render={({ field, fieldState }) => (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Birth date")}</InputLabel>
-                <DatePicker
-                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  value={field.value != null ? new Date(field.value) : null}
-                  onChange={(...event: any[]) => {
-                    field.onChange(...event);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            )}
-          />
-        )}
-
-        {(fields?.citizenship == null || !!fields?.citizenship) && (
-          <Controller
-            control={control}
-            name={names.citizenship}
-            defaultValue={defaultValues?.citizenship ?? null}
-            render={({ field, fieldState }) => (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Citizenship")}</InputLabel>
-                <Autocomplete
-                  labelField="name"
-                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  options={
-                    citizenshipDictionary?.status === 0
-                      ? (citizenshipDictionary?.data as Record<string, any>[]) ?? []
-                      : []
-                  }
-                  loading={citizenshipDictionaryLoading}
-                  value={
-                    field.value != null
-                      ? (citizenshipDictionary?.data ?? []).find(
-                          (item: Record<string, any>) => item.id == field.value.id
-                        ) ?? null
-                      : null
-                  }
-                  onBlur={field.onBlur}
-                  onChange={(event, value) => {
-                    field.onChange(value?.id != null ? { id: value.id } : null);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            )}
-          />
-        )}
-      </Box>
-
-      {type == 1 && (
+      {type == 2 && (
         <>
           <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-            {(fields?.knowledgeLanguage == null || !!fields?.knowledgeLanguage) && (
+            {(fields?.lastName == null || !!fields?.lastName) && (
               <Controller
                 control={control}
-                name={names.knowledgeLanguage}
-                defaultValue={defaultValues?.knowledgeLanguage ?? false}
+                name={names.lastName}
+                defaultValue={defaultValues?.lastName ?? ""}
                 render={({ field, fieldState }) => (
-                  <Checkbox
-                    label={t("Knowledge of russian/kyrgyz")}
-                    type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                    {...field}
-                    checked={!!field.value}
-                  />
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Last name")}</InputLabel>
+                    <Input
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      {...field}
+                    />
+                  </Box>
                 )}
               />
             )}
 
-            {(fields?.notaryForeignParticipation == null || !!fields?.notaryForeignParticipation) && (
+            {(fields?.firstName == null || !!fields?.firstName) && (
               <Controller
                 control={control}
-                name={names.notaryForeignParticipation}
-                defaultValue={defaultValues?.notaryForeignParticipation ?? false}
+                name={names.firstName}
+                defaultValue={defaultValues?.firstName ?? ""}
                 render={({ field, fieldState }) => (
-                  <Checkbox
-                    label={t("Foreign participation")}
-                    type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                    {...field}
-                    checked={!!field.value}
-                  />
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("First name")}</InputLabel>
+                    <Input
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      {...field}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+
+            {(fields?.middleName == null || !!fields?.middleName) && (
+              <Controller
+                control={control}
+                name={names.middleName}
+                defaultValue={defaultValues?.middleName ?? ""}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Middle name")}</InputLabel>
+                    <Input
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      {...field}
+                    />
+                  </Box>
                 )}
               />
             )}
           </Box>
 
+          <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+            {(fields?.birthDate == null || !!fields?.birthDate) && (
+              <Controller
+                control={control}
+                name={names.birthDate}
+                defaultValue={defaultValues?.birthDate ?? null}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Birth date")}</InputLabel>
+                    <DatePicker
+                      type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      value={field.value != null ? new Date(field.value) : null}
+                      onChange={(...event: any[]) => {
+                        field.onChange(...event);
+                        trigger(field.name);
+                      }}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+
+            {(fields?.citizenship == null || !!fields?.citizenship) && (
+              <Controller
+                control={control}
+                name={names.citizenship}
+                defaultValue={defaultValues?.citizenship ?? null}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Citizenship")}</InputLabel>
+                    <Autocomplete
+                      labelField="name"
+                      type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      options={
+                        citizenshipDictionary?.status === 0
+                          ? (citizenshipDictionary?.data as Record<string, any>[]) ?? []
+                          : []
+                      }
+                      loading={citizenshipDictionaryLoading}
+                      value={
+                        field.value != null
+                          ? (citizenshipDictionary?.data ?? []).find(
+                              (item: Record<string, any>) => item.id == field.value.id
+                            ) ?? null
+                          : null
+                      }
+                      onBlur={field.onBlur}
+                      onChange={(event, value) => {
+                        field.onChange(value?.id != null ? { id: value.id } : null);
+                        trigger(field.name);
+                      }}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+          </Box>
+        </>
+      )}
+
+      {type == 1 && (
+        <>
           {(fields?.nameOfCompanyOfficial == null || !!fields?.nameOfCompanyOfficial) && (
             <Controller
               control={control}
