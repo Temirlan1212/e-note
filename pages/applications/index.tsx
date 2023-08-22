@@ -1,28 +1,16 @@
 import Head from "next/head";
-import { useState } from "react";
 import { Box, Container } from "@mui/material";
 import { useTranslations } from "next-intl";
-import { useProfileStore } from "@/stores/profile";
 import { GetStaticPropsContext } from "next";
 import ApplicationList from "@/components/applications/ApplicationList";
-import { IUserData } from "@/models/profile/user";
-import useEffectOnce from "@/hooks/useEffectOnce";
 
 export default function Applications() {
-  const [user, setUser] = useState<IUserData | null>();
-
   const t = useTranslations();
-
-  const userData: IUserData | null = useProfileStore((state) => state.getUserData());
-
-  useEffectOnce(() => {
-    setUser(userData);
-  }, [userData]);
 
   return (
     <>
       <Head>
-        <title>{user?.group.id === 4 ? t("Notarial actions") : t("Applications")}</title>
+        <title>{t("Notarial actions")}</title>
       </Head>
 
       <Container maxWidth="xl">

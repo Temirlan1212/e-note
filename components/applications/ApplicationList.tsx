@@ -13,9 +13,6 @@ import Link from "@/components/ui/Link";
 import { useTranslations } from "next-intl";
 import { ApplicationListActions } from "./ApplicationListActions";
 import { IStatus } from "@/models/dictionaries/status";
-import { useProfileStore } from "@/stores/profile";
-import { IUserData } from "@/models/profile/user";
-import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -30,13 +27,6 @@ export default function ApplicationList() {
   const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
   const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
   const { data: statusData } = useFetch("/api/dictionaries/status", "POST");
-  const [user, setUser] = useState<IUserData | null>();
-
-  const userData: IUserData | null = useProfileStore((state) => state.getUserData());
-
-  useEffectOnce(() => {
-    setUser(userData);
-  }, [userData]);
 
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,
@@ -107,11 +97,11 @@ export default function ApplicationList() {
     <Box height={{ xs: "600px", md: "700px" }}>
       <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
         <Typography variant="h4" color="text.primary">
-          {user?.group.id === 4 ? t("Notarial actions") : t("Your applications")}
+          {t("Notarial actions")}
         </Typography>
         <Link href="applications/create">
           <Button sx={{ py: "10px", px: "20px" }} component="label" startIcon={<PostAddIcon />}>
-            {user?.group.id === 4 ? t("Create notarial action") : t("Create application")}
+            {t("Create notarial action")}
           </Button>
         </Link>
       </Box>
