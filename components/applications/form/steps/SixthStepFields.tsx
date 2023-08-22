@@ -10,7 +10,6 @@ import PDFViewer from "@/components/PDFViewer";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import ApplicationStatusInfoContent from "@/components/applications/status/ApplicationStatusInfoContent";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -50,7 +49,6 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
   return (
     <Box display="flex" gap="30px" flexDirection="column">
-      <ApplicationStatusInfoContent id={id} />
       <Box
         display="flex"
         justifyContent="space-between"

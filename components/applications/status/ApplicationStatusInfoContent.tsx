@@ -27,7 +27,17 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
   }, [id]);
 
   return (
-    <Box display="flex" flexDirection="column" gap="40px">
+    <Box
+      sx={{
+        p: {
+          xs: "10px",
+          md: "40px",
+        },
+      }}
+      display="flex"
+      flexDirection="column"
+      gap="40px"
+    >
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Typography
           sx={{
