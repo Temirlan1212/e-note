@@ -170,7 +170,7 @@ export default function ApplicationList() {
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (statusData != null) {
-                const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(1));
+                const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(params.value));
                 const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
                 return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
               }
