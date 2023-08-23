@@ -166,7 +166,7 @@ const getDynamicGroupName = (group: Record<string, any>, locale: string | undefi
 
 const getDynamicName = (path: string | null, name: string | null) => {
   if (path != null && name != null) {
-    const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson)(?:\.|$)/;
+    const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)(?:\.|$)/;
     if (regex.test(path)) {
       const index = 0;
       return `${path}.${index}.${name}`;
