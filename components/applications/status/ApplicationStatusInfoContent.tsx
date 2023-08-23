@@ -42,7 +42,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
         >
           {t("InformationAboutStatusApplication")}
         </Typography>
-        <Link href={"/applications"}>
+        <Link href="/applications">
           <Button
             variant="text"
             sx={{
