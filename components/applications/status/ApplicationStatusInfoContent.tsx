@@ -18,13 +18,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
   const { id } = props;
   const t = useTranslations();
 
-  const { data, update: getStatusInfo } = useFetch("", "POST");
-
-  useEffectOnce(() => {
-    if (id) {
-      getStatusInfo(`/api/applications/${id}`);
-    }
-  }, [id]);
+  const { data } = useFetch(id != null ? `/api/applications/${id}` : "", "POST");
 
   return (
     <Box
