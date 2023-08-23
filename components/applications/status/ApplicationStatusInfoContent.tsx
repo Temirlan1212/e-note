@@ -8,6 +8,7 @@ import Button from "@/components/ui/Button";
 import ApplicationStatusRead from "./ApplicationStatusRead";
 import ApplicationStatusView from "./ApplicationStatusView";
 import useFetch from "@/hooks/useFetch";
+import Link from "next/link";
 
 interface IApplicationStatusInfoContentProps {
   id?: number;
@@ -40,22 +41,23 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
         >
           {t("InformationAboutStatusApplication")}
         </Typography>
-        <Button
-          href={"/applications"}
-          variant="text"
-          sx={{
-            backgroundColor: "none",
-            color: "#1BAA75",
-            fontSize: "16px",
-            width: "auto",
-            ":hover": {
-              backgroundColor: "transparent !important",
-            },
-          }}
-          startIcon={<KeyboardBackspaceOutlinedIcon />}
-        >
-          {t("Back")}
-        </Button>
+        <Link href={"/applications"}>
+          <Button
+            variant="text"
+            sx={{
+              backgroundColor: "none",
+              color: "#1BAA75",
+              fontSize: "16px",
+              width: "auto",
+              ":hover": {
+                backgroundColor: "transparent !important",
+              },
+            }}
+            startIcon={<KeyboardBackspaceOutlinedIcon />}
+          >
+            {t("Back")}
+          </Button>
+        </Link>
       </Box>
       <ApplicationStatusRead data={data?.data[0]} />
       <ApplicationStatusView />
