@@ -43,7 +43,7 @@ export default function About() {
             variant="h4"
             m="20px 0 10px 0"
             sx={{
-              color: "#1BAA75",
+              color: "success.main",
             }}
           >
             {t("chamber of Kyrgyz republic")}
@@ -61,49 +61,49 @@ export default function About() {
             <span style={span_style}>1)</span> {t("task-1")}
           </Typography>
           <Typography style={styled_p} component="p">
-            <span style={span_style}>2)</span> {t("task-2")}{" "}
+            <span style={span_style}>2)</span> {t("task-2")}
           </Typography>
           <Typography style={styled_p} component="p">
-            <span style={span_style}>3)</span> {t("task-3")}{" "}
+            <span style={span_style}>3)</span> {t("task-3")}
           </Typography>
           <Typography style={styled_p} component="p">
-            <span style={span_style}>4)</span> {t("task-4")}{" "}
+            <span style={span_style}>4)</span> {t("task-4")}
           </Typography>
           <Typography style={styled_p} component="p">
-            <span style={span_style}>5)</span> {t("task-5")}{" "}
+            <span style={span_style}>5)</span> {t("task-5")}
           </Typography>
           <Typography style={styled_p} component="p">
-            <span style={span_style}>6)</span> {t("task-6")}{" "}
+            <span style={span_style}>6)</span> {t("task-6")}
           </Typography>
           <Typography style={styled_p} component="p">
-            <span style={span_style}>7)</span> {t("task-7")}{" "}
+            <span style={span_style}>7)</span> {t("task-7")}
           </Typography>
           <Typography style={styled_p} component="p">
-            <span style={span_style}>8)</span> {t("task-8")}{" "}
+            <span style={span_style}>8)</span> {t("task-8")}
           </Typography>
           <Typography style={styled_p} component="p">
-            <span style={span_style}>9)</span> {t("task-9")}{" "}
+            <span style={span_style}>9)</span> {t("task-9")}
           </Typography>
           <Typography style={styled_p} component="p">
-            <span style={span_style}>10)</span> {t("task-10")}{" "}
+            <span style={span_style}>10)</span> {t("task-10")}
           </Typography>
           <Typography style={styled_p} component="p">
-            <span style={span_style}>11)</span> {t("task-11")}{" "}
+            <span style={span_style}>11)</span> {t("task-11")}
           </Typography>
           <Typography style={styled_p} component="p">
-            <span style={span_style}>12)</span> {t("task-12")}{" "}
+            <span style={span_style}>12)</span> {t("task-12")}
           </Typography>
           <Typography style={styled_p} component="p">
-            {t("paragraph-3")}{" "}
+            {t("paragraph-3")}
           </Typography>
           <Typography style={styled_p} component="p">
-            {t("paragraph-4")}{" "}
+            {t("paragraph-4")}
           </Typography>
           <Typography style={styled_p} component="p">
-            {t("paragraph-5")}{" "}
+            {t("paragraph-5")}
           </Typography>
           <Typography style={styled_p} component="p">
-            {t("paragraph-6")}{" "}
+            {t("paragraph-6")}
           </Typography>
           <Typography style={styled_p} component="p">
             {t("members are")}
@@ -124,11 +124,10 @@ export default function About() {
             variant="h4"
             m="20px 0 10px 0"
             sx={{
-              color: "#1BAA75",
+              color: "success.main",
             }}
           >
-            {" "}
-            {t("title-2")}{" "}
+            {t("title-2")}
           </Typography>
           <Typography style={styled_p} component="p">
             {t("commission-1")}
@@ -155,7 +154,7 @@ export default function About() {
                 variant="h4"
                 m="20px 0 10px 0"
                 sx={{
-                  color: "#1BAA75",
+                  color: "success.main",
                 }}
               >
                 {t("info contacts")}
@@ -167,8 +166,7 @@ export default function About() {
               <Typography sx={{ display: "flex" }} gap="10px" component="div">
                 <Typography sx={{ fontWeight: 600 }}>{t("title phone")}</Typography>
                 <Typography component="a" href="tel:996312343527">
-                  {" "}
-                  {t("phone")}{" "}
+                  {t("phone")}
                 </Typography>
               </Typography>
               <Typography sx={{ display: "flex" }} gap="10px" component="div">
