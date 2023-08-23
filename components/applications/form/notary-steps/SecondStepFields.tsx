@@ -5,7 +5,7 @@ import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { useProfileStore } from "@/stores/profile";
-import { IProduct } from "@/models/applications/application-list";
+import { IProduct } from "@/models/product";
 import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
