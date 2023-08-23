@@ -110,7 +110,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
               <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
-                <InputLabel>{t("Object")}</InputLabel>
+                <InputLabel>{t("Objects of civil rights")}</InputLabel>
                 <Hint type="hint" maxWidth="520px">
                   {t("second-step-hint-title")}
                 </Hint>
@@ -290,7 +290,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Searched document")}</InputLabel>
+              <InputLabel>{t("Document")}</InputLabel>
               <Select
                 disabled={!actionVal}
                 selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
