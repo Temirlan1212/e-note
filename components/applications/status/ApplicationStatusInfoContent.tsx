@@ -8,7 +8,6 @@ import Button from "@/components/ui/Button";
 import ApplicationStatusRead from "./ApplicationStatusRead";
 import ApplicationStatusView from "./ApplicationStatusView";
 import useFetch from "@/hooks/useFetch";
-import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface IApplicationStatusInfoContentProps {
   id?: number;
@@ -42,6 +41,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
           {t("InformationAboutStatusApplication")}
         </Typography>
         <Button
+          href={"/applications"}
           variant="text"
           sx={{
             backgroundColor: "none",

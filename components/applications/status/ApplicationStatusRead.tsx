@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from "react";
+import React, { FC } from "react";
 
 import { Box, List, ListItem, Typography } from "@mui/material";
 import { useLocale, useTranslations } from "next-intl";
@@ -6,41 +6,10 @@ import useFetch from "@/hooks/useFetch";
 import { IActionType } from "@/models/dictionaries/action-type";
 import { format } from "date-fns";
 import { useTheme } from "@mui/material/styles";
-import { IApplication } from "@/models/applications/application-list";
+import { IApplication } from "@/models/application";
 
 interface IApplicationStatusReadProps {
-  data: IApplicationStatus;
-}
-
-interface IApplicationStatus extends IApplication {
-  product: {
-    fullName: string;
-  };
-  createdOn: Date | string;
-  statusSelect: number;
-  notaryUniqNumber: string;
-  notarySignatureStatus: number;
-  company: {
-    name: string;
-  };
-  requester: {
-    fullName: string;
-    name: string;
-    lastName: string;
-    middleName: string;
-    mainAddress: {
-      fullName: string;
-    };
-  }[];
-  members: {
-    fullName: string;
-    name: string;
-    lastName: string;
-    middleName: string;
-    mainAddress: {
-      fullName: string;
-    };
-  }[];
+  data: IApplication;
 }
 
 const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
@@ -52,7 +21,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
   const { data: statusData } = useFetch("/api/dictionaries/status", "POST");
   const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
 
-  const translatedStatusTitle = (data, value) => {
+  const translatedStatusTitle = (data: Record<string, any>[], value?: number): string => {
     const matchedStatus = data?.find((item) => item.value == value);
     const translatedTitle = matchedStatus?.[("title_" + locale) as keyof IActionType];
     return !!translatedTitle ? translatedTitle : matchedStatus?.["title" as keyof IActionType] ?? "";
@@ -125,7 +94,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                   color: "#687C9B",
                 }}
               >
-                {t(el.value)}
+                {el.value}
               </Typography>
             </ListItem>
           );
@@ -179,7 +148,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                     color: "#687C9B",
                   }}
                 >
-                  {t(`${member.lastName} ${member.name} ${member.middleName}`)}
+                  {member.lastName} {member.name} {member.middleName}
                 </Typography>
                 <Typography
                   sx={{
