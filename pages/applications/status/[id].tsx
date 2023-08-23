@@ -3,8 +3,6 @@ import { useTranslations } from "next-intl";
 import { GetStaticPathsContext, GetStaticPropsContext } from "next";
 import { Container } from "@mui/material";
 import ApplicationStatusInfoContent from "@/components/applications/status/ApplicationStatusInfoContent";
-import useFetch from "@/hooks/useFetch";
-import useEffectOnce from "@/hooks/useEffectOnce";
 import { useRouter } from "next/router";
 
 export default function ApplicationsStatusInformation() {
@@ -20,7 +18,7 @@ export default function ApplicationsStatusInformation() {
       </Head>
 
       <Container maxWidth="xl">
-        <ApplicationStatusInfoContent id={id} />
+        <ApplicationStatusInfoContent id={isNaN(parseInt(id as string)) ? undefined : parseInt(id as string)} />
       </Container>
     </>
   );
