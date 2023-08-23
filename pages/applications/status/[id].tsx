@@ -3,13 +3,9 @@ import { useTranslations } from "next-intl";
 import { GetStaticPathsContext, GetStaticPropsContext } from "next";
 import { Container } from "@mui/material";
 import ApplicationStatusInfoContent from "@/components/applications/status/ApplicationStatusInfoContent";
-import { useRouter } from "next/router";
 
 export default function ApplicationsStatusInformation() {
   const t = useTranslations();
-
-  const router = useRouter();
-  const { id } = router.query;
 
   return (
     <>
@@ -18,7 +14,7 @@ export default function ApplicationsStatusInformation() {
       </Head>
 
       <Container maxWidth="xl">
-        <ApplicationStatusInfoContent id={+id!} />
+        <ApplicationStatusInfoContent />
       </Container>
     </>
   );

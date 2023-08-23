@@ -1,6 +1,8 @@
 import { FC } from "react";
 
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/router";
+import Link from "next/link";
 import KeyboardBackspaceOutlinedIcon from "@mui/icons-material/KeyboardBackspaceOutlined";
 import { Box, Typography } from "@mui/material";
 
@@ -8,15 +10,14 @@ import Button from "@/components/ui/Button";
 import ApplicationStatusRead from "./ApplicationStatusRead";
 import ApplicationStatusView from "./ApplicationStatusView";
 import useFetch from "@/hooks/useFetch";
-import Link from "next/link";
 
-interface IApplicationStatusInfoContentProps {
-  id?: number;
-}
+interface IApplicationStatusInfoContentProps {}
 
 const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (props) => {
-  const { id } = props;
   const t = useTranslations();
+
+  const router = useRouter();
+  const { id } = router.query;
 
   const { data } = useFetch(id != null ? `/api/applications/${id}` : "", "POST");
 
