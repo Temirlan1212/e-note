@@ -3,44 +3,13 @@ import React, { FC, Fragment } from "react";
 import { Box, List, ListItem, Typography } from "@mui/material";
 import { useLocale, useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
-import { IActionType } from "@/models/dictionaries/action-type";
+import { IActionType } from "@/models/action-type";
 import { format } from "date-fns";
 import { useTheme } from "@mui/material/styles";
-import { IApplication } from "@/models/applications/application-list";
+import { IApplication } from "@/models/application";
 
 interface IApplicationStatusReadProps {
-  data: IApplicationStatus;
-}
-
-interface IApplicationStatus extends IApplication {
-  product: {
-    fullName: string;
-  };
-  createdOn: Date | string;
-  statusSelect: number;
-  notaryUniqNumber: string;
-  notarySignatureStatus: number;
-  company: {
-    name: string;
-  };
-  requester: {
-    fullName: string;
-    name: string;
-    lastName: string;
-    middleName: string;
-    mainAddress: {
-      fullName: string;
-    };
-  }[];
-  members: {
-    fullName: string;
-    name: string;
-    lastName: string;
-    middleName: string;
-    mainAddress: {
-      fullName: string;
-    };
-  }[];
+  data: IApplication;
 }
 
 const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
@@ -49,10 +18,10 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
   const locale = useLocale();
   const t = useTranslations();
 
-  const { data: statusData } = useFetch("/api/dictionaries/status", "POST");
+  const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
   const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
 
-  const translatedStatusTitle = (data, value) => {
+  const translatedStatusTitle = (data: Record<string, any>[], value?: number) => {
     const matchedStatus = data?.find((item) => item.value == value);
     const translatedTitle = matchedStatus?.[("title_" + locale) as keyof IActionType];
     return !!translatedTitle ? translatedTitle : matchedStatus?.["title" as keyof IActionType] ?? "";
@@ -65,7 +34,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
     { title: "Signature status", value: data?.notarySignatureStatus },
     {
       title: "Date of the action",
-      value: data?.createdOn ? format(new Date(data?.createdOn!), "dd.MM.yyyy HH:mm:ss") : "",
+      value: data?.creationDate ? format(new Date(data?.creationDate!), "dd.MM.yyyy HH:mm:ss") : "",
     },
     { title: "Notary's full name", value: data?.company.name },
     { title: "Unique registry number", value: data?.notaryUniqNumber },

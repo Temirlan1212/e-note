@@ -1,7 +1,6 @@
-import { IStatus } from "@/models/dictionaries/status";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IStatus | null>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }

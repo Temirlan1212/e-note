@@ -10,8 +10,8 @@ import PostAddIcon from "@mui/icons-material/PostAdd";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import useFetch from "@/hooks/useFetch";
 import { GridValueGetterParams } from "@mui/x-data-grid";
-import { IStatus } from "@/models/dictionaries/status";
-import { IActionType } from "@/models/dictionaries/action-type";
+import { IStatus } from "@/models/application-status";
+import { IActionType } from "@/models/action-type";
 import { useRouter } from "next/router";
 import Link from "@/components/ui/Link";
 
@@ -24,7 +24,7 @@ export interface IStepFieldsProps {
 export default function SuccessStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
-  const { data: statusData } = useFetch("/api/dictionaries/status", "POST");
+  const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
   const { data, loading } = useFetch(`/api/applications/${form.getValues().id ?? ""}`, "POST");
   const dataItem = data?.data?.[0];
 

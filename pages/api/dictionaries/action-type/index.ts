@@ -1,7 +1,6 @@
-import { IActionType } from "@/models/dictionaries/action-type";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IActionType | null>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }

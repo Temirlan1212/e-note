@@ -11,7 +11,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Hint from "@/components/ui/Hint";
 import { useRouter } from "next/router";
-import { INotarialActionData } from "@/models/dictionaries/notarial-action";
+import { INotarialActionData } from "@/models/notarial-action";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;

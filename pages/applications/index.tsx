@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useProfileStore } from "@/stores/profile";
 import { GetStaticPropsContext } from "next";
 import ApplicationList from "@/components/applications/ApplicationList";
-import { IUserData } from "@/models/profile/user";
+import { IUserData } from "@/models/user";
 import useEffectOnce from "@/hooks/useEffectOnce";
 
 export default function Applications() {
