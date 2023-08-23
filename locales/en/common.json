@@ -10,7 +10,7 @@
   "Community": "Community",
   "Sample": "Sample",
   "Resource": "Resource",
-  "2023 E-Notariat All rights Reserved": "2023 E-Notariat All rights Reserved",
+  "2023 E-Notariat All rights Reserved": "2023 E-Notariat. All rights Reserved",
   "Accessibility": "Accessibility",
   "Usability": "Usability",
   "Marketplace": "Marketplace",
@@ -157,5 +157,10 @@
   "Fingerprint verification successful": "Fingerprint verification successful",
   "Confirm fingerprint": "Confirm fingerprint",
   "Sign": "Sign",
-  "Signed": "Signed"
+  "Signed": "Signed",
+  "Alisher uulu Alymbek": "Alisher uulu Alymbek",
+  "Address: Bishkek, blvd Molodoy Guardii 32": "Address: Bishkek, blvd. Molodoy Guardii 32",
+  "Phone number: +996 (312) 34-35-27": "Phone number: +996 (312) 34-35-27",
+  "E-mail: not palata kr@gmail com": "E-mail: not.palata.kr@gmail.com",
+  "Working hours: Mon-Fri, 09:00-18:00": "Working hours: Mon-Fri, 09:00-18:00"
 }

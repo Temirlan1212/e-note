@@ -34,6 +34,13 @@ const footerData: Record<string, IFooterDataItem[]> = {
     { title: "Usability", link: "/usability" },
     { title: "Design & Dev", link: "/design" },
   ],
+  Contacts: [
+    { title: "Alisher uulu Alymbek", link: "/#" },
+    { title: "Address: Bishkek, blvd Molodoy Guardii 32", link: "https://go.2gis.com/divf1" },
+    { title: "Phone number: +996 (312) 34-35-27", link: "tel:+996312343527" },
+    { title: "E-mail: not palata kr@gmail com", link: "mailto:not.palata.kr@gmail.com" },
+    { title: "Working hours: Mon-Fri, 09:00-18:00", link: "/#" },
+  ],
 };
 
 const footerIconsData = [
@@ -90,7 +97,6 @@ const Footer: React.FC = () => {
               gap: { xs: "20px" },
             }}
           >
-            <Image src="/images/website-analytics.png" alt="website-analytics" width={107} height={38} />
             <Typography color="white">{t("2023 E-Notariat All rights Reserved")}</Typography>
           </Box>
 
