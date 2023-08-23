@@ -11,13 +11,13 @@ import ApplicationStatusRead from "./ApplicationStatusRead";
 import ApplicationStatusView from "./ApplicationStatusView";
 import useFetch from "@/hooks/useFetch";
 
-interface IApplicationStatusInfoContentProps {}
+interface IApplicationStatusInfoContentProps {
+  id: string | string[] | undefined;
+}
 
 const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (props) => {
+  const { id } = props;
   const t = useTranslations();
-
-  const router = useRouter();
-  const { id } = router.query;
 
   const { data } = useFetch(id != null ? `/api/applications/${id}` : "", "POST");
 
