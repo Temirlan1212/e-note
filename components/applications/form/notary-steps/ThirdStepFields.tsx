@@ -11,7 +11,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Hint from "@/components/ui/Hint";
 import { useRouter } from "next/router";
-import { INotarialActionData } from "@/models/dictionaries/notarial-action";
+import { INotarialActionData } from "@/models/notarial-action";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -112,7 +112,7 @@ export default function ThirdStepFields({ form, stepState, onPrev, onNext }: ISt
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
               <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
-                <InputLabel>{t("Object")}</InputLabel>
+                <InputLabel>{t("Objects of civil rights")}</InputLabel>
                 <Hint type="hint" maxWidth="520px">
                   {t("second-step-hint-title")}
                 </Hint>
@@ -261,7 +261,7 @@ export default function ThirdStepFields({ form, stepState, onPrev, onNext }: ISt
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Action")}</InputLabel>
+              <InputLabel>{t("Purpose of action")}</InputLabel>
               <Select
                 disabled={!typeNotarialActionVal}
                 selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -292,7 +292,7 @@ export default function ThirdStepFields({ form, stepState, onPrev, onNext }: ISt
 
           return (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Searched document")}</InputLabel>
+              <InputLabel>{t("Document")}</InputLabel>
               <Select
                 disabled={!actionVal}
                 selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}

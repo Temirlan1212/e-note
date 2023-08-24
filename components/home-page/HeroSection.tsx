@@ -7,7 +7,7 @@ import { login as loginSchema } from "@/validator-schemas/login";
 import Link from "@/components/ui/Link";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import { IUser, IUserCredentials } from "@/models/profile/user";
+import { IUser, IUserCredentials } from "@/models/user";
 import { useProfileStore } from "@/stores/profile";
 import { useEffect, useState } from "react";
 
