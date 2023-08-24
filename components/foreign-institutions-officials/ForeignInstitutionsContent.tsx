@@ -1,117 +1,85 @@
-import React, { FC, useState } from "react";
-
+import React, { FC, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 
 import { Box, Typography } from "@mui/material";
 
-import Button from "../ui/Button";
-import SearchBar from "../ui/SearchBar";
-import { GridTable } from "../ui/GridTable";
+import useFetch from "@/hooks/useFetch";
+
+import Button from "@/components/ui/Button";
+import SearchBar from "@/components/ui/SearchBar";
+import { GridTable } from "@/components/ui/GridTable";
+import Pagination from "@/components/ui/Pagination";
 
 import ExcelIcon from "@/public/icons/excel.svg";
 
-interface IForeignInstitutionsOfficialsContentProps {}
+interface IRequestBody {
+  searchValue: string | null;
+  roleValue: string | null;
+  requestType?: string | null;
+}
 
-const ForeignInstitutionsOfficialsContent: FC<IForeignInstitutionsOfficialsContentProps> = (props) => {
+interface IRowData {
+  status: number;
+  offset: number;
+  total: number;
+  data: Array<Record<string, any>>;
+}
+
+export default function ForeignInstitutionsOfficialsContent() {
   const t = useTranslations();
+  const [keywordValue, setKeywordValue] = useState<string>("");
+  const [rowData, setRowData] = useState<IRowData | null>(null);
 
-  const columns = [
-    { field: "fullName", headerName: "Full name", width: 280 },
-    { field: "position", headerName: "Position", width: 280 },
-    { field: "birthDate", headerName: "Date of birth", width: 140 },
-    { field: "phoneNumber", headerName: "Phone number", width: 160 },
-    { field: "email", headerName: "E-mail", width: 180 },
-    { field: "institution", headerName: "Institution", width: 180 },
-    { field: "order", headerName: "Order", width: 200 },
-    { field: "criminalRecord", headerName: "Criminal record", width: 200 },
-  ];
+  const [requestBody, setRequestBody] = useState<IRequestBody>({
+    searchValue: null,
+    roleValue: "Foreign institution official",
+    requestType: "getAllData",
+  });
 
-  const rows = [
-    {
-      id: 1,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      position: "Сотрудник Консульства",
-      birthDate: "01.01.2022",
-      phoneNumber: "0555 26 29 30",
-      email: "turat@gmail.com",
-      institution: "Доверенность",
-      order: "",
-      criminalRecord: "",
-    },
-    {
-      id: 2,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      position: "Сотрудник Консульства",
-      birthDate: "01.01.2022",
-      phoneNumber: "0555 26 29 30",
-      email: "turat@gmail.com",
-      institution: "Доверенность",
-      order: "",
-      criminalRecord: "",
-    },
-    {
-      id: 3,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      position: "Сотрудник Консульства",
-      birthDate: "01.01.2022",
-      phoneNumber: "0555 26 29 30",
-      email: "turat@gmail.com",
-      institution: "Доверенность",
-      order: "",
-      criminalRecord: "",
-    },
-    {
-      id: 4,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      position: "Сотрудник Консульства",
-      birthDate: "01.01.2022",
-      phoneNumber: "0555 26 29 30",
-      email: "turat@gmail.com",
-      institution: "Доверенность",
-      order: "",
-      criminalRecord: "",
-    },
-    {
-      id: 5,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      position: "Сотрудник Консульства",
-      birthDate: "01.01.2022",
-      phoneNumber: "0555 26 29 30",
-      email: "turat@gmail.com",
-      institution: "Доверенность",
-      order: "",
-      criminalRecord: "",
-    },
-    {
-      id: 6,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      position: "Сотрудник Консульства",
-      birthDate: "01.01.2022",
-      phoneNumber: "0555 26 29 30",
-      email: "turat@gmail.com",
-      institution: "Доверенность",
-      order: "",
-      criminalRecord: "",
-    },
-  ];
+  const { data, loading } = useFetch("/api/officials", "POST", {
+    body: requestBody,
+  });
 
-  const dataGridStyles = {
-    ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": { padding: "10px 16px" },
-    ".MuiDataGrid-row": { "&:hover": { "& .MuiIconButton-root": { visibility: "visible" } } },
-    ".MuiBox-root": { backgroundColor: "#FFF" },
-    ".MuiDataGrid-columnHeader": { padding: "16px" },
+  const { export: exportExcel, download: downloadExcel } = useFetch("", "POST", {
+    body: requestBody,
+  });
+
+  const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setKeywordValue(event.target.value);
   };
 
-  const itemsPerPage = 6;
+  const handleKeywordSearch = async () => {
+    setRequestBody((prev: any) => ({
+      ...prev,
+      requestType: "search",
+      searchValue: keywordValue,
+      roleValue: "Foreign institution official",
+    }));
 
-  const totalPages = Math.ceil(rows.length / itemsPerPage);
+    setRowData(data);
+  };
+
+  const exportToExcel = async () => {
+    // setRequestBody((prev: any) => ({
+    //   ...prev,
+    //   roleValue: "ForeignInstitutions",
+    //   requestType: "export",
+    // }));
+    // await exportExcel("/api/officials", requestBody);
+  };
+
+  useEffect(() => {
+    if (data && keywordValue === "") {
+      setRowData(data);
+    }
+  }, [data, keywordValue]);
 
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: "40px",
+        gap: "20px",
       }}
     >
       <Typography typography="h4" color={"#1BAA75"}>
@@ -135,9 +103,13 @@ const ForeignInstitutionsOfficialsContent: FC<IForeignInstitutionsOfficialsConte
               md: "80%",
             },
           }}
-          placeholder={t("Search")}
+          onChange={handleKeywordChange}
+          onClick={handleKeywordSearch}
+          value={keywordValue}
         />
         <Button
+          color="primary"
+          variant="outlined"
           sx={{
             "&:hover": {
               background: "#fff !important",
@@ -151,11 +123,12 @@ const ForeignInstitutionsOfficialsContent: FC<IForeignInstitutionsOfficialsConte
               xs: "100%",
               md: "20%",
             },
-            padding: "10px 10px",
+            gap: "10px",
+            height: "auto",
+            padding: "10px 22px",
           }}
-          color="primary"
-          variant="outlined"
           endIcon={<ExcelIcon />}
+          onClick={exportToExcel}
         >
           <Typography fontWeight={600} fontSize={14}>
             {t("Export to excel")}
@@ -163,12 +136,93 @@ const ForeignInstitutionsOfficialsContent: FC<IForeignInstitutionsOfficialsConte
         </Button>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-        <Box>
-          <GridTable rows={rows} columns={columns} sx={dataGridStyles} />
+        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <GridTable
+            rows={rowData?.data ?? []}
+            columns={[
+              {
+                field: "fullName",
+                headerName: "Full name",
+                width: 280,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
+              },
+              {
+                field: "notaryPosition",
+                headerName: "Position",
+                width: 280,
+              },
+              {
+                field: "birthDate",
+                headerName: "Date of birth",
+                width: 200,
+              },
+              {
+                field: "mobilePhone",
+                headerName: "Phone number",
+                width: 220,
+              },
+              {
+                field: "emailAddress.address",
+                headerName: "E-mail",
+                width: 180,
+              },
+              {
+                field: "simpleFullName",
+                headerName: "Institution",
+                width: 180,
+              },
+              {
+                field: "notaryWorkOrder",
+                headerName: "Order",
+                width: 200,
+              },
+              {
+                field: "notaryCriminalRecord",
+                headerName: "Criminal record",
+                width: 200,
+              },
+            ]}
+            sx={{
+              height: "100%",
+              ".notaryColumn": {
+                color: "success.main",
+              },
+            }}
+            rowHeight={65}
+            cellMaxHeight="200px"
+            loading={loading}
+          />
+          <Pagination
+            sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+            totalPages={data?.total ? Math.ceil(data.total / 7) : 1}
+          />
+
+          <Button
+            color="primary"
+            variant="outlined"
+            sx={{
+              "&:hover": {
+                background: "#fff !important",
+                border: "1px solid",
+              },
+              padding: "10px 10px",
+              marginTop: "30px",
+              display: { xs: "flex", sm: "flex", md: "none" },
+              alignSelf: "center",
+            }}
+            fullWidth
+            endIcon={<ExcelIcon />}
+            onClick={exportToExcel}
+          >
+            <Typography fontWeight={600} fontSize={14}>
+              {t("Export to excel")}
+            </Typography>
+          </Button>
         </Box>
       </Box>
     </Box>
   );
-};
-
-export default ForeignInstitutionsOfficialsContent;
+}
