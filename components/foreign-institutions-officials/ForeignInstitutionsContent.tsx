@@ -111,7 +111,7 @@ const ForeignInstitutionsOfficialsContent: FC<IForeignInstitutionsOfficialsConte
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: "40px",
+        gap: "20px",
       }}
     >
       <Typography typography="h4" color={"#1BAA75"}>
@@ -138,23 +138,16 @@ const ForeignInstitutionsOfficialsContent: FC<IForeignInstitutionsOfficialsConte
           placeholder={t("Search")}
         />
         <Button
-          sx={{
-            "&:hover": {
-              background: "#fff !important",
-              border: "1px solid",
-            },
-            display: {
-              xs: "none",
-              md: "flex",
-            },
-            width: {
-              xs: "100%",
-              md: "20%",
-            },
-            padding: "10px 10px",
-          }}
-          color="primary"
           variant="outlined"
+          color="success"
+          sx={{
+            height: "auto",
+            gap: "10px",
+            padding: "10px 22px",
+            width: { md: "20%", xs: "100%" },
+            "&:hover": { color: "#F6F6F6" },
+          }}
+          fullWidth
           endIcon={<ExcelIcon />}
         >
           <Typography fontWeight={600} fontSize={14}>
