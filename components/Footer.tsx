@@ -16,23 +16,11 @@ interface IFooterSection {
 }
 
 const footerData: Record<string, IFooterDataItem[]> = {
-  Community: [
+  Links: [
     { title: "About us", link: "/about" },
-    { title: "Usability", link: "/usability" },
-    { title: "Marketplace", link: "/marketplace" },
-    { title: "Design & Dev", link: "/design" },
-  ],
-  Sample: [
-    { title: "Usability", link: "/usability" },
-    { title: "Usability", link: "/usability" },
-    { title: "Marketplace", link: "/marketplace" },
-    { title: "Design & Dev", link: "/design" },
-  ],
-  Resource: [
-    { title: "Accessibility", link: "/accessibility" },
-    { title: "Usability", link: "/usability" },
-    { title: "Usability", link: "/usability" },
-    { title: "Design & Dev", link: "/design" },
+    { title: "Notaries", link: "/notaries" },
+    { title: "Regulatory acts", link: "/regulatory-acts" },
+    { title: "Questions and answers", link: "/qa" },
   ],
   Contacts: [
     { title: "Alisher uulu Alymbek", link: "/#" },
