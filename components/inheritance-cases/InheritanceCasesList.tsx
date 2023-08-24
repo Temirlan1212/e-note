@@ -254,7 +254,7 @@ export default function InheritanceCases() {
 
   return (
     <>
-      <Typography typography="h4" color={"#1BAA75"}>
+      <Typography typography="h4" color="primary">
         {t("Register of inheritance cases")}
       </Typography>
       <Grid
@@ -278,6 +278,7 @@ export default function InheritanceCases() {
             sx={{
               height: "auto",
               gap: "10px",
+              fontSize: "14px",
               padding: "10px 22px",
               width: { xs: "100%" },
               "&:hover": { color: "#F6F6F6" },
@@ -285,9 +286,7 @@ export default function InheritanceCases() {
             fullWidth
             endIcon={<ExcelIcon />}
           >
-            <Typography fontWeight={600} fontSize={14}>
-              {t("Export to excel")}
-            </Typography>
+            {t("Export to excel")}
           </Button>
         </Grid>
       </Grid>

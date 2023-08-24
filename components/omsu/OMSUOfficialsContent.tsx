@@ -116,7 +116,7 @@ const OMSUOfficialsContent: FC<IOMSUOfficialsContentProps> = (props) => {
         gap: "20px",
       }}
     >
-      <Typography typography="h4" color={"#1BAA75"}>
+      <Typography typography="h4" color="primary">
         {t("OMSUOfficials")}
       </Typography>
       <Box
@@ -146,40 +146,15 @@ const OMSUOfficialsContent: FC<IOMSUOfficialsContentProps> = (props) => {
             height: "auto",
             gap: "10px",
             padding: "10px 22px",
-            width: { md: "20%", xs: "100%" },
+            fontSize: "14px",
+            width: { md: "30%", xs: "100%" },
             "&:hover": { color: "#F6F6F6" },
           }}
           fullWidth
           endIcon={<ExcelIcon />}
         >
-          <Typography fontWeight={600} fontSize={14}>
-            {t("Export to excel")}
-          </Typography>
+          {t("Export to excel")}
         </Button>
-        {/*<Button*/}
-        {/*  sx={{*/}
-        {/*    "&:hover": {*/}
-        {/*      background: "#fff !important",*/}
-        {/*      border: "1px solid",*/}
-        {/*    },*/}
-        {/*    display: {*/}
-        {/*      xs: "none",*/}
-        {/*      md: "flex",*/}
-        {/*    },*/}
-        {/*    width: {*/}
-        {/*      xs: "100%",*/}
-        {/*      md: "20%",*/}
-        {/*    },*/}
-        {/*    padding: "10px 10px",*/}
-        {/*  }}*/}
-        {/*  color="primary"*/}
-        {/*  variant="outlined"*/}
-        {/*  endIcon={<ExcelIcon />}*/}
-        {/*>*/}
-        {/*  <Typography fontWeight={600} fontSize={14}>*/}
-        {/*    {t("Export to excel")}*/}
-        {/*  </Typography>*/}
-        {/*</Button>*/}
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <Box>

@@ -114,7 +114,7 @@ const ForeignInstitutionsOfficialsContent: FC<IForeignInstitutionsOfficialsConte
         gap: "20px",
       }}
     >
-      <Typography typography="h4" color={"#1BAA75"}>
+      <Typography typography="h4" color="primary">
         {t("ForeignInstitutions")}
       </Typography>
       <Box
@@ -144,15 +144,14 @@ const ForeignInstitutionsOfficialsContent: FC<IForeignInstitutionsOfficialsConte
             height: "auto",
             gap: "10px",
             padding: "10px 22px",
-            width: { md: "20%", xs: "100%" },
+            fontSize: "14px",
+            width: { md: "30%", xs: "100%" },
             "&:hover": { color: "#F6F6F6" },
           }}
           fullWidth
           endIcon={<ExcelIcon />}
         >
-          <Typography fontWeight={600} fontSize={14}>
-            {t("Export to excel")}
-          </Typography>
+          {t("Export to excel")}
         </Button>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>

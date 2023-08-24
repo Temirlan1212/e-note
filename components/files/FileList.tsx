@@ -103,9 +103,9 @@ export default function FileList() {
   };
 
   return (
-    <Box pt={2} height={{ xs: "600px", md: "700px" }}>
+    <Box height={{ xs: "600px", md: "700px" }}>
       <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
-        <Typography variant="h4" color="success.main">
+        <Typography variant="h4" color="primary">
           {t("Files")}
         </Typography>
         <Box>

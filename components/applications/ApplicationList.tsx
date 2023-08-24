@@ -106,7 +106,7 @@ export default function ApplicationList() {
   return (
     <Box height={{ xs: "600px", md: "700px" }}>
       <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
-        <Typography variant="h4" color="text.primary">
+        <Typography variant="h4" color="primary">
           {user?.group.id === 4 ? t("Notarial actions") : t("Your applications")}
         </Typography>
         <Link href="applications/create">
