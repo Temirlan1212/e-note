@@ -6,12 +6,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
-  let API_URL = process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Partner/search";
+  let API_URL = process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Partner";
 
   const requestType = req.body["requestType"];
   const searchValue = req.body["searchValue"];
   const roleValue = req.body["roleValue"];
   const fileName = req.body["fileName"];
+
+  let criteria: Array<any> = [
+    {
+      fieldName: "user.roles.name",
+      operator: "=",
+      value: roleValue,
+    },
+  ];
 
   const fields = [
     "lastName",
@@ -26,30 +34,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     "notaryCriminalRecord",
   ];
 
-  const criteria: Array<{
-    fieldName?: string;
-    operator: string;
-    value?: string | null;
-    criteria?: Record<string, any>;
-  }> = [];
-
-  criteria.push({
-    fieldName: "user.roles.name",
-    operator: "=",
-    value: roleValue,
-  });
-
-  if (requestType === "search") {
-    const fieldsToSearch = fields.map((field) => ({
-      fieldName: field,
-      operator: "like",
-      value: `%${searchValue}%`,
-    }));
-
-    criteria.push({
-      operator: "or",
-      criteria: fieldsToSearch,
-    });
+  if (requestType === "getAllData") {
+    API_URL += "/search";
   }
 
   if (requestType === "export") {
@@ -58,6 +44,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   if (requestType === "download") {
     API_URL += `/export/${fileName}`;
+  }
+
+  if (requestType === "search") {
+    API_URL += "/search";
+
+    const fieldsToSearch = fields.map((field) => ({
+      fieldName: field,
+      operator: "like",
+      value: `%${searchValue}%`,
+    }));
+
+    criteria = [
+      {
+        fieldName: "user.roles.name",
+        operator: "=",
+        value: roleValue,
+      },
+      {
+        operator: "or",
+        criteria: fieldsToSearch,
+      },
+    ];
   }
 
   const response = await fetch(API_URL, {
@@ -85,3 +93,58 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   return res.status(200).json(responseData);
 }
+
+// const fieldsToSearch = [
+//   {
+//     "fieldName": "user.roles.name", // Виды должностных лиц (роль пользователя)
+//     "operator": "=",
+//     "value": "OMSU official" // Должностные лица органов местного самоуправления
+//   },
+//   {
+//     "operator": "or",
+//     "criteria": [
+//       {
+//         "fieldName": "lastName",
+//         "operator": "like",
+//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
+//       },
+//       {
+//         "fieldName": "firstName",
+//         "operator": "like",
+//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
+//       },
+//       {
+//         "fieldName": "middleName",
+//         "operator": "like",
+//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
+//       },
+//       {
+//         "fieldName": "notaryPosition",
+//         "operator": "like",
+//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
+//       },
+//       {
+//         "fieldName": "emailAddress.address",
+//         "operator": "like",
+//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
+//       },
+//       {
+//         "fieldName": "simpleFullName",
+//         "operator": "like",
+//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
+//       },
+//       {
+//         "fieldName": "notaryWorkOrder",
+//         "operator": "like",
+//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
+//       },
+//       {
+//         "fieldName": "notaryCriminalRecord",
+//         "operator": "like",
+//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
+//       }
+//     ]
+//   }
+// ];
+
+// criteria = fieldsToSearch;
