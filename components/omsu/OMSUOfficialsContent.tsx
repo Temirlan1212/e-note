@@ -65,7 +65,6 @@ export default function OMSUOfficialsContent() {
     updateRequestBodyParams("requestType", "search");
     updateRequestBodyParams("searchValue", keywordValue);
 
-    console.log("requestKeyword", requestBody);
     setRowData(data);
   };
 
