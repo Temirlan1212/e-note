@@ -24,6 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   let API_URL = process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Partner";
 
+  const filterValues = req.body["filterValues"];
   const requestType = req.body["requestType"];
   const searchValue = req.body["searchValue"];
   const roleValue = req.body["roleValue"];
@@ -100,6 +101,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             fieldName: "notaryCriminalRecord",
             operator: "like",
             value: `%${searchValue}%`,
+          },
+        ],
+      },
+    ];
+  }
+
+  if (requestType === "searchFilterValue") {
+    API_URL += "/search";
+    const field = Object.keys(filterValues)[0];
+    const fieldValue = filterValues[field];
+
+    criteria = [
+      {
+        fieldName: "user.roles.name",
+        operator: "=",
+        value: roleValue,
+      },
+      {
+        operator: "or",
+        criteria: [
+          {
+            fieldName: field,
+            operator: "like",
+            value: `%${fieldValue}%`,
           },
         ],
       },

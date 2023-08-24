@@ -18,6 +18,7 @@ interface IRequestBody {
   pageSize: number;
   page: number;
   sortBy: string[];
+  filterValues: Record<string, (string | number)[]>;
 }
 
 interface IRowData {
@@ -39,6 +40,7 @@ export default function OMSUOfficialsContent() {
     searchValue: null,
     roleValue: "OMSU official",
     requestType: "getAllData",
+    filterValues: {},
   });
 
   const { data, loading, update } = useFetch("/api/officials", "POST", {
@@ -68,7 +70,7 @@ export default function OMSUOfficialsContent() {
   };
 
   const exportToExcel = () => {
-    updateRequestBodyParams("requestType", "export");
+    // updateRequestBodyParams("requestType", "export");
   };
 
   const handleSortByDate = (model: GridSortModel) => {
@@ -79,7 +81,13 @@ export default function OMSUOfficialsContent() {
     }));
   };
 
-  const handleFilterSubmit = async (value: IFilterSubmitParams) => {};
+  const handleFilterSubmit = async (value: IFilterSubmitParams) => {
+    const field = value.rowParams.colDef.filter?.field;
+    if (value.value.length > 0) {
+      updateRequestBodyParams("filterValues", { [field]: value.value });
+      updateRequestBodyParams("requestType", "searchFilterValue");
+    }
+  };
 
   const handlePageChange = (page: number) => {
     if (requestBody.page !== page) updateRequestBodyParams("page", page);
