@@ -22,7 +22,8 @@
   "Notary's full name": "Notary's full name",
   "Unique registry number": "Unique registry number",
   "Sides": "Sides",
-  "Object": "Object",
+  "Objects of civil rights": "Objects of civil rights",
+  "Purpose of action": "Purpose of action",
   "Object type": "Object type",
   "Object selection": "Object selection",
   "second-step-hint-title": "You need to choose the object and its type regarding what you want to make a notarial document. Choosing an object will help you quickly find the notarial document you need.",
@@ -59,5 +60,6 @@
   "Applicant": "Applicant",
   "Your application has been successfully sent to the notary": "Your application has been successfully sent to the notary",
   "Make a new application": "Make a new application",
-  "Go to applications": "Go to applications"
+  "Go to applications": "Go to applications",
+  "Participant": "Participant"
 }

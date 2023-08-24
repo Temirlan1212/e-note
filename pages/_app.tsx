@@ -9,7 +9,7 @@ import { ThemeProvider } from "@mui/material";
 import theme from "@/themes/default";
 import { useProfileStore } from "@/stores/profile";
 import { IRoute, useRouteStore } from "@/stores/route";
-import { IUser } from "@/models/profile/user";
+import { IUser } from "@/models/user";
 import NavigationLoading from "@/components/ui/NavigationLoading";
 import useNotificationStore from "@/stores/notification";
 import Notification from "@/components/ui/Notification";

@@ -1,10 +1,10 @@
 import React, { FC } from "react";
 import { Avatar, Box, Card, CardContent, CardHeader, Typography } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
-import { NotaryCardProps } from "@/models/notaries/notary";
+import { INotary } from "./NotariesList";
 import Rating from "../ui/Rating";
 
-const NotariesCard: FC<NotaryCardProps> = ({ notary }) => {
+const NotariesCard: FC<{ notary: INotary }> = ({ notary }) => {
   return (
     <Card
       sx={{

@@ -5,7 +5,7 @@ import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { format } from "date-fns";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { INotaryDistrict } from "@/models/dictionaries/notary-district";
+import { INotaryDistrict } from "@/models/notary-district";
 import { ICompany } from "@/models/company";
 import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
