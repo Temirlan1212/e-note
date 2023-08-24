@@ -1,6 +1,19 @@
 import { IOfficialsData } from "@/models/omsu-officials/officials-data";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+type CriteriaItem = {
+  fieldName: string;
+  operator: string;
+  value: string;
+};
+
+type Criteria =
+  | CriteriaItem
+  | {
+      operator: string;
+      criteria: CriteriaItem[];
+    };
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse<IOfficialsData | null>) {
   if (req.method !== "POST") {
     return res.status(400).json(null);
@@ -13,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const roleValue = req.body["roleValue"];
   const fileName = req.body["fileName"];
 
-  let criteria: Array<any> = [
+  let criteria: Criteria[] = [
     {
       fieldName: "user.roles.name",
       operator: "=",
@@ -126,58 +139,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   return res.status(200).json(responseData);
 }
-
-// const fieldsToSearch = [
-//   {
-//     "fieldName": "user.roles.name", // Виды должностных лиц (роль пользователя)
-//     "operator": "=",
-//     "value": "OMSU official" // Должностные лица органов местного самоуправления
-//   },
-//   {
-//     "operator": "or",
-//     "criteria": [
-//       {
-//         "fieldName": "lastName",
-//         "operator": "like",
-//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
-//       },
-//       {
-//         "fieldName": "firstName",
-//         "operator": "like",
-//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
-//       },
-//       {
-//         "fieldName": "middleName",
-//         "operator": "like",
-//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
-//       },
-//       {
-//         "fieldName": "notaryPosition",
-//         "operator": "like",
-//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
-//       },
-//       {
-//         "fieldName": "emailAddress.address",
-//         "operator": "like",
-//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
-//       },
-//       {
-//         "fieldName": "simpleFullName",
-//         "operator": "like",
-//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
-//       },
-//       {
-//         "fieldName": "notaryWorkOrder",
-//         "operator": "like",
-//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
-//       },
-//       {
-//         "fieldName": "notaryCriminalRecord",
-//         "operator": "like",
-//         "value": `%${searchValue}%` // значение который пользователь ввел в поисковую строку
-//       }
-//     ]
-//   }
-// ];
-
-// criteria = fieldsToSearch;
