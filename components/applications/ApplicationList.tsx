@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { ValueOf } from "next/dist/shared/lib/constants";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
@@ -16,6 +16,7 @@ import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import Pagination from "@/components/ui/Pagination";
 import Link from "@/components/ui/Link";
 import { ApplicationListActions } from "./ApplicationListActions";
+import QrCode2Icon from "@mui/icons-material/QrCode2";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -118,6 +119,13 @@ export default function ApplicationList() {
 
       <GridTable
         columns={[
+          {
+            field: "QR",
+            headerName: "QR",
+            width: 90,
+            sortable: false,
+            renderCell: (params: any) => <QrCode2Icon />,
+          },
           {
             field: "typeNotarialAction",
             headerName: "Type of action",
