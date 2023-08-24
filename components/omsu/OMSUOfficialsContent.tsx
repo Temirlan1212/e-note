@@ -30,7 +30,7 @@ export default function OMSUOfficialsContent() {
   const [keywordValue, setKeywordValue] = useState<string>("");
   const [rowData, setRowData] = useState<IRowData | null>(null);
 
-  const [requestBody, setRequestBody] = useState<any>({
+  const [requestBody, setRequestBody] = useState<IRequestBody>({
     searchValue: null,
     roleValue: "OMSU official",
     requestType: "getAllData",
@@ -79,7 +79,7 @@ export default function OMSUOfficialsContent() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: "40px",
+        gap: "20px",
       }}
     >
       <Typography typography="h4" color={"#1BAA75"}>
@@ -108,23 +108,15 @@ export default function OMSUOfficialsContent() {
           value={keywordValue}
         />
         <Button
-          sx={{
-            "&:hover": {
-              background: "#fff !important",
-              border: "1px solid",
-            },
-            display: {
-              xs: "none",
-              md: "flex",
-            },
-            width: {
-              xs: "100%",
-              md: "20%",
-            },
-            padding: "10px 10px",
-          }}
-          color="primary"
           variant="outlined"
+          color="primary"
+          sx={{
+            height: "auto",
+            gap: "10px",
+            padding: "10px 22px",
+            width: { md: "20%", xs: "100%" },
+            "&:hover": { color: "#F6F6F6" },
+          }}
           endIcon={<ExcelIcon />}
           onClick={exportToExcel}
         >
@@ -138,14 +130,78 @@ export default function OMSUOfficialsContent() {
           <GridTable
             rows={rowData?.data ?? []}
             columns={[
-              { field: "fullName", headerName: "Full name", width: 280 },
-              { field: "notaryPosition", headerName: "Position", width: 280 },
-              { field: "birthDate", headerName: "Date of birth", width: 200 },
-              { field: "mobilePhone", headerName: "Phone number", width: 220 },
-              { field: "emailAddress.address", headerName: "E-mail", width: 180 },
-              { field: "simpleFullName", headerName: "Institution", width: 180 },
-              { field: "notaryWorkOrder", headerName: "Order", width: 200 },
-              { field: "notaryCriminalRecord", headerName: "Criminal record", width: 200 },
+              {
+                field: "fullName",
+                headerName: "Full name",
+                width: 280,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
+              },
+              {
+                field: "notaryPosition",
+                headerName: "Position",
+                width: 280,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
+              },
+              {
+                field: "birthDate",
+                headerName: "Date of birth",
+                width: 200,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
+              },
+              {
+                field: "mobilePhone",
+                headerName: "Phone number",
+                width: 220,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
+              },
+              {
+                field: "emailAddress.address",
+                headerName: "E-mail",
+                width: 180,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
+              },
+              {
+                field: "simpleFullName",
+                headerName: "Institution",
+                width: 180,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
+              },
+              {
+                field: "notaryWorkOrder",
+                headerName: "Order",
+                width: 200,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
+              },
+              {
+                field: "notaryCriminalRecord",
+                headerName: "Criminal record",
+                width: 200,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
+              },
             ]}
             sx={{
               height: "100%",
@@ -163,6 +219,8 @@ export default function OMSUOfficialsContent() {
           />
 
           <Button
+            color="primary"
+            variant="outlined"
             sx={{
               "&:hover": {
                 background: "#fff !important",
@@ -173,8 +231,7 @@ export default function OMSUOfficialsContent() {
               display: { xs: "flex", sm: "flex", md: "none" },
               alignSelf: "center",
             }}
-            color="primary"
-            variant="outlined"
+            fullWidth
             endIcon={<ExcelIcon />}
             onClick={exportToExcel}
           >

@@ -21,19 +21,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     },
   ];
 
-  const fields = [
-    "lastName",
-    "firstName",
-    "middleName",
-    "notaryPosition",
-    "birthDate",
-    "mobilePhone",
-    "emailAddress.address",
-    "simpleFullName",
-    "notaryWorkOrder",
-    "notaryCriminalRecord",
-  ];
-
   if (requestType === "getAllData") {
     API_URL += "/search";
   }
@@ -49,12 +36,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   if (requestType === "search") {
     API_URL += "/search";
 
-    const fieldsToSearch = fields.map((field) => ({
-      fieldName: field,
-      operator: "like",
-      value: `%${searchValue}%`,
-    }));
-
     criteria = [
       {
         fieldName: "user.roles.name",
@@ -63,7 +44,48 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       },
       {
         operator: "or",
-        criteria: fieldsToSearch,
+        criteria: [
+          {
+            fieldName: "lastName",
+            operator: "like",
+            value: `%${searchValue}%`,
+          },
+          {
+            fieldName: "firstName",
+            operator: "like",
+            value: `%${searchValue}%`,
+          },
+          {
+            fieldName: "middleName",
+            operator: "like",
+            value: `%${searchValue}%`,
+          },
+          {
+            fieldName: "notaryPosition",
+            operator: "like",
+            value: `%${searchValue}%`,
+          },
+          {
+            fieldName: "emailAddress.address",
+            operator: "like",
+            value: `%${searchValue}%`,
+          },
+          {
+            fieldName: "simpleFullName",
+            operator: "like",
+            value: `%${searchValue}%`,
+          },
+          {
+            fieldName: "notaryWorkOrder",
+            operator: "like",
+            value: `%${searchValue}%`,
+          },
+          {
+            fieldName: "notaryCriminalRecord",
+            operator: "like",
+            value: `%${searchValue}%`,
+          },
+        ],
       },
     ];
   }
@@ -77,7 +99,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     body: JSON.stringify({
       offset: 0,
       limit: 100,
-      field: fields,
+      field: [
+        "lastName",
+        "firstName",
+        "middleName",
+        "notaryPosition",
+        "birthDate",
+        "mobilePhone",
+        "emailAddress.address",
+        "simpleFullName",
+        "notaryWorkOrder",
+        "notaryCriminalRecord",
+      ],
       data: {
         operator: "and",
         criteria: criteria,
