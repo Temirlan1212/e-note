@@ -19,6 +19,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
+  const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
+  const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
+
   let API_URL = process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Partner";
 
   const requestType = req.body["requestType"];
@@ -110,8 +113,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      offset: 0,
-      limit: 100,
+      offset: page,
+      limit: pageSize,
       field: [
         "lastName",
         "firstName",
@@ -124,6 +127,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         "notaryWorkOrder",
         "notaryCriminalRecord",
       ],
+      sortBy: req.body["sortBy"] ?? [],
       data: {
         operator: "and",
         criteria: criteria,
