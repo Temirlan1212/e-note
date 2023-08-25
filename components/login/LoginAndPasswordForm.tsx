@@ -7,7 +7,7 @@ import Input from "../ui/Input";
 import { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useProfileStore } from "@/stores/profile";
-import { IUserCredentials } from "@/models/profile/user";
+import { IUserCredentials } from "@/models/user";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { login as loginSchema } from "@/validator-schemas/login";
