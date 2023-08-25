@@ -18,7 +18,7 @@ import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import UploadFiles from "@/components/fields/UploadFiles";
-import Stepper from "@/components/ui/Stepper";
+import VerticalStepper from "@/components/ui/VerticalStepper";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -380,7 +380,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
 
   return (
     <Box display="flex" gap={"20px"}>
-      <Stepper currentStep={1} stepNext={2} stepNextTitle={"Choose object"} />
+      <VerticalStepper currentStep={1} stepNext={2} stepNextTitle={"Choose object"} />
       <Box
         width="100%"
         display="flex"

@@ -14,7 +14,7 @@ import Autocomplete from "@/components/ui/Autocomplete";
 import Area from "@/components/fields/Area";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import Stepper from "@/components/ui/Stepper";
+import VerticalStepper from "@/components/ui/VerticalStepper";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -100,7 +100,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
   return (
     <Box display="flex" gap="20px">
-      <Stepper currentStep={1} stepNext={2} stepNextTitle={"Choose object"} />
+      <VerticalStepper currentStep={1} stepNext={2} stepNextTitle={"Choose object"} />
       <Box
         width="100%"
         display="flex"

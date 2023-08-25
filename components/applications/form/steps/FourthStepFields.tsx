@@ -16,7 +16,7 @@ import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import UploadFiles from "@/components/fields/UploadFiles";
-import Stepper from "@/components/ui/Stepper";
+import VerticalStepper from "@/components/ui/VerticalStepper";
 
 interface IBaseEntityFields {
   id?: number;
@@ -279,7 +279,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
   return (
     <Box display="flex" gap="20px">
-      <Stepper currentStep={4} stepNext={5} stepNextTitle={"Additional information"} />
+      <VerticalStepper currentStep={4} stepNext={5} stepNextTitle={"Additional information"} />
       <Box
         width="100%"
         display="flex"

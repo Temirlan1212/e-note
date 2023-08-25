@@ -10,7 +10,7 @@ import PDFViewer from "@/components/PDFViewer";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
-import Stepper from "@/components/ui/Stepper";
+import VerticalStepper from "@/components/ui/VerticalStepper";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -51,7 +51,7 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
 
   return (
     <Box display="flex" gap="20px">
-      <Stepper onlyCurrentStep currentStep={6} />
+      <VerticalStepper onlyCurrentStep currentStep={6} />
       <Box
         width="100%"
         display="flex"
