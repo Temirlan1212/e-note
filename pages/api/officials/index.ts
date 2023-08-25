@@ -40,10 +40,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     API_URL += "/search";
   }
 
-  if (requestType === "export") {
-    API_URL += "/export/";
-  }
-
   if (requestType === "searchFilter") {
     API_URL += "/search";
 
