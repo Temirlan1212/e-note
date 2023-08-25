@@ -12,6 +12,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Hint from "@/components/ui/Hint";
 import { useRouter } from "next/router";
 import { INotarialActionData } from "@/models/notarial-action";
+import Stepper from "@/components/ui/Stepper";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -90,240 +91,252 @@ export default function ThirdStepFields({ form, stepState, onPrev, onNext }: ISt
   };
 
   return (
-    <Box display="flex" flexDirection="column" gap="30px">
+    <Box display="flex" gap={"20px"}>
+      <Stepper currentStep={3} stepNext={4} stepNextTitle={"fifth-step-title"} />
       <Box
+        width="100%"
         display="flex"
-        justifyContent="space-between"
-        gap={{ xs: "20px", md: "200px" }}
-        flexDirection={{ xs: "column", md: "row" }}
+        flexDirection="column"
+        gap="30px"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+          paddingBottom: { xs: "0", md: "90px" },
+        }}
       >
-        <Typography variant="h4" whiteSpace="nowrap">
-          {t("Choose object")}
-        </Typography>
-      </Box>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          gap={{ xs: "20px", md: "200px" }}
+          flexDirection={{ xs: "column", md: "row" }}
+        >
+          <Typography variant="h4" whiteSpace="nowrap">
+            {t("Choose object")}
+          </Typography>
+        </Box>
 
-      <Controller
-        control={control}
-        name="object"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const objectList = notarialData?.object;
-          const errorMessage = fieldState.error?.message;
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
-                <InputLabel>{t("Objects of civil rights")}</InputLabel>
-                <Hint type="hint" maxWidth="520px">
-                  {t("second-step-hint-title")}
-                </Hint>
+        <Controller
+          control={control}
+          name="object"
+          defaultValue={null}
+          render={({ field, fieldState }) => {
+            const objectList = notarialData?.object;
+            const errorMessage = fieldState.error?.message;
+            return (
+              <Box width="100%" display="flex" flexDirection="column" gap="10px">
+                <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
+                  <InputLabel>{t("Objects of civil rights")}</InputLabel>
+                  <Hint type="hint" maxWidth="520px">
+                    {t("second-step-hint-title")}
+                  </Hint>
+                </Box>
+
+                <Select
+                  fullWidth
+                  selectType={errorMessage ? "error" : field.value ? "success" : "secondary"}
+                  data={objectList ?? []}
+                  labelField={"title_" + locale}
+                  valueField="value"
+                  helperText={errorMessage ? t(errorMessage) : ""}
+                  value={field.value == null ? "" : field.value}
+                  onBlur={field.onBlur}
+                  loading={notarialLoading}
+                  onChange={(...event: any[]) => {
+                    field.onChange(...event);
+                    trigger(field.name);
+                    ["objectType", "notarialAction", "typeNotarialAction", "action", "product.id"].map((item: any) =>
+                      resetField(item, { defaultValue: null })
+                    );
+                  }}
+                />
               </Box>
+            );
+          }}
+        />
 
-              <Select
-                fullWidth
-                selectType={errorMessage ? "error" : field.value ? "success" : "secondary"}
-                data={objectList ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={notarialLoading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                  ["objectType", "notarialAction", "typeNotarialAction", "action", "product.id"].map((item: any) =>
-                    resetField(item, { defaultValue: null })
-                  );
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
+        <Controller
+          control={control}
+          name="objectType"
+          defaultValue={null}
+          render={({ field, fieldState }) => {
+            const errorMessage = fieldState.error?.message;
+            const objectTypeList = notarialData?.objectType.filter((item) =>
+              item["parent.value"].join(",").includes(String(objectVal))
+            );
 
-      <Controller
-        control={control}
-        name="objectType"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-          const objectTypeList = notarialData?.objectType.filter((item) =>
-            item["parent.value"].join(",").includes(String(objectVal))
-          );
+            return (
+              <Box width="100%" display="flex" flexDirection="column" gap="10px">
+                <InputLabel>{t("Object type")}</InputLabel>
+                <Select
+                  disabled={!objectVal}
+                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  data={objectTypeList ?? []}
+                  labelField={"title_" + locale}
+                  valueField="value"
+                  helperText={!!objectVal && errorMessage ? t(errorMessage) : ""}
+                  value={field.value == null ? "" : field.value}
+                  onBlur={field.onBlur}
+                  loading={loading}
+                  onChange={(...event: any[]) => {
+                    field.onChange(...event);
+                    trigger(field.name);
+                    ["notarialAction", "typeNotarialAction", "action", "product.id"].map((item: any) =>
+                      resetField(item, { defaultValue: null })
+                    );
+                  }}
+                />
+              </Box>
+            );
+          }}
+        />
 
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Object type")}</InputLabel>
-              <Select
-                disabled={!objectVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={objectTypeList ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!objectVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                  ["notarialAction", "typeNotarialAction", "action", "product.id"].map((item: any) =>
-                    resetField(item, { defaultValue: null })
-                  );
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
+        <Typography variant="h4">{t("Choose document")}</Typography>
 
-      <Typography variant="h4">{t("Choose document")}</Typography>
+        <Controller
+          control={control}
+          name="notarialAction"
+          defaultValue={null}
+          render={({ field, fieldState }) => {
+            const errorMessage = fieldState.error?.message;
+            const notarialActionList = notarialData?.notarialAction.filter((item) =>
+              item["parent.value"].join(",").includes(String(objectTypeVal))
+            );
 
-      <Controller
-        control={control}
-        name="notarialAction"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-          const notarialActionList = notarialData?.notarialAction.filter((item) =>
-            item["parent.value"].join(",").includes(String(objectTypeVal))
-          );
+            return (
+              <Box width="100%" display="flex" flexDirection="column" gap="10px">
+                <InputLabel>{t("Notarial action")}</InputLabel>
+                <Select
+                  disabled={!objectTypeVal}
+                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  data={notarialActionList ?? []}
+                  labelField={"title_" + locale}
+                  valueField="value"
+                  helperText={!!objectTypeVal && errorMessage ? t(errorMessage) : ""}
+                  value={field.value == null ? "" : field.value}
+                  onBlur={field.onBlur}
+                  loading={loading}
+                  onChange={(...event: any[]) => {
+                    field.onChange(...event);
+                    trigger(field.name);
+                    ["typeNotarialAction", "action", "product.id"].map((item: any) =>
+                      resetField(item, { defaultValue: null })
+                    );
+                  }}
+                />
+              </Box>
+            );
+          }}
+        />
 
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Notarial action")}</InputLabel>
-              <Select
-                disabled={!objectTypeVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={notarialActionList ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!objectTypeVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                  ["typeNotarialAction", "action", "product.id"].map((item: any) =>
-                    resetField(item, { defaultValue: null })
-                  );
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
+        <Controller
+          control={control}
+          name="typeNotarialAction"
+          defaultValue={null}
+          render={({ field, fieldState }) => {
+            const errorMessage = fieldState.error?.message;
+            const typeNotarialActionList = notarialData?.typeNotarialAction.filter((item) =>
+              item["parent.value"].join(",").includes(String(notarialActionVal))
+            );
 
-      <Controller
-        control={control}
-        name="typeNotarialAction"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-          const typeNotarialActionList = notarialData?.typeNotarialAction.filter((item) =>
-            item["parent.value"].join(",").includes(String(notarialActionVal))
-          );
+            return (
+              <Box width="100%" display="flex" flexDirection="column" gap="10px">
+                <InputLabel>{t("Type of notarial action")}</InputLabel>
+                <Select
+                  disabled={!notarialActionVal}
+                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  data={typeNotarialActionList ?? []}
+                  labelField={"title_" + locale}
+                  valueField="value"
+                  helperText={!!notarialActionVal && errorMessage ? t(errorMessage) : ""}
+                  value={field.value == null ? "" : field.value}
+                  onBlur={field.onBlur}
+                  loading={loading}
+                  onChange={(...event: any[]) => {
+                    field.onChange(...event);
+                    trigger(field.name);
+                    ["action", "product.id"].map((item: any) => resetField(item, { defaultValue: null }));
+                  }}
+                />
+              </Box>
+            );
+          }}
+        />
 
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Type of notarial action")}</InputLabel>
-              <Select
-                disabled={!notarialActionVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={typeNotarialActionList ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!notarialActionVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                  ["action", "product.id"].map((item: any) => resetField(item, { defaultValue: null }));
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
+        <Controller
+          control={control}
+          name="action"
+          defaultValue={null}
+          render={({ field, fieldState }) => {
+            const errorMessage = fieldState.error?.message;
+            const actionList = notarialData?.action.filter((item) =>
+              item["parent.value"].join(",").includes(String(typeNotarialActionVal))
+            );
 
-      <Controller
-        control={control}
-        name="action"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-          const actionList = notarialData?.action.filter((item) =>
-            item["parent.value"].join(",").includes(String(typeNotarialActionVal))
-          );
+            return (
+              <Box width="100%" display="flex" flexDirection="column" gap="10px">
+                <InputLabel>{t("Purpose of action")}</InputLabel>
+                <Select
+                  disabled={!typeNotarialActionVal}
+                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  data={actionList ?? []}
+                  labelField={"title_" + locale}
+                  valueField="value"
+                  helperText={!!typeNotarialActionVal && errorMessage ? t(errorMessage) : ""}
+                  value={field.value == null ? "" : field.value}
+                  onBlur={field.onBlur}
+                  loading={loading}
+                  onChange={(...event: any[]) => {
+                    field.onChange(...event);
+                    trigger(field.name);
+                    resetField("product.id", { defaultValue: null });
+                  }}
+                />
+              </Box>
+            );
+          }}
+        />
 
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Purpose of action")}</InputLabel>
-              <Select
-                disabled={!typeNotarialActionVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={actionList ?? []}
-                labelField={"title_" + locale}
-                valueField="value"
-                helperText={!!typeNotarialActionVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                  resetField("product.id", { defaultValue: null });
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
+        <Controller
+          control={control}
+          name="product.id"
+          defaultValue={null}
+          render={({ field, fieldState }) => {
+            const errorMessage = fieldState.error?.message;
 
-      <Controller
-        control={control}
-        name="product.id"
-        defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
+            return (
+              <Box width="100%" display="flex" flexDirection="column" gap="10px">
+                <InputLabel>{t("Document")}</InputLabel>
+                <Select
+                  disabled={!actionVal}
+                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  data={searchedDocData?.data ?? []}
+                  labelField="name"
+                  valueField="id"
+                  helperText={!!actionVal && errorMessage ? t(errorMessage) : ""}
+                  value={field.value == null ? "" : field.value}
+                  onBlur={field.onBlur}
+                  loading={loading}
+                  onChange={(...event: any[]) => {
+                    field.onChange(...event);
+                    trigger(field.name);
+                  }}
+                />
+              </Box>
+            );
+          }}
+        />
 
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Document")}</InputLabel>
-              <Select
-                disabled={!actionVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={searchedDocData?.data ?? []}
-                labelField="name"
-                valueField="id"
-                helperText={!!actionVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
-          );
-        }}
-      />
-
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
-            {t("Prev")}
-          </Button>
-        )}
-        {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
-            {t("Next")}
-          </Button>
-        )}
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          {onPrev != null && (
+            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+              {t("Prev")}
+            </Button>
+          )}
+          {onNext != null && (
+            <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+              {t("Next")}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   );
