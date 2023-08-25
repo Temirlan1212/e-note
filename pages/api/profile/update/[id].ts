@@ -1,8 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { IUserData } from "@/models/profile/user";
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IUserData | null>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
 
   if (req.method !== "POST" || req.body == null) {

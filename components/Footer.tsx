@@ -90,7 +90,13 @@ const Footer: React.FC = () => {
               gap: { xs: "20px" },
             }}
           >
-            <Image src="/images/website-analytics.png" alt="website-analytics" width={107} height={38} />
+            <Image
+              src="https://informer.yandex.ru/informer/94733774/3_1_FFFFFFFF_FFFFFFFF_0_uniques"
+              alt="Метрика"
+              width={107}
+              height={38}
+              unoptimized
+            />
             <Typography color="white">{t("2023 E-Notariat All rights Reserved")}</Typography>
           </Box>
 

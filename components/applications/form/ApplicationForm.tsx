@@ -6,7 +6,7 @@ import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema, applicationSchema } from "@/validator-schemas/application";
 import { IApplication } from "@/models/application";
 import { useProfileStore } from "@/stores/profile";
-import { IUserData } from "@/models/profile/user";
+import { IUserData } from "@/models/user";
 import { Box, Step, StepIcon, Stepper, StepConnector, Skeleton } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";

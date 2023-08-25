@@ -1,27 +1,23 @@
-export interface IFileUser {
-  id: number;
-  $version: number;
-  code: string;
-  fullName: string;
-}
+import { IUserData } from "./user";
 
-export interface IFileTags {}
+export interface IFileTag {}
 
-export interface IFileList {
+export interface IFile {
   id: number;
   version: number;
+  $version: number;
   canShare: boolean;
   canWrite: boolean;
-  createdBy: IFileUser;
-  createdOn: string;
   detailsIcon: string;
   downloadIcon: string;
   fileName: string;
   "metaFile.createdOn": string;
   "metaFile.fileType": string;
   relatedModel: string;
-  tags: IFileTags[];
   typeIcon: string;
-  updatedBy: IFileUser;
+  createdOn: string;
   updatedOn: string;
+  createdBy: IUserData;
+  updatedBy: IUserData;
+  tags: IFileTag[];
 }

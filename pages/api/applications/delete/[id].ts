@@ -1,7 +1,6 @@
-import { IApplication } from "@/models/applications/application-list";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IApplication | null>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id, version } = req.query;
 
   if (req.method !== "DELETE" || id == null || version == null) {

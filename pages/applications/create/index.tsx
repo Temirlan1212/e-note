@@ -8,7 +8,7 @@ import { Box, Container, Typography } from "@mui/material";
 import ApplicationForm from "@/components/applications/form/ApplicationForm";
 import Button from "@/components/ui/Button";
 import CloseIcon from "@mui/icons-material/Close";
-import { IUserData } from "@/models/profile/user";
+import { IUserData } from "@/models/user";
 import useEffectOnce from "@/hooks/useEffectOnce";
 
 export default function CreateApplication() {

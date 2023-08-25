@@ -18,6 +18,7 @@ import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import UploadFiles from "@/components/fields/UploadFiles";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -57,6 +58,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
     name: "requester",
   });
 
+  const [step, setStep] = stepState;
   const [loading, setLoading] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
@@ -309,6 +311,8 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
     setValue(`${entity}.${index}.mainAddress.version`, null);
     setValue(`${entity}.${index}.actualResidenceAddress.id`, null);
     setValue(`${entity}.${index}.actualResidenceAddress.version`, null);
+    setValue(`${entity}.${index}.emailAddress.id`, null);
+    setValue(`${entity}.${index}.emailAddress.version`, null);
 
     if (values[entity] != null && values[entity][index].personalNumber) {
       const pin = values[entity][index].personalNumber;
@@ -319,9 +323,10 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
         return;
       }
 
-      const partner = personalData.data.partner;
-      const mainAddress = personalData.data.mainAddress;
-      const actualAddress = personalData.data.actualAddress;
+      const partner = personalData.data?.partner;
+      const mainAddress = personalData.data?.mainAddress;
+      const actualAddress = personalData.data?.actualAddress;
+      const emailAddress = personalData.data?.emailAddress;
 
       if (partner == null || partner.id == null) {
         setAlertOpen(true);
@@ -335,6 +340,9 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
       setValue(`${entity}.${index}.mainAddress.version`, mainAddress?.version);
       setValue(`${entity}.${index}.actualResidenceAddress.id`, actualAddress?.id);
       setValue(`${entity}.${index}.actualResidenceAddress.version`, actualAddress?.version);
+      setValue(`${entity}.${index}.emailAddress.id`, emailAddress?.id);
+      setValue(`${entity}.${index}.emailAddress.version`, emailAddress?.version);
+      setValue(`${entity}.${index}.emailAddress.address`, emailAddress?.address);
 
       const baseFields = [
         ...Object.values(getPersonalDataNames(index)),
@@ -371,63 +379,75 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
   };
 
   return (
-    <Box display="flex" gap="20px" flexDirection="column">
+    <Box display="flex" gap={"20px"}>
+      <StepperContentStep currentStep={1} stepNext={2} stepNextTitle={"Choose object"} />
       <Box
+        width="100%"
         display="flex"
-        justifyContent="space-between"
-        gap={{ xs: "20px", md: "200px" }}
-        flexDirection={{ xs: "column", md: "row" }}
+        gap="20px"
+        flexDirection="column"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+          paddingBottom: { xs: "0", md: "90px" },
+        }}
       >
-        <Typography variant="h4" whiteSpace="nowrap">
-          {t("Choose requester")}
-        </Typography>
-      </Box>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          gap={{ xs: "20px", md: "200px" }}
+          flexDirection={{ xs: "column", md: "row" }}
+        >
+          <Typography variant="h4" whiteSpace="nowrap">
+            {t("Choose requester")}
+          </Typography>
+        </Box>
 
-      <Collapse in={alertOpen}>
-        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-          {t("Sorry, such pin not found")}
-        </Alert>
-      </Collapse>
+        <Collapse in={alertOpen}>
+          <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+            {t("Sorry, such pin not found")}
+          </Alert>
+        </Collapse>
 
-      <Tabs
-        data={items.map(({ getElement }, index) => {
-          return {
-            tabErrorsCount: tabsErrorsCounts[index] ?? 0,
-            tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: getElement(index) ?? <></>,
-          };
-        })}
-        actionsContent={
-          <>
-            <Button
-              buttonType="primary"
-              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-              onClick={handleAddTabClick}
-            >
-              <AddIcon />
+        <Tabs
+          data={items.map(({ getElement }, index) => {
+            return {
+              tabErrorsCount: tabsErrorsCounts[index] ?? 0,
+              tabLabel: `${t("Member")} ${index + 1}`,
+              tabPanelContent: getElement(index) ?? <></>,
+            };
+          })}
+          actionsContent={
+            <>
+              <Button
+                buttonType="primary"
+                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+                onClick={handleAddTabClick}
+              >
+                <AddIcon />
+              </Button>
+              <Button
+                buttonType="secondary"
+                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+                onClick={handleRemoveTabClick}
+              >
+                <RemoveIcon />
+              </Button>
+            </>
+          }
+        />
+
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          {onPrev != null && (
+            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+              {t("Prev")}
             </Button>
-            <Button
-              buttonType="secondary"
-              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-              onClick={handleRemoveTabClick}
-            >
-              <RemoveIcon />
+          )}
+          {onNext != null && (
+            <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+              {t("Next")}
             </Button>
-          </>
-        }
-      />
-
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
-            {t("Prev")}
-          </Button>
-        )}
-        {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
-            {t("Next")}
-          </Button>
-        )}
+          )}
+        </Box>
       </Box>
     </Box>
   );

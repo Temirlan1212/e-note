@@ -1,8 +1,7 @@
-import { IUser } from "@/models/profile/user";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IUser | null>) {
-  if (req.method !== "POST" || req.body == null || req.body.username == null || req.body.password == null) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== "POST" || req.body?.username == null || req.body?.password == null) {
     return res.status(400).json(null);
   }
 
