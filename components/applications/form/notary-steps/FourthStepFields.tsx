@@ -298,6 +298,8 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
     setValue(`${entity}.${index}.mainAddress.version`, null);
     setValue(`${entity}.${index}.actualResidenceAddress.id`, null);
     setValue(`${entity}.${index}.actualResidenceAddress.version`, null);
+    setValue(`${entity}.${index}.emailAddress.id`, null);
+    setValue(`${entity}.${index}.emailAddress.version`, null);
 
     if (values[entity] != null && values[entity][index].personalNumber) {
       const pin = values[entity][index].personalNumber;
@@ -311,6 +313,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
       const partner = personalData.data.partner;
       const mainAddress = personalData.data.mainAddress;
       const actualAddress = personalData.data.actualAddress;
+      const emailAddress = personalData.data?.emailAddress;
 
       if (partner == null || partner.id == null) {
         setAlertOpen(true);
@@ -324,6 +327,9 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
       setValue(`${entity}.${index}.mainAddress.version`, mainAddress?.version);
       setValue(`${entity}.${index}.actualResidenceAddress.id`, actualAddress?.id);
       setValue(`${entity}.${index}.actualResidenceAddress.version`, actualAddress?.version);
+      setValue(`${entity}.${index}.emailAddress.id`, emailAddress?.id);
+      setValue(`${entity}.${index}.emailAddress.version`, emailAddress?.version);
+      setValue(`${entity}.${index}.emailAddress.address`, emailAddress?.address);
 
       const baseFields = [
         ...Object.values(getPersonalDataNames(index)),
