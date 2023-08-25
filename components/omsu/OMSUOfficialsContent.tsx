@@ -55,7 +55,6 @@ export default function OMSUOfficialsContent() {
   });
 
   const { update: downloadExcel } = useFetch("", "GET", {
-    // body: excelReqBody,
     returnResponse: true,
   });
 
