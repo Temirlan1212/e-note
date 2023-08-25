@@ -12,7 +12,7 @@ import Select from "@/components/ui/Select";
 import Hint from "@/components/ui/Hint";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import VerticalStepper from "@/components/ui/VerticalStepper";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -98,7 +98,7 @@ export default function SecondStepFields({ form, stepState, onPrev, onNext }: IS
 
   return (
     <Box display="flex" gap={"20px"}>
-      <VerticalStepper currentStep={2} stepNext={3} stepNextTitle={"Choose object"} />
+      <StepperContentStep currentStep={2} stepNext={3} stepNextTitle={"Choose object"} />
       <Box
         width="100%"
         display="flex"

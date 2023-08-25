@@ -21,7 +21,7 @@ import CheckBox from "@/components/ui/Checkbox";
 import TimePicker from "@/components/ui/TimePicker";
 import DateTimePicker from "@/components/ui/DateTimePicker";
 import { useState } from "react";
-import VerticalStepper from "@/components/ui/VerticalStepper";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -255,7 +255,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
 
   return (
     <Box display="flex" gap="20px">
-      <VerticalStepper currentStep={5} stepNext={6} stepNextTitle={"View document"} />
+      <StepperContentStep currentStep={5} stepNext={6} stepNextTitle={"View document"} />
       <Box
         width="100%"
         display="flex"

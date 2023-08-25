@@ -9,7 +9,7 @@ interface IStepperProps {
   onlyCurrentStep?: boolean;
 }
 
-const VerticalStepper: React.FC<IStepperProps> = (props) => {
+const StepperContentStep: React.FC<IStepperProps> = (props) => {
   const t = useTranslations();
 
   const { currentStep, stepNext, stepNextTitle, onlyCurrentStep } = props;
@@ -79,4 +79,4 @@ const VerticalStepper: React.FC<IStepperProps> = (props) => {
   );
 };
 
-export default VerticalStepper;
+export default StepperContentStep;

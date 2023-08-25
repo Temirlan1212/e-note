@@ -12,7 +12,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Hint from "@/components/ui/Hint";
 import { useRouter } from "next/router";
 import { INotarialActionData } from "@/models/notarial-action";
-import VerticalStepper from "@/components/ui/VerticalStepper";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -90,7 +90,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
   return (
     <Box display="flex" gap="20px">
-      <VerticalStepper currentStep={2} stepNext={3} stepNextTitle={"fourth-step-title"} />
+      <StepperContentStep currentStep={2} stepNext={3} stepNextTitle={"fourth-step-title"} />
       <Box
         width="100%"
         display="flex"
