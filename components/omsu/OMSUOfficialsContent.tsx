@@ -81,7 +81,7 @@ export default function OMSUOfficialsContent() {
   };
 
   const handleFilterSubmit = async (value: IFilterSubmitParams) => {
-    const field = value.rowParams.colDef.filter?.field;
+    const field = value.rowParams.colDef.field;
     if (value.value.length > 0) {
       updateRequestBodyParams("filterValues", { [field]: value.value });
       updateRequestBodyParams("requestType", "searchFilterValue");
@@ -106,7 +106,7 @@ export default function OMSUOfficialsContent() {
         gap: "20px",
       }}
     >
-      <Typography typography="h4" color={"#1BAA75"}>
+      <Typography typography="h4" color="primary">
         {t("OMSUOfficials")}
       </Typography>
       <Box
@@ -138,16 +138,16 @@ export default function OMSUOfficialsContent() {
             height: "auto",
             gap: "10px",
             padding: "10px 22px",
-            width: { md: "20%", xs: "100%" },
-            display: { xs: "none", sm: "none", md: "unset" },
+            fontSize: "14px",
+            width: { md: "30%", xs: "100%" },
+            display: { xs: "none", sm: "none", md: "flex" },
             "&:hover": { color: "#F6F6F6" },
           }}
+          fullWidth
           endIcon={<ExcelIcon />}
           onClick={exportToExcel}
         >
-          <Typography fontWeight={600} fontSize={14}>
-            {t("Export to excel")}
-          </Typography>
+          {t("Export to excel")}
         </Button>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
