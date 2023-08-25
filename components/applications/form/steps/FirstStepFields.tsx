@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -14,6 +14,7 @@ import Autocomplete from "@/components/ui/Autocomplete";
 import Area from "@/components/fields/Area";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -23,6 +24,8 @@ export interface IStepFieldsProps {
 
 export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
+
+  const locale = useLocale();
 
   const { trigger, control, watch, resetField, getValues, setValue } = form;
 
@@ -87,99 +90,119 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
     }
   };
 
+  const getLabelField = (data) => {
+    if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
+      const item = data.data.find((item) => item.hasOwnProperty("$t:name"));
+      return item != null ? "$t:name" : "name";
+    }
+    return "name";
+  };
+
   return (
-    <Box display="flex" gap="20px" flexDirection="column">
+    <Box display="flex" gap="20px">
+      <StepperContentStep currentStep={1} stepNext={2} stepNextTitle={"Choose object"} />
       <Box
+        width="100%"
         display="flex"
-        justifyContent="space-between"
-        gap={{ xs: "20px", md: "200px" }}
-        flexDirection={{ xs: "column", md: "row" }}
+        gap="20px"
+        flexDirection="column"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+          paddingBottom: { xs: "0", md: "90px" },
+        }}
       >
-        <Typography variant="h4" whiteSpace="nowrap">
-          {t("Choose notary")}
-        </Typography>
-        <Hint type="hint">{t("Form first step hint text")}</Hint>
-      </Box>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          gap={{ xs: "20px", md: "200px" }}
+          flexDirection={{ xs: "column", md: "row" }}
+        >
+          <Typography variant="h4" whiteSpace="nowrap">
+            {t("Choose notary")}
+          </Typography>
+          <Hint type="hint">{t("Form first step hint text")}</Hint>
+        </Box>
 
-      <Area form={form} names={{ region: "region", district: "district", city: "city" }} />
+        <Area form={form} names={{ region: "region", district: "district", city: "city" }} />
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        <Controller
-          control={control}
-          name="notaryDistrict"
-          defaultValue={null}
-          render={({ field, fieldState }) => (
-            <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Notary district")}</InputLabel>
-              <Autocomplete
-                labelField="name"
-                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!city}
-                options={
-                  notaryDistrictDictionary?.status === 0
-                    ? (notaryDistrictDictionary?.data as INotaryDistrict[]) ?? []
-                    : []
-                }
-                loading={notaryDistrictDictionaryLoading}
-                value={
-                  field.value != null
-                    ? (notaryDistrictDictionary?.data ?? []).find(
-                        (item: INotaryDistrict) => item.id == field.value?.id
-                      ) ?? null
-                    : null
-                }
-                onBlur={field.onBlur}
-                onChange={(event, value) => {
-                  field.onChange(value?.id != null ? { id: value.id } : null);
-                  trigger(field.name);
-                  resetField("company", { defaultValue: null });
-                }}
-              />
-            </Box>
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          <Controller
+            control={control}
+            name="notaryDistrict"
+            defaultValue={null}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel>{t("Notary district")}</InputLabel>
+                <Autocomplete
+                  labelField={getLabelField(notaryDistrictDictionary)}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  disabled={!city}
+                  options={
+                    notaryDistrictDictionary?.status === 0
+                      ? (notaryDistrictDictionary?.data as INotaryDistrict[]) ?? []
+                      : []
+                  }
+                  loading={notaryDistrictDictionaryLoading}
+                  value={
+                    field.value != null
+                      ? (notaryDistrictDictionary?.data ?? []).find(
+                          (item: INotaryDistrict) => item.id == field.value?.id
+                        ) ?? null
+                      : null
+                  }
+                  onBlur={field.onBlur}
+                  onChange={(event, value) => {
+                    field.onChange(value?.id != null ? { id: value.id } : null);
+                    trigger(field.name);
+                    resetField("company", { defaultValue: null });
+                  }}
+                />
+              </Box>
+            )}
+          />
+          <Controller
+            control={control}
+            name="company"
+            defaultValue={null}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel>{t("Notary")}</InputLabel>
+                <Autocomplete
+                  labelField={getLabelField(companyDictionary)}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  disabled={loading}
+                  options={companyDictionary?.status === 0 ? (companyDictionary?.data as ICompany[]) ?? [] : []}
+                  loading={companyDictionaryLoading}
+                  value={
+                    field.value != null
+                      ? (companyDictionary?.data ?? []).find((item: ICompany) => item.id == field.value?.id) ?? null
+                      : null
+                  }
+                  onBlur={field.onBlur}
+                  onChange={(event, value) => {
+                    field.onChange(value?.id != null ? { id: value.id } : null);
+                    trigger(field.name);
+                  }}
+                />
+              </Box>
+            )}
+          />
+        </Box>
+
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          {onPrev != null && (
+            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+              {t("Prev")}
+            </Button>
           )}
-        />
-        <Controller
-          control={control}
-          name="company"
-          defaultValue={null}
-          render={({ field, fieldState }) => (
-            <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Notary")}</InputLabel>
-              <Autocomplete
-                labelField="name"
-                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={loading}
-                options={companyDictionary?.status === 0 ? (companyDictionary?.data as ICompany[]) ?? [] : []}
-                loading={companyDictionaryLoading}
-                value={
-                  field.value != null
-                    ? (companyDictionary?.data ?? []).find((item: ICompany) => item.id == field.value?.id) ?? null
-                    : null
-                }
-                onBlur={field.onBlur}
-                onChange={(event, value) => {
-                  field.onChange(value?.id != null ? { id: value.id } : null);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
+          {onNext != null && (
+            <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+              {t("Next")}
+            </Button>
           )}
-        />
-      </Box>
-
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
-            {t("Prev")}
-          </Button>
-        )}
-        {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
-            {t("Next")}
-          </Button>
-        )}
+        </Box>
       </Box>
     </Box>
   );
