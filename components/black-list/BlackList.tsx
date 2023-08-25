@@ -248,7 +248,7 @@ export default function BlackList() {
 
   return (
     <>
-      <Typography typography="h4" color={"#1BAA75"}>
+      <Typography typography="h4" color="primary">
         {t("Black list")}
       </Typography>
       <Grid

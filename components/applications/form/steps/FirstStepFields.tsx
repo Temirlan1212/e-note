@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -24,6 +24,8 @@ export interface IStepFieldsProps {
 
 export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
+
+  const locale = useLocale();
 
   const { trigger, control, watch, resetField, getValues, setValue } = form;
 
@@ -88,6 +90,14 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
     }
   };
 
+  const getLabelField = (data) => {
+    if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
+      const item = data.data.find((item) => item.hasOwnProperty("$t:name"));
+      return item != null ? "$t:name" : "name";
+    }
+    return "name";
+  };
+
   return (
     <Box display="flex" gap="20px">
       <Stepper currentStep={1} stepNext={2} stepNextTitle={"Choose object"} />
@@ -124,7 +134,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("Notary district")}</InputLabel>
                 <Autocomplete
-                  labelField="name"
+                  labelField={getLabelField(notaryDistrictDictionary)}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={!city}
@@ -159,7 +169,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("Notary")}</InputLabel>
                 <Autocomplete
-                  labelField="name"
+                  labelField={getLabelField(companyDictionary)}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={loading}
