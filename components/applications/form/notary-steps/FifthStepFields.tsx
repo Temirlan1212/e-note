@@ -39,6 +39,8 @@ interface IDynamicComponentProps {
   trigger: UseFormTrigger<any>;
 }
 
+const isEmptyOrNull = (value: string | null) => value === "" || value == null;
+
 const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentProps) => {
   const { locale, field, data, errorMessage, fieldState, trigger } = props;
   const types = {
@@ -46,7 +48,9 @@ const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentP
       <Input
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         helperText={errorMessage}
-        {...field}
+        onBlur={field.onBlur}
+        value={getDynamicValue("String", field.value)}
+        onChange={(e) => field.onChange(String(e.target.value))}
       />
     ),
     Float: (
@@ -54,7 +58,8 @@ const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentP
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         type="number"
         helperText={errorMessage}
-        {...field}
+        onBlur={field.onBlur}
+        value={getDynamicValue("Float", field.value)}
         onChange={(e) => field.onChange(parseInt(e.target.value))}
       />
     ),
@@ -63,7 +68,8 @@ const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentP
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         type="number"
         helperText={errorMessage}
-        {...field}
+        onBlur={field.onBlur}
+        value={getDynamicValue("Decimal", field.value)}
         onChange={(e) => field.onChange(parseInt(e.target.value))}
       />
     ),
@@ -72,7 +78,8 @@ const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentP
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         type="number"
         helperText={errorMessage}
-        {...field}
+        onBlur={field.onBlur}
+        value={getDynamicValue("Integer", field.value)}
         onChange={(e) => field.onChange(parseInt(e.target.value))}
       />
     ),
@@ -95,7 +102,7 @@ const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentP
     Date: (
       <DatePicker
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={getDateDynamicValue("Date", field.value)}
+        value={getDynamicValue("Date", field.value)}
         helperText={errorMessage}
         onChange={(...event: any[]) => {
           field.onChange(...event);
@@ -107,7 +114,7 @@ const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentP
     Time: (
       <TimePicker
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={getDateDynamicValue("Time", field.value)}
+        value={getDynamicValue("Time", field.value)}
         helperText={errorMessage}
         onChange={(...event: any[]) => {
           field.onChange(...event);
@@ -118,7 +125,7 @@ const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentP
     DateTime: (
       <DateTimePicker
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={getDateDynamicValue("DateTime", field.value)}
+        value={getDynamicValue("DateTime", field.value)}
         helperText={errorMessage}
         onChange={(...event: any[]) => {
           field.onChange(...event);
@@ -131,38 +138,20 @@ const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentP
   return types[type];
 };
 
-const getDynamicDefaultValue = (field: keyof typeof types, value: any) => {
-  const isInvalidDate = isNaN(new Date(String(value)).getDate());
-
-  const types = {
-    Float: !value ? null : value,
-    Decimal: !value ? null : value,
-    Integer: !value ? null : value,
-    Boolean: value,
-    Selection: !value ? null : value,
-    String: !value ? "" : value,
-    Date: isInvalidDate ? null : new Date(String(value)),
-    Time: isInvalidDate ? null : new Date(Date.parse(value)),
-    DateTime: isInvalidDate ? null : new Date(String(value)),
-  };
-
-  return types[field];
-};
-
-const getDateDynamicValue = (field: keyof typeof types, value: any) => {
+const getDynamicValue = (field: keyof typeof types, value: any) => {
   const isDate = value instanceof Date;
   const isInvalidDate = isNaN(new Date(String(value)).getDate());
 
   const types = {
+    Boolean: value,
+    Selection: isEmptyOrNull(value) ? null : value,
+    Float: isEmptyOrNull(value) ? "" : parseInt(value),
+    Decimal: isEmptyOrNull(value) ? "" : parseInt(value),
+    Integer: isEmptyOrNull(value) ? "" : parseInt(value),
+    String: isEmptyOrNull(value) ? "" : value,
     Date: isDate ? value : isInvalidDate ? null : new Date(String(value)),
     Time: isDate ? value : isInvalidDate ? null : new Date(Date.parse(value)),
     DateTime: isDate ? value : isInvalidDate ? null : new Date(String(value)),
-    Float: !value ? null : value,
-    Decimal: !value ? null : value,
-    Integer: !value ? null : value,
-    Boolean: value,
-    Selection: !value ? null : value,
-    String: !value ? "" : value,
   };
 
   return types[field];
@@ -196,10 +185,6 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
 
   const { trigger, control } = dynamicForm;
 
-  const handlePrevClick = () => {
-    if (onPrev != null) onPrev();
-  };
-
   const [selectDatas, setSelectDatas] = useState<Record<string, any[]>>({});
 
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
@@ -213,7 +198,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
         const fieldName = getDynamicName(item?.path, item?.fieldName);
         const model = item?.selection;
 
-        if (!!fieldName && !!model) {
+        if (!isEmptyOrNull(fieldName) && !isEmptyOrNull(model)) {
           const { data } = await selectionUpdate(`/api/dictionaries/selection/${model}`);
           setSelectDatas((prev) => {
             return { ...prev, [fieldName]: data };
@@ -262,6 +247,10 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
     }
   };
 
+  const handlePrevClick = () => {
+    if (onPrev != null) onPrev();
+  };
+
   if (documentTemplateLoading || selectionLoading) return <></>;
 
   return (
@@ -279,7 +268,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
                       <Controller
                         control={control}
                         name={getDynamicName(item?.path, item?.fieldName)}
-                        defaultValue={getDynamicDefaultValue(item?.fieldType, item?.defaultValue)}
+                        defaultValue={getDynamicValue(item?.fieldType, item?.defaultValue)}
                         rules={{ required: !!item?.required ? "required" : false }}
                         render={({ field, fieldState }) => {
                           let errorMessage = fieldState.error?.message

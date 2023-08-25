@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -23,6 +23,8 @@ export interface IAreaProps {
 export default function Area({ form, names, defaultValues }: IAreaProps) {
   const t = useTranslations();
 
+  const locale = useLocale();
+
   const { trigger, control, watch, resetField } = form;
 
   const region = watch(names.region);
@@ -39,6 +41,14 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
     "GET"
   );
 
+  const getLabelField = (data) => {
+    if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
+      const item = data.data.find((item) => item.hasOwnProperty("$t:name"));
+      return item != null ? "$t:name" : "name";
+    }
+    return "name";
+  };
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
@@ -50,7 +60,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Region")}</InputLabel>
               <Autocomplete
-                labelField="name"
+                labelField={getLabelField(regionDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 options={regionDictionary?.status === 0 ? (regionDictionary?.data as Record<string, any>[]) ?? [] : []}
@@ -79,7 +89,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("District")}</InputLabel>
               <Autocomplete
-                labelField="name"
+                labelField={getLabelField(districtDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={!region}
@@ -111,7 +121,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("City")}</InputLabel>
               <Autocomplete
-                labelField="name"
+                labelField={getLabelField(cityDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={!district}

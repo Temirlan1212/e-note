@@ -1,4 +1,3 @@
-import { IDocumentType } from "@/models/dictionaries/document-type";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 enum criteriaFieldNames {
@@ -11,7 +10,7 @@ enum criteriaFieldNames {
   action = "notaryRequestAction",
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IDocumentType | null>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }
