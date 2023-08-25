@@ -26,9 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   const filterValues = req.body["filterValues"];
   const requestType = req.body["requestType"];
-  const searchValue = req.body["searchValue"];
   const roleValue = req.body["roleValue"];
-  const fileName = req.body["fileName"];
 
   let criteria: Criteria[] = [
     {
@@ -46,12 +44,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     API_URL += "/export/";
   }
 
-  if (requestType === "download") {
-    API_URL += `/export/${fileName}`;
-  }
-
-  if (requestType === "search") {
+  if (requestType === "searchFilter") {
     API_URL += "/search";
+
+    const keys = Object.keys(filterValues);
+    const values = Object.values(filterValues);
 
     criteria = [
       {
@@ -60,73 +57,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         value: roleValue,
       },
       {
-        operator: "or",
-        criteria: [
-          {
-            fieldName: "lastName",
-            operator: "like",
-            value: `%${searchValue}%`,
-          },
-          {
-            fieldName: "firstName",
-            operator: "like",
-            value: `%${searchValue}%`,
-          },
-          {
-            fieldName: "middleName",
-            operator: "like",
-            value: `%${searchValue}%`,
-          },
-          {
-            fieldName: "notaryPosition",
-            operator: "like",
-            value: `%${searchValue}%`,
-          },
-          {
-            fieldName: "emailAddress.address",
-            operator: "like",
-            value: `%${searchValue}%`,
-          },
-          {
-            fieldName: "simpleFullName",
-            operator: "like",
-            value: `%${searchValue}%`,
-          },
-          {
-            fieldName: "notaryWorkOrder",
-            operator: "like",
-            value: `%${searchValue}%`,
-          },
-          {
-            fieldName: "notaryCriminalRecord",
-            operator: "like",
-            value: `%${searchValue}%`,
-          },
-        ],
-      },
-    ];
-  }
-
-  if (requestType === "searchFilterValue") {
-    API_URL += "/search";
-    const field = Object.keys(filterValues)[0];
-    const fieldValue = filterValues[field];
-
-    criteria = [
-      {
-        fieldName: "user.roles.name",
-        operator: "=",
-        value: roleValue,
-      },
-      {
-        operator: "or",
-        criteria: [
-          {
-            fieldName: field,
-            operator: "like",
-            value: `%${fieldValue}%`,
-          },
-        ],
+        operator: "and",
+        criteria: keys.map((key, index) => ({
+          fieldName: key,
+          operator: "like",
+          value: `%${values[index]}%`,
+        })),
       },
     ];
   }

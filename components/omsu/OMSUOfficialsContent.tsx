@@ -1,23 +1,21 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Box, Typography } from "@mui/material";
 import useFetch from "@/hooks/useFetch";
 import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import Button from "@/components/ui/Button";
-import SearchBar from "@/components/ui/SearchBar";
 import Pagination from "@/components/ui/Pagination";
-
 import ExcelIcon from "@/public/icons/excel.svg";
 import { GridSortModel } from "@mui/x-data-grid";
 import { ValueOf } from "next/dist/shared/lib/constants";
 
 interface IRequestBody {
-  searchValue: string | null;
-  roleValue: string | null;
+  searchValue?: string | null;
+  roleValue?: string | null;
   requestType?: string | null;
-  pageSize: number;
-  page: number;
-  sortBy: string[];
+  pageSize?: number;
+  page?: number;
+  sortBy?: string[];
   filterValues: Record<string, (string | number)[]>;
 }
 
@@ -30,8 +28,8 @@ interface IRowData {
 
 export default function OMSUOfficialsContent() {
   const t = useTranslations();
-  const [keywordValue, setKeywordValue] = useState<string>("");
   const [rowData, setRowData] = useState<IRowData | null>(null);
+  const [fileName, setFileName] = useState<string | null>("");
 
   const [requestBody, setRequestBody] = useState<IRequestBody>({
     pageSize: 7,
@@ -43,33 +41,28 @@ export default function OMSUOfficialsContent() {
     filterValues: {},
   });
 
-  const { data, loading, update } = useFetch("/api/officials", "POST", {
+  const [excelReqBody, setExcelReqBody] = useState<IRequestBody>({
+    roleValue: "OMSU official",
+    filterValues: {},
+  });
+
+  const { data, loading } = useFetch("/api/officials", "POST", {
     body: requestBody,
   });
 
-  const { export: exportExcel, download: downloadExcel } = useFetch("", "POST", {
-    body: requestBody,
+  const { data: exportExcel } = useFetch("/api/officials/export", "POST", {
+    body: excelReqBody,
+  });
+
+  const { update: downloadExcel } = useFetch("", "GET", {
+    // body: excelReqBody,
+    returnResponse: true,
   });
 
   const updateRequestBodyParams = (key: keyof IRequestBody, newValue: ValueOf<IRequestBody>) => {
     setRequestBody((prev) => {
       return { ...prev, [key]: newValue };
     });
-  };
-
-  const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setKeywordValue(event.target.value);
-  };
-
-  const handleKeywordSearch = async () => {
-    updateRequestBodyParams("requestType", "search");
-    updateRequestBodyParams("searchValue", keywordValue);
-
-    setRowData(data);
-  };
-
-  const exportToExcel = () => {
-    // updateRequestBodyParams("requestType", "export");
   };
 
   const handleSortByDate = (model: GridSortModel) => {
@@ -81,10 +74,26 @@ export default function OMSUOfficialsContent() {
   };
 
   const handleFilterSubmit = async (value: IFilterSubmitParams) => {
+    handleUpdateFilterValues(value);
+    if (value.value.length > 0) updateRequestBodyParams("page", 1);
+  };
+
+  const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
     const field = value.rowParams.colDef.field;
-    if (value.value.length > 0) {
-      updateRequestBodyParams("filterValues", { [field]: value.value });
-      updateRequestBodyParams("requestType", "searchFilterValue");
+    const prevValue = requestBody.filterValues;
+
+    if (field) {
+      if (value.value.length > 0) {
+        updateRequestBodyParams("filterValues", {
+          ...prevValue,
+          [field]: value.value,
+        });
+        updateRequestBodyParams("requestType", "searchFilter");
+      } else {
+        const updatedFilterValues = { ...prevValue };
+        delete updatedFilterValues[field];
+        updateRequestBodyParams("filterValues", updatedFilterValues);
+      }
     }
   };
 
@@ -92,11 +101,25 @@ export default function OMSUOfficialsContent() {
     if (requestBody.page !== page) updateRequestBodyParams("page", page);
   };
 
+  const download = async () => {
+    const response = await downloadExcel(`/api/officials/download/${fileName}`);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = fileName || "exported-data.csv";
+    document.body.appendChild(a);
+    a.click();
+  };
+
   useEffect(() => {
-    if (data && keywordValue === "") {
+    if (data && exportExcel?.data) {
       setRowData(data);
+      setFileName(exportExcel.data.fileName);
     }
-  }, [data, keywordValue]);
+  }, [data, exportExcel?.data]);
 
   return (
     <Box
@@ -106,50 +129,27 @@ export default function OMSUOfficialsContent() {
         gap: "20px",
       }}
     >
-      <Typography typography="h4" color="primary">
-        {t("OMSUOfficials")}
-      </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          gap: "30px",
-          alignItems: "center",
-          flexDirection: {
-            xs: "column",
-            md: "row",
-          },
-        }}
-      >
-        <SearchBar
-          boxSx={{
-            width: {
-              xs: "100%",
-              md: "80%",
-            },
-          }}
-          onChange={handleKeywordChange}
-          onClick={handleKeywordSearch}
-          value={keywordValue}
-        />
-        <Button
-          variant="outlined"
-          color="primary"
-          sx={{
-            height: "auto",
-            gap: "10px",
-            padding: "10px 22px",
-            fontSize: "14px",
-            width: { md: "30%", xs: "100%" },
-            display: { xs: "none", sm: "none", md: "flex" },
-            "&:hover": { color: "#F6F6F6" },
-          }}
-          fullWidth
-          endIcon={<ExcelIcon />}
-          onClick={exportToExcel}
-        >
-          {t("Export to excel")}
-        </Button>
+      <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
+        <Typography variant="h4" color="success.main">
+          {t("OMSUOfficials")}
+        </Typography>
+        <Box>
+          <Button
+            component="label"
+            endIcon={<ExcelIcon />}
+            color="primary"
+            variant="outlined"
+            sx={{
+              gap: "10px",
+              "&:hover": { color: "#F6F6F6" },
+            }}
+            onClick={download}
+          >
+            {t("Export to excel")}
+          </Button>
+        </Box>
       </Box>
+
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <GridTable
@@ -158,6 +158,10 @@ export default function OMSUOfficialsContent() {
                 field: "fullName",
                 headerName: "Full name",
                 width: 280,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
               },
               {
                 field: "notaryPosition",
@@ -220,28 +224,6 @@ export default function OMSUOfficialsContent() {
             totalPages={data?.total ? Math.ceil(data.total / requestBody.pageSize) : 1}
             onPageChange={handlePageChange}
           />
-
-          <Button
-            color="primary"
-            variant="outlined"
-            sx={{
-              "&:hover": {
-                background: "#fff !important",
-                border: "1px solid",
-              },
-              padding: "10px 10px",
-              marginTop: "30px",
-              display: { xs: "flex", sm: "flex", md: "none" },
-              alignSelf: "center",
-            }}
-            fullWidth
-            endIcon={<ExcelIcon />}
-            onClick={exportToExcel}
-          >
-            <Typography fontWeight={600} fontSize={14}>
-              {t("Export to excel")}
-            </Typography>
-          </Button>
         </Box>
       </Box>
     </Box>
