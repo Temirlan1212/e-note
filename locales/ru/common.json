@@ -10,7 +10,7 @@
   "Community": "Сообщество",
   "Sample": "Образец",
   "Resource": "Ресурс",
-  "2023 E-Notariat All rights Reserved": "2023 E-Notariat Все права защищены",
+  "2023 E-Notariat All rights Reserved": "2023 E-Notariat. Все права защищены",
   "Accessibility": "Доступность",
   "Usability": "Удобство использования",
   "Marketplace": "Торговая площадка",
@@ -158,5 +158,8 @@
   "Confirm fingerprint": "Подтвердить отпечаток пальца",
   "Sign": "Подписать",
   "Signed": "Подписано",
+  "Address: Bishkek, blvd Molodoy Guardii 32": "Адрес: г. Бишкек, бул. Молодой Гвардии 32",
+  "Working hours: Mon-Fri, 09:00-18:00": "Время работы: Пн-Пт, 09:00-18:00",
+  "Links": "Ссылки",
   "Object": "Обьект"
 }
