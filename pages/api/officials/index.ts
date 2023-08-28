@@ -1,4 +1,4 @@
-import { IPartner } from "@/models/profile/user";
+import { IPartner } from "@/models/user";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type CriteriaItem = {
