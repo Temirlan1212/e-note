@@ -11,6 +11,7 @@ import Link from "@/components/ui/Link";
 import CopyAllIcon from "@mui/icons-material/CopyAll";
 import DoneIcon from "@mui/icons-material/Done";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
+import BrokenImageIcon from "@mui/icons-material/BrokenImage";
 
 export const ApplicationListQRMenu = ({
   params,
@@ -22,7 +23,6 @@ export const ApplicationListQRMenu = ({
   const [qrUrl, setQrUrl] = useState<string | null>(null);
 
   const open = !!menu;
-  const uniqueQrCode = params?.row?.id ?? 0;
 
   const { copied, copyToClipboard } = useCopyToClipboard({ resetDuration: 2000 });
 
@@ -31,7 +31,7 @@ export const ApplicationListQRMenu = ({
   });
 
   const handleCopyToClipboardClick = () => {
-    copyToClipboard(`${window.location.href}/status/${params.row.id}`);
+    copyToClipboard(`${window.location.href}/status/${params?.row?.id ?? 0}`);
   };
 
   const handlePopupToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -41,7 +41,7 @@ export const ApplicationListQRMenu = ({
 
   const onPopupOpen = async () => {
     if (!Boolean(qrUrl)) {
-      const res = await downloadUpdate(`/api/files/download/${uniqueQrCode}`);
+      const res = await downloadUpdate(`/api/files/download/${params?.row?.id ?? 0}`);
       const blobData = await res.blob();
       const blobURL = URL.createObjectURL(blobData);
       setQrUrl(blobURL);
@@ -63,9 +63,10 @@ export const ApplicationListQRMenu = ({
           ) : qrUrl != null ? (
             <Image src={qrUrl ?? ""} width={170} height={170} alt="qr code" onError={() => setQrUrl(null)} />
           ) : (
-            <Typography variant="h2" py="30px">
-              404
-            </Typography>
+            <Box py="20px" display="flex" flexDirection="column" alignItems="center">
+              <BrokenImageIcon sx={{ width: 50, height: 50 }} />
+              <Typography variant="h2">404</Typography>
+            </Box>
           )}
 
           <Button endIcon={copied ? <DoneIcon /> : <CopyAllIcon />} onClick={handleCopyToClipboardClick}>
