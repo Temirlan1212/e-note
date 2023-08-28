@@ -30,8 +30,8 @@ export const ApplicationListQRMenu = ({
     returnResponse: true,
   });
 
-  const handleCopyToClipboardClick = () => {
-    copyToClipboard(`${window.location.href}/check-document/${params?.row?.id ?? 0}`);
+  const handleCopyLinkClick = () => {
+    if (!copied) copyToClipboard(`${window.location.href}/check-document/${params?.row?.id ?? 0}`);
   };
 
   const handlePopupToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -69,7 +69,7 @@ export const ApplicationListQRMenu = ({
             </Box>
           )}
 
-          <Button endIcon={copied ? <DoneIcon /> : <CopyAllIcon />} onClick={handleCopyToClipboardClick}>
+          <Button endIcon={copied ? <DoneIcon /> : <CopyAllIcon />} onClick={handleCopyLinkClick}>
             {t("Copy link")}
           </Button>
 
