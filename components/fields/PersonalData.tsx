@@ -290,7 +290,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
               defaultValue={defaultValues?.nameOfCompanyOfficial ?? ""}
               render={({ field, fieldState }) => (
                 <Box display="flex" flexDirection="column" width="100%">
-                  <InputLabel>{t("Name of organization/translation company in russian")}</InputLabel>
+                  <InputLabel>{t("Full name in the official language")}</InputLabel>
                   <Input
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -308,7 +308,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
               defaultValue={defaultValues?.nameOfCompanyGov ?? ""}
               render={({ field, fieldState }) => (
                 <Box display="flex" flexDirection="column" width="100%">
-                  <InputLabel>{t("Name of organization/translation company in kyrgyz")}</InputLabel>
+                  <InputLabel>{t("Full name in the state language")}</InputLabel>
                   <Input
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
