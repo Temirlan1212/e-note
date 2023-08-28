@@ -7,11 +7,18 @@ import { Box, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import ApplicationStatusRead from "./ApplicationStatusRead";
 import ApplicationStatusView from "./ApplicationStatusView";
+import useFetch from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
-interface IApplicationStatusInfoContentProps {}
+interface IApplicationStatusInfoContentProps {
+  id?: number;
+}
 
 const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (props) => {
+  const { id } = props;
   const t = useTranslations();
+
+  const { data } = useFetch(id != null ? `/api/applications/${id}` : "", "POST");
 
   return (
     <Box
@@ -50,7 +57,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
           {t("Back")}
         </Button>
       </Box>
-      <ApplicationStatusRead />
+      <ApplicationStatusRead data={data?.data[0]} />
       <ApplicationStatusView />
     </Box>
   );

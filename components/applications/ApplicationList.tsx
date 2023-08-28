@@ -1,16 +1,20 @@
-import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
+import React, { useState } from "react";
+import { ValueOf } from "next/dist/shared/lib/constants";
+import { useRouter } from "next/router";
+import { useTranslations } from "next-intl";
+import { IActionType } from "@/models/action-type";
+import { IUserData } from "@/models/user";
+import { IStatus } from "@/models/application-status";
+import { useProfileStore } from "@/stores/profile";
+import useFetch from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
 import { Box, Typography } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { IActionType } from "@/models/dictionaries/action-type";
-import Pagination from "@/components/ui/Pagination";
-import useFetch from "@/hooks/useFetch";
-import { ValueOf } from "next/dist/shared/lib/constants";
-import Button from "@/components/ui/Button";
 import PostAddIcon from "@mui/icons-material/PostAdd";
+import Button from "@/components/ui/Button";
+import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
+import Pagination from "@/components/ui/Pagination";
 import Link from "@/components/ui/Link";
-import { useTranslations } from "next-intl";
 import { ApplicationListActions } from "./ApplicationListActions";
 import { IStatus } from "@/models/dictionaries/status";
 
@@ -109,6 +113,13 @@ export default function ApplicationList() {
       <GridTable
         columns={[
           {
+            field: "QR",
+            headerName: "QR",
+            width: 90,
+            sortable: false,
+            renderCell: (params: any) => <QrCode2Icon />,
+          },
+          {
             field: "typeNotarialAction",
             headerName: "Type of action",
             width: 200,
@@ -160,7 +171,7 @@ export default function ApplicationList() {
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (statusData != null) {
-                const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(1));
+                const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(params.value));
                 const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
                 return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
               }
