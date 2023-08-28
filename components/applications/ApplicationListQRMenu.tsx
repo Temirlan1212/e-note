@@ -31,7 +31,7 @@ export const ApplicationListQRMenu = ({
   });
 
   const handleCopyLinkClick = () => {
-    if (!copied) copyToClipboard(`${window.location.href}/check-document/${params?.row?.id ?? 0}`);
+    if (!copied) copyToClipboard(`${window.location.href}/check-document/${params?.row?.uniqueQrCode ?? 0}`);
   };
 
   const handlePopupToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
