@@ -31,7 +31,7 @@ export const ApplicationListQRMenu = ({
   });
 
   const handleCopyToClipboardClick = () => {
-    copyToClipboard(`${window.location.href}/status/${params?.row?.id ?? 0}`);
+    copyToClipboard(`${window.location.href}/check-document/${params?.row?.id ?? 0}`);
   };
 
   const handlePopupToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
