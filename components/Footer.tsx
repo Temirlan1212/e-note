@@ -9,6 +9,7 @@ import { IRoute, useRouteStore } from "@/stores/route";
 interface IFooterDataItem {
   title: string;
   link: string;
+  content?: string;
 }
 
 interface IFooterSection {
@@ -28,8 +29,8 @@ const Footer: React.FC = () => {
     })),
     Contacts: [
       { title: "Address: Bishkek, blvd Molodoy Guardii 32", link: "https://go.2gis.com/divf1" },
-      { title: "Phone number: +996 (312) 34-35-27", link: "tel:+996312343527" },
-      { title: "E-mail: not.palata.kr@gmail.com", link: "mailto:not.palata.kr@gmail.com" },
+      { title: "Phone number", content: ": +996 (312) 34-35-27", link: "tel:+996312343527" },
+      { title: "E-mail", content: ": not.palata.kr@gmail.com", link: "mailto:not.palata.kr@gmail.com" },
       { title: "Working hours: Mon-Fri, 09:00-18:00", link: "/#" },
     ],
   };
@@ -116,11 +117,12 @@ const FooterSection: React.FC<IFooterSection> = ({ title, items }) => {
       </Typography>
 
       <List>
-        {items.map(({ title, link }, index) =>
+        {items.map(({ title, link, content }, index) =>
           title ? (
             <ListItem sx={{ padding: "0 0 24px 0" }} key={index}>
               <Link href={link} color="#fff" activeColor="text.primary" isActive={router.route === link}>
                 {t(title)}
+                {content}
               </Link>
             </ListItem>
           ) : null
