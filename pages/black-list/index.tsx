@@ -17,7 +17,7 @@ export default function BlackList() {
           display: "flex",
           flexDirection: "column",
           gap: "30px",
-          padding: { xs: "30px 20px 31px 20px", sm: "30px 20px 57px 20px", md: "60px 60px 198px 60px" },
+          py: "30px",
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >

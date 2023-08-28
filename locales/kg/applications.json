@@ -23,7 +23,8 @@
   "Notary's full name": "Нотариустун аты-жөнү",
   "Unique registry number": "Уникалдуу реестр номери",
   "Sides": "Тараптар",
-  "Object": "Объект",
+  "Objects of civil rights": "Жарандык укуктардын объекттери",
+  "Purpose of action": "Аракеттин максаты",
   "Object type": "Объекттин түрү",
   "Object selection": "Объект тандоо",
   "second-step-hint-title": "Сиз объектти жана анын түрүн тандашыңыз керек нотариалдык документти жасагыңыз келген нерсеге байланыштуу. Объектти тандоо сизге керектүү нотариалдык документти тез табууга жардам берет.",
@@ -44,8 +45,8 @@
   "Assign a unique number and enter it in the registry": "Уникалдуу номер ыйгаруу жана реестрге киргизүү",
   "Knowledge of russian/kyrgyz": "Орус/кыргыз тилдерин билүү",
   "Foreign participation": "Чет элдик катышуу",
-  "Name of organization/translation company in russian": "Уюмдун/котормочу компаниянын орусча аталышы",
-  "Name of organization/translation company in kyrgyz": "Уюмдун/котормочу компаниянын кыргызча аталышы",
+  "Full name in the state language": "Толук аталышы расмий тилде",
+  "Full name in the official language": "Толук аталышы мамлекеттик тилде",
   "Full name of the representative": "Өкүлдүн толук аты-жөнү",
   "Registration number": "Каттоо номери",
   "OKPO code": "ОКПО коду",
@@ -59,5 +60,7 @@
   "Applicant": "Арыз ээси",
   "Your application has been successfully sent to the notary": "Сиздин арызыңыз нотариуска ийгиликтүү жөнөтүлдү",
   "Make a new application": "Жаңы арыз түзүү",
-  "Go to applications": "Арыз баракчасына өтүү"
+  "Go to applications": "Арыз баракчасына өтүү",
+  "Participant": "Катышуучу",
+  "Additional information": "Кошумча маалымат"
 }

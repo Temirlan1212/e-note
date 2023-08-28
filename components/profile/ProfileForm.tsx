@@ -12,7 +12,7 @@ import ProfilePasswordForm from "./ProfilePasswordForm";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { userProfileSchema } from "@/validator-schemas/profile";
 import { useProfileStore } from "@/stores/profile";
-import { IUserData } from "@/models/profile/user";
+import { IUserData } from "@/models/user";
 
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -26,13 +26,17 @@ interface IUserProfile {
   mobilePhone: string;
 }
 
+interface IExtendedUserData extends IUserData {
+  "partner.mobilePhone"?: string;
+}
+
 async function blobToFile(blob: Blob, fileName: string): Promise<File> {
   return new File([blob], fileName, { type: blob?.type });
 }
 
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const profile = useProfileStore((state) => state);
-  const userData: IUserData | null = profile.getUserData();
+  const userData: IExtendedUserData | null = profile.getUserData();
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);

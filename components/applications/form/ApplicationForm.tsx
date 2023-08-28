@@ -6,7 +6,7 @@ import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema, applicationSchema } from "@/validator-schemas/application";
 import { IApplication } from "@/models/application";
 import { useProfileStore } from "@/stores/profile";
-import { IUserData } from "@/models/profile/user";
+import { IUserData } from "@/models/user";
 import { Box, Step, StepIcon, Stepper, StepConnector, Skeleton } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
@@ -42,7 +42,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const { data, update } = useFetch("", "POST");
   const {
     data: dynamicFormAppData,
-    update: getDynamicFormAppData,
+    update: updateDynamicFormAppData,
     loading: dynamicFormAppLoading,
   } = useFetch("", "POST");
 
@@ -73,6 +73,33 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     setLoading(false);
   });
 
+  const getDynamicFormAppData = async () => {
+    const productId = form.watch("product.id");
+    const { data } = await getDocumentTemplateData(`/api/dictionaries/document-type/template/${productId}`);
+
+    if (Array.isArray(data) && data.length > 0 && id) {
+      const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
+      let related: Record<string, string[]> = {};
+      let fields: string[] = [];
+      const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)\b/;
+
+      fieldsProps.map((fieldProps: Record<string, any>) => {
+        const fieldName = fieldProps?.fieldName ?? "";
+        const match = fieldProps?.path?.match(regex);
+
+        if (match) {
+          const relatedFields = related?.[match?.[0]] ?? [];
+          related[match?.[0] ?? ""] = [...relatedFields, fieldName];
+        } else {
+          const field = !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
+          fields.push(String(field));
+        }
+      });
+
+      updateDynamicFormAppData(`/api/applications/${id}`, { related, fields });
+    }
+  };
+
   const steps =
     userData?.group?.id === 4
       ? [
@@ -82,42 +109,15 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             form={form}
             stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
-            onNext={async () => {
-              const { data } = await getDocumentTemplateData(
-                "/api/dictionaries/document-type/template/" + form.watch("product.id")
-              );
-
-              if (Array.isArray(data) && data.length > 0 && id) {
-                const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
-                const fields = fieldsProps.map((fieldProps: Record<string, any>) => {
-                  const fieldName = fieldProps?.fieldName ?? "";
-                  return !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
-                });
-
-                getDynamicFormAppData(`/api/applications/${id}`, { fields: fields });
-              }
-            }}
+            onNext={getDynamicFormAppData}
           />,
           <NotaryThirdStepFields
             key={2}
             form={form}
             stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
-            onNext={async () => {
-              const { data } = await getDocumentTemplateData(
-                "/api/dictionaries/document-type/template/" + form.watch("product.id")
-              );
-
-              if (Array.isArray(data) && data.length > 0 && id) {
-                const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
-                const fields = fieldsProps.map((fieldProps: Record<string, any>) => {
-                  const fieldName = fieldProps?.fieldName ?? "";
-                  return !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
-                });
-
-                getDynamicFormAppData(`/api/applications/${id}`, { fields: fields });
-              }
-
+            onNext={() => {
+              getDynamicFormAppData();
               setStep(step + 1);
             }}
           />,
@@ -153,20 +153,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             form={form}
             onPrev={() => setStep(step - 1)}
             onNext={async () => {
-              const { data } = await getDocumentTemplateData(
-                "/api/dictionaries/document-type/template/" + form.watch("product.id")
-              );
-
-              if (Array.isArray(data) && data.length > 0 && id) {
-                const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
-                const fields = fieldsProps.map((fieldProps: Record<string, any>) => {
-                  const fieldName = fieldProps?.fieldName ?? "";
-                  return !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
-                });
-
-                getDynamicFormAppData(`/api/applications/${id}`, { fields: fields });
-              }
-
+              getDynamicFormAppData();
               setStep(step + 1);
             }}
           />,

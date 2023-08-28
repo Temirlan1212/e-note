@@ -10,6 +10,7 @@ import PDFViewer from "@/components/PDFViewer";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -48,37 +49,48 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
   };
 
   return (
-    <Box display="flex" gap="30px" flexDirection="column">
+    <Box display="flex" gap="20px">
+      <StepperContentStep currentStep={6} onlyCurrentStep />
       <Box
+        width="100%"
         display="flex"
-        justifyContent="space-between"
-        gap={{ xs: "20px", md: "200px" }}
-        flexDirection={{ xs: "column", md: "row" }}
+        gap="30px"
+        flexDirection="column"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+        }}
       >
-        <Typography variant="h4" whiteSpace="nowrap">
-          {t("View document")}
-        </Typography>
-      </Box>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          gap={{ xs: "20px", md: "200px" }}
+          flexDirection={{ xs: "column", md: "row" }}
+        >
+          <Typography variant="h4" whiteSpace="nowrap">
+            {t("View document")}
+          </Typography>
+        </Box>
 
-      <Box display="flex" justifyContent="end">
-        <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
-          {t("Download PDF")}
-        </Button>
-      </Box>
-
-      <PDFViewer fileUrl="/documents/example.pdf" />
-
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
-            {t("Prev")}
+        <Box display="flex" justifyContent="end">
+          <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
+            {t("Download PDF")}
           </Button>
-        )}
-        {onNext != null && (
-          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
-            {t("Next")}
-          </Button>
-        )}
+        </Box>
+
+        <PDFViewer fileUrl="/documents/example.pdf" />
+
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          {onPrev != null && (
+            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+              {t("Prev")}
+            </Button>
+          )}
+          {onNext != null && (
+            <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+              {t("Next")}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   );
