@@ -80,7 +80,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     if (Array.isArray(data) && data.length > 0 && id) {
       const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
       let related: Record<string, string[]> = {};
-      let fields: Record<string, string> = {};
+      let fields: string[] = [];
       const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)\b/;
 
       fieldsProps.map((fieldProps: Record<string, any>) => {
@@ -92,11 +92,11 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           related[match?.[0] ?? ""] = [...relatedFields, fieldName];
         } else {
           const field = !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
-          fields[String(field)] = "";
+          fields.push(String(field));
         }
       });
 
-      updateDynamicFormAppData(`/api/applications/${id}`, { related, fields: Object.keys(fields) });
+      updateDynamicFormAppData(`/api/applications/${id}`, { related, fields });
     }
   };
 
