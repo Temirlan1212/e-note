@@ -28,7 +28,7 @@ function Layout({ children }: { children: JSX.Element }) {
      * Route redirects
      */
     if (router.route === "/login" && profile.user != null) {
-      router.push("/profile");
+      router.push("/applications");
     }
     if (router.route === "/profile" && profile.user == null) {
       router.push("/");
