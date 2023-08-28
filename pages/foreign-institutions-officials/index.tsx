@@ -14,12 +14,7 @@ export default function ForeignInstitutionsOfficials() {
         <title>{t("ForeignInstitutions")}</title>
       </Head>
 
-      <Container
-        maxWidth="xl"
-        sx={{
-          py: "40px",
-        }}
-      >
+      <Container maxWidth="xl" sx={{ py: "30px" }}>
         <ForeignInstitutionsOfficialsContent />
       </Container>
     </>
