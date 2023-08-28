@@ -1,21 +1,22 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-
 import { Box, Typography } from "@mui/material";
-
 import useFetch from "@/hooks/useFetch";
-
+import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import Button from "@/components/ui/Button";
-import SearchBar from "@/components/ui/SearchBar";
-import { GridTable } from "@/components/ui/GridTable";
 import Pagination from "@/components/ui/Pagination";
-
 import ExcelIcon from "@/public/icons/excel.svg";
+import { GridSortModel } from "@mui/x-data-grid";
+import { ValueOf } from "next/dist/shared/lib/constants";
 
 interface IRequestBody {
-  searchValue: string | null;
-  roleValue: string | null;
+  searchValue?: string | null;
+  roleValue?: string | null;
   requestType?: string | null;
+  pageSize?: number;
+  page?: number;
+  sortBy?: string[];
+  filterValues: Record<string, (string | number)[]>;
 }
 
 interface IRowData {
@@ -27,52 +28,97 @@ interface IRowData {
 
 export default function ForeignInstitutionsOfficialsContent() {
   const t = useTranslations();
-  const [keywordValue, setKeywordValue] = useState<string>("");
   const [rowData, setRowData] = useState<IRowData | null>(null);
+  const [fileName, setFileName] = useState<string | null>("");
 
   const [requestBody, setRequestBody] = useState<IRequestBody>({
+    pageSize: 7,
+    page: 1,
+    sortBy: [],
     searchValue: null,
     roleValue: "Foreign institution official",
     requestType: "getAllData",
+    filterValues: {},
+  });
+
+  const [excelReqBody, setExcelReqBody] = useState<IRequestBody>({
+    roleValue: "Foreign institution official",
+    filterValues: {},
   });
 
   const { data, loading } = useFetch("/api/officials", "POST", {
     body: requestBody,
   });
 
-  const { export: exportExcel, download: downloadExcel } = useFetch("", "POST", {
-    body: requestBody,
+  const { data: exportExcel } = useFetch("/api/officials/export", "POST", {
+    body: excelReqBody,
   });
 
-  const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setKeywordValue(event.target.value);
+  const { update: downloadExcel } = useFetch("", "GET", {
+    returnResponse: true,
+  });
+
+  const updateRequestBodyParams = (key: keyof IRequestBody, newValue: ValueOf<IRequestBody>) => {
+    setRequestBody((prev) => {
+      return { ...prev, [key]: newValue };
+    });
   };
 
-  const handleKeywordSearch = async () => {
+  const handleSortByDate = (model: GridSortModel) => {
+    const sortBy = model.map((s) => (s.sort === "asc" ? s.field : `-${s.field}`));
     setRequestBody((prev: any) => ({
       ...prev,
-      requestType: "search",
-      searchValue: keywordValue,
-      roleValue: "Foreign institution official",
+      sortBy: sortBy,
     }));
-
-    setRowData(data);
   };
 
-  const exportToExcel = async () => {
-    // setRequestBody((prev: any) => ({
-    //   ...prev,
-    //   roleValue: "ForeignInstitutions",
-    //   requestType: "export",
-    // }));
-    // await exportExcel("/api/officials", requestBody);
+  const handleFilterSubmit = async (value: IFilterSubmitParams) => {
+    handleUpdateFilterValues(value);
+    if (value.value.length > 0) updateRequestBodyParams("page", 1);
+  };
+
+  const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
+    const field = value.rowParams.colDef.field;
+    const prevValue = requestBody.filterValues;
+
+    if (field) {
+      if (value.value.length > 0) {
+        updateRequestBodyParams("filterValues", {
+          ...prevValue,
+          [field]: value.value,
+        });
+        updateRequestBodyParams("requestType", "searchFilter");
+      } else {
+        const updatedFilterValues = { ...prevValue };
+        delete updatedFilterValues[field];
+        updateRequestBodyParams("filterValues", updatedFilterValues);
+      }
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    if (requestBody.page !== page) updateRequestBodyParams("page", page);
+  };
+
+  const download = async () => {
+    const response = await downloadExcel(`/api/officials/download/${fileName}`);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = fileName || "exported-data.csv";
+    document.body.appendChild(a);
+    a.click();
   };
 
   useEffect(() => {
-    if (data && keywordValue === "") {
+    if (data && exportExcel?.data) {
       setRowData(data);
+      setFileName(exportExcel.data.fileName);
     }
-  }, [data, keywordValue]);
+  }, [data, exportExcel?.data]);
 
   return (
     <Box
@@ -82,63 +128,30 @@ export default function ForeignInstitutionsOfficialsContent() {
         gap: "20px",
       }}
     >
-      <Typography typography="h4" color={"#1BAA75"}>
-        {t("ForeignInstitutions")}
-      </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          gap: "30px",
-          alignItems: "center",
-          flexDirection: {
-            xs: "column",
-            md: "row",
-          },
-        }}
-      >
-        <SearchBar
-          boxSx={{
-            width: {
-              xs: "100%",
-              md: "80%",
-            },
-          }}
-          onChange={handleKeywordChange}
-          onClick={handleKeywordSearch}
-          value={keywordValue}
-        />
-        <Button
-          color="primary"
-          variant="outlined"
-          sx={{
-            "&:hover": {
-              background: "#fff !important",
-              border: "1px solid",
-            },
-            display: {
-              xs: "none",
-              md: "flex",
-            },
-            width: {
-              xs: "100%",
-              md: "20%",
-            },
-            gap: "10px",
-            height: "auto",
-            padding: "10px 22px",
-          }}
-          endIcon={<ExcelIcon />}
-          onClick={exportToExcel}
-        >
-          <Typography fontWeight={600} fontSize={14}>
+      <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
+        <Typography variant="h4" color="success.main">
+          {t("ForeignInstitutions")}
+        </Typography>
+        <Box>
+          <Button
+            component="label"
+            endIcon={<ExcelIcon />}
+            color="primary"
+            variant="outlined"
+            sx={{
+              gap: "10px",
+              "&:hover": { color: "#F6F6F6" },
+            }}
+            onClick={download}
+          >
             {t("Export to excel")}
-          </Typography>
-        </Button>
+          </Button>
+        </Box>
       </Box>
+
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <GridTable
-            rows={rowData?.data ?? []}
             columns={[
               {
                 field: "fullName",
@@ -153,6 +166,10 @@ export default function ForeignInstitutionsOfficialsContent() {
                 field: "notaryPosition",
                 headerName: "Position",
                 width: 280,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
               },
               {
                 field: "birthDate",
@@ -178,11 +195,13 @@ export default function ForeignInstitutionsOfficialsContent() {
                 field: "notaryWorkOrder",
                 headerName: "Order",
                 width: 200,
+                sortable: false,
               },
               {
                 field: "notaryCriminalRecord",
                 headerName: "Criminal record",
                 width: 200,
+                sortable: false,
               },
             ]}
             sx={{
@@ -194,33 +213,16 @@ export default function ForeignInstitutionsOfficialsContent() {
             rowHeight={65}
             cellMaxHeight="200px"
             loading={loading}
+            rows={rowData?.data ?? []}
+            onFilterSubmit={handleFilterSubmit}
+            onSortModelChange={handleSortByDate}
           />
           <Pagination
             sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
-            totalPages={data?.total ? Math.ceil(data.total / 7) : 1}
+            currentPage={requestBody.page}
+            totalPages={data?.total ? Math.ceil(data.total / requestBody.pageSize) : 1}
+            onPageChange={handlePageChange}
           />
-
-          <Button
-            color="primary"
-            variant="outlined"
-            sx={{
-              "&:hover": {
-                background: "#fff !important",
-                border: "1px solid",
-              },
-              padding: "10px 10px",
-              marginTop: "30px",
-              display: { xs: "flex", sm: "flex", md: "none" },
-              alignSelf: "center",
-            }}
-            fullWidth
-            endIcon={<ExcelIcon />}
-            onClick={exportToExcel}
-          >
-            <Typography fontWeight={600} fontSize={14}>
-              {t("Export to excel")}
-            </Typography>
-          </Button>
         </Box>
       </Box>
     </Box>
