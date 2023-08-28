@@ -61,12 +61,12 @@ export const personSchema = object().shape({
     .trim()
     .required("required")
     .matches(/^[0-9\+\-\s]*$/, "onlyNumbers"),
-  nameOfCompanyOfficial: string().trim(),
-  nameOfCompanyGov: string().trim(),
-  representativesName: string().trim(),
-  notaryRegistrationNumber: number().integer(),
-  notaryOKPONumber: number().integer(),
-  notaryPhysicalParticipantsQty: number().integer(),
-  notaryLegalParticipantsQty: number().integer(),
-  notaryTotalParticipantsQty: number().integer(),
+  nameOfCompanyOfficial: string().trim().nullable(),
+  nameOfCompanyGov: string().trim().nullable(),
+  representativesName: string().trim().nullable(),
+  notaryRegistrationNumber: number().integer().nullable(),
+  notaryOKPONumber: number().integer().nullable(),
+  notaryPhysicalParticipantsQty: number().integer().nullable(),
+  notaryLegalParticipantsQty: number().integer().nullable(),
+  notaryTotalParticipantsQty: number().integer().nullable(),
 });
