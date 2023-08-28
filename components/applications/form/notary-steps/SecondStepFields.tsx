@@ -12,6 +12,7 @@ import Select from "@/components/ui/Select";
 import Hint from "@/components/ui/Hint";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -96,93 +97,105 @@ export default function SecondStepFields({ form, stepState, onPrev, onNext }: IS
   };
 
   return (
-    <Box display="flex" gap="20px" flexDirection="column">
+    <Box display="flex" gap={"20px"}>
+      <StepperContentStep currentStep={2} stepNext={3} stepNextTitle={"Choose object"} />
       <Box
+        width="100%"
         display="flex"
-        justifyContent="space-between"
-        gap={{ xs: "20px", md: "200px" }}
-        flexDirection={{ xs: "column", md: "row" }}
+        gap="20px"
+        flexDirection="column"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+          paddingBottom: { xs: "0", md: "90px" },
+        }}
       >
-        <Typography variant="h4" whiteSpace="nowrap">
-          {t("Choose document from templates")}
-        </Typography>
-        <Hint type="hint">{t("Notary form first step hint text")}</Hint>
-      </Box>
-
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        <Controller
-          control={control}
-          name="product.id"
-          defaultValue={null}
-          render={({ field, fieldState }) => {
-            return (
-              <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                <InputLabel>{t("Select document from my templates")}</InputLabel>
-                <Select
-                  labelField="name"
-                  valueField="id"
-                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  disabled={selectedInput !== "my" && selectedInput !== null}
-                  data={myDocuments?.status === 0 ? (myDocuments?.data as IProduct[]) ?? [] : []}
-                  loading={myDocumentsLoading}
-                  value={field.value == null ? "" : field.value}
-                  onBlur={field.onBlur}
-                  onChange={(...event: any[]) => {
-                    field.onChange(...event);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            );
-          }}
-        />
-        <Controller
-          control={control}
-          name="product.id"
-          defaultValue={null}
-          render={({ field, fieldState }) => {
-            return (
-              <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                <InputLabel>{t("Select document from system templates")}</InputLabel>
-                <Select
-                  labelField="name"
-                  valueField="id"
-                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  disabled={selectedInput !== "system" && selectedInput !== null}
-                  data={systemDocuments?.status === 0 ? (systemDocuments?.data as IProduct[]) ?? [] : []}
-                  loading={systemDocumentsLoading}
-                  value={field.value == null ? "" : field.value}
-                  onBlur={field.onBlur}
-                  onChange={(...event: any[]) => {
-                    field.onChange(...event);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            );
-          }}
-        />
-      </Box>
-
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
-            {t("Prev")}
-          </Button>
-        )}
-        {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
-            {t("Next")}
-          </Button>
-        )}
-        <Button
-          onClick={handleStepByStepClick}
-          endIcon={<ArrowForwardIcon />}
-          buttonType="secondary"
-          sx={{ width: "auto" }}
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          gap={{ xs: "20px", md: "200px" }}
+          flexDirection={{ xs: "column", md: "row" }}
         >
-          {t("Choose step by step")}
-        </Button>
+          <Typography variant="h4" whiteSpace="nowrap">
+            {t("Choose document from templates")}
+          </Typography>
+          <Hint type="hint">{t("Notary form first step hint text")}</Hint>
+        </Box>
+
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          <Controller
+            control={control}
+            name="product.id"
+            defaultValue={null}
+            render={({ field, fieldState }) => {
+              return (
+                <Box width="100%" display="flex" flexDirection="column" gap="10px">
+                  <InputLabel>{t("Select document from my templates")}</InputLabel>
+                  <Select
+                    labelField="name"
+                    valueField="id"
+                    selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    disabled={selectedInput !== "my" && selectedInput !== null}
+                    data={myDocuments?.status === 0 ? (myDocuments?.data as IProduct[]) ?? [] : []}
+                    loading={myDocumentsLoading}
+                    value={field.value == null ? "" : field.value}
+                    onBlur={field.onBlur}
+                    onChange={(...event: any[]) => {
+                      field.onChange(...event);
+                      trigger(field.name);
+                    }}
+                  />
+                </Box>
+              );
+            }}
+          />
+          <Controller
+            control={control}
+            name="product.id"
+            defaultValue={null}
+            render={({ field, fieldState }) => {
+              return (
+                <Box width="100%" display="flex" flexDirection="column" gap="10px">
+                  <InputLabel>{t("Select document from system templates")}</InputLabel>
+                  <Select
+                    labelField="name"
+                    valueField="id"
+                    selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    disabled={selectedInput !== "system" && selectedInput !== null}
+                    data={systemDocuments?.status === 0 ? (systemDocuments?.data as IProduct[]) ?? [] : []}
+                    loading={systemDocumentsLoading}
+                    value={field.value == null ? "" : field.value}
+                    onBlur={field.onBlur}
+                    onChange={(...event: any[]) => {
+                      field.onChange(...event);
+                      trigger(field.name);
+                    }}
+                  />
+                </Box>
+              );
+            }}
+          />
+        </Box>
+
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          {onPrev != null && (
+            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+              {t("Prev")}
+            </Button>
+          )}
+          {onNext != null && (
+            <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+              {t("Next")}
+            </Button>
+          )}
+          <Button
+            onClick={handleStepByStepClick}
+            endIcon={<ArrowForwardIcon />}
+            buttonType="secondary"
+            sx={{ width: "auto" }}
+          >
+            {t("Choose step by step")}
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

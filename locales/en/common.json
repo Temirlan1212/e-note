@@ -10,7 +10,7 @@
   "Community": "Community",
   "Sample": "Sample",
   "Resource": "Resource",
-  "2023 E-Notariat All rights Reserved": "2023 E-Notariat All rights Reserved",
+  "2023 E-Notariat All rights Reserved": "2023 E-Notariat. All rights Reserved",
   "Accessibility": "Accessibility",
   "Usability": "Usability",
   "Marketplace": "Marketplace",
@@ -159,5 +159,8 @@
   "Sign": "Sign",
   "Signed": "Signed",
   "Try again": "Try again",
+  "Address: Bishkek, blvd Molodoy Guardii 32": "Address: Bishkek, blvd. Molodoy Guardii 32",
+  "Working hours: Mon-Fri, 09:00-18:00": "Working hours: Mon-Fri, 09:00-18:00",
+  "Links": "Links",
   "Object": "Object"
 }

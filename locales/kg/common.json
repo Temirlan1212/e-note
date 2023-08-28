@@ -10,7 +10,7 @@
   "Community": "Жамаат",
   "Sample": "Үлгү",
   "Resource": "Ресурс",
-  "2023 E-Notariat All rights Reserved": "2023 E-Notariat Бардык укуктар корголгон",
+  "2023 E-Notariat All rights Reserved": "2023 E-Notariat. Бардык укуктар корголгон",
   "Accessibility": "Жеткиликтүүлүк",
   "Usability": "Колдонуу Жөндөмдүүлүгү",
   "Marketplace": "Базар",
@@ -159,5 +159,8 @@
   "Sign": "Кол кою",
   "Signed": "Кол коюлду",
   "Try again": "Кайра аракет кылуу",
+  "Address: Bishkek, blvd Molodoy Guardii 32": "Дарек: Бишкек ш., Жаш Гвардия бульвары 32",
+  "Working hours: Mon-Fri, 09:00-18:00": "Иш убактысы: Дүйшөмбү-Жума, 09:00-18:00",
+  "Links": "Шилтемелер",
   "Object": "Объект"
 }

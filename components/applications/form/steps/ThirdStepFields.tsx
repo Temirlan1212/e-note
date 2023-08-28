@@ -12,6 +12,7 @@ import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import UploadFiles from "@/components/fields/UploadFiles";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 interface IBaseEntityFields {
   id?: number;
@@ -44,11 +45,9 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
     pin: `requester.${index}.personalNumber`,
     birthDate: `requester.${index}.birthDate`,
     citizenship: `requester.${index}.citizenship`,
-    knowledgeLanguage: `requester.${index}.knowledgeLanguage`,
     nameOfCompanyOfficial: `requester.${index}.nameOfCompanyOfficial`,
     nameOfCompanyGov: `requester.${index}.nameOfCompanyGov`,
     representativesName: `requester.${index}.representativesName`,
-    notaryForeignParticipation: `requester.${index}.notaryForeignParticipation`,
     notaryRegistrationNumber: `requester.${index}.notaryRegistrationNumber`,
     notaryOKPONumber: `requester.${index}.notaryOKPONumber`,
     notaryPhysicalParticipantsQty: `requester.${index}.notaryPhysicalParticipantsQty`,
@@ -177,47 +176,59 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
   };
 
   return (
-    <Box display="flex" gap="20px" flexDirection="column">
+    <Box display="flex" gap="20px">
+      <StepperContentStep currentStep={3} stepNext={4} stepNextTitle={"fifth-step-title"} />
       <Box
+        width="100%"
         display="flex"
-        justifyContent="space-between"
-        gap={{ xs: "20px", md: "200px" }}
-        flexDirection={{ xs: "column", md: "row" }}
+        gap="20px"
+        flexDirection="column"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+          paddingBottom: { xs: "0", md: "90px" },
+        }}
       >
-        <Typography variant="h4" whiteSpace="nowrap">
-          {t("fourth-step-title")}
-        </Typography>
-      </Box>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          gap={{ xs: "20px", md: "200px" }}
+          flexDirection={{ xs: "column", md: "row" }}
+        >
+          <Typography variant="h4" whiteSpace="nowrap">
+            {t("fourth-step-title")}
+          </Typography>
+        </Box>
 
-      <Typography variant="h5">{t("Personal data")}</Typography>
-      <PersonalData form={form} names={getPersonalDataNames(0)} />
+        <Typography variant="h5">{t("Personal data")}</Typography>
+        <PersonalData form={form} names={getPersonalDataNames(0)} />
 
-      <Typography variant="h5">{t("Identity document")}</Typography>
-      <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
+        <Typography variant="h5">{t("Identity document")}</Typography>
+        <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
 
-      <Typography variant="h5">{t("Place of residence")}</Typography>
-      <Address form={form} names={getAddressNames(0)} />
+        <Typography variant="h5">{t("Place of residence")}</Typography>
+        <Address form={form} names={getAddressNames(0)} />
 
-      <Typography variant="h5">{t("Actual place of residence")}</Typography>
-      <Address form={form} names={getActualAddressNames(0)} />
+        <Typography variant="h5">{t("Actual place of residence")}</Typography>
+        <Address form={form} names={getActualAddressNames(0)} />
 
-      <Typography variant="h5">{t("Contacts")}</Typography>
-      <Contact form={form} names={getContactNames(0)} />
+        <Typography variant="h5">{t("Contacts")}</Typography>
+        <Contact form={form} names={getContactNames(0)} />
 
-      <Typography variant="h5">{t("Files to upload")}</Typography>
-      <UploadFiles />
+        <Typography variant="h5">{t("Files to upload")}</Typography>
+        <UploadFiles />
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
-            {t("Prev")}
-          </Button>
-        )}
-        {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
-            {t("Next")}
-          </Button>
-        )}
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          {onPrev != null && (
+            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+              {t("Prev")}
+            </Button>
+          )}
+          {onNext != null && (
+            <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+              {t("Next")}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   );

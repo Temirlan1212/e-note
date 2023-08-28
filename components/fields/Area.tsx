@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { InputLabel, Box } from "@mui/material";
 import Autocomplete from "../ui/Autocomplete";
@@ -22,7 +22,6 @@ export interface IAreaProps {
 
 export default function Area({ form, names, defaultValues }: IAreaProps) {
   const t = useTranslations();
-
   const locale = useLocale();
 
   const { trigger, control, watch, resetField } = form;
@@ -41,7 +40,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
     "GET"
   );
 
-  const getLabelField = (data) => {
+  const getLabelField = (data: FetchResponseBody | null) => {
     if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
       const item = data.data.find((item) => item.hasOwnProperty("$t:name"));
       return item != null ? "$t:name" : "name";
