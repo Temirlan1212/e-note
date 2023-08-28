@@ -1,9 +1,18 @@
 import { Box, Grid } from "@mui/material";
 import React from "react";
 import NotariesCard from "./NotariesCard";
-import { INotary } from "@/models/notaries/notary";
 import Link from "next/link";
 import Pagination from "../ui/Pagination";
+
+export interface INotary {
+  id: number;
+  name: string;
+  image?: string;
+  rating: number;
+  region: string;
+  area: string;
+  location: string;
+}
 
 export const notariesArr: INotary[] = [
   {

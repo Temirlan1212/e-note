@@ -1,4 +1,4 @@
-import { IUser, IUserCredentials, IUserData } from "@/models/profile/user";
+import { IUser, IUserCredentials, IUserData } from "@/models/user";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

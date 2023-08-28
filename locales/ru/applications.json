@@ -23,7 +23,8 @@
   "Notary's full name": "ФИО нотариуса",
   "Unique registry number": "Уникальный номер реестра",
   "Sides": "Стороны",
-  "Object": "Объект",
+  "Objects of civil rights": "Объекты гражданских прав",
+  "Purpose of action": "Цель действия",
   "Object type": "Вид объекта",
   "Object selection": "Выбор объекта",
   "second-step-hint-title": "Вам необходимо выбрать объект и его вид касательно чего вы хотите сделать нотариальный документ. Выбор объекта поможет вам быстро найти нужный вам нотариальный документ.",
@@ -44,8 +45,8 @@
   "Assign a unique number and enter it in the registry": "Присвоить уникальный номер и внести в реестр",
   "Knowledge of russian/kyrgyz": "Знание русского/кыргызского",
   "Foreign participation": "Иностранное участие",
-  "Name of organization/translation company in russian": "Наименование организации/переводческой компании на русском",
-  "Name of organization/translation company in kyrgyz": "Наименование организации/переводческой компании на кыргызском",
+  "Full name in the state language": "Полное наименование на государственном языке",
+  "Full name in the official language": "Полное наименование на официальном языке",
   "Full name of the representative": "ФИО представителя",
   "Registration number": "Регистрационный номер",
   "OKPO code": "Код ОКПО",
@@ -59,5 +60,7 @@
   "Applicant": "Заявитель",
   "Your application has been successfully sent to the notary": "Ваша заявка успешно отправлена нотариусу",
   "Make a new application": "Оформить новую заявку",
-  "Go to applications": "Перейти в заявки"
+  "Go to applications": "Перейти в заявки",
+  "Participant": "Участник",
+  "Additional information": "Дополнительные данные"
 }

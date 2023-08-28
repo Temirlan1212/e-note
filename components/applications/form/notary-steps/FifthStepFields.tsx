@@ -21,6 +21,7 @@ import CheckBox from "@/components/ui/Checkbox";
 import TimePicker from "@/components/ui/TimePicker";
 import DateTimePicker from "@/components/ui/DateTimePicker";
 import { Dispatch, SetStateAction, useState } from "react";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -254,8 +255,18 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
   if (documentTemplateLoading || selectionLoading) return <></>;
 
   return (
-    <Box>
-      <Box display="flex" gap="30px" flexDirection="column">
+    <Box display="flex" gap="20px">
+      <StepperContentStep currentStep={5} stepNext={6} stepNextTitle={"View document"} />
+      <Box
+        display="flex"
+        gap="30px"
+        flexDirection="column"
+        width="100%"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+          paddingBottom: { xs: "0", md: "90px" },
+        }}
+      >
         <Box display="flex" flexDirection="column" gap="30px">
           {documentTemplateData?.data &&
             documentTemplateData?.data.map((group: Record<string, any>, index: number) => (

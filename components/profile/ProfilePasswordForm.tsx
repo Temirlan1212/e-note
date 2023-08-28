@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
 
-import { IUserData } from "@/models/profile/user";
+import { IUserData } from "@/models/user";
 import { useProfileStore } from "@/stores/profile";
 import useFetch from "@/hooks/useFetch";
 import { yupResolver } from "@hookform/resolvers/yup";

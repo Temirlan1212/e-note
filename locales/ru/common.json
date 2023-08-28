@@ -157,5 +157,6 @@
   "Fingerprint verification successful": "Проверка отпечатка пальца прошла успешно",
   "Confirm fingerprint": "Подтвердить отпечаток пальца",
   "Sign": "Подписать",
-  "Signed": "Подписано"
+  "Signed": "Подписано",
+  "Object": "Обьект"
 }
