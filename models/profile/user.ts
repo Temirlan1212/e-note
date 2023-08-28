@@ -22,6 +22,16 @@ export interface IPartner {
   $version: number;
   fullName: string;
   id: number;
+  lastName: string;
+  firstName: string;
+  middleName: string;
+  notaryPosition: string;
+  birthDate: string;
+  "emailAddress.address": string;
+  simpleFullName: string;
+  notaryWorkOrder: string;
+  notaryCriminalRecord: string;
+  version: number;
 }
 
 export interface IUserData extends IUser {
