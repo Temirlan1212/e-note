@@ -1,4 +1,4 @@
-import { IOfficialsData } from "@/models/omsu-officials/officials-data";
+import { IPartner } from "@/models/profile/user";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type CriteriaItem = {
@@ -14,7 +14,7 @@ type Criteria =
       criteria: CriteriaItem[];
     };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IOfficialsData | null>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<IPartner | null>) {
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }
