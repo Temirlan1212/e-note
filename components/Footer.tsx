@@ -4,6 +4,7 @@ import Link from "@/components/ui/Link";
 import { WhatsApp, Instagram, Facebook } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
+import { IRoute, useRouteStore } from "@/stores/route";
 
 interface IFooterDataItem {
   title: string;
@@ -15,30 +16,29 @@ interface IFooterSection {
   items: IFooterDataItem[];
 }
 
-const footerData: Record<string, IFooterDataItem[]> = {
-  Links: [
-    { title: "About us", link: "/about" },
-    { title: "Notaries", link: "/notaries" },
-    { title: "Regulatory acts", link: "/regulatory-acts" },
-    { title: "Questions and answers", link: "/qa" },
-  ],
-  Contacts: [
-    { title: "Alisher uulu Alymbek", link: "/#" },
-    { title: "Address: Bishkek, blvd Molodoy Guardii 32", link: "https://go.2gis.com/divf1" },
-    { title: "Phone number: +996 (312) 34-35-27", link: "tel:+996312343527" },
-    { title: "E-mail: not palata kr@gmail com", link: "mailto:not.palata.kr@gmail.com" },
-    { title: "Working hours: Mon-Fri, 09:00-18:00", link: "/#" },
-  ],
-};
-
-const footerIconsData = [
-  { icon: WhatsApp, url: "https://whatsapp.com" },
-  { icon: Facebook, url: "https://ru-ru.facebook.com" },
-  { icon: Instagram, url: "https://www.instagram.com" },
-];
-
 const Footer: React.FC = () => {
   const t = useTranslations();
+
+  const routes: IRoute[] = useRouteStore((state) => state.getRoutes(state.guestRoutes, "menu"));
+
+  const footerData: Record<string, IFooterDataItem[]> = {
+    Links: routes.map((route) => ({
+      title: route.title,
+      link: route.link,
+    })),
+    Contacts: [
+      { title: "Address: Bishkek, blvd Molodoy Guardii 32", link: "https://go.2gis.com/divf1" },
+      { title: "Phone number: +996 (312) 34-35-27", link: "tel:+996312343527" },
+      { title: "E-mail: not.palata.kr@gmail.com", link: "mailto:not.palata.kr@gmail.com" },
+      { title: "Working hours: Mon-Fri, 09:00-18:00", link: "/#" },
+    ],
+  };
+
+  const footerIconsData = [
+    { icon: WhatsApp, url: "https://whatsapp.com" },
+    { icon: Facebook, url: "https://ru-ru.facebook.com" },
+    { icon: Instagram, url: "https://www.instagram.com" },
+  ];
 
   return (
     <Box sx={{ bgcolor: "success.main", padding: { xs: "48px 0", md: "30px 0" } }}>
