@@ -19,7 +19,7 @@ export const ApplicationListQRMenu = ({
 }) => {
   const t = useTranslations();
   const [menu, setMenu] = useState<HTMLElement | null>(null);
-  const [qrUrls, setQrUrls] = useState<Record<string, string> | null>(null);
+  const [qrUrl, setQrUrl] = useState<string | null>(null);
 
   const open = !!menu;
   const uniqueQrCode = params?.row?.id ?? 0;
@@ -40,14 +40,11 @@ export const ApplicationListQRMenu = ({
   };
 
   const onPopupOpen = async () => {
-    if (!Boolean(qrUrls?.[uniqueQrCode])) {
+    if (!Boolean(qrUrl)) {
       const res = await downloadUpdate(`/api/files/download/${uniqueQrCode}`);
       const blobData = await res.blob();
       const blobURL = URL.createObjectURL(blobData);
-
-      setQrUrls((prev) => {
-        return { ...prev, [uniqueQrCode]: blobURL };
-      });
+      setQrUrl(blobURL);
     }
   };
 
@@ -63,14 +60,8 @@ export const ApplicationListQRMenu = ({
 
           {loading ? (
             <CircularProgress />
-          ) : qrUrls != null ? (
-            <Image
-              src={qrUrls?.[uniqueQrCode] ?? ""}
-              width={170}
-              height={170}
-              alt="qr code"
-              onError={() => setQrUrls(null)}
-            />
+          ) : qrUrl != null ? (
+            <Image src={qrUrl ?? ""} width={170} height={170} alt="qr code" onError={() => setQrUrl(null)} />
           ) : (
             <Typography variant="h2" py="30px">
               404
