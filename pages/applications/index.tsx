@@ -25,10 +25,8 @@ export default function Applications() {
         <title>{user?.group.id === 4 ? t("Notarial actions") : t("Applications")}</title>
       </Head>
 
-      <Container maxWidth="xl">
-        <Box marginTop="30px">
-          <ApplicationList />
-        </Box>
+      <Container maxWidth="xl" sx={{ py: "30px" }}>
+        <ApplicationList />
       </Container>
     </>
   );

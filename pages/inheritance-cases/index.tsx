@@ -16,8 +16,8 @@ export default function InheritanceCases() {
         sx={{
           display: "flex",
           flexDirection: "column",
+          py: "30px",
           gap: "30px",
-          padding: { xs: "30px 20px 25px 20px", sm: "30px 20px 34px 20px", md: "60px 60px 124px 60px" },
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
