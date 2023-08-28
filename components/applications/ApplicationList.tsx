@@ -16,7 +16,7 @@ import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import Pagination from "@/components/ui/Pagination";
 import Link from "@/components/ui/Link";
 import { ApplicationListActions } from "./ApplicationListActions";
-import QrCode2Icon from "@mui/icons-material/QrCode2";
+import { ApplicationListQRMenu } from "./ApplicationListQRMenu";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -124,7 +124,8 @@ export default function ApplicationList() {
             headerName: "QR",
             width: 90,
             sortable: false,
-            renderCell: (params: any) => <QrCode2Icon />,
+            type: "actions",
+            renderCell: (params: any) => <ApplicationListQRMenu params={params} />,
           },
           {
             field: "typeNotarialAction",
