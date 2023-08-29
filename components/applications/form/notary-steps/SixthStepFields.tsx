@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useTranslations } from "next-intl";
-import { Controller, UseFormReturn } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
@@ -10,6 +10,7 @@ import PDFViewer from "@/components/PDFViewer";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import SignModal from "@/components/applications/SignModal";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
@@ -72,10 +73,14 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
           </Typography>
         </Box>
 
-        <Box display="flex" justifyContent="end">
-          <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
-            {t("Download PDF")}
-          </Button>
+        <Box display="flex" gap="10px" justifyContent="flex-end">
+          <Box display="flex" justifyContent="end">
+            <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
+              {t("Download PDF")}
+            </Button>
+          </Box>
+
+          <SignModal />
         </Box>
 
         <PDFViewer fileUrl="/documents/example.pdf" />
