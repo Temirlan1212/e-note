@@ -13,7 +13,7 @@ import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import Pagination from "@/components/ui/Pagination";
 import Link from "@/components/ui/Link";
 import { ApplicationListActions } from "./ApplicationListActions";
-import QrCode2Icon from "@mui/icons-material/QrCode2";
+import { ApplicationListQRMenu } from "./ApplicationListQRMenu";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -28,6 +28,10 @@ export default function ApplicationList() {
   const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
   const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
   const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
+  const { data: executorData } = useFetch(
+    "/api/dictionaries/selection/notary.filter.saleorder.by.performer.type.select",
+    "POST"
+  );
 
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,
@@ -114,7 +118,8 @@ export default function ApplicationList() {
             headerName: "QR",
             width: 90,
             sortable: false,
-            renderCell: (params: any) => <QrCode2Icon />,
+            type: "actions",
+            renderCell: (params: any) => <ApplicationListQRMenu params={params} />,
           },
           {
             field: "typeNotarialAction",
@@ -182,11 +187,18 @@ export default function ApplicationList() {
             sortable: true,
           },
           {
-            field: "company.name",
-            headerName: "Notary",
+            field: "createdBy.fullName",
+            headerName: "Executor",
             width: 200,
             sortable: false,
-            cellClassName: "notaryColumn",
+            filter: {
+              data: executorData?.data ?? [],
+              labelField: locale === "ru" || locale === "kg" ? "title_ru" : "title",
+              valueField: "value",
+              type: "dictionary",
+              field: "createdBy.fullName",
+            },
+            cellClassName: "executorColumn",
           },
           {
             field: "actions",
@@ -204,7 +216,7 @@ export default function ApplicationList() {
         loading={loading}
         sx={{
           height: "100%",
-          ".notaryColumn": {
+          ".executorColumn": {
             color: "success.main",
           },
         }}
