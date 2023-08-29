@@ -4,6 +4,9 @@ const fields: string[] = [
   "id",
   "version",
   "createdBy",
+  "createdOn",
+  "notaryUniqNumber",
+  "notarySignatureStatus",
   "company",
   "object",
   "objectType",
@@ -11,6 +14,8 @@ const fields: string[] = [
   "typeNotarialAction",
   "action",
   "product",
+  "creationDate",
+  "statusSelect",
 ];
 
 const related: Record<string, typeof fields> = {
@@ -46,6 +51,14 @@ const related: Record<string, typeof fields> = {
     "actualResidenceAddress.addressL4",
     "actualResidenceAddress.addressL3",
     "actualResidenceAddress.addressL2",
+    "nameOfCompanyOfficial",
+    "nameOfCompanyGov",
+    "representativesName",
+    "notaryRegistrationNumber",
+    "notaryOKPONumber",
+    "notaryPhysicalParticipantsQty",
+    "notaryLegalParticipantsQty",
+    "notaryTotalParticipantsQty",
   ],
   members: [
     "partnerTypeSelect",
@@ -79,6 +92,14 @@ const related: Record<string, typeof fields> = {
     "actualResidenceAddress.addressL4",
     "actualResidenceAddress.addressL3",
     "actualResidenceAddress.addressL2",
+    "nameOfCompanyOfficial",
+    "nameOfCompanyGov",
+    "representativesName",
+    "notaryRegistrationNumber",
+    "notaryOKPONumber",
+    "notaryPhysicalParticipantsQty",
+    "notaryLegalParticipantsQty",
+    "notaryTotalParticipantsQty",
   ],
 };
 

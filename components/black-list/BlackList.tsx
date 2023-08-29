@@ -248,6 +248,9 @@ export default function BlackList() {
 
   return (
     <>
+      <Typography typography="h4" color="primary">
+        {t("Black list")}
+      </Typography>
       <Grid
         container
         spacing={{ xs: 2.5, sm: 3.75, md: 3.75 }}

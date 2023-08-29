@@ -11,6 +11,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import Link from "@/components/ui/Link";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -29,29 +30,12 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
   const [iframeContent, setIframeContent] = useState("");
 
   const { data } = useFetch(id != null ? `/api/files/prepare/${id}` : "", "GET");
-  const { data: iframeContentResponse } = useFetch<Response>(
-    data?.data?.token != null
-      ? `/api/iframe?url=${process.env.NEXT_PUBLIC_NEXTCLOUD_URL + "/index.php/f/248959"}&token=${data?.data?.token}`
-      : "",
-    "GET",
-    { returnResponse: true }
-  );
 
   useEffectOnce(async () => {
     if (data?.data?.saleOrderVersion != null) {
       setValue("version", data.data.saleOrderVersion);
     }
   }, [data]);
-
-  useEffectOnce(async () => {
-    if (iframeContentResponse != null) {
-      let iframeContent = (await iframeContentResponse.text())
-        .replaceAll(/href="/g, 'href="' + process.env.NEXT_PUBLIC_NEXTCLOUD_URL)
-        .replaceAll(/src="/g, 'src="' + process.env.NEXT_PUBLIC_NEXTCLOUD_URL);
-      console.log(iframeContent);
-      setIframeContent(iframeContent);
-    }
-  }, [iframeContentResponse]);
 
   const triggerFields = async () => {
     return await trigger([]);
@@ -67,43 +51,65 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
   };
 
   return (
-    <Box display="flex" gap="30px" flexDirection="column">
+    <Box display="flex" gap="20px">
+      <StepperContentStep onlyCurrentStep currentStep={6} />
       <Box
+        width="100%"
         display="flex"
-        justifyContent="space-between"
-        gap={{ xs: "20px", md: "200px" }}
-        flexDirection={{ xs: "column", md: "row" }}
+        gap="30px"
+        flexDirection="column"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+        }}
       >
-        <Typography variant="h4" whiteSpace="nowrap">
-          {t("View document")}
-        </Typography>
-      </Box>
-
-      <Box display="flex" justifyContent="end">
-        <Link
-          href={`/api/iframe?url=${data?.data?.downloadUrl}&token=${data?.data?.token}`}
-          download={data?.data?.fileName}
-          target="_blank"
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          gap={{ xs: "20px", md: "200px" }}
+          flexDirection={{ xs: "column", md: "row" }}
         >
-          <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
-            {t("Download PDF")}
-          </Button>
-        </Link>
-      </Box>
+          <Typography variant="h4" whiteSpace="nowrap">
+            {t("View document")}
+          </Typography>
 
-      {iframeContent && <iframe srcDoc={iframeContent} style={{ minHeight: "500px" }}></iframe>}
+          <Link
+            href={`/api/iframe?url=${data?.data?.downloadUrl}&token=${data?.data?.token}`}
+            download={data?.data?.fileName}
+            target="_blank"
+          >
+            <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
+              {t("Download PDF")}
+            </Button>
+          </Link>
+        </Box>
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
-            {t("Prev")}
-          </Button>
+        {data?.data?.token != null && (
+          <Link
+            href={
+              process.env.NEXT_PUBLIC_NEXTCLOUD_URL +
+              `/notarynew/index.php/auth-redirect?redirectUrl=${data?.data
+                ?.editUrl}&authorizationBasic=${data?.data?.token.replace(/Basic /, "")}`
+            }
+            target="_blank"
+          >
+            ok
+          </Link>
         )}
-        {onNext != null && (
-          <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
-            {t("Next")}
-          </Button>
-        )}
+
+        <PDFViewer fileUrl="/documents/example.pdf" />
+
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          {onPrev != null && (
+            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+              {t("Prev")}
+            </Button>
+          )}
+          {onNext != null && (
+            <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+              {t("Next")}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   );

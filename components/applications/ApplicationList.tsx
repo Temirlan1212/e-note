@@ -1,21 +1,22 @@
-import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
+import React, { useState } from "react";
+import { ValueOf } from "next/dist/shared/lib/constants";
+import { useRouter } from "next/router";
+import { useTranslations } from "next-intl";
+import { IActionType } from "@/models/action-type";
+import { IUserData } from "@/models/user";
+import { IStatus } from "@/models/application-status";
+import { useProfileStore } from "@/stores/profile";
+import useFetch from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
 import { Box, Typography } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { IActionType } from "@/models/dictionaries/action-type";
-import Pagination from "@/components/ui/Pagination";
-import useFetch from "@/hooks/useFetch";
-import { ValueOf } from "next/dist/shared/lib/constants";
-import Button from "@/components/ui/Button";
 import PostAddIcon from "@mui/icons-material/PostAdd";
+import Button from "@/components/ui/Button";
+import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
+import Pagination from "@/components/ui/Pagination";
 import Link from "@/components/ui/Link";
-import { useTranslations } from "next-intl";
 import { ApplicationListActions } from "./ApplicationListActions";
-import { IStatus } from "@/models/dictionaries/status";
-import { useProfileStore } from "@/stores/profile";
-import { IUserData } from "@/models/profile/user";
-import useEffectOnce from "@/hooks/useEffectOnce";
+import QrCode2Icon from "@mui/icons-material/QrCode2";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -29,7 +30,7 @@ export default function ApplicationList() {
   const { locale } = useRouter();
   const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
   const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
-  const { data: statusData } = useFetch("/api/dictionaries/status", "POST");
+  const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
   const [user, setUser] = useState<IUserData | null>();
 
   const userData: IUserData | null = useProfileStore((state) => state.getUserData());
@@ -106,7 +107,7 @@ export default function ApplicationList() {
   return (
     <Box height={{ xs: "600px", md: "700px" }}>
       <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
-        <Typography variant="h4" color="text.primary">
+        <Typography variant="h4" color="primary">
           {user?.group.id === 4 ? t("Notarial actions") : t("Your applications")}
         </Typography>
         <Link href="applications/create">
@@ -118,6 +119,13 @@ export default function ApplicationList() {
 
       <GridTable
         columns={[
+          {
+            field: "QR",
+            headerName: "QR",
+            width: 90,
+            sortable: false,
+            renderCell: (params: any) => <QrCode2Icon />,
+          },
           {
             field: "typeNotarialAction",
             headerName: "Type of action",
@@ -170,7 +178,7 @@ export default function ApplicationList() {
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (statusData != null) {
-                const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(1));
+                const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(params.value));
                 const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
                 return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
               }
