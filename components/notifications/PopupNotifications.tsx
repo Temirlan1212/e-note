@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
 import Button from "@/components/ui/Button";
 import { useProfileStore } from "../../stores/profile";
-import { IUserData } from "@/models/profile/user";
+import { IUserData } from "@/models/user";
 
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CircleIcon from "@mui/icons-material/Circle";

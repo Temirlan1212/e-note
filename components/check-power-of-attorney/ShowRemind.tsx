@@ -29,11 +29,11 @@ export default function ShowRemind({ closeRemind, documentFound, remindTitle, re
       {!documentFound ? (
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <Typography fontWeight={400} color="#687C9B">
-            {t("Each notarial document has its unique number, consisting of n-characters. Click on the ")}
-            <Link href="/unique-number" color="#1BAA75">
-              {t("link")}
+            {t("Each notarial document has its unique number, consisting of n-characters Click on the")}
+            <Link href="#" color="success.main" sx={{ textDecoration: "underline" }}>
+              {t("link")}{" "}
             </Link>
-            {t(" to find out how to get it.")}
+            {t("to find out how to get it")}
           </Typography>
         </Box>
       ) : (

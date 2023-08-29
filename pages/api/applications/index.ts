@@ -1,7 +1,13 @@
-import { IApplication, IApplicationsQueryParamsData } from "@/models/applications/application-list";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IApplication | null>) {
+export interface IApplicationsQueryParamsData {
+  _domain: string;
+  _domainContext: {
+    [key: string]: (number | string)[];
+  };
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }
@@ -48,6 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         "creationDate",
         "createdBy",
         "company.name",
+        "uniqueQrCode",
       ],
       sortBy: req.body["sortBy"] ?? [],
       ...requestBody,

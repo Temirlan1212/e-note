@@ -4,10 +4,12 @@ import Link from "@/components/ui/Link";
 import { WhatsApp, Instagram, Facebook } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
+import { IRoute, useRouteStore } from "@/stores/route";
 
 interface IFooterDataItem {
   title: string;
   link: string;
+  content?: string;
 }
 
 interface IFooterSection {
@@ -15,35 +17,29 @@ interface IFooterSection {
   items: IFooterDataItem[];
 }
 
-const footerData: Record<string, IFooterDataItem[]> = {
-  Community: [
-    { title: "About us", link: "/about" },
-    { title: "Usability", link: "/usability" },
-    { title: "Marketplace", link: "/marketplace" },
-    { title: "Design & Dev", link: "/design" },
-  ],
-  Sample: [
-    { title: "Usability", link: "/usability" },
-    { title: "Usability", link: "/usability" },
-    { title: "Marketplace", link: "/marketplace" },
-    { title: "Design & Dev", link: "/design" },
-  ],
-  Resource: [
-    { title: "Accessibility", link: "/accessibility" },
-    { title: "Usability", link: "/usability" },
-    { title: "Usability", link: "/usability" },
-    { title: "Design & Dev", link: "/design" },
-  ],
-};
-
-const footerIconsData = [
-  { icon: WhatsApp, url: "https://whatsapp.com" },
-  { icon: Facebook, url: "https://ru-ru.facebook.com" },
-  { icon: Instagram, url: "https://www.instagram.com" },
-];
-
 const Footer: React.FC = () => {
   const t = useTranslations();
+
+  const routes: IRoute[] = useRouteStore((state) => state.getRoutes(state.guestRoutes, "menu"));
+
+  const footerData: Record<string, IFooterDataItem[]> = {
+    Links: routes.map((route) => ({
+      title: route.title,
+      link: route.link,
+    })),
+    Contacts: [
+      { title: "Address: Bishkek, blvd Molodoy Guardii 32", link: "https://go.2gis.com/divf1" },
+      { title: "Phone number", content: ": +996 (312) 34-35-27", link: "tel:+996312343527" },
+      { title: "E-mail", content: ": not.palata.kr@gmail.com", link: "mailto:not.palata.kr@gmail.com" },
+      { title: "Working hours: Mon-Fri, 09:00-18:00", link: "/#" },
+    ],
+  };
+
+  const footerIconsData = [
+    { icon: WhatsApp, url: "https://whatsapp.com" },
+    { icon: Facebook, url: "https://ru-ru.facebook.com" },
+    { icon: Instagram, url: "https://www.instagram.com" },
+  ];
 
   return (
     <Box sx={{ bgcolor: "success.main", padding: { xs: "48px 0", md: "30px 0" } }}>
@@ -90,7 +86,6 @@ const Footer: React.FC = () => {
               gap: { xs: "20px" },
             }}
           >
-            <Image src="/images/website-analytics.png" alt="website-analytics" width={107} height={38} />
             <Typography color="white">{t("2023 E-Notariat All rights Reserved")}</Typography>
           </Box>
 
@@ -122,11 +117,12 @@ const FooterSection: React.FC<IFooterSection> = ({ title, items }) => {
       </Typography>
 
       <List>
-        {items.map(({ title, link }, index) =>
+        {items.map(({ title, link, content }, index) =>
           title ? (
             <ListItem sx={{ padding: "0 0 24px 0" }} key={index}>
               <Link href={link} color="#fff" activeColor="text.primary" isActive={router.route === link}>
                 {t(title)}
+                {content}
               </Link>
             </ListItem>
           ) : null

@@ -32,13 +32,13 @@ export const ApplicationListActions = ({
 
   return (
     <Box display="flex" alignItems="center" gap="10px">
-      {/* <Link href="applications">
+      <Link href={`/applications/status/${params.row.id}`}>
         <Tooltip title={t("More detailed")} arrow>
           <IconButton>
             <VisibilityIcon />
           </IconButton>
         </Tooltip>
-      </Link> */}
+      </Link>
 
       <Link href={`/applications/edit/${params.row.id}`}>
         <Tooltip title={t("Edit")} arrow>
