@@ -1,112 +1,124 @@
-import React, { FC, useState } from "react";
-
+import React, { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-
 import { Box, Typography } from "@mui/material";
-
-import Button from "../ui/Button";
-import SearchBar from "../ui/SearchBar";
-import { GridTable } from "../ui/GridTable";
-
+import useFetch from "@/hooks/useFetch";
+import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
+import Button from "@/components/ui/Button";
+import Pagination from "@/components/ui/Pagination";
 import ExcelIcon from "@/public/icons/excel.svg";
+import { GridSortModel } from "@mui/x-data-grid";
+import { ValueOf } from "next/dist/shared/lib/constants";
 
-interface IOMSUOfficialsContentProps {}
+interface IRequestBody {
+  searchValue?: string | null;
+  roleValue?: string | null;
+  requestType?: string | null;
+  pageSize?: number;
+  page?: number;
+  sortBy?: string[];
+  filterValues: Record<string, (string | number)[]>;
+}
 
-const OMSUOfficialsContent: FC<IOMSUOfficialsContentProps> = (props) => {
-  const [selectedPage, setSelectedPage] = useState(1);
+interface IRowData {
+  status: number;
+  offset: number;
+  total: number;
+  data: Array<Record<string, any>>;
+}
 
+export default function OMSUOfficialsContent() {
   const t = useTranslations();
+  const [rowData, setRowData] = useState<IRowData | null>(null);
+  const [fileName, setFileName] = useState<string | null>("");
 
-  const columns = [
-    { field: "fullName", headerName: "Full name", width: 280 },
-    { field: "position", headerName: "Position", width: 280 },
-    { field: "birthDate", headerName: "Date of birth", width: 140 },
-    { field: "phoneNumber", headerName: "Phone number", width: 160 },
-    { field: "email", headerName: "E-mail", width: 180 },
-    { field: "institution", headerName: "Institution", width: 180 },
-    { field: "order", headerName: "Order", width: 200 },
-    { field: "criminalRecord", headerName: "Criminal record", width: 200 },
-  ];
+  const [requestBody, setRequestBody] = useState<IRequestBody>({
+    pageSize: 7,
+    page: 1,
+    sortBy: [],
+    searchValue: null,
+    roleValue: "OMSU official",
+    requestType: "getAllData",
+    filterValues: {},
+  });
 
-  const rows = [
-    {
-      id: 1,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      position: "Сотрудник Консульства",
-      birthDate: "01.01.2022",
-      phoneNumber: "0555 26 29 30",
-      email: "turat@gmail.com",
-      institution: "Доверенность",
-      order: "",
-      criminalRecord: "",
-    },
-    {
-      id: 2,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      position: "Сотрудник Консульства",
-      birthDate: "01.01.2022",
-      phoneNumber: "0555 26 29 30",
-      email: "turat@gmail.com",
-      institution: "Доверенность",
-      order: "",
-      criminalRecord: "",
-    },
-    {
-      id: 3,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      position: "Сотрудник Консульства",
-      birthDate: "01.01.2022",
-      phoneNumber: "0555 26 29 30",
-      email: "turat@gmail.com",
-      institution: "Доверенность",
-      order: "",
-      criminalRecord: "",
-    },
-    {
-      id: 4,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      position: "Сотрудник Консульства",
-      birthDate: "01.01.2022",
-      phoneNumber: "0555 26 29 30",
-      email: "turat@gmail.com",
-      institution: "Доверенность",
-      order: "",
-      criminalRecord: "",
-    },
-    {
-      id: 5,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      position: "Сотрудник Консульства",
-      birthDate: "01.01.2022",
-      phoneNumber: "0555 26 29 30",
-      email: "turat@gmail.com",
-      institution: "Доверенность",
-      order: "",
-      criminalRecord: "",
-    },
-    {
-      id: 6,
-      fullName: "Чалбеков Анарбек Ибраимович",
-      position: "Сотрудник Консульства",
-      birthDate: "01.01.2022",
-      phoneNumber: "0555 26 29 30",
-      email: "turat@gmail.com",
-      institution: "Доверенность",
-      order: "",
-      criminalRecord: "",
-    },
-  ];
+  const [excelReqBody, setExcelReqBody] = useState<IRequestBody>({
+    roleValue: "OMSU official",
+    filterValues: {},
+  });
 
-  const dataGridStyles = {
-    ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": { padding: "10px 16px" },
-    ".MuiDataGrid-row": { "&:hover": { "& .MuiIconButton-root": { visibility: "visible" } } },
-    ".MuiBox-root": { backgroundColor: "#FFF" },
-    ".MuiDataGrid-columnHeader": { padding: "16px" },
+  const { data, loading } = useFetch("/api/officials", "POST", {
+    body: requestBody,
+  });
+
+  const { data: exportExcel } = useFetch("/api/officials/export", "POST", {
+    body: excelReqBody,
+  });
+
+  const { update: downloadExcel } = useFetch("", "GET", {
+    returnResponse: true,
+  });
+
+  const updateRequestBodyParams = (key: keyof IRequestBody, newValue: ValueOf<IRequestBody>) => {
+    setRequestBody((prev) => {
+      return { ...prev, [key]: newValue };
+    });
   };
 
-  const itemsPerPage = 6;
+  const handleSortByDate = (model: GridSortModel) => {
+    const sortBy = model.map((s) => (s.sort === "asc" ? s.field : `-${s.field}`));
+    setRequestBody((prev: any) => ({
+      ...prev,
+      sortBy: sortBy,
+    }));
+  };
 
-  const totalPages = Math.ceil(rows.length / itemsPerPage);
+  const handleFilterSubmit = async (value: IFilterSubmitParams) => {
+    handleUpdateFilterValues(value);
+    if (value.value.length > 0) updateRequestBodyParams("page", 1);
+  };
+
+  const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
+    const field = value.rowParams.colDef.field;
+    const prevValue = requestBody.filterValues;
+
+    if (field && Array.isArray(value.value)) {
+      if (value.value.length > 0) {
+        updateRequestBodyParams("filterValues", {
+          ...prevValue,
+          [field]: value.value,
+        });
+        updateRequestBodyParams("requestType", "searchFilter");
+      } else {
+        const updatedFilterValues = { ...prevValue };
+        delete updatedFilterValues[field];
+        updateRequestBodyParams("filterValues", updatedFilterValues);
+      }
+    }
+  };
+
+  const handlePageChange = (page: number) => {
+    if (requestBody.page !== page) updateRequestBodyParams("page", page);
+  };
+
+  const download = async () => {
+    const response = await downloadExcel(`/api/officials/download/${fileName}`);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = fileName || "exported-data.csv";
+    document.body.appendChild(a);
+    a.click();
+  };
+
+  useEffect(() => {
+    if (data && exportExcel?.data) {
+      setRowData(data);
+      setFileName(exportExcel.data.fileName);
+    }
+  }, [data, exportExcel?.data]);
 
   return (
     <Box
@@ -116,53 +128,103 @@ const OMSUOfficialsContent: FC<IOMSUOfficialsContentProps> = (props) => {
         gap: "20px",
       }}
     >
-      <Typography typography="h4" color="primary">
-        {t("OMSUOfficials")}
-      </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          gap: "30px",
-          alignItems: "center",
-          flexDirection: {
-            xs: "column",
-            md: "row",
-          },
-        }}
-      >
-        <SearchBar
-          boxSx={{
-            width: {
-              xs: "100%",
-              md: "80%",
-            },
-          }}
-          placeholder={t("Search")}
-        />
-        <Button
-          variant="outlined"
-          color="primary"
-          sx={{
-            height: "auto",
-            gap: "10px",
-            padding: "10px 22px",
-            fontSize: "14px",
-            width: { md: "30%", xs: "100%" },
-            "&:hover": { color: "#F6F6F6" },
-          }}
-          fullWidth
-          endIcon={<ExcelIcon />}
-        >
-          {t("Export to excel")}
-        </Button>
-      </Box>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
+        <Typography variant="h4" color="success.main">
+          {t("OMSUOfficials")}
+        </Typography>
         <Box>
-          <GridTable rows={rows} columns={columns} sx={dataGridStyles} />
+          <Button
+            component="label"
+            endIcon={<ExcelIcon />}
+            color="primary"
+            variant="outlined"
+            sx={{
+              gap: "10px",
+              "&:hover": { color: "#F6F6F6" },
+            }}
+            onClick={download}
+          >
+            {t("Export to excel")}
+          </Button>
+        </Box>
+      </Box>
+
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <GridTable
+            columns={[
+              {
+                field: "fullName",
+                headerName: "Full name",
+                width: 280,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
+              },
+              {
+                field: "notaryPosition",
+                headerName: "Position",
+                width: 280,
+                filter: {
+                  type: "simple",
+                },
+                sortable: false,
+              },
+              {
+                field: "birthDate",
+                headerName: "Date of birth",
+                width: 200,
+              },
+              {
+                field: "mobilePhone",
+                headerName: "Phone number",
+                width: 220,
+              },
+              {
+                field: "emailAddress.address",
+                headerName: "E-mail",
+                width: 180,
+              },
+              {
+                field: "simpleFullName",
+                headerName: "Institution",
+                width: 180,
+              },
+              {
+                field: "notaryWorkOrder",
+                headerName: "Order",
+                width: 200,
+                sortable: false,
+              },
+              {
+                field: "notaryCriminalRecord",
+                headerName: "Criminal record",
+                width: 200,
+                sortable: false,
+              },
+            ]}
+            sx={{
+              height: "100%",
+              ".notaryColumn": {
+                color: "success.main",
+              },
+            }}
+            rowHeight={65}
+            cellMaxHeight="200px"
+            loading={loading}
+            rows={rowData?.data ?? []}
+            onFilterSubmit={handleFilterSubmit}
+            onSortModelChange={handleSortByDate}
+          />
+          <Pagination
+            sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+            currentPage={requestBody.page ?? 1}
+            totalPages={data?.total ? Math.ceil(data.total / (requestBody.pageSize ?? 7)) : 1}
+            onPageChange={handlePageChange}
+          />
         </Box>
       </Box>
     </Box>
   );
-};
-
-export default OMSUOfficialsContent;
+}
