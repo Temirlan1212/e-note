@@ -81,7 +81,7 @@ export default function OMSUOfficialsContent() {
     const field = value.rowParams.colDef.field;
     const prevValue = requestBody.filterValues;
 
-    if (field) {
+    if (field && Array.isArray(value.value)) {
       if (value.value.length > 0) {
         updateRequestBodyParams("filterValues", {
           ...prevValue,
@@ -219,8 +219,8 @@ export default function OMSUOfficialsContent() {
           />
           <Pagination
             sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
-            currentPage={requestBody.page}
-            totalPages={data?.total ? Math.ceil(data.total / requestBody.pageSize) : 1}
+            currentPage={requestBody.page ?? 1}
+            totalPages={data?.total ? Math.ceil(data.total / (requestBody.pageSize ?? 7)) : 1}
             onPageChange={handlePageChange}
           />
         </Box>
