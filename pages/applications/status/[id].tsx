@@ -18,7 +18,7 @@ export default function ApplicationsStatusInformation() {
       </Head>
 
       <Container maxWidth="xl">
-        <ApplicationStatusInfoContent id={id} />
+        <ApplicationStatusInfoContent id={isNaN(parseInt(id as string)) ? undefined : parseInt(id as string)} />
       </Container>
     </>
   );

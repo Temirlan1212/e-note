@@ -6,7 +6,7 @@ import MyTemplateListComponent from "@/components/my-template-list/my-template-l
 import NotaryMyTemplateListComponent from "@/components/my-template-list/notary-my-temlate-list/NotaryMyTemplateList";
 import { useProfileStore } from "@/stores/profile";
 import { useState } from "react";
-import { IUserData } from "@/models/profile/user";
+import { IUserData } from "@/models/user";
 import useEffectOnce from "@/hooks/useEffectOnce";
 
 export default function MyTemplateList() {

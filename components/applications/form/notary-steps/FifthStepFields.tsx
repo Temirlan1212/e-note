@@ -9,7 +9,7 @@ import {
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Grid, InputLabel, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -21,6 +21,7 @@ import CheckBox from "@/components/ui/Checkbox";
 import TimePicker from "@/components/ui/TimePicker";
 import DateTimePicker from "@/components/ui/DateTimePicker";
 import { Dispatch, SetStateAction, useState } from "react";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -166,7 +167,7 @@ const getDynamicGroupName = (group: Record<string, any>, locale: string | undefi
 
 const getDynamicName = (path: string | null, name: string | null) => {
   if (path != null && name != null) {
-    const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson)(?:\.|$)/;
+    const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)(?:\.|$)/;
     if (regex.test(path)) {
       const index = 0;
       return `${path}.${index}.${name}`;
@@ -254,8 +255,18 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
   if (documentTemplateLoading || selectionLoading) return <></>;
 
   return (
-    <Box>
-      <Box display="flex" gap="30px" flexDirection="column">
+    <Box display="flex" gap="20px">
+      <StepperContentStep currentStep={5} stepNext={6} stepNextTitle={"View document"} />
+      <Box
+        display="flex"
+        gap="30px"
+        flexDirection="column"
+        width="100%"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+          paddingBottom: { xs: "0", md: "90px" },
+        }}
+      >
         <Box display="flex" flexDirection="column" gap="30px">
           {documentTemplateData?.data &&
             documentTemplateData?.data.map((group: Record<string, any>, index: number) => (
@@ -263,44 +274,46 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
                 <Typography variant="h4">{getDynamicGroupName(group, locale)}</Typography>
 
                 <Grid key={index} container spacing={2}>
-                  {group?.fields?.map((item: Record<string, any>, index: number) => (
-                    <Grid item md={12} key={index}>
-                      <Controller
-                        control={control}
-                        name={getDynamicName(item?.path, item?.fieldName)}
-                        defaultValue={getDynamicValue(item?.fieldType, item?.defaultValue)}
-                        rules={{ required: !!item?.required ? "required" : false }}
-                        render={({ field, fieldState }) => {
-                          let errorMessage = fieldState.error?.message
-                            ? t(fieldState.error.message)
-                            : fieldState.error?.message;
+                  {group?.fields
+                    ?.sort((a: any, b: any) => Number(a?.sequence ?? 0) - Number(b?.sequence ?? 0))
+                    .map((item: Record<string, any>, index: number) => (
+                      <Grid item md={12} key={index}>
+                        <Controller
+                          control={control}
+                          name={getDynamicName(item?.path, item?.fieldName)}
+                          defaultValue={getDynamicValue(item?.fieldType, item?.defaultValue)}
+                          rules={{ required: !!item?.required ? "required" : false }}
+                          render={({ field, fieldState }) => {
+                            let errorMessage = fieldState.error?.message
+                              ? t(fieldState.error.message)
+                              : fieldState.error?.message;
 
-                          if (["Date", "DateTime", "Time"].includes(item.fieldType)) {
-                            if (typeof field.value === "object" && field.value == "Invalid Date") {
-                              errorMessage = t("invalid format");
+                            if (["Date", "DateTime", "Time"].includes(item.fieldType)) {
+                              if (typeof field.value === "object" && field.value == "Invalid Date") {
+                                errorMessage = t("invalid format");
+                              }
                             }
-                          }
-                          const data = Array.isArray(selectDatas[getDynamicName(item?.path, item?.fieldName)])
-                            ? selectDatas[getDynamicName(item?.path, item?.fieldName)]
-                            : [];
+                            const data = Array.isArray(selectDatas[getDynamicName(item?.path, item?.fieldName)])
+                              ? selectDatas[getDynamicName(item?.path, item?.fieldName)]
+                              : [];
 
-                          return (
-                            <Box display="flex" flexDirection="column" gap="10px">
-                              <InputLabel>{item?.fieldTitles?.[locale ?? ""] ?? ""}</InputLabel>
-                              {getDynamicComponent(item.fieldType, {
-                                locale: locale ?? "ru",
-                                field,
-                                fieldState,
-                                errorMessage,
-                                data,
-                                trigger,
-                              })}
-                            </Box>
-                          );
-                        }}
-                      />
-                    </Grid>
-                  ))}
+                            return (
+                              <Box display="flex" flexDirection="column" gap="10px">
+                                <Typography>{item?.fieldTitles?.[locale ?? ""] ?? ""}</Typography>
+                                {getDynamicComponent(item.fieldType, {
+                                  locale: locale ?? "ru",
+                                  field,
+                                  fieldState,
+                                  errorMessage,
+                                  data,
+                                  trigger,
+                                })}
+                              </Box>
+                            );
+                          }}
+                        />
+                      </Grid>
+                    ))}
                 </Grid>
               </Box>
             ))}

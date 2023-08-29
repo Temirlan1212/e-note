@@ -2,17 +2,19 @@ import { Box, FormHelperText, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { login as loginSchema } from "@/validator-schemas/login";
 import Link from "@/components/ui/Link";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import { IUser, IUserCredentials } from "@/models/profile/user";
+import { IUser, IUserCredentials } from "@/models/user";
 import { useProfileStore } from "@/stores/profile";
 import { useEffect, useState } from "react";
 
 const HeroSection: React.FC = () => {
   const t = useTranslations();
+  const router = useRouter();
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -37,6 +39,7 @@ const HeroSection: React.FC = () => {
       setError("root.serverError", { type: "custom", message: "Incorrect password or username" });
     } else {
       form.reset();
+      router.push("/applications");
     }
   };
 

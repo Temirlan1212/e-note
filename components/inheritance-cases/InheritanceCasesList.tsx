@@ -6,25 +6,23 @@ import Grid from "@mui/material/Grid";
 
 import ExcelIcon from "@/public/icons/excel.svg";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
-import FilterAltOffIcon from "@mui/icons-material/FilterAltOff";
 
 import Select from "@/components/ui/Select";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Pagination from "@/components/ui/Pagination";
 import SearchBar from "@/components/ui/SearchBar";
-import { GridTable } from "@/components/ui/GridTable";
+import { GridTable, IGridColDef } from "@/components/ui/GridTable";
 
 export default function InheritanceCases() {
   const [selectedPage, setSelectedPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterVisible, setFilterVisible] = useState(true);
   const [selectedYear, setSelectedYear] = useState<string>("All years");
   const [sortByYear, setSortByYear] = useState(false);
 
   const t = useTranslations();
 
-  const columns = [
+  const columns: IGridColDef[] = [
     {
       field: "QR",
       headerName: "QR",
@@ -36,17 +34,28 @@ export default function InheritanceCases() {
       field: "registryNumber",
       headerName: "Registry number",
       width: 210,
+      sortable: false,
+      filter: {
+        type: "simple",
+      },
     },
     {
       field: "pin",
       headerName: t("PIN of the deceased"),
       width: 210,
+      filter: {
+        type: "simple",
+      },
       sortable: false,
     },
     {
       field: "fullName",
       headerName: t("Full name of the deceased"),
       width: 270,
+      filter: {
+        type: "simple",
+      },
+      sortable: false,
     },
     {
       field: "dateOfBirth",
@@ -243,13 +252,9 @@ export default function InheritanceCases() {
     }
   };
 
-  const toggleFilter = () => {
-    setFilterVisible((prevValue) => !prevValue);
-  };
-
   return (
     <>
-      <Typography typography="h4" color={"#1BAA75"}>
+      <Typography typography="h4" color="primary">
         {t("Register of inheritance cases")}
       </Typography>
       <Grid
@@ -266,79 +271,47 @@ export default function InheritanceCases() {
           <SearchBar onChange={handleSearchInputChange} value={searchQuery} />
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3} sx={{ display: { xs: "none", sm: "none", md: "unset" } }}>
+        <Grid item xs={12} sm={6} md={3}>
           <Button
             variant="outlined"
             color="success"
             sx={{
               height: "auto",
               gap: "10px",
+              fontSize: "14px",
               padding: "10px 22px",
+              width: { xs: "100%" },
               "&:hover": { color: "#F6F6F6" },
             }}
             fullWidth
             endIcon={<ExcelIcon />}
           >
-            <Typography fontWeight={600} fontSize={14}>
-              {t("Export to excel")}
-            </Typography>
+            {t("Export to excel")}
           </Button>
         </Grid>
       </Grid>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", gap: "30px", alignItems: "center" }}>
-        <Button
-          variant="contained"
-          sx={{
-            gap: "10px",
-            boxShadow: "0px 10px 20px 0px #99DBAF",
-            width: { xs: "100%", sm: "100%", md: "243px" },
-            padding: "9.5px 0",
-          }}
-          onClick={toggleFilter}
-        >
-          <FilterAltOffIcon />
-          <Typography fontWeight={600} fontSize={15}>
-            {filterVisible ? t("Collapse filter") : t("Expand filter")}
-          </Typography>
-        </Button>
-
-        <Box sx={{ display: { xs: "none", sm: "none", md: "flex" }, gap: "20px", alignItems: "center" }}>
-          <Typography fontSize={16} fontWeight={600}>
-            {t("Sorting for")}:
-          </Typography>
-          <Select
-            data={selectSortData}
-            name="select-sort"
-            defaultValue={selectedYear}
-            selectType="primary"
-            sx={{ width: "180px", height: "44px" }}
-            fullWidth
-            onChange={(event: React.ChangeEvent<{ value: unknown }>) => handleSortByYear(event.target.value as string)}
-          />
-        </Box>
+      <Box
+        sx={{
+          display: { xs: "none", sm: "none", md: "flex" },
+          gap: "20px",
+          alignItems: "center",
+          justifyContent: "flex-end",
+        }}
+      >
+        <Typography fontSize={16} fontWeight={600}>
+          {t("Sorting for")}:
+        </Typography>
+        <Select
+          data={selectSortData}
+          name="select-sort"
+          defaultValue={selectedYear}
+          selectType="primary"
+          sx={{ width: "180px", height: "44px" }}
+          fullWidth
+          onChange={(event: React.ChangeEvent<{ value: unknown }>) => handleSortByYear(event.target.value as string)}
+        />
       </Box>
-
-      <Grid container spacing={{ xs: 2.5, sm: 2.5, md: 5 }} sx={{ display: filterVisible ? "flex" : "none" }}>
-        <Grid item xs={12} sm={12} md={4}>
-          <InputLabel htmlFor="input-number" sx={{ fontSize: "14px", fontWeight: "500", color: "#24334B" }}>
-            {t("Registry number")}
-          </InputLabel>
-          <Input placeholder={t("Enter number")} variant="outlined" name="input-nubmer" fullWidth />
-        </Grid>
-        <Grid item xs={12} sm={12} md={4}>
-          <InputLabel htmlFor="input-pin" sx={{ fontSize: "14px", fontWeight: "500", color: "#24334B" }}>
-            {t("PIN of the deceased")}
-          </InputLabel>
-          <Input placeholder={t("Enter PIN")} variant="outlined" name="input-pin" fullWidth />
-        </Grid>
-        <Grid item xs={12} sm={12} md={4}>
-          <InputLabel htmlFor="input-full-name" sx={{ fontSize: "14px", fontWeight: "500", color: "#24334B" }}>
-            {t("Full name of the deceased")}
-          </InputLabel>
-          <Input placeholder={t("Enter full name")} variant="outlined" name="input-full-name" fullWidth />
-        </Grid>
-      </Grid>
 
       <Box sx={{ display: { xs: "block", sm: "block", md: "none" } }}>
         <InputLabel htmlFor="select-sort" sx={{ fontSize: "16px", fontWeight: "600", color: "#24334B" }}>

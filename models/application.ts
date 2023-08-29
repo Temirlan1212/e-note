@@ -1,18 +1,19 @@
 import { ICompany } from "./company";
-import { IUserData } from "@/models/user-data";
+import { IProduct } from "./product";
+import { IPartner, IUserData } from "./user";
 
 export interface IApplication {
-  product: {
-    fullName: string;
-  };
   id: number;
   version: number;
-  company: ICompany;
-  typeNotarialAction: number;
-  createdOn: Date | string;
+  $version: number;
   statusSelect: number;
+  typeNotarialAction: number;
+  creationDate: string;
   notaryUniqNumber: string;
   notarySignatureStatus: number;
-  members: IUserData[];
-  requester: IUserData[];
+  createdBy: IUserData;
+  company: ICompany;
+  product: IProduct;
+  requester: IPartner[];
+  members: IPartner[];
 }

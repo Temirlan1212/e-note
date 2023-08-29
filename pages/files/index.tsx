@@ -13,7 +13,12 @@ export default function Files() {
         <title>{t("Files")}</title>
       </Head>
 
-      <Container maxWidth="xl">
+      <Container
+        maxWidth="xl"
+        sx={{
+          py: "30px",
+        }}
+      >
         <FileList />
       </Container>
     </>

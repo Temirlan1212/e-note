@@ -12,7 +12,7 @@ import ApplicationStatusView from "./ApplicationStatusView";
 import useFetch from "@/hooks/useFetch";
 
 interface IApplicationStatusInfoContentProps {
-  id: string | string[] | undefined;
+  id?: number;
 }
 
 const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (props) => {
