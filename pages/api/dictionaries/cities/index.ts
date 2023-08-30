@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { districtId } = req.query;
+  const { districtId, regionId } = req.query;
 
   if (req.method !== "GET") {
     return res.status(400).json(null);
@@ -9,7 +9,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const criteria = [];
 
-  if (districtId != null && typeof districtId === "string") {
+  if (regionId != null && typeof regionId === "string") {
+    criteria.push({
+      fieldName: "region.id",
+      operator: "=",
+      value: !Number.isNaN(parseInt(regionId)) ? parseInt(regionId) : 0,
+    });
+  }
+
+  if (districtId != null && typeof districtId === "string" && districtId !== "undefined") {
     criteria.push({
       fieldName: "district.id",
       operator: "=",
@@ -24,8 +32,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      fields: ["id", "version", "name", "district.id", "zip"],
+      fields: ["id", "version", "name", "district.id", "region.id", "zip"],
       data: {
+        operator: "and",
         criteria,
       },
     }),

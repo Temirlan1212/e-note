@@ -36,7 +36,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
     "GET"
   );
   const { data: cityDictionary, loading: cityDictionaryLoading } = useFetch(
-    district != null ? `/api/dictionaries/cities?districtId=${district.id}` : "",
+    region != null ? `/api/dictionaries/cities?regionId=${region.id}&districtId=${district?.id}` : "",
     "GET"
   );
 
@@ -123,7 +123,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
                 labelField={getLabelField(cityDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!district}
+                disabled={!region}
                 options={cityDictionary?.status === 0 ? (cityDictionary?.data as Record<string, any>[]) ?? [] : []}
                 loading={cityDictionaryLoading}
                 value={
