@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 import { Box } from "@mui/material";
 import Button from "@/components/ui/Button";
@@ -7,11 +8,25 @@ import CreateIcon from "@mui/icons-material/Create";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import FingerprintScanner from "@/components/ui/FingerprintScanner";
 
+type IWindow = Window &
+  typeof globalThis & {
+    JCWebClient2?: Record<string, any>;
+  };
+
 export default function SignModal() {
   const [state, setState] = useState<"error" | "success" | "primary" | "signed">("primary");
   const [isSigned, setIsSigned] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [jc, setJc] = useState<Record<string, any> | null>(null);
   const t = useTranslations();
+
+  useEffectOnce(() => {
+    const w = window as IWindow;
+    if (w.JCWebClient2 != null) {
+      w.JCWebClient2?.initialize();
+      setJc(w.JCWebClient2 ?? null);
+    }
+  });
 
   const handleState = () => {
     setLoading(true);
@@ -23,6 +38,16 @@ export default function SignModal() {
   const handleSign = () => {
     setIsSigned(true);
     setState("signed");
+    const slots = jc?.getAllSlots();
+    console.log(slots);
+    const tokenInfo = jc?.getTokenInfo({
+      args: {
+        tokenID: slots[0].id,
+      },
+    });
+    console.log(tokenInfo, slots?.[0].id);
+    const containers = jc?.getContainerList(slots?.[0].id);
+    console.log(containers);
   };
 
   const handleToggle = () => {
