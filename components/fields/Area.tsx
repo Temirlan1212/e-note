@@ -36,7 +36,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
     "GET"
   );
   const { data: cityDictionary, loading: cityDictionaryLoading } = useFetch(
-    region != null ? `/api/dictionaries/cities?regionId=${region.id}&districtId=${district?.id}` : "",
+    region != null ? `/api/dictionaries/cities?regionId=${region.id}&districtId=${district?.id ?? ""}` : "",
     "GET"
   );
 

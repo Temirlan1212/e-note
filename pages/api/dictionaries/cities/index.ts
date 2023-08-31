@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const criteria = [];
 
-  if (regionId != null && typeof regionId === "string") {
+  if (typeof regionId === "string" && regionId !== "") {
     criteria.push({
       fieldName: "region.id",
       operator: "=",
@@ -17,13 +17,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
-  if (districtId != null && typeof districtId === "string" && districtId !== "undefined") {
+  if (typeof districtId === "string" && districtId !== "") {
     criteria.push({
       fieldName: "district.id",
       operator: "=",
       value: !Number.isNaN(parseInt(districtId)) ? parseInt(districtId) : 0,
     });
   }
+
+  console.log(criteria);
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.City/search", {
     method: "POST",
