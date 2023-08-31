@@ -6,11 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "test": "",
+    "lint": "tsc --noemit && next lint",
     "prepare": "husky install"
   },
   "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": "eslint --fix",
     "**/*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
