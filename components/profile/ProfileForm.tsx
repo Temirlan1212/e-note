@@ -2,8 +2,17 @@ import React, { useRef, useState } from "react";
 
 import { useTranslations } from "next-intl";
 import { PermIdentity } from "@mui/icons-material";
-import { Avatar, Box, CircularProgress, Divider, FormControl, InputLabel, Typography } from "@mui/material";
-import { useForm } from "react-hook-form";
+import {
+  Avatar,
+  Box,
+  CircularProgress,
+  Divider,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  Typography,
+} from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
 
 import Button from "../ui/Button";
 import Input from "../ui/Input";
@@ -16,6 +25,8 @@ import { IUserData } from "@/models/user";
 
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
+import { MuiTelInput } from "mui-tel-input";
+import TelInput from "../ui/TelInput";
 
 interface IProfileFormProps {}
 
@@ -40,6 +51,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [mobilePhone, setMobilePhone] = useState<string | undefined>("");
 
   const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
     returnResponse: true,
@@ -61,6 +73,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
     setImagePreview(url);
     setSelectedImage(convertedFile);
+    setMobilePhone(userData?.["partner.mobilePhone"]);
   }, [imageData]);
 
   const form = useForm<IUserProfile>({
@@ -79,6 +92,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     formState: { errors },
     setError,
     reset,
+    control,
   } = form;
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -344,25 +358,32 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               />
             </FormControl>
             <FormControl sx={{ width: "100%" }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Phone number")}
-              </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.mobilePhone?.message ?? false}
-                helperText={errors.mobilePhone?.message ? t(errors.mobilePhone?.message) : ""}
-                register={form.register}
+              <Controller
+                control={control}
                 name="mobilePhone"
+                defaultValue={mobilePhone}
+                render={({ field, fieldState }) => (
+                  <>
+                    <InputLabel
+                      sx={{
+                        color: "#24334B",
+                        fontSize: "18px",
+                        top: "10px",
+                        left: "-14px",
+                        fontWeight: "500",
+                        position: "inherit",
+                      }}
+                      shrink
+                    >
+                      {t("Phone number")}
+                    </InputLabel>
+                    <TelInput
+                      inputType={errors.mobilePhone?.message ? "error" : "success"}
+                      helperText={errors.mobilePhone?.message ? t(errors.mobilePhone?.message) : ""}
+                      {...field}
+                    />
+                  </>
+                )}
               />
             </FormControl>
           </Box>
