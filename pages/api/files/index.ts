@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const criteria = Object.entries(req.body?.criteriaValue ?? {}).reduce((acc: Record<string, any>[], [key, value]) => {
     if (value && key) {
-      acc.push({ fieldName: key, operator: "=", value: value });
+      acc.push({ fieldName: key, operator: "=", value });
     }
     return acc;
   }, []);
