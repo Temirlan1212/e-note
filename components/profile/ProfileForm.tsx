@@ -2,17 +2,8 @@ import React, { useRef, useState } from "react";
 
 import { useTranslations } from "next-intl";
 import { PermIdentity } from "@mui/icons-material";
-import {
-  Avatar,
-  Box,
-  CircularProgress,
-  Divider,
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  Typography,
-} from "@mui/material";
-import { useForm, Controller } from "react-hook-form";
+import { Avatar, Box, CircularProgress, Divider, FormControl, InputLabel, Typography } from "@mui/material";
+import { useForm } from "react-hook-form";
 
 import Button from "../ui/Button";
 import Input from "../ui/Input";
@@ -25,9 +16,7 @@ import { IUserData } from "@/models/user";
 
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
-import { MuiTelInput } from "mui-tel-input";
 import TelInput from "../ui/TelInput";
-import Contact from "../fields/Contact";
 
 interface IProfileFormProps {}
 
@@ -93,7 +82,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     formState: { errors },
     setError,
     reset,
-    control,
   } = form;
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -333,7 +321,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             display="flex"
             gap="20px"
             sx={{
-              width: "100%",
               flexDirection: {
                 xs: "column",
                 sm: "row",
@@ -382,11 +369,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 helperText={errors.mobilePhone?.message ? t(errors.mobilePhone?.message) : ""}
                 value={mobilePhone}
                 name="mobilePhone"
-                onChange={(value) => {
-                  if (typeof value === "string") {
-                    handleMobilePhoneChange(value);
-                  }
-                }}
+                onChange={(value) => typeof value === "string" && handleMobilePhoneChange(value)}
               />
             </FormControl>
           </Box>
