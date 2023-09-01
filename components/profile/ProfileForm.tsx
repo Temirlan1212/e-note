@@ -20,13 +20,14 @@ import ProfilePasswordForm from "./ProfilePasswordForm";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { userProfileSchema } from "@/validator-schemas/profile";
-import { useProfileStore } from "@/stores/profile";
+import { IProfileState, useProfileStore } from "@/stores/profile";
 import { IUserData } from "@/models/user";
 
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { MuiTelInput } from "mui-tel-input";
 import TelInput from "../ui/TelInput";
+import Contact from "../fields/Contact";
 
 interface IProfileFormProps {}
 
@@ -46,7 +47,7 @@ async function blobToFile(blob: Blob, fileName: string): Promise<File> {
 }
 
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
-  const profile = useProfileStore((state) => state);
+  const profile = useProfileStore<IProfileState>((state) => state);
   const userData: IExtendedUserData | null = profile.getUserData();
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -121,7 +122,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             partner: {
               id: userData?.partner.id,
               version: userData?.partner.$version,
-              mobilePhone: data.mobilePhone,
+              mobilePhone: mobilePhone,
             },
           }).then((res) => {
             if (res.ok) {
@@ -146,7 +147,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           partner: {
             id: userData?.partner.id,
             version: userData?.partner.$version,
-            mobilePhone: data.mobilePhone,
+            mobilePhone: mobilePhone,
           },
         }).then((res) => {
           if (res.ok) {
@@ -169,6 +170,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const handleDeleteClick = () => {
     setSelectedImage(null);
     setImagePreview(null);
+  };
+
+  const handleMobilePhoneChange = (newPhoneNumber: string) => {
+    setMobilePhone(newPhoneNumber);
   };
 
   return (
@@ -328,6 +333,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             display="flex"
             gap="20px"
             sx={{
+              width: "100%",
               flexDirection: {
                 xs: "column",
                 sm: "row",
@@ -358,32 +364,29 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               />
             </FormControl>
             <FormControl sx={{ width: "100%" }}>
-              <Controller
-                control={control}
+              <InputLabel
+                sx={{
+                  color: "#24334B",
+                  fontSize: "18px",
+                  top: "10px",
+                  left: "-14px",
+                  fontWeight: "500",
+                  position: "inherit",
+                }}
+                shrink
+              >
+                {t("Phone number")}
+              </InputLabel>
+              <TelInput
+                inputType={errors.mobilePhone?.message ? "error" : mobilePhone ? "secondary" : "success"}
+                helperText={errors.mobilePhone?.message ? t(errors.mobilePhone?.message) : ""}
+                value={mobilePhone}
                 name="mobilePhone"
-                defaultValue={mobilePhone}
-                render={({ field, fieldState }) => (
-                  <>
-                    <InputLabel
-                      sx={{
-                        color: "#24334B",
-                        fontSize: "18px",
-                        top: "10px",
-                        left: "-14px",
-                        fontWeight: "500",
-                        position: "inherit",
-                      }}
-                      shrink
-                    >
-                      {t("Phone number")}
-                    </InputLabel>
-                    <TelInput
-                      inputType={errors.mobilePhone?.message ? "error" : "success"}
-                      helperText={errors.mobilePhone?.message ? t(errors.mobilePhone?.message) : ""}
-                      {...field}
-                    />
-                  </>
-                )}
+                onChange={(value) => {
+                  if (typeof value === "string") {
+                    handleMobilePhoneChange(value);
+                  }
+                }}
               />
             </FormControl>
           </Box>

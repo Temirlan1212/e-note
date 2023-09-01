@@ -11,7 +11,7 @@ enum types {
 export type IFileInputProps = MuiTelInputProps & {
   inputType?: keyof typeof types;
   value?: File | File[] | null | string;
-  onChange?: (file: File | File[] | null) => void;
+  onChange?: (file: File | File[] | null | string) => void;
 };
 
 export default forwardRef<HTMLDivElement, IFileInputProps>(function FileInput(
