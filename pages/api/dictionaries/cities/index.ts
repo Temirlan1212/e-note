@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { districtId } = req.query;
+  const { districtId, regionId } = req.query;
 
   if (req.method !== "GET") {
     return res.status(400).json(null);
@@ -9,13 +9,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const criteria = [];
 
-  if (districtId != null && typeof districtId === "string") {
+  if (typeof regionId === "string" && regionId !== "") {
+    criteria.push({
+      fieldName: "region.id",
+      operator: "=",
+      value: !Number.isNaN(parseInt(regionId)) ? parseInt(regionId) : 0,
+    });
+  }
+
+  if (typeof districtId === "string" && districtId !== "") {
     criteria.push({
       fieldName: "district.id",
       operator: "=",
       value: !Number.isNaN(parseInt(districtId)) ? parseInt(districtId) : 0,
     });
   }
+
+  console.log(criteria);
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.City/search", {
     method: "POST",
@@ -24,8 +34,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      fields: ["id", "version", "name", "district.id", "zip"],
+      fields: ["id", "version", "name", "district.id", "region.id", "zip"],
       data: {
+        operator: "and",
         criteria,
       },
     }),

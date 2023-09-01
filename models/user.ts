@@ -47,6 +47,12 @@ export interface IPartner {
   emailAddress: IEmail;
   mainAddress: IAddress;
   actualResidenceAddress: IAddress;
+  firstName: string;
+  notaryPosition: string;
+  "emailAddress.address": string;
+  simpleFullName: string;
+  notaryWorkOrder: string;
+  notaryCriminalRecord: string;
 }
 
 export interface IUserGroup {

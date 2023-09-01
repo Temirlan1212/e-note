@@ -3,11 +3,8 @@ import { ValueOf } from "next/dist/shared/lib/constants";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { IActionType } from "@/models/action-type";
-import { IUserData } from "@/models/user";
 import { IStatus } from "@/models/application-status";
-import { useProfileStore } from "@/stores/profile";
 import useFetch from "@/hooks/useFetch";
-import useEffectOnce from "@/hooks/useEffectOnce";
 import { Box, Typography } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import PostAddIcon from "@mui/icons-material/PostAdd";
@@ -16,7 +13,7 @@ import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import Pagination from "@/components/ui/Pagination";
 import Link from "@/components/ui/Link";
 import { ApplicationListActions } from "./ApplicationListActions";
-import QrCode2Icon from "@mui/icons-material/QrCode2";
+import { ApplicationListQRMenu } from "./ApplicationListQRMenu";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -31,13 +28,10 @@ export default function ApplicationList() {
   const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
   const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
   const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
-  const [user, setUser] = useState<IUserData | null>();
-
-  const userData: IUserData | null = useProfileStore((state) => state.getUserData());
-
-  useEffectOnce(() => {
-    setUser(userData);
-  }, [userData]);
+  const { data: executorData } = useFetch(
+    "/api/dictionaries/selection/notary.filter.saleorder.by.performer.type.select",
+    "POST"
+  );
 
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,
@@ -108,11 +102,11 @@ export default function ApplicationList() {
     <Box height={{ xs: "600px", md: "700px" }}>
       <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
         <Typography variant="h4" color="primary">
-          {user?.group.id === 4 ? t("Notarial actions") : t("Your applications")}
+          {t("Notarial actions")}
         </Typography>
         <Link href="applications/create">
           <Button sx={{ py: "10px", px: "20px" }} component="label" startIcon={<PostAddIcon />}>
-            {user?.group.id === 4 ? t("Create notarial action") : t("Create application")}
+            {t("Create")}
           </Button>
         </Link>
       </Box>
@@ -124,7 +118,8 @@ export default function ApplicationList() {
             headerName: "QR",
             width: 90,
             sortable: false,
-            renderCell: (params: any) => <QrCode2Icon />,
+            type: "actions",
+            renderCell: (params: any) => <ApplicationListQRMenu params={params} />,
           },
           {
             field: "typeNotarialAction",
@@ -192,11 +187,18 @@ export default function ApplicationList() {
             sortable: true,
           },
           {
-            field: "company.name",
-            headerName: "Notary",
+            field: "createdBy.fullName",
+            headerName: "Executor",
             width: 200,
             sortable: false,
-            cellClassName: "notaryColumn",
+            filter: {
+              data: executorData?.data ?? [],
+              labelField: locale === "ru" || locale === "kg" ? "title_ru" : "title",
+              valueField: "value",
+              type: "dictionary",
+              field: "createdBy.fullName",
+            },
+            cellClassName: "executorColumn",
           },
           {
             field: "actions",
@@ -214,7 +216,7 @@ export default function ApplicationList() {
         loading={loading}
         sx={{
           height: "100%",
-          ".notaryColumn": {
+          ".executorColumn": {
             color: "success.main",
           },
         }}

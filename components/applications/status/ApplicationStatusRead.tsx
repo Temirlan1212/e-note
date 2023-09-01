@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from "react";
+import React, { FC } from "react";
 
 import { Box, List, ListItem, Typography } from "@mui/material";
 import { useLocale, useTranslations } from "next-intl";

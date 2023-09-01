@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Controller, UseFormReturn } from "react-hook-form";
-import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
+import { UseFormReturn } from "react-hook-form";
+import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box, Typography } from "@mui/material";
@@ -10,7 +10,9 @@ import PDFViewer from "@/components/PDFViewer";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import EditIcon from "@mui/icons-material/Edit";
 import Link from "@/components/ui/Link";
+import SignModal from "@/components/applications/SignModal";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
@@ -27,9 +29,7 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
 
   const id = watch("id");
 
-  const [iframeContent, setIframeContent] = useState("");
-
-  const { data } = useFetch(id != null ? `/api/files/prepare/${id}` : "", "GET");
+  const { data, loading } = useFetch(id != null ? `/api/files/prepare/${id}` : "", "GET");
 
   useEffectOnce(async () => {
     if (data?.data?.saleOrderVersion != null) {
@@ -51,53 +51,39 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
   };
 
   return (
-    <Box display="flex" gap="20px">
-      <StepperContentStep onlyCurrentStep currentStep={6} />
-      <Box
-        width="100%"
-        display="flex"
-        gap="30px"
-        flexDirection="column"
-        sx={{
-          marginTop: { xs: "0", md: "16px" },
-        }}
-      >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          gap={{ xs: "20px", md: "200px" }}
-          flexDirection={{ xs: "column", md: "row" }}
-        >
-          <Typography variant="h4" whiteSpace="nowrap">
-            {t("View document")}
-          </Typography>
+    <Box display="flex" gap="20px" flexDirection="column">
+      <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", lg: "row" }}>
+        <StepperContentStep step={6} title={t("View document")} loading={loading} />
 
-          <Link
-            href={`/api/iframe?url=${data?.data?.downloadUrl}&token=${data?.data?.token}`}
-            download={data?.data?.fileName}
-            target="_blank"
-          >
-            <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
-              {t("Download PDF")}
-            </Button>
-          </Link>
-        </Box>
+        {!loading && data?.data?.token && (
+          <Box display="flex" gap="10px" flexDirection={{ xs: "column", md: "row" }}>
+            <Link
+              href={`/api/iframe?url=${data?.data?.downloadUrl}&token=${data?.data?.token}`}
+              download={data?.data?.fileName}
+              target="_blank"
+            >
+              <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
+                {t("Download PDF")}
+              </Button>
+            </Link>
 
-        {data?.data?.token != null && (
-          <Link
-            href={
-              process.env.NEXT_PUBLIC_NEXTCLOUD_URL +
-              `/notarynew/index.php/auth-redirect?redirectUrl=${data?.data
-                ?.editUrl}&authorizationBasic=${data?.data?.token.replace(/Basic /, "")}`
-            }
-            target="_blank"
-          >
-            ok
-          </Link>
+            <Link
+              href={`${data?.data?.editUrl}?AuthorizationBasic=${data?.data?.token.replace(/Basic /, "")}`}
+              target="_blank"
+            >
+              <Button startIcon={<EditIcon />} sx={{ width: "auto" }}>
+                {t("Edit")}
+              </Button>
+            </Link>
+
+            <SignModal />
+          </Box>
         )}
+      </Box>
 
-        <PDFViewer fileUrl="/documents/example.pdf" />
+      {!loading && data?.data?.downloadUrl && <PDFViewer fileUrl="/documents/example.pdf" />}
 
+      {!loading && (
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
           {onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
@@ -110,7 +96,7 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
             </Button>
           )}
         </Box>
-      </Box>
+      )}
     </Box>
   );
 }

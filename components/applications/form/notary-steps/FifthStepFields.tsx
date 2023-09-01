@@ -9,7 +9,7 @@ import {
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Grid, InputLabel, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -167,7 +167,7 @@ const getDynamicGroupName = (group: Record<string, any>, locale: string | undefi
 
 const getDynamicName = (path: string | null, name: string | null) => {
   if (path != null && name != null) {
-    const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson)(?:\.|$)/;
+    const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)(?:\.|$)/;
     if (regex.test(path)) {
       const index = 0;
       return `${path}.${index}.${name}`;
@@ -252,29 +252,24 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
     if (onPrev != null) onPrev();
   };
 
-  if (documentTemplateLoading || selectionLoading) return <></>;
-
   return (
-    <Box display="flex" gap="20px">
-      <StepperContentStep currentStep={5} stepNext={6} stepNextTitle={"View document"} />
-      <Box
-        display="flex"
-        gap="30px"
-        flexDirection="column"
-        width="100%"
-        sx={{
-          marginTop: { xs: "0", md: "16px" },
-          paddingBottom: { xs: "0", md: "90px" },
-        }}
-      >
-        <Box display="flex" flexDirection="column" gap="30px">
-          {documentTemplateData?.data &&
-            documentTemplateData?.data.map((group: Record<string, any>, index: number) => (
-              <Box display="flex" flexDirection="column" gap="20px" key={index}>
-                <Typography variant="h4">{getDynamicGroupName(group, locale)}</Typography>
+    <Box display="flex" gap="20px" flexDirection="column">
+      <StepperContentStep
+        step={5}
+        title={t("Additional information")}
+        loading={documentTemplateLoading || selectionLoading}
+      />
 
-                <Grid key={index} container spacing={2}>
-                  {group?.fields?.map((item: Record<string, any>, index: number) => (
+      <Box display="flex" flexDirection="column" gap="30px">
+        {documentTemplateData?.data &&
+          documentTemplateData?.data.map((group: Record<string, any>, index: number) => (
+            <Box display="flex" flexDirection="column" gap="20px" key={index}>
+              <Typography variant="h4">{getDynamicGroupName(group, locale)}</Typography>
+
+              <Grid key={index} container spacing={2}>
+                {group?.fields
+                  ?.sort((a: any, b: any) => Number(a?.sequence ?? 0) - Number(b?.sequence ?? 0))
+                  .map((item: Record<string, any>, index: number) => (
                     <Grid item md={12} key={index}>
                       <Controller
                         control={control}
@@ -297,7 +292,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
 
                           return (
                             <Box display="flex" flexDirection="column" gap="10px">
-                              <InputLabel>{item?.fieldTitles?.[locale ?? ""] ?? ""}</InputLabel>
+                              <Typography>{item?.fieldTitles?.[locale ?? ""] ?? ""}</Typography>
                               {getDynamicComponent(item.fieldType, {
                                 locale: locale ?? "ru",
                                 field,
@@ -312,11 +307,12 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
                       />
                     </Grid>
                   ))}
-                </Grid>
-              </Box>
-            ))}
-        </Box>
+              </Grid>
+            </Box>
+          ))}
+      </Box>
 
+      {!documentTemplateLoading && !selectionLoading && (
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
           {onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
@@ -327,7 +323,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
             {t("Next")}
           </Button>
         </Box>
-      </Box>
+      )}
     </Box>
   );
 }
