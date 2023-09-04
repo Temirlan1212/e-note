@@ -8,6 +8,7 @@
   "Action type": "Вид действия",
   "Document type": "Вид документа",
   "Object type": "Вид объекта",
+  "Object": "Объект",
   "Actions": "Выполнить действие",
   "In my templates": "В Мои шаблоны",
   "New application": "Новая заявка",
@@ -23,5 +24,8 @@
   "Resolution on the appointment of an expert examination": "Постановление о назначении экспертизы",
   "Apartments": "Квартира",
   "Salary": "Заработная плата",
-  "Residential building": "Жилой дом"
+  "Residential building": "Жилой дом",
+  "Select action": "Выбрать действие",
+  "Create new template": "Создать новый шаблон",
+  "Hand templates": "Ручные шаблоны"
 }

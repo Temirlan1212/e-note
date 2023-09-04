@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import useEffectOnce from "./useEffectOnce";
 import { useProfileStore } from "@/stores/profile";
+import useNotificationStore from "@/stores/notification";
 
 const cache: Record<string, { date: Date; data: any }> = {};
 
@@ -28,6 +29,7 @@ export default function useFetch<T = FetchResponseBody>(
 ) {
   const router = useRouter();
   const profile = useProfileStore.getState();
+  // const setNotification = useNotificationStore((state) => state.setNotification);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<FetchError | null>(null);
@@ -85,6 +87,8 @@ export default function useFetch<T = FetchResponseBody>(
           profile.logOut();
           return router.push("/login");
         }
+
+        // setNotification(error.message);
       })
       .finally(() => setLoading(false));
   };

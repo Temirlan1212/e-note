@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useProfileStore } from "@/stores/profile";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
-import { IUser } from "@/models/profile/user";
+import { IUser } from "@/models/user";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";

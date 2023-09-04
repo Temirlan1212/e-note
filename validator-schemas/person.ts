@@ -15,16 +15,17 @@ export const personSchema = object().shape({
   lastName: string()
     .trim()
     .required("required")
-    .matches(/^[aA-zZаА-яЯ\s]*$/, "onlyLetters"),
+    .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
   name: string()
     .trim()
     .required("required")
-    .matches(/^[aA-zZаА-яЯ\s]*$/, "onlyLetters"),
+    .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
   middleName: string()
     .trim()
-    .matches(/^[aA-zZаА-яЯ\s]*$/, "onlyLetters"),
+    .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
   personalNumber: string()
     .trim()
+    .min(6, "minNumbers")
     .required("required")
     .matches(/^[0-9]*$/, "onlyNumbers"),
   birthDate: date().nullable(),
@@ -60,4 +61,60 @@ export const personSchema = object().shape({
     .trim()
     .required("required")
     .matches(/^[0-9\+\-\s]*$/, "onlyNumbers"),
+  nameOfCompanyOfficial: string()
+    .trim()
+    .when("partnerTypeSelect", {
+      is: 1,
+      then: (schema) => schema.required("required"),
+      otherwise: (schema) => schema.nullable(),
+    }),
+  nameOfCompanyGov: string()
+    .trim()
+    .when("partnerTypeSelect", {
+      is: 1,
+      then: (schema) => schema.required("required"),
+      otherwise: (schema) => schema.nullable(),
+    }),
+  representativesName: string()
+    .trim()
+    .when("partnerTypeSelect", {
+      is: 1,
+      then: (schema) => schema.required("required"),
+      otherwise: (schema) => schema.nullable(),
+    }),
+  notaryRegistrationNumber: number()
+    .integer()
+    .when("partnerTypeSelect", {
+      is: 1,
+      then: (schema) => schema.required("required"),
+      otherwise: (schema) => schema.nullable(),
+    }),
+  notaryOKPONumber: number()
+    .integer()
+    .when("partnerTypeSelect", {
+      is: 1,
+      then: (schema) => schema.required("required"),
+      otherwise: (schema) => schema.nullable(),
+    }),
+  notaryPhysicalParticipantsQty: number()
+    .integer()
+    .when("partnerTypeSelect", {
+      is: 1,
+      then: (schema) => schema.required("required"),
+      otherwise: (schema) => schema.nullable(),
+    }),
+  notaryLegalParticipantsQty: number()
+    .integer()
+    .when("partnerTypeSelect", {
+      is: 1,
+      then: (schema) => schema.required("required"),
+      otherwise: (schema) => schema.nullable(),
+    }),
+  notaryTotalParticipantsQty: number()
+    .integer()
+    .when("partnerTypeSelect", {
+      is: 1,
+      then: (schema) => schema.required("required"),
+      otherwise: (schema) => schema.nullable(),
+    }),
 });

@@ -6,7 +6,7 @@ import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema, applicationSchema } from "@/validator-schemas/application";
 import { IApplication } from "@/models/application";
 import { useProfileStore } from "@/stores/profile";
-import { IUserData } from "@/models/profile/user";
+import { IUserData } from "@/models/user";
 import { Box, Step, StepIcon, Stepper, StepConnector, Skeleton } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
@@ -16,12 +16,14 @@ import ThirdStepFields from "./steps/ThirdStepFields";
 import FourthStepFields from "./steps/FourthStepFields";
 import FifthStepFields from "./steps/FifthStepFields";
 import SixthStepFields from "./steps/SixthStepFields";
+import SuccessStepFields from "./steps/SuccessStepFields";
 import NotaryFirstStepFields from "./notary-steps/FirstStepFields";
 import NotarySecondStepFields from "./notary-steps/SecondStepFields";
 import NotaryThirdStepFields from "./notary-steps/ThirdStepFields";
 import NotaryFourthStepFields from "./notary-steps/FourthStepFields";
 import NotaryFifthStepFields from "./notary-steps/FifthStepFields";
 import NotarySixthStepFields from "./notary-steps/SixthStepFields";
+import NotarySuccessStepFields from "./notary-steps/SuccessStepFields";
 import { useRouter } from "next/router";
 import useNavigationConfirmation from "@/hooks/useNavigationConfirmation";
 
@@ -40,7 +42,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const { data, update } = useFetch("", "POST");
   const {
     data: dynamicFormAppData,
-    update: getDynamicFormAppData,
+    update: updateDynamicFormAppData,
     loading: dynamicFormAppLoading,
   } = useFetch("", "POST");
 
@@ -71,57 +73,101 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     setLoading(false);
   });
 
+  const getDynamicFormAppData = async () => {
+    const productId = form.watch("product.id");
+    const { data } = await getDocumentTemplateData(`/api/dictionaries/document-type/template/${productId}`);
+
+    if (Array.isArray(data) && data.length > 0 && id) {
+      const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
+      let related: Record<string, string[]> = {};
+      let fields: string[] = [];
+      const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)\b/;
+
+      fieldsProps.map((fieldProps: Record<string, any>) => {
+        const fieldName = fieldProps?.fieldName ?? "";
+        const match = fieldProps?.path?.match(regex);
+
+        if (match) {
+          const relatedFields = related?.[match?.[0]] ?? [];
+          related[match?.[0] ?? ""] = [...relatedFields, fieldName];
+        } else {
+          const field = !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
+          fields.push(String(field));
+        }
+      });
+
+      updateDynamicFormAppData(`/api/applications/${id}`, { related, fields });
+    }
+  };
+
   const steps =
     userData?.group?.id === 4
       ? [
-          <NotaryFirstStepFields form={form} onNext={() => setStep(step + 1)} />,
-          // <NotarySecondStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-          <NotaryThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-          <NotaryFourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <NotaryFirstStepFields key={0} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
+          <NotarySecondStepFields
+            key={1}
+            form={form}
+            stepState={[step, setStep]}
+            onPrev={() => setStep(step - 1)}
+            onNext={getDynamicFormAppData}
+          />,
+          <NotaryThirdStepFields
+            key={2}
+            form={form}
+            stepState={[step, setStep]}
+            onPrev={() => setStep(step - 1)}
+            onNext={() => {
+              getDynamicFormAppData();
+              setStep(step + 1);
+            }}
+          />,
+          <NotaryFourthStepFields
+            key={3}
+            form={form}
+            stepState={[step, setStep]}
+            onPrev={() => setStep(step - 1)}
+            onNext={() => setStep(step + 1)}
+          />,
+
           <NotaryFifthStepFields
+            key={4}
             dynamicForm={dynamicForm}
             form={form}
+            stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
             onNext={() => setStep(step + 1)}
           />,
           <NotarySixthStepFields
+            key={5}
             form={form}
+            stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
-            onNext={() => router.push("/applications")}
+            onNext={() => setStep(step + 1)}
           />,
+          <NotarySuccessStepFields key={7} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
         ]
       : [
-          <FirstStepFields form={form} onNext={() => setStep(step + 1)} />,
+          <FirstStepFields key={0} form={form} onNext={() => setStep(step + 1)} />,
           <SecondStepFields
+            key={1}
             form={form}
             onPrev={() => setStep(step - 1)}
             onNext={async () => {
-              const { data } = await getDocumentTemplateData(
-                "/api/dictionaries/document-type/template/" + form.watch("product.id")
-              );
-
-              if (Array.isArray(data) && data.length > 0 && id) {
-                const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
-                const fields = fieldsProps.map((fieldProps: Record<string, any>) => {
-                  const fieldName = fieldProps?.fieldName ?? "";
-                  return !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
-                });
-
-                getDynamicFormAppData(`/api/applications/${id}`, { fields: fields });
-              }
-
+              getDynamicFormAppData();
               setStep(step + 1);
             }}
           />,
-          <ThirdStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-          <FourthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <ThirdStepFields key={2} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <FourthStepFields key={3} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
           <FifthStepFields
+            key={4}
             form={form}
             dynamicForm={dynamicForm}
             onPrev={() => setStep(step - 1)}
             onNext={() => setStep(step + 1)}
           />,
-          <SixthStepFields form={form} onPrev={() => setStep(step - 1)} onNext={() => router.push("/applications")} />,
+          <SixthStepFields key={5} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <SuccessStepFields key={7} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
         ];
 
   const onSubmit = async (data: IApplicationSchema) => {};
@@ -164,11 +210,13 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
         display="flex"
         flexDirection="column"
         gap="30px"
+        mb={3}
         p={2}
         boxShadow={4}
+        borderRadius={1}
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        {steps.map((component, index) => step === index && <Box key={index}>{component}</Box>)}
+        {steps.map((component, index) => step === index && component)}
       </Box>
     </Box>
   );

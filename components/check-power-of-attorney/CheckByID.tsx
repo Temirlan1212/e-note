@@ -7,11 +7,11 @@ import ShowRemind from "./ShowRemind";
 import NothingFound from "./NothingFound";
 import SearchBar from "@/components/ui/SearchBar";
 import Button from "@/components/ui/Button";
-import Input from "@components/ui/Input";
+import Input from "@/components/ui/Input";
 
 export default function CheckByID({ showRemind, closeRemind }: { showRemind: Boolean; closeRemind: Function }) {
   const [keywordValue, setKeywordValue] = useState("");
-  const [documentData, setDocumentData] = useState({});
+  const [documentData, setDocumentData] = useState<any>(null);
   const [documentFound, setDocumentFound] = useState(false);
   const t = useTranslations();
 
@@ -21,8 +21,9 @@ export default function CheckByID({ showRemind, closeRemind }: { showRemind: Boo
     setKeywordValue(event.target.value);
   };
 
-  const handleKeywordSearch = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
+  const handleKeywordSearch: React.MouseEventHandler<HTMLDivElement> &
+    ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void) = (event) => {
+    event.preventDefault();
     if (keywordValue.trim() === "") {
       setDocumentFound(false);
       return;
@@ -94,38 +95,38 @@ export default function CheckByID({ showRemind, closeRemind }: { showRemind: Boo
           >
             <Box sx={{ padding: documentPadding }}>
               <Typography fontWeight={600}>{t("Name")}</Typography>
-              <Typography fontWeight={400}>{t(`${documentData.name}`)}</Typography>
+              <Typography fontWeight={400}>{t(`${documentData?.name}`)}</Typography>
             </Box>
             <Box sx={{ padding: documentPadding }}>
               <Typography fontWeight={600}>{t("Type of notarial action")}</Typography>
-              <Typography fontWeight={400}>{t(`${documentData.name}`)}</Typography>
+              <Typography fontWeight={400}>{t(`${documentData?.name}`)}</Typography>
             </Box>
             <Box sx={{ padding: documentPadding }}>
               <Typography fontWeight={600}>{t("Status")}</Typography>
-              <Typography fontWeight={400}>{t(`${documentData.id}`)}</Typography>
+              <Typography fontWeight={400}>{t(`${documentData?.id}`)}</Typography>
             </Box>
             <Box sx={{ padding: documentPadding }}>
               <Typography fontWeight={600}>{t("Date of action")}</Typography>
-              <Typography fontWeight={400}>{t(`${documentData.phone}`)}</Typography>
+              <Typography fontWeight={400}>{t(`${documentData?.phone}`)}</Typography>
             </Box>
             <Box sx={{ padding: documentPadding }}>
               <Typography fontWeight={600}>{t("Full name of the notary")}</Typography>
-              <Typography fontWeight={400}>{t(`${documentData.name}`)}</Typography>
+              <Typography fontWeight={400}>{t(`${documentData?.name}`)}</Typography>
             </Box>
             <Box sx={{ padding: documentPadding }}>
               <Typography fontWeight={600}>{t("Unique registry number")}</Typography>
-              <Typography fontWeight={400}>{t(`${documentData.name}`)}</Typography>
+              <Typography fontWeight={400}>{t(`${documentData?.name}`)}</Typography>
             </Box>
             <Box sx={{ padding: documentPadding }}>
               <Typography fontWeight={600}>{t("Parties")}</Typography>
-              <Typography fontWeight={400}>{t(`${documentData.name}`)}</Typography>
+              <Typography fontWeight={400}>{t(`${documentData?.name}`)}</Typography>
             </Box>
             <Box sx={{ padding: documentPadding, display: "grid", gap: "8px" }}>
               <Typography fontWeight={600}>{t("Parties")}</Typography>
               <Typography fontWeight={500}>{t("Participant-1:")}</Typography>
-              <Typography fontWeight={400}>{t(`${documentData.name}`)}</Typography>
-              <Typography fontWeight={400}>{t(`${documentData.zipcode}`)}</Typography>
-              <Typography fontWeight={400}>{t(`${documentData.email}`)}</Typography>
+              <Typography fontWeight={400}>{t(`${documentData?.name}`)}</Typography>
+              <Typography fontWeight={400}>{t(`${documentData?.zipcode}`)}</Typography>
+              <Typography fontWeight={400}>{t(`${documentData?.email}`)}</Typography>
             </Box>
           </Box>
         </Box>

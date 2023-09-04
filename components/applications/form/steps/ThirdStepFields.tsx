@@ -12,8 +12,10 @@ import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import UploadFiles from "@/components/fields/UploadFiles";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
-interface IVersionFields {
+interface IBaseEntityFields {
+  id?: number;
   version?: number;
   $version?: number;
 }
@@ -43,6 +45,14 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
     pin: `requester.${index}.personalNumber`,
     birthDate: `requester.${index}.birthDate`,
     citizenship: `requester.${index}.citizenship`,
+    nameOfCompanyOfficial: `requester.${index}.nameOfCompanyOfficial`,
+    nameOfCompanyGov: `requester.${index}.nameOfCompanyGov`,
+    representativesName: `requester.${index}.representativesName`,
+    notaryRegistrationNumber: `requester.${index}.notaryRegistrationNumber`,
+    notaryOKPONumber: `requester.${index}.notaryOKPONumber`,
+    notaryPhysicalParticipantsQty: `requester.${index}.notaryPhysicalParticipantsQty`,
+    notaryLegalParticipantsQty: `requester.${index}.notaryLegalParticipantsQty`,
+    notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -111,7 +121,7 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("version", result.data[0].version);
 
-        const applicationData = await applicationFetch(`/api/applications/${values.id}`, {
+        const applicationData = await applicationFetch(`/api/applications/${result.data[0].id}`, {
           fields: ["version"],
           related: {
             requester: ["version", "emailAddress.version", "mainAddress.version", "actualResidenceAddress.version"],
@@ -121,26 +131,39 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
         if (applicationData?.status === 0 && applicationData?.data[0]?.id != null) {
           applicationData.data[0]?.requester?.map(
             (
-              item: IVersionFields & {
-                mainAddress?: IVersionFields;
-                actualResidenceAddress?: IVersionFields;
-                emailAddress?: IVersionFields;
+              item: IBaseEntityFields & {
+                mainAddress?: IBaseEntityFields;
+                actualResidenceAddress?: IBaseEntityFields;
+                emailAddress?: IBaseEntityFields;
               },
               index: number
             ) => {
+              setValue(`requester.${index}.id`, item.id);
               setValue(`requester.${index}.version`, item.version ?? item.$version);
-              setValue(
-                `requester.${index}.mainAddress.version`,
-                item.mainAddress?.version ?? item?.mainAddress?.$version
-              );
-              setValue(
-                `requester.${index}.actualResidenceAddress.version`,
-                item?.actualResidenceAddress?.version ?? item?.actualResidenceAddress?.$version
-              );
-              setValue(
-                `requester.${index}.emailAddress.version`,
-                item?.emailAddress?.version ?? item?.emailAddress?.$version
-              );
+
+              if (item.mainAddress?.id != null) {
+                setValue(`requester.${index}.mainAddress.id`, item.mainAddress.id);
+                setValue(
+                  `requester.${index}.mainAddress.version`,
+                  item.mainAddress?.version ?? item?.mainAddress?.$version
+                );
+              }
+
+              if (item.actualResidenceAddress?.id != null) {
+                setValue(`requester.${index}.actualResidenceAddress.id`, item.actualResidenceAddress.id);
+                setValue(
+                  `requester.${index}.actualResidenceAddress.version`,
+                  item.actualResidenceAddress?.version ?? item?.actualResidenceAddress?.$version
+                );
+              }
+
+              if (item.emailAddress?.id != null) {
+                setValue(`requester.${index}.emailAddress.id`, item.emailAddress.id);
+                setValue(
+                  `requester.${index}.emailAddress.version`,
+                  item.emailAddress?.version ?? item?.emailAddress?.$version
+                );
+              }
             }
           );
         }
@@ -153,47 +176,59 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
   };
 
   return (
-    <Box display="flex" gap="20px" flexDirection="column">
+    <Box display="flex" gap="20px">
+      <StepperContentStep currentStep={3} stepNext={4} stepNextTitle={"fifth-step-title"} />
       <Box
+        width="100%"
         display="flex"
-        justifyContent="space-between"
-        gap={{ xs: "20px", md: "200px" }}
-        flexDirection={{ xs: "column", md: "row" }}
+        gap="20px"
+        flexDirection="column"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+          paddingBottom: { xs: "0", md: "90px" },
+        }}
       >
-        <Typography variant="h4" whiteSpace="nowrap">
-          {t("fourth-step-title")}
-        </Typography>
-      </Box>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          gap={{ xs: "20px", md: "200px" }}
+          flexDirection={{ xs: "column", md: "row" }}
+        >
+          <Typography variant="h4" whiteSpace="nowrap">
+            {t("fourth-step-title")}
+          </Typography>
+        </Box>
 
-      <Typography variant="h5">{t("Personal data")}</Typography>
-      <PersonalData form={form} names={getPersonalDataNames(0)} />
+        <Typography variant="h5">{t("Personal data")}</Typography>
+        <PersonalData form={form} names={getPersonalDataNames(0)} />
 
-      <Typography variant="h5">{t("Identity document")}</Typography>
-      <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
+        <Typography variant="h5">{t("Identity document")}</Typography>
+        <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
 
-      <Typography variant="h5">{t("Place of residence")}</Typography>
-      <Address form={form} names={getAddressNames(0)} />
+        <Typography variant="h5">{t("Place of residence")}</Typography>
+        <Address form={form} names={getAddressNames(0)} />
 
-      <Typography variant="h5">{t("Actual place of residence")}</Typography>
-      <Address form={form} names={getActualAddressNames(0)} />
+        <Typography variant="h5">{t("Actual place of residence")}</Typography>
+        <Address form={form} names={getActualAddressNames(0)} />
 
-      <Typography variant="h5">{t("Contacts")}</Typography>
-      <Contact form={form} names={getContactNames(0)} />
+        <Typography variant="h5">{t("Contacts")}</Typography>
+        <Contact form={form} names={getContactNames(0)} />
 
-      <Typography variant="h5">{t("Files to upload")}</Typography>
-      <UploadFiles />
+        <Typography variant="h5">{t("Files to upload")}</Typography>
+        <UploadFiles />
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
-            {t("Prev")}
-          </Button>
-        )}
-        {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
-            {t("Next")}
-          </Button>
-        )}
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          {onPrev != null && (
+            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+              {t("Prev")}
+            </Button>
+          )}
+          {onNext != null && (
+            <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+              {t("Next")}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   );

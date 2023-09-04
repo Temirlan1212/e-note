@@ -41,8 +41,5 @@
   "Fingerprint Login": "Манжа изи менен кирүү",
   "You need to verify your fingerprint to sign in": "Кирүү үчүн манжа изиңизди ырасташыңыз керек",
   "Confirm": "ырастоо",
-  "Fingerprint verification": "Манжа изин тастыктоо",
-  "Unsuccessful login attempt": "Кирүү аракети ийгиликсиз болду",
-  "Unable to identify fingerprint, Place your finger on the scanner again": "Манжа изин аныктоо мүмкүн эмес. Манжаңызды кайра сканерге коюңуз",
-  "Fingerprint verification successful": "Манжа изин текшерүү ийгиликтүү болду"
+  "Unsuccessful login attempt": "Кирүү аракети ийгиликсиз болду"
 }

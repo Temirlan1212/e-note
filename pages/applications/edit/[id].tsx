@@ -9,6 +9,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 export default function EditApplication() {
   const router = useRouter();
+
   const t = useTranslations();
 
   const { id } = router.query;
@@ -20,13 +21,13 @@ export default function EditApplication() {
   return (
     <>
       <Head>
-        <title>{t("Edit application")}</title>
+        <title>{t("Edit notarial action")}</title>
       </Head>
 
       <Container maxWidth="xl">
         <Box display="flex" alignItems="center" justifyContent="space-between" my={2}>
           <Typography variant="h4" color="success.main">
-            {t("Edit application")}
+            {t("Edit notarial action")}
           </Typography>
           <Box>
             <Button buttonType="secondary" startIcon={<CloseIcon />} onClick={handleCancelClick}>

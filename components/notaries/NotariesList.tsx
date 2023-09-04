@@ -3,7 +3,7 @@ import { FC } from "react";
 import { Box, CircularProgress, Grid } from "@mui/material";
 
 import NotariesCard from "./NotariesCard";
-import { INotary, INotaryData } from "@/models/notaries/notary";
+import { INotary, INotaryData } from "@/models/notaries";
 import Link from "next/link";
 import Pagination from "../ui/Pagination";
 

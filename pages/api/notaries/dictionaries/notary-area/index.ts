@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { INotarySelections } from "@/models/notaries/notary";
+import { INotarySelections } from "@/models/notaries";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<INotarySelections | null>) {
   if (req.method !== "POST" && req.body == null) {

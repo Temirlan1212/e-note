@@ -6,7 +6,8 @@ import { format } from "date-fns";
 
 import Button from "../ui/Button";
 import Rating from "../ui/Rating";
-import { ApiNotaryResponse } from "@/models/notaries/notary";
+import { ApiNotaryResponse } from "@/models/notaries";
+import Link from "@/components/ui/Link";
 
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import PhoneEnabledOutlinedIcon from "@mui/icons-material/PhoneEnabledOutlined";
@@ -234,19 +235,21 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
           gap: "30px",
         }}
       >
-        <Button
-          startIcon={<ContentPlusIcon />}
-          color="success"
-          sx={{
-            width: {
-              sx: "100%",
-              md: "320px",
-            },
-            padding: "10px 0",
-          }}
-        >
-          {t("Create application")}
-        </Button>
+        <Link href="/applications/create">
+          <Button
+            startIcon={<ContentPlusIcon />}
+            color="success"
+            sx={{
+              width: {
+                sx: "100%",
+                md: "320px",
+              },
+              padding: "10px 0",
+            }}
+          >
+            {t("Create application")}
+          </Button>
+        </Link>
         <Button
           startIcon={<CloudMessageIcon />}
           buttonType="secondary"

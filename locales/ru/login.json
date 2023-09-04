@@ -41,8 +41,5 @@
   "Fingerprint Login": "Вход по отпечаткам пальцев",
   "You need to verify your fingerprint to sign in": "Для входа вам необходимо подтвердить отпечаток своего пальца",
   "Confirm": "Подтвердить",
-  "Fingerprint verification": "Подтверждение отпечатка пальца",
-  "Unsuccessful login attempt": "Неудачная попытка входа",
-  "Unable to identify fingerprint, Place your finger on the scanner again": "Не удается идентифицировать отпечаток пальца. Приложите палец к сканеру повторно",
-  "Fingerprint verification successful": "Проверка отпечатка пальца прошла успешно"
+  "Unsuccessful login attempt": "Неудачная попытка входа"
 }

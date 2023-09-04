@@ -9,6 +9,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 export default function CreateApplication() {
   const router = useRouter();
+
   const t = useTranslations();
 
   const handleCancelClick = () => {
@@ -18,13 +19,13 @@ export default function CreateApplication() {
   return (
     <>
       <Head>
-        <title>{t("Create application")}</title>
+        <title>{t("Create notarial action")}</title>
       </Head>
 
       <Container maxWidth="xl">
         <Box display="flex" alignItems="center" justifyContent="space-between" my={2}>
           <Typography variant="h4" color="success.main">
-            {t("Create application")}
+            {t("Create notarial action")}
           </Typography>
           <Box>
             <Button buttonType="secondary" startIcon={<CloseIcon />} onClick={handleCancelClick}>

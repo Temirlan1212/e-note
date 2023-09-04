@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { ApiNotaryResponse } from "@/models/notaries/notary";
+import { ApiNotaryResponse } from "@/models/notaries";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ApiNotaryResponse | null>) {
   const { id } = req.query;

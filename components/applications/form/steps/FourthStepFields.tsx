@@ -16,8 +16,10 @@ import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import UploadFiles from "@/components/fields/UploadFiles";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
-interface IVersionFields {
+interface IBaseEntityFields {
+  id?: number;
   version?: number;
   $version?: number;
 }
@@ -91,6 +93,14 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     pin: `members.${index}.personalNumber`,
     birthDate: `members.${index}.birthDate`,
     citizenship: `members.${index}.citizenship`,
+    nameOfCompanyOfficial: `requester.${index}.nameOfCompanyOfficial`,
+    nameOfCompanyGov: `requester.${index}.nameOfCompanyGov`,
+    representativesName: `requester.${index}.representativesName`,
+    notaryRegistrationNumber: `requester.${index}.notaryRegistrationNumber`,
+    notaryOKPONumber: `requester.${index}.notaryOKPONumber`,
+    notaryPhysicalParticipantsQty: `requester.${index}.notaryPhysicalParticipantsQty`,
+    notaryLegalParticipantsQty: `requester.${index}.notaryLegalParticipantsQty`,
+    notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -187,7 +197,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("version", result.data[0].version);
 
-        const applicationData = await applicationFetch(`/api/applications/${values.id}`, {
+        const applicationData = await applicationFetch(`/api/applications/${result.data[0].id}`, {
           fields: ["version"],
           related: {
             members: ["version", "emailAddress.version", "mainAddress.version", "actualResidenceAddress.version"],
@@ -197,26 +207,39 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         if (applicationData?.status === 0 && applicationData?.data[0]?.id != null) {
           applicationData.data[0]?.members?.map(
             (
-              item: IVersionFields & {
-                mainAddress?: IVersionFields;
-                actualResidenceAddress?: IVersionFields;
-                emailAddress?: IVersionFields;
+              item: IBaseEntityFields & {
+                mainAddress?: IBaseEntityFields;
+                actualResidenceAddress?: IBaseEntityFields;
+                emailAddress?: IBaseEntityFields;
               },
               index: number
             ) => {
+              setValue(`members.${index}.id`, item.id);
               setValue(`members.${index}.version`, item.version ?? item.$version);
-              setValue(
-                `members.${index}.mainAddress.version`,
-                item.mainAddress?.version ?? item?.mainAddress?.$version
-              );
-              setValue(
-                `members.${index}.actualResidenceAddress.version`,
-                item?.actualResidenceAddress?.version ?? item?.actualResidenceAddress?.$version
-              );
-              setValue(
-                `members.${index}.emailAddress.version`,
-                item?.emailAddress?.version ?? item?.emailAddress?.$version
-              );
+
+              if (item.mainAddress?.id != null) {
+                setValue(`members.${index}.mainAddress.id`, item.mainAddress.id);
+                setValue(
+                  `members.${index}.mainAddress.version`,
+                  item.mainAddress?.version ?? item?.mainAddress?.$version
+                );
+              }
+
+              if (item.actualResidenceAddress?.id != null) {
+                setValue(`members.${index}.actualResidenceAddress.id`, item.actualResidenceAddress.id);
+                setValue(
+                  `members.${index}.actualResidenceAddress.version`,
+                  item.actualResidenceAddress?.version ?? item?.actualResidenceAddress?.$version
+                );
+              }
+
+              if (item.emailAddress?.id != null) {
+                setValue(`members.${index}.emailAddress.id`, item.emailAddress.id);
+                setValue(
+                  `members.${index}.emailAddress.version`,
+                  item.emailAddress?.version ?? item?.emailAddress?.$version
+                );
+              }
             }
           );
         }
@@ -253,57 +276,69 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
   };
 
   return (
-    <Box display="flex" gap="20px" flexDirection="column">
+    <Box display="flex" gap="20px">
+      <StepperContentStep currentStep={4} stepNext={5} stepNextTitle={"Additional information"} />
       <Box
+        width="100%"
         display="flex"
-        justifyContent="space-between"
-        gap={{ xs: "20px", md: "200px" }}
-        flexDirection={{ xs: "column", md: "row" }}
+        gap="20px"
+        flexDirection="column"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+          paddingBottom: { xs: "0", md: "90px" },
+        }}
       >
-        <Typography variant="h4" whiteSpace="nowrap">
-          {t("fifth-step-title")}
-        </Typography>
-      </Box>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          gap={{ xs: "20px", md: "200px" }}
+          flexDirection={{ xs: "column", md: "row" }}
+        >
+          <Typography variant="h4" whiteSpace="nowrap">
+            {t("fifth-step-title")}
+          </Typography>
+        </Box>
 
-      <Tabs
-        data={items.map(({ getElement }, index) => {
-          return {
-            tabErrorsCount: tabsErrorsCounts[index] ?? 0,
-            tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: getElement(index) ?? <></>,
-          };
-        })}
-        actionsContent={
-          <>
-            <Button
-              buttonType={"primary"}
-              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-              onClick={handleAddTabClick}
-            >
-              <AddIcon />
-            </Button>
-            <Button
-              buttonType={"secondary"}
-              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-              onClick={handleRemoveTabClick}
-            >
-              <RemoveIcon />
-            </Button>
-          </>
-        }
-      />
+        <Tabs
+          data={items.map(({ getElement }, index) => {
+            return {
+              tabErrorsCount: tabsErrorsCounts[index] ?? 0,
+              tabLabel: `${t("Member")} ${index + 1}`,
+              tabPanelContent: getElement(index) ?? <></>,
+            };
+          })}
+          actionsContent={
+            <>
+              <Button
+                buttonType="primary"
+                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+                onClick={handleAddTabClick}
+              >
+                <AddIcon />
+              </Button>
+              <Button
+                buttonType="secondary"
+                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+                onClick={handleRemoveTabClick}
+              >
+                <RemoveIcon />
+              </Button>
+            </>
+          }
+        />
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
-            {t("Prev")}
-          </Button>
-        )}
-        {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
-            {t("Next")}
-          </Button>
-        )}
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          {onPrev != null && (
+            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+              {t("Prev")}
+            </Button>
+          )}
+          {onNext != null && (
+            <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+              {t("Next")}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   );

@@ -62,6 +62,7 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
 
 export default function FileList() {
   const t = useTranslations();
+  const locale = useLocale();
 
   const [pagination, setPagination] = useState<{ pageSize: number; page: number; sortBy: string[] }>({
     pageSize: 12,
@@ -102,9 +103,9 @@ export default function FileList() {
   };
 
   return (
-    <Box pt={2} height={{ xs: "600px", md: "700px" }}>
+    <Box height={{ xs: "600px", md: "700px" }}>
       <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
-        <Typography variant="h4" color="success.main">
+        <Typography variant="h4" color="primary">
           {t("Files")}
         </Typography>
         <Box>
@@ -131,7 +132,7 @@ export default function FileList() {
             field: "metaFile.createdOn",
             headerName: "Upload date",
             width: 200,
-            renderCell: ({ value }) => new Date(value).toLocaleDateString(useLocale()),
+            renderCell: ({ value }) => new Date(value).toLocaleDateString(locale),
           },
           {
             field: "metaFile.sizeText",

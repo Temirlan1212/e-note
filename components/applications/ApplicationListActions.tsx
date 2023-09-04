@@ -24,7 +24,7 @@ export const ApplicationListActions = ({
 
   const handleDeleteClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
     if (params.row.id != null) {
-      await update("/api/applications/delete/" + params.row.id);
+      await update("/api/applications/delete/" + params.row.id + "?version=" + params.row.version);
       callback(false);
       onDelete();
     }
@@ -32,7 +32,7 @@ export const ApplicationListActions = ({
 
   return (
     <Box display="flex" alignItems="center" gap="10px">
-      <Link href="applications">
+      <Link href={`/applications/status/${params.row.id}`}>
         <Tooltip title={t("More detailed")} arrow>
           <IconButton>
             <VisibilityIcon />

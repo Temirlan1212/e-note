@@ -113,8 +113,9 @@ export default function BlackList() {
   const [reasonValue, setReasonValue] = useState<string>("");
   const [pinValue, setPinValue] = useState<string>("");
   const [fullNameValue, setFullNameValue] = useState<string>("");
-  const [rowData, setRowData] = useState<IRowData>({});
+  const [rowData, setRowData] = useState<IRowData | null>(null);
   const t = useTranslations();
+  const locale = useLocale();
 
   const columns: IGridColDef[] = [
     {
@@ -136,7 +137,7 @@ export default function BlackList() {
       field: "createdOn",
       headerName: "Entry date",
       width: 180,
-      renderCell: ({ value }) => new Date(value).toLocaleDateString(useLocale()),
+      renderCell: ({ value }) => new Date(value).toLocaleDateString(locale),
     },
     {
       field: "createdBy.fullName",
@@ -175,7 +176,7 @@ export default function BlackList() {
   });
 
   const itemsPerPage = 6;
-  const totalPages = Array.isArray(allData?.data) ? Math.ceil(allData?.data.length / itemsPerPage) : 1;
+  const totalPages = allData != null && Array.isArray(allData.data) ? Math.ceil(allData.data.length / itemsPerPage) : 1;
 
   const onPageChange = (page: number) => {
     setSelectedPage(page);
@@ -247,6 +248,9 @@ export default function BlackList() {
 
   return (
     <>
+      <Typography typography="h4" color="primary">
+        {t("Black list")}
+      </Typography>
       <Grid
         container
         spacing={{ xs: 2.5, sm: 3.75, md: 3.75 }}

@@ -10,13 +10,11 @@ export default function Applications() {
   return (
     <>
       <Head>
-        <title>{t("Applications")}</title>
+        <title>{t("Notarial actions")}</title>
       </Head>
 
-      <Container maxWidth="xl">
-        <Box marginTop="30px">
-          <ApplicationList />
-        </Box>
+      <Container maxWidth="xl" sx={{ py: "30px" }}>
+        <ApplicationList />
       </Container>
     </>
   );

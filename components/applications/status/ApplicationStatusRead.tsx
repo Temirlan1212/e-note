@@ -1,60 +1,46 @@
 import React, { FC } from "react";
 
 import { Box, List, ListItem, Typography } from "@mui/material";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import useFetch from "@/hooks/useFetch";
+import { IActionType } from "@/models/action-type";
+import { format } from "date-fns";
+import { useTheme } from "@mui/material/styles";
+import { IApplication } from "@/models/application";
 
-interface IApplicationStatusReadProps {}
-
-const titles = [
-  { id: 1, title: "Name" },
-  { id: 2, title: "Type of notarial action" },
-  { id: 3, title: "StatusApplication" },
-  { id: 4, title: "Signature status" },
-  { id: 5, title: "Date of the action" },
-  { id: 6, title: "Notary's full name" },
-  { id: 7, title: "Unique registry number" },
-  { id: 8, title: "Sides" },
-];
-
-const data = [
-  { id: 1, title: "Доверенность на получение алиментов", type: "text" },
-  { id: 2, title: "Удостоверение (доверенностей, договоров, фактов и др. сделки)", type: "text" },
-  { id: 3, title: "На исполнении", type: "text" },
-  { id: 4, title: "Не подписан", type: "text" },
-  { id: 5, title: "01.01.2022 15:05:35", type: "text" },
-  { id: 6, title: "ЧН Баланчаев Баланча Баланчаевич", type: "link" },
-  { id: 7, title: "125-2023-4QwR5", type: "text" },
-  {
-    id: 8,
-    type: "list",
-    array: [
-      {
-        id: 1,
-        user: "Участник-1",
-        fullName: "Ташматов Акмат Ташматович",
-        dateOfBirth: "03.05.1990",
-        address: "Кыргызстан, г. Талас ул Манас 22",
-      },
-      {
-        id: 2,
-        user: "Участник-2",
-        fullName: "Ташматов Акмат Ташматович",
-        dateOfBirth: "03.05.1990",
-        address: "Кыргызстан, г. Талас ул Манас 22",
-      },
-      {
-        id: 3,
-        user: "Участник-3",
-        fullName: "Ташматов Акмат Ташматович",
-        dateOfBirth: "03.05.1990",
-        address: "Кыргызстан, г. Талас ул Манас 22",
-      },
-    ],
-  },
-];
+interface IApplicationStatusReadProps {
+  data: IApplication;
+}
 
 const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
+  const { data } = props;
+  const theme = useTheme();
+  const locale = useLocale();
   const t = useTranslations();
+
+  const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
+  const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
+
+  const translatedStatusTitle = (data: Record<string, any>[], value?: number) => {
+    const matchedStatus = data?.find((item) => item.value == value);
+    const translatedTitle = matchedStatus?.[("title_" + locale) as keyof IActionType];
+    return !!translatedTitle ? translatedTitle : matchedStatus?.["title" as keyof IActionType] ?? "";
+  };
+
+  const titles = [
+    { title: "Name", value: data?.product?.fullName },
+    { title: "Type of notarial action", value: translatedStatusTitle(actionTypeData?.data, data?.typeNotarialAction) },
+    { title: "StatusApplication", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
+    { title: "Signature status", value: data?.notarySignatureStatus },
+    {
+      title: "Date of the action",
+      value: data?.creationDate ? format(new Date(data?.creationDate!), "dd.MM.yyyy HH:mm:ss") : "",
+    },
+    { title: "Notary's full name", value: data?.company.name },
+    { title: "Unique registry number", value: data?.notaryUniqNumber },
+  ];
+
+  const members = data?.requester.concat(data.members);
 
   return (
     <Box
@@ -70,120 +56,113 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
           display: "flex",
           flexDirection: "column",
           gap: "10px",
+          width: "100%",
         }}
       >
-        {titles.map((el) => {
+        {titles.map((el, idx) => {
           return (
-            <ListItem key={el.id}>
+            <ListItem
+              key={idx}
+              sx={{
+                gap: "10px",
+                display: "flex",
+                [theme.breakpoints.down("sm")]: {
+                  flexDirection: "column",
+                },
+                alignItems: "start",
+              }}
+            >
               <Typography
                 sx={{
                   fontSize: "14px",
                   fontWeight: "600",
+                  width: "100%",
+                  minWidth: "260px",
+                  maxWidth: { md: "280px", xs: "260px" },
+                  [theme.breakpoints.down("sm")]: {
+                    maxWidth: "unset",
+                  },
+                  wordBreak: "break-word",
                 }}
               >
                 {t(el.title)}
               </Typography>
+              <Typography
+                sx={{
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  color: "#687C9B",
+                }}
+              >
+                {t(el.value)}
+              </Typography>
             </ListItem>
           );
         })}
-      </List>
-      <List
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-        }}
-      >
-        {data.map(({ type, id, title: text, array }) => {
-          return (
-            <ListItem key={id}>
-              {type === "link" ? (
-                <a
-                  href="#"
-                  style={{
-                    color: "#1BAA75",
-                    fontSize: "14px",
-                  }}
-                >
-                  {text}
-                </a>
-              ) : (
-                type === "text" && (
-                  <Typography
-                    sx={{
-                      fontSize: "14px",
-                      color: "#687C9B",
-                      fontWeight: "500",
-                    }}
-                  >
-                    {text}
-                  </Typography>
-                )
-              )}
-              {type === "list" && (
-                <Box
+        <ListItem
+          sx={{
+            gap: "10px",
+            display: "flex",
+            [theme.breakpoints.down("sm")]: {
+              flexDirection: "column",
+            },
+            alignItems: "start",
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: "14px",
+              fontWeight: "600",
+              width: "100%",
+              minWidth: "260px",
+              maxWidth: { md: "280px", xs: "260px" },
+              [theme.breakpoints.down("sm")]: {
+                maxWidth: "unset",
+              },
+              wordBreak: "break-word",
+            }}
+          >
+            {t("Sides")}
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+            }}
+          >
+            {members?.map((member, idx) => (
+              <Box key={idx}>
+                <Typography
                   sx={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(3, 1fr)",
-                    gridTemplateRows: "auto",
-                    gridColumnGap: "20px",
-                    gridRowGap: "15px",
+                    fontSize: "14px",
+                    fontWeight: "600",
                   }}
                 >
-                  {array?.map((el) => {
-                    return (
-                      <Box
-                        key={el.id}
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "5px",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontSize: "14px",
-                            color: "#687C9B",
-                            fontWeight: "500",
-                          }}
-                        >
-                          {el.user}:
-                        </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: "14px",
-                            color: "#687C9B",
-                            fontWeight: "500",
-                          }}
-                        >
-                          {el.fullName}
-                        </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: "14px",
-                            color: "#687C9B",
-                            fontWeight: "500",
-                          }}
-                        >
-                          {el.dateOfBirth}
-                        </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: "14px",
-                            color: "#687C9B",
-                            fontWeight: "500",
-                          }}
-                        >
-                          {el.address}
-                        </Typography>
-                      </Box>
-                    );
-                  })}
-                </Box>
-              )}
-            </ListItem>
-          );
-        })}
+                  {t("Participant")}-{idx + 1}:
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    color: "#687C9B",
+                  }}
+                >
+                  {t(`${member.lastName} ${member.name} ${member.middleName}`)}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    color: "#687C9B",
+                  }}
+                >
+                  {member.mainAddress.fullName}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+        </ListItem>
       </List>
     </Box>
   );

@@ -1,9 +1,13 @@
 import { create } from "zustand";
+import { useProfileStore } from "./profile";
+
+const userData = useProfileStore.getState().userData;
 
 export interface IChildRoute {
   title: string;
   link: string;
   type: "link" | "menu";
+  role?: "user" | "notary";
   icon?: string;
   bottomDivider?: boolean;
 }
@@ -16,8 +20,12 @@ export interface IRoute extends Omit<IChildRoute, "type"> {
 export interface IRouteState {
   guestRoutes: IRoute[];
   userRoutes: IRoute[];
-  notaryRoutes: IRoute[];
-  getRoutes: (routeList: IRoute[], type?: IChildRoute["type"] | "all", rootOnly?: boolean) => IRoute[] | IChildRoute[];
+  getRoutes: (
+    routeList: IRoute[],
+    type?: IRoute["type"] | "rendered",
+    role?: IChildRoute["role"],
+    rootOnly?: boolean
+  ) => IRoute[] | IChildRoute[];
 }
 
 export const useRouteStore = create<IRouteState>()((set, get) => ({
@@ -55,7 +63,7 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
   ],
   userRoutes: [
     {
-      title: "Applications",
+      title: "Notarial actions",
       link: "/applications",
       type: "menu",
       icon: "BorderColor",
@@ -70,6 +78,7 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
       title: "Registries",
       link: "",
       type: "group",
+      role: "notary",
       icon: "Inventory",
       children: [
         {
@@ -84,18 +93,18 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
           type: "menu",
           icon: "LocalLibrary",
         },
-        {
-          title: "Register of Notaries of the KR",
-          link: "",
-          type: "menu",
-          icon: "ListAlt",
-        },
-        {
-          title: "Register of notarial acts",
-          link: "",
-          type: "menu",
-          icon: "ContentPasteSearch",
-        },
+        // {
+        //   title: "Register of Notaries of the KR",
+        //   link: "",
+        //   type: "menu",
+        //   icon: "ListAlt",
+        // },
+        // {
+        //   title: "Register of notarial acts",
+        //   link: "",
+        //   type: "menu",
+        //   icon: "ContentPasteSearch",
+        // },
         {
           title: "Register of inheritance cases",
           link: "/inheritance-cases",
@@ -124,35 +133,45 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
         },
         {
           title: "My templates",
-          link: "",
+          link: "my-templates",
           type: "menu",
           icon: "CollectionsBookmark",
         },
       ],
     },
   ],
-  notaryRoutes: [],
-  getRoutes: (routeList, type, rootOnly = false) => {
+  getRoutes: (routeList, type, role, rootOnly = false) => {
     if (type == null) {
       return routeList;
     }
 
-    const routes = routeList.reduce((acc: IRoute[], val: IRoute) => {
-      if (!rootOnly && val.children != null) {
-        acc.push(...val.children);
+    return routeList.reduce((acc: IRoute[], val: IRoute) => {
+      if (role != null && val.role != null && role !== val.role) return acc;
+
+      if (rootOnly && val.children != null) {
+        val.children.map((item) => {
+          if (
+            (role == null || val.role == null || role === val.role) &&
+            (type == null || type === "rendered" || type === item.type)
+          )
+            acc.push(item);
+        });
       } else {
-        acc.push(val);
+        const childRoutes = val.children?.filter(
+          (item) =>
+            (role == null || item.role == null || role === item.role) &&
+            (type == null || type === "rendered" || type === item.type)
+        );
+        const route = { ...val, children: childRoutes };
+
+        if (
+          (role == null || val.role == null || role === val.role) &&
+          (type == null || type === "rendered" || type === val.type)
+        )
+          acc.push(route);
       }
 
       return acc;
     }, []);
-
-    switch (type) {
-      case "link":
-      case "menu":
-        return routes.filter((route) => route.type === type);
-      default:
-        return routes;
-    }
   },
 }));

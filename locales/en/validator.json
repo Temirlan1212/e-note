@@ -3,5 +3,7 @@
   "email": "This field must be a valid email",
   "onlyLetters": "This field must contain only letters",
   "onlyNumbers": "This field must contain only numbers",
+  "minLetters": "This field must be at least {min} letters",
+  "minNumbers": "This field must be at least {min} numbers",
   "invalid format": "Invalid format"
 }

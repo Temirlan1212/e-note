@@ -14,12 +14,7 @@ export default function OMSUOfficials() {
         <title>{t("OMSUOfficials")}</title>
       </Head>
 
-      <Container
-        maxWidth="xl"
-        sx={{
-          py: "40px",
-        }}
-      >
+      <Container maxWidth="xl" sx={{ py: "30px" }}>
         <OMSUOfficialsContent />
       </Container>
     </>

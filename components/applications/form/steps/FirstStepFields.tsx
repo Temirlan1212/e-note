@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { format } from "date-fns";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { INotaryDistrict } from "@/models/dictionaries/notary-district";
+import { INotaryDistrict } from "@/models/notary-district";
 import { ICompany } from "@/models/company";
 import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
@@ -14,6 +14,7 @@ import Autocomplete from "@/components/ui/Autocomplete";
 import Area from "@/components/fields/Area";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -23,6 +24,7 @@ export interface IStepFieldsProps {
 
 export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
+  const locale = useLocale();
 
   const { trigger, control, watch, resetField, getValues, setValue } = form;
 
@@ -30,13 +32,22 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
   const notaryDistrict = watch("notaryDistrict");
 
   const [loading, setLoading] = useState(false);
-  const [mounted, setMounted] = useState(false);
+
+  const { data: notaryDistrictDictionary, loading: notaryDistrictDictionaryLoading } = useFetch(
+    city != null ? `/api/dictionaries/notary-districts?cityId=${city.id}` : "",
+    "GET"
+  );
+  const { data: companyDictionary, loading: companyDictionaryLoading } = useFetch(
+    `/api/companies${notaryDistrict != null ? "?notaryDistrictId=" + notaryDistrict.id : ""}`,
+    "GET"
+  );
 
   const { update: applicationCreate } = useFetch("", "POST");
+  const { update: applicationUpdate } = useFetch("", "PUT");
 
   useEffectOnce(() => {
-    setMounted(true);
-  });
+    resetField("notaryDistrict", { defaultValue: null });
+  }, [city]);
 
   const triggerFields = async () => {
     return await trigger(["region", "district", "city", "notaryDistrict", "company"]);
@@ -58,14 +69,16 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
         creationDate: format(new Date(), "yyyy-MM-dd"),
       };
 
-      let url = "/api/applications/create";
+      let result = null;
       if (values.id != null) {
-        url = `/api/applications/update/${values.id}`;
         data.id = values.id;
         data.version = values.version;
+        result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
+      } else {
+        data.statusSelect = 2;
+        result = await applicationCreate("/api/applications/create", data);
       }
 
-      const result = await applicationCreate(url, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
@@ -76,93 +89,94 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
     }
   };
 
+  const getLabelField = (data: FetchResponseBody | null) => {
+    if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
+      const item = data.data.find((item) => item.hasOwnProperty("$t:name"));
+      return item != null ? "$t:name" : "name";
+    }
+    return "name";
+  };
+
   return (
-    <Box display="flex" gap="20px" flexDirection="column">
+    <Box display="flex" gap="20px">
+      <StepperContentStep currentStep={1} stepNext={2} stepNextTitle={"Choose object"} />
       <Box
+        width="100%"
         display="flex"
-        justifyContent="space-between"
-        gap={{ xs: "20px", md: "200px" }}
-        flexDirection={{ xs: "column", md: "row" }}
+        gap="20px"
+        flexDirection="column"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+          paddingBottom: { xs: "0", md: "90px" },
+        }}
       >
-        <Typography variant="h4" whiteSpace="nowrap">
-          {t("Choose notary")}
-        </Typography>
-        <Hint type="hint">{t("Form first step hint text")}</Hint>
-      </Box>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          gap={{ xs: "20px", md: "200px" }}
+          flexDirection={{ xs: "column", md: "row" }}
+        >
+          <Typography variant="h4" whiteSpace="nowrap">
+            {t("Choose notary")}
+          </Typography>
+          <Hint type="hint">{t("Form first step hint text")}</Hint>
+        </Box>
 
-      <Area form={form} names={{ region: "region", district: "district", city: "city" }} />
+        <Area form={form} names={{ region: "region", district: "district", city: "city" }} />
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        <Controller
-          control={control}
-          name="notaryDistrict"
-          defaultValue={null}
-          render={({ field, fieldState }) => {
-            const { data, loading } = useFetch(
-              city != null ? `/api/dictionaries/notary-districts?cityId=${city.id}` : "",
-              "GET"
-            );
-
-            useEffectOnce(() => {
-              if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
-                resetField(field.name, { defaultValue: null });
-              }
-            }, ["notaryDistrict", city]);
-
-            return (
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          <Controller
+            control={control}
+            name="notaryDistrict"
+            defaultValue={null}
+            render={({ field, fieldState }) => (
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("Notary district")}</InputLabel>
                 <Autocomplete
-                  labelField="name"
+                  labelField={getLabelField(notaryDistrictDictionary)}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={!city}
-                  options={data?.status === 0 ? (data?.data as INotaryDistrict[]) ?? [] : []}
-                  loading={loading}
+                  options={
+                    notaryDistrictDictionary?.status === 0
+                      ? (notaryDistrictDictionary?.data as INotaryDistrict[]) ?? []
+                      : []
+                  }
+                  loading={notaryDistrictDictionaryLoading}
                   value={
                     field.value != null
-                      ? (data?.data ?? []).find((item: INotaryDistrict) => item.id == field.value?.id) ?? null
+                      ? (notaryDistrictDictionary?.data ?? []).find(
+                          (item: INotaryDistrict) => item.id == field.value?.id
+                        ) ?? null
                       : null
                   }
                   onBlur={field.onBlur}
                   onChange={(event, value) => {
                     field.onChange(value?.id != null ? { id: value.id } : null);
                     trigger(field.name);
+                    resetField("company", { defaultValue: null });
                   }}
                 />
               </Box>
-            );
-          }}
-        />
-        <Controller
-          control={control}
-          name="company"
-          defaultValue={null}
-          render={({ field, fieldState }) => {
-            const { data, loading } = useFetch(
-              `/api/companies${notaryDistrict != null ? "?notaryDistrictId=" + notaryDistrict.id : ""}`,
-              "GET"
-            );
-
-            useEffectOnce(() => {
-              if (field.value != null && mounted && (fieldState.isTouched || !fieldState.isDirty)) {
-                resetField(field.name, { defaultValue: null });
-              }
-            }, ["company", notaryDistrict]);
-
-            return (
+            )}
+          />
+          <Controller
+            control={control}
+            name="company"
+            defaultValue={null}
+            render={({ field, fieldState }) => (
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("Notary")}</InputLabel>
                 <Autocomplete
-                  labelField="name"
+                  labelField={getLabelField(companyDictionary)}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={loading}
-                  options={data?.status === 0 ? (data?.data as ICompany[]) ?? [] : []}
-                  loading={loading}
+                  options={companyDictionary?.status === 0 ? (companyDictionary?.data as ICompany[]) ?? [] : []}
+                  loading={companyDictionaryLoading}
                   value={
                     field.value != null
-                      ? (data?.data ?? []).find((item: ICompany) => item.id == field.value?.id) ?? null
+                      ? (companyDictionary?.data ?? []).find((item: ICompany) => item.id == field.value?.id) ?? null
                       : null
                   }
                   onBlur={field.onBlur}
@@ -172,22 +186,22 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
                   }}
                 />
               </Box>
-            );
-          }}
-        />
-      </Box>
+            )}
+          />
+        </Box>
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
-            {t("Prev")}
-          </Button>
-        )}
-        {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
-            {t("Next")}
-          </Button>
-        )}
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          {onPrev != null && (
+            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+              {t("Prev")}
+            </Button>
+          )}
+          {onNext != null && (
+            <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+              {t("Next")}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   );

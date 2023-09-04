@@ -1,7 +1,8 @@
-import { IDocumentType } from "@/models/dictionaries/document-type";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 enum criteriaFieldNames {
+  isSystem = "isSystem",
+  createdBy = "createdBy.id",
   object = "notaryObject",
   objectType = "notaryObjectType",
   notarialAction = "notaryAction",
@@ -9,34 +10,25 @@ enum criteriaFieldNames {
   action = "notaryRequestAction",
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<IDocumentType | null>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }
 
   const formValues = req.body?.["formValues"];
-  let body: any = {};
+  const criteria: Record<string, string | number>[] = [];
 
   if (formValues != null) {
-    let criteries = [];
     for (let key in criteriaFieldNames) {
       const field = key as keyof typeof criteriaFieldNames;
       const value = formValues?.[field];
-      if (!value) return;
+      if (!value) continue;
 
-      const criteria = {
-        operator: "=",
+      criteria.push({
         fieldName: criteriaFieldNames[field],
+        operator: "=",
         value: value ? value : null,
-      };
-
-      criteries.push(criteria);
-    }
-
-    if (criteries.length > 0) {
-      body.data = {};
-      body.data.operator = "and";
-      body.data.criteria = criteries;
+      });
     }
   }
 
@@ -51,7 +43,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       limit: 100,
       fields: ["name", "fullName"],
       translate: true,
-      ...body,
+      data: {
+        operator: "and",
+        criteria,
+      },
     }),
   });
 

@@ -8,14 +8,15 @@ enum types {
   secondary = "secondary.main",
 }
 
-export type IFileInputProps = MuiTelInputProps & {
+export type ITelInputProps = MuiTelInputProps & {
   inputType?: keyof typeof types;
-  value?: File | File[] | null;
-  onChange?: (file: File | File[] | null) => void;
+  helperText?: string | null;
+  value?: string | null;
+  onChange?: (value: string) => void;
 };
 
-export default forwardRef<HTMLDivElement, IFileInputProps>(function FileInput(
-  { inputType = "secondary", helperText, value, onChange, ...rest }: IFileInputProps,
+export default forwardRef<HTMLDivElement, ITelInputProps>(function TelInput(
+  { inputType = "secondary", helperText, value, onChange, ...rest }: ITelInputProps,
   ref
 ) {
   const styles = {

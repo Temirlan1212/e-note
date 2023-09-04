@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -6,7 +6,6 @@ import useFetch from "@/hooks/useFetch";
 import { format } from "date-fns";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { useProfileStore } from "@/stores/profile";
-import { IUserData } from "@/models/profile/user";
 import { Alert, Box, Collapse, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Tabs from "@/components/ui/Tabs";
@@ -19,14 +18,14 @@ import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import UploadFiles from "@/components/fields/UploadFiles";
+import StepperContentStep from "@/components/ui/StepperContentStep";
 
 enum tundukFieldNames {
   name = "firstName",
 }
 
-let timer: ReturnType<typeof setTimeout> | null = null;
-
-interface IVersionFields {
+interface IBaseEntityFields {
+  id?: number;
   version?: number;
   $version?: number;
 }
@@ -37,18 +36,18 @@ export interface ITabListItem {
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  onPrev?: Function | null;
-  onNext?: Function | null;
+  stepState: [number, Dispatch<SetStateAction<number>>];
+  onPrev?: Function;
+  onNext?: Function;
 }
 
-export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
-  const profile = useProfileStore.getState();
+export default function FourthStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
+  const userData = useProfileStore((state) => state.userData);
   const t = useTranslations();
 
   const {
     control,
     trigger,
-    watch,
     getValues,
     setValue,
     formState: { errors },
@@ -59,9 +58,9 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     name: "requester",
   });
 
+  const [step, setStep] = stepState;
   const [loading, setLoading] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
-  const [userData, setUserData] = useState<IUserData | null>(null);
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
@@ -69,7 +68,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         return (
           <Box display="flex" gap="20px" flexDirection="column">
             <Typography variant="h5">{t("Personal data")}</Typography>
-            <PersonalData form={form} names={getPersonalDataNames(index)} />
+            <PersonalData form={form} names={getPersonalDataNames(index)} onPinCheck={() => handlePinCheck(index)} />
 
             <Typography variant="h5">{t("Identity document")}</Typography>
             <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
@@ -92,8 +91,9 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
   ]);
 
   const { update: applicationCreate } = useFetch("", "POST");
+  const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
-  const { update: tundukPersonalDataFetch } = useFetch("", "POST");
+  const { update: tundukPersonalDataFetch } = useFetch("", "GET");
 
   const getPersonalDataNames = (index: number) => ({
     type: `requester.${index}.partnerTypeSelect`,
@@ -104,6 +104,14 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     pin: `requester.${index}.personalNumber`,
     birthDate: `requester.${index}.birthDate`,
     citizenship: `requester.${index}.citizenship`,
+    nameOfCompanyOfficial: `requester.${index}.nameOfCompanyOfficial`,
+    nameOfCompanyGov: `requester.${index}.nameOfCompanyGov`,
+    representativesName: `requester.${index}.representativesName`,
+    notaryRegistrationNumber: `requester.${index}.notaryRegistrationNumber`,
+    notaryOKPONumber: `requester.${index}.notaryOKPONumber`,
+    notaryPhysicalParticipantsQty: `requester.${index}.notaryPhysicalParticipantsQty`,
+    notaryLegalParticipantsQty: `requester.${index}.notaryLegalParticipantsQty`,
+    notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -139,44 +147,6 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
   });
 
   useEffectOnce(() => {
-    setUserData(profile.getUserData());
-  }, [profile]);
-
-  useEffectOnce(() => {
-    const subscription = watch(({ requester }, { name }) => {
-      const path = name?.split(".");
-
-      if (!path || (path && (path[0] !== "requester" || path[path.length - 1] !== "personalNumber"))) return;
-
-      if (timer != null) clearTimeout(timer);
-
-      timer = setTimeout(async () => {
-        let pin: any = requester;
-
-        path.slice(1).map((item: string) => {
-          pin = pin[item];
-        });
-
-        if (!pin) {
-          setAlertOpen(true);
-          return;
-        }
-
-        const personalData = await tundukPersonalDataFetch(`/api/tunduk/personal-data/${pin}`);
-
-        if (personalData?.status !== 0 || personalData?.data == null) {
-          setAlertOpen(true);
-          return;
-        }
-
-        setAlertOpen(false);
-        setTundukValues(personalData.data);
-      }, 1111);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
-  useEffectOnce(() => {
     const values = getValues();
     const itemsLength = values.requester?.length ?? 1;
     if (itemsLength > 1) {
@@ -186,39 +156,18 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     }
   });
 
-  const setTundukValues = (values: Record<string, any>) => {
-    const allFields = items.reduce((acc: string[], _, index: number) => {
-      return [
-        ...acc,
-        ...Object.values(getPersonalDataNames(index)),
-        ...Object.values(getIdentityDocumentNames(index)),
-        ...Object.values(getAddressNames(index)),
-        ...Object.values(getActualAddressNames(index)),
-        ...Object.values(getContactNames(index)),
-      ];
-    }, []);
-
-    allFields.map((field: any) => {
-      const fieldPath = field.split(".");
-      const fieldLastItem = fieldPath[fieldPath.length - 1];
-      const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
-      if (values[tundukField ?? fieldLastItem] != null && fieldLastItem !== "personalNumber") {
-        setValue(field, values[tundukField ?? fieldLastItem]);
-      }
-    });
-  };
-
   const triggerFields = async () => {
-    const allFields = items.reduce((acc: string[], _, index: number) => {
-      return [
+    const allFields = items.reduce(
+      (acc: string[], _, index: number) => [
         ...acc,
         ...Object.values(getPersonalDataNames(index)),
         ...Object.values(getIdentityDocumentNames(index)),
         ...Object.values(getAddressNames(index)),
         ...Object.values(getActualAddressNames(index)),
         ...Object.values(getContactNames(index)),
-      ];
-    }, []);
+      ],
+      []
+    );
 
     const validated = await trigger(allFields as any);
 
@@ -254,23 +203,25 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         id: values.id,
         version: values.version,
         creationDate: format(new Date(), "yyyy-MM-dd"),
-        company: { id: userData?.id },
+        company: { id: userData?.activeCompany?.id },
         requester: values.requester,
       };
 
-      let url = "/api/applications/create";
+      let result = null;
       if (values.id != null) {
-        url = `/api/applications/update/${values.id}`;
         data.id = values.id;
         data.version = values.version;
+        result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
+      } else {
+        data.statusSelect = 2;
+        result = await applicationCreate("/api/applications/create", data);
       }
 
-      const result = await applicationCreate(url, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
 
-        const applicationData = await applicationFetch(`/api/applications/${values.id}`, {
+        const applicationData = await applicationFetch(`/api/applications/${result.data[0].id}`, {
           fields: ["version"],
           related: {
             requester: ["version", "emailAddress.version", "mainAddress.version", "actualResidenceAddress.version"],
@@ -280,26 +231,39 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
         if (applicationData?.status === 0 && applicationData?.data[0]?.id != null) {
           applicationData.data[0]?.requester?.map(
             (
-              item: IVersionFields & {
-                mainAddress?: IVersionFields;
-                actualResidenceAddress?: IVersionFields;
-                emailAddress?: IVersionFields;
+              item: IBaseEntityFields & {
+                mainAddress?: IBaseEntityFields;
+                actualResidenceAddress?: IBaseEntityFields;
+                emailAddress?: IBaseEntityFields;
               },
               index: number
             ) => {
+              setValue(`requester.${index}.id`, item.id);
               setValue(`requester.${index}.version`, item.version ?? item.$version);
-              setValue(
-                `requester.${index}.mainAddress.version`,
-                item.mainAddress?.version ?? item?.mainAddress?.$version
-              );
-              setValue(
-                `requester.${index}.actualResidenceAddress.version`,
-                item?.actualResidenceAddress?.version ?? item?.actualResidenceAddress?.$version
-              );
-              setValue(
-                `requester.${index}.emailAddress.version`,
-                item?.emailAddress?.version ?? item?.emailAddress?.$version
-              );
+
+              if (item.mainAddress?.id != null) {
+                setValue(`requester.${index}.mainAddress.id`, item.mainAddress.id);
+                setValue(
+                  `requester.${index}.mainAddress.version`,
+                  item.mainAddress?.version ?? item?.mainAddress?.$version
+                );
+              }
+
+              if (item.actualResidenceAddress?.id != null) {
+                setValue(`requester.${index}.actualResidenceAddress.id`, item.actualResidenceAddress.id);
+                setValue(
+                  `requester.${index}.actualResidenceAddress.version`,
+                  item.actualResidenceAddress?.version ?? item?.actualResidenceAddress?.$version
+                );
+              }
+
+              if (item.emailAddress?.id != null) {
+                setValue(`requester.${index}.emailAddress.id`, item.emailAddress.id);
+                setValue(
+                  `requester.${index}.emailAddress.version`,
+                  item.emailAddress?.version ?? item?.emailAddress?.$version
+                );
+              }
             }
           );
         }
@@ -335,64 +299,153 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     });
   };
 
-  return (
-    <Box display="flex" gap="20px" flexDirection="column">
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        gap={{ xs: "20px", md: "200px" }}
-        flexDirection={{ xs: "column", md: "row" }}
-      >
-        <Typography variant="h4" whiteSpace="nowrap">
-          {t("Choose requester")}
-        </Typography>
-      </Box>
+  const handlePinCheck = async (index: number) => {
+    const values = getValues();
+    const entity = "requester";
 
-      <Collapse in={alertOpen}>
-        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-          {t("Sorry, such pin not found")}
-        </Alert>
-      </Collapse>
+    setValue(`${entity}.${index}.id`, null);
+    setValue(`${entity}.${index}.version`, null);
+    setValue(`${entity}.${index}.mainAddress.id`, null);
+    setValue(`${entity}.${index}.mainAddress.version`, null);
+    setValue(`${entity}.${index}.actualResidenceAddress.id`, null);
+    setValue(`${entity}.${index}.actualResidenceAddress.version`, null);
+    setValue(`${entity}.${index}.emailAddress.id`, null);
+    setValue(`${entity}.${index}.emailAddress.version`, null);
 
-      <Tabs
-        data={items.map(({ getElement }, index) => {
-          return {
-            tabErrorsCount: tabsErrorsCounts[index] ?? 0,
-            tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: getElement(index) ?? <></>,
-          };
-        })}
-        actionsContent={
-          <>
-            <Button
-              buttonType={"primary"}
-              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-              onClick={handleAddTabClick}
-            >
-              <AddIcon />
-            </Button>
-            <Button
-              buttonType={"secondary"}
-              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-              onClick={handleRemoveTabClick}
-            >
-              <RemoveIcon />
-            </Button>
-          </>
+    if (values[entity] != null && values[entity][index].personalNumber) {
+      const pin = values[entity][index].personalNumber;
+      const personalData = await tundukPersonalDataFetch(`/api/tunduk/personal-data/${pin}`);
+
+      if (personalData?.status !== 0 || personalData?.data == null) {
+        setAlertOpen(true);
+        return;
+      }
+
+      const partner = personalData.data?.partner;
+      const mainAddress = personalData.data?.mainAddress;
+      const actualAddress = personalData.data?.actualAddress;
+      const emailAddress = personalData.data?.emailAddress;
+
+      if (partner == null || partner.id == null) {
+        setAlertOpen(true);
+        return;
+      }
+
+      setAlertOpen(false);
+      setValue(`${entity}.${index}.id`, partner?.id);
+      setValue(`${entity}.${index}.version`, partner?.version);
+      setValue(`${entity}.${index}.mainAddress.id`, mainAddress?.id);
+      setValue(`${entity}.${index}.mainAddress.version`, mainAddress?.version);
+      setValue(`${entity}.${index}.actualResidenceAddress.id`, actualAddress?.id);
+      setValue(`${entity}.${index}.actualResidenceAddress.version`, actualAddress?.version);
+      setValue(`${entity}.${index}.emailAddress.id`, emailAddress?.id);
+      setValue(`${entity}.${index}.emailAddress.version`, emailAddress?.version);
+      setValue(`${entity}.${index}.emailAddress.address`, emailAddress?.address);
+
+      const baseFields = [
+        ...Object.values(getPersonalDataNames(index)),
+        ...Object.values(getIdentityDocumentNames(index)),
+        ...Object.values(getContactNames(index)),
+      ];
+      baseFields.map((field: any) => {
+        const fieldPath = field.split(".");
+        const fieldLastItem = fieldPath[fieldPath.length - 1];
+        const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
+        if (partner[tundukField ?? fieldLastItem] != null && fieldLastItem !== "personalNumber") {
+          setValue(field, partner[tundukField ?? fieldLastItem]);
         }
-      />
+      });
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {onPrev != null && (
-          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />}>
-            {t("Prev")}
-          </Button>
-        )}
-        {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />}>
-            {t("Next")}
-          </Button>
-        )}
+      const mainAddressFields = [...Object.values(getAddressNames(index))];
+      mainAddressFields.map((field: any) => {
+        const fieldPath = field.split(".");
+        const fieldLastItem = fieldPath[fieldPath.length - 1];
+        if (mainAddress[fieldLastItem] != null) {
+          setValue(field, mainAddress[fieldLastItem]);
+        }
+      });
+
+      const actualAddressFields = [...Object.values(getActualAddressNames(index))];
+      actualAddressFields.map((field: any) => {
+        const fieldPath = field.split(".");
+        const fieldLastItem = fieldPath[fieldPath.length - 1];
+        if (actualAddress[fieldLastItem] != null) {
+          setValue(field, actualAddress[fieldLastItem]);
+        }
+      });
+    }
+  };
+
+  return (
+    <Box display="flex" gap={"20px"}>
+      <StepperContentStep currentStep={1} stepNext={2} stepNextTitle={"Choose object"} />
+      <Box
+        width="100%"
+        display="flex"
+        gap="20px"
+        flexDirection="column"
+        sx={{
+          marginTop: { xs: "0", md: "16px" },
+          paddingBottom: { xs: "0", md: "90px" },
+        }}
+      >
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          gap={{ xs: "20px", md: "200px" }}
+          flexDirection={{ xs: "column", md: "row" }}
+        >
+          <Typography variant="h4" whiteSpace="nowrap">
+            {t("Choose requester")}
+          </Typography>
+        </Box>
+
+        <Collapse in={alertOpen}>
+          <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+            {t("Sorry, such pin not found")}
+          </Alert>
+        </Collapse>
+
+        <Tabs
+          data={items.map(({ getElement }, index) => {
+            return {
+              tabErrorsCount: tabsErrorsCounts[index] ?? 0,
+              tabLabel: `${t("Member")} ${index + 1}`,
+              tabPanelContent: getElement(index) ?? <></>,
+            };
+          })}
+          actionsContent={
+            <>
+              <Button
+                buttonType="primary"
+                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+                onClick={handleAddTabClick}
+              >
+                <AddIcon />
+              </Button>
+              <Button
+                buttonType="secondary"
+                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+                onClick={handleRemoveTabClick}
+              >
+                <RemoveIcon />
+              </Button>
+            </>
+          }
+        />
+
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          {onPrev != null && (
+            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+              {t("Prev")}
+            </Button>
+          )}
+          {onNext != null && (
+            <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+              {t("Next")}
+            </Button>
+          )}
+        </Box>
       </Box>
     </Box>
   );
