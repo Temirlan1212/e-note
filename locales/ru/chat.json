@@ -1,6 +1,10 @@
 {
+  "Correspondence": "Переписка",
   "Your messages": "Ваши сообщения",
   "Choose an interlocutor": "Выберите собеседника для начала общения",
   "online": "онлайн",
-  "offline": "офлайн"
+  "offline": "офлайн",
+  "Chat is not available": "Чат не доступен",
+  "Select a chat from the list on the left": "Выберите чат из списка слева",
+  "Start chatting": "Чтобы начать общение, перейдите по этой ссылке"
 }

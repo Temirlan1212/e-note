@@ -30,6 +30,8 @@ export const ApplicationListQRMenu = ({
     returnResponse: true,
   });
 
+  const { update: getDocument } = useFetch("", "POST");
+
   const handleCopyLinkClick = () => {
     if (!copied) copyToClipboard(`${window.location.href}/check-document/${params?.row?.uniqueQrCode ?? 0}`);
   };
@@ -40,11 +42,17 @@ export const ApplicationListQRMenu = ({
   };
 
   const onPopupOpen = async () => {
-    if (!Boolean(qrUrl)) {
-      const res = await downloadUpdate(`/api/files/download/${params?.row?.id ?? 0}`);
-      const blobData = await res.blob();
-      const blobURL = URL.createObjectURL(blobData);
-      setQrUrl(blobURL);
+    if (!Boolean(qrUrl) && params?.row?.uniqueQrCode != null) {
+      const filesRes = await getDocument(`/api/files`, {
+        filters: { fileName: `SaleOrderQRCode_${params?.row?.uniqueQrCode}` },
+      });
+      const fileId = filesRes?.data?.[0]?.id;
+      if (fileId != null) {
+        const res = await downloadUpdate(`/api/files/download/${fileId ?? 0}`);
+        const blobData = await res.blob();
+        const blobURL = URL.createObjectURL(blobData);
+        setQrUrl(blobURL);
+      }
     }
   };
 

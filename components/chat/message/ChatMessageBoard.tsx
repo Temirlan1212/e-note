@@ -1,64 +1,19 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC } from "react";
 
-import Image, { StaticImageData } from "next/image";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
-
-import { Avatar, Box, IconButton, Typography } from "@mui/material";
-import MoreVert from "@mui/icons-material/MoreVert";
-import SendOutlinedIcon from "@mui/icons-material/SendOutlined";
-
-import Input from "../../ui/Input";
-import Button from "../../ui/Button";
-import MessageItem from "./ChatMessageItem";
-import { Message } from "../ChatContent";
+import { Avatar, Box, Typography } from "@mui/material";
 
 interface IChatRightPartProps {
-  avatar?: StaticImageData;
-  contactOnline?: boolean;
   name?: string;
-  onSend: (text: string) => void;
-  messages?: Message[];
-  activeContactId?: number;
+  chatLink?: string;
 }
 
-const ChatMessageBoard: FC<IChatRightPartProps> = (props) => {
-  const { avatar, contactOnline, name, onSend, messages, activeContactId } = props;
-
-  const [messageText, setMessageText] = useState("");
-
+const ChatMessageBoard: FC<IChatRightPartProps> = ({ name, chatLink }) => {
   const t = useTranslations();
 
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-    }
-  };
-
-  const handleSend = () => {
-    if (messageText.trim() !== "") {
-      onSend(messageText);
-      setMessageText("");
-      scrollToBottom();
-    }
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
   return (
-    <Box
-      flexDirection="column"
-      width="100%"
-      sx={{
-        display: {
-          xs: activeContactId ? "flex" : "none",
-          md: "flex",
-        },
-      }}
-    >
+    <Box display="flex" flexDirection="column" width="100%" gap="16px">
       <Box
         sx={{
           display: "flex",
@@ -76,29 +31,14 @@ const ChatMessageBoard: FC<IChatRightPartProps> = (props) => {
             gap: "16px",
           }}
         >
-          {avatar ? (
-            <Avatar
-              sizes="100"
-              sx={{
-                bgcolor: "success.main",
-                width: "40px",
-                height: "40px",
-              }}
-              aria-label="recipe"
-            >
-              <Image src={avatar} alt="contact-profile" />
-            </Avatar>
-          ) : (
-            <Avatar
-              sizes="100"
-              sx={{
-                bgcolor: "success.main",
-                width: "40px",
-                height: "40px",
-              }}
-              aria-label="recipe"
-            />
-          )}
+          <Avatar
+            sizes="100"
+            sx={{
+              bgcolor: "success.main",
+              width: "40px",
+              height: "40px",
+            }}
+          />
 
           <Box
             sx={{
@@ -112,65 +52,24 @@ const ChatMessageBoard: FC<IChatRightPartProps> = (props) => {
                 fontSize: "16px",
               }}
             >
-              {name}
-            </Typography>
-            <Typography
-              sx={{
-                color: contactOnline ? "#1BAA75" : "#BDBDBD",
-                fontSize: "14px",
-              }}
-            >
-              {contactOnline ? t("online") : t("offline")}
+              {name ? name : t("Chat is not available")}
             </Typography>
           </Box>
         </Box>
-        <IconButton
-          sx={{
-            "& svg": {
-              color: "white",
-            },
-          }}
-        >
-          <MoreVert />
-        </IconButton>
       </Box>
       <Box
         sx={{
-          height: "400px",
-          overflowY: "auto",
-          py: "20px",
-          px: "7px",
+          padding: "16px",
+          background: "#F6F6F6",
         }}
-        ref={messagesContainerRef}
       >
-        {messages?.map((message) => <MessageItem key={message.id} message={message} />)}
-      </Box>
-      <Box display="flex">
-        <Input
-          fullWidth
-          name={name}
-          placeholder={t("Your messages")}
-          value={messageText}
-          onChange={(e) => setMessageText(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              handleSend();
-            }
-          }}
-        />
-        <Button
-          sx={{
-            width: "80px",
-            boxShadow: 0,
-            ":hover": {
-              boxShadow: 0,
-            },
-          }}
-          color="success"
-          onClick={handleSend}
-        >
-          <SendOutlinedIcon />
-        </Button>
+        {chatLink ? (
+          <Link href={chatLink} rel="noopener noreferrer" target="_blank">
+            {t("Start chatting")}
+          </Link>
+        ) : (
+          <Typography sx={{ fontSize: "16px" }}>{t("Select a chat from the list on the left")}</Typography>
+        )}
       </Box>
     </Box>
   );

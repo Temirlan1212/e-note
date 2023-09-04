@@ -6,8 +6,9 @@ export const userProfileSchema = yup.object().shape({
   email: yup.string().email().required("E-mail is required!"),
   mobilePhone: yup
     .string()
+    .trim()
     .required("Mobile is required!")
-    .matches(/^[996]\d{11}$/, { message: "Please enter valid number.", excludeEmptyString: false }),
+    .matches(/^[0-9\+\-\s]*$/, { message: "Please enter valid number", excludeEmptyString: false }),
 });
 
 export const userProfilePasswordSchema = yup.object().shape({

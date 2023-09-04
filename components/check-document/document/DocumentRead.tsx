@@ -1,26 +1,26 @@
 import React, { FC } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { format } from "date-fns";
 
 import { Box, List, ListItem, Typography } from "@mui/material";
-import { useLocale, useTranslations } from "next-intl";
-import useFetch from "@/hooks/useFetch";
 import { IActionType } from "@/models/action-type";
-import { format } from "date-fns";
 import { useTheme } from "@mui/material/styles";
+
+import useFetch from "@/hooks/useFetch";
 import { IApplication } from "@/models/application";
 
-interface IApplicationStatusReadProps {
+interface IDocumentReadProps {
   data: IApplication;
 }
 
-const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
-  const { data } = props;
+const DocumentRead: FC<IDocumentReadProps> = ({ data }) => {
   const theme = useTheme();
   const locale = useLocale();
   const t = useTranslations();
 
-  const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
-  const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
-  const { data: signatureStatusData } = useFetch("/api/dictionaries/notary-signature-status", "POST");
+  const { data: statusData } = useFetch("/api/check-document/dictionaries/application-status", "GET");
+  const { data: actionTypeData } = useFetch("/api/check-document/dictionaries/action-type", "GET");
+  const { data: signatureStatusData } = useFetch("/api/check-document/dictionaries/notary-signature-status", "GET");
 
   const translatedStatusTitle = (data: Record<string, any>[], value?: number) => {
     const matchedStatus = data?.find((item) => item.value == value);
@@ -29,19 +29,19 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
   };
 
   const titles = [
-    { title: "Name", value: data?.product?.fullName },
+    { title: "Name", value: data?.product.fullName },
     { title: "Type of notarial action", value: translatedStatusTitle(actionTypeData?.data, data?.typeNotarialAction) },
-    { title: "StatusApplication", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
+    { title: "Status", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
     { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
     {
-      title: "Date of the action",
+      title: "Date of action",
       value: data?.creationDate ? format(new Date(data?.creationDate!), "dd.MM.yyyy HH:mm:ss") : "",
     },
-    { title: "Notary's full name", value: data?.company.name },
+    { title: "Full name of the notary", value: data?.company.name },
     { title: "Unique registry number", value: data?.notaryUniqNumber },
   ];
 
-  const members = data?.requester.concat(data.members);
+  const members = data?.requester?.concat(data.members!);
 
   return (
     <Box
@@ -149,7 +149,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                     color: "#687C9B",
                   }}
                 >
-                  {member.lastName} {member.name} {member.middleName}
+                  {member.fullName}
                 </Typography>
                 <Typography
                   sx={{
@@ -169,4 +169,4 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
   );
 };
 
-export default ApplicationStatusRead;
+export default DocumentRead;
