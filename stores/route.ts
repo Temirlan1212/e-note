@@ -93,12 +93,12 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
           type: "menu",
           icon: "LocalLibrary",
         },
-        // {
-        //   title: "Register of Notaries of the KR",
-        //   link: "",
-        //   type: "menu",
-        //   icon: "ListAlt",
-        // },
+        {
+          title: "Register of Notaries of the KR",
+          link: "/notaries",
+          type: "menu",
+          icon: "ListAlt",
+        },
         // {
         //   title: "Register of notarial acts",
         //   link: "",
