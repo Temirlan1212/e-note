@@ -30,8 +30,12 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
   const id = watch("id");
 
   const { data, loading } = useFetch(id != null ? `/api/files/prepare/${id}` : "", "GET");
+  const { data: conversionData, loading: conversionLoading } = useFetch(
+    id != null ? `/api/files/document-conversion/${id}` : "",
+    "GET"
+  );
 
-  useEffectOnce(async () => {
+  useEffectOnce(() => {
     if (data?.data?.saleOrderVersion != null) {
       setValue("version", data.data.saleOrderVersion);
     }
@@ -53,9 +57,9 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", lg: "row" }}>
-        <StepperContentStep step={6} title={t("View document")} loading={loading} />
+        <StepperContentStep step={6} title={t("View document")} loading={loading || conversionLoading} />
 
-        {!loading && data?.data?.token && (
+        {!loading && !conversionLoading && data?.data?.token && (
           <Box display="flex" gap="10px" flexDirection={{ xs: "column", md: "row" }}>
             <Link
               href={`/api/iframe?url=${data?.data?.downloadUrl}&token=${data?.data?.token}`}
@@ -81,9 +85,17 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
         )}
       </Box>
 
-      {!loading && data?.data?.downloadUrl && <PDFViewer fileUrl="/documents/example.pdf" />}
+      {!conversionLoading && data?.data?.token && (
+        <PDFViewer
+          fileUrl={
+            conversionData?.data?.pdfLink
+              ? `/api/iframe?url=${conversionData?.data?.pdfLink}&token=${data?.data?.token}`
+              : "/"
+          }
+        />
+      )}
 
-      {!loading && (
+      {!loading && !conversionLoading && (
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
           {onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
