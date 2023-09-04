@@ -11,6 +11,7 @@ export interface IApplication {
   creationDate: string;
   notaryUniqNumber: string;
   notarySignatureStatus: number;
+  uniqueQrCode?: string;
   createdBy: IUserData;
   company: ICompany;
   product: IProduct;

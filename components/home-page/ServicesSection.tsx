@@ -11,7 +11,7 @@ const ServicesSection: React.FC = () => {
   const t = useTranslations();
 
   const servicesData = [
-    { title: "Verification of the power of attorney", link: "/", icon: CheckDocIcon },
+    { title: "Verification of the power of attorney", link: "/check-document", icon: CheckDocIcon },
     { title: "Checking of mortgaged movable property", link: "/", icon: CarIcon },
     { title: "Search for heirs", link: "/", icon: SearchHeirs },
     { title: "Hereditary affairs", link: "/", icon: HereditaryAffairs },
