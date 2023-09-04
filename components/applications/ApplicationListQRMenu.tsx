@@ -44,7 +44,7 @@ export const ApplicationListQRMenu = ({
   const onPopupOpen = async () => {
     if (!Boolean(qrUrl) && params?.row?.uniqueQrCode != null) {
       const filesRes = await getDocument(`/api/files`, {
-        criteriaValue: { fileName: `SaleOrderQRCode_${params?.row?.uniqueQrCode}` },
+        filters: { fileName: `SaleOrderQRCode_${params?.row?.uniqueQrCode}` },
       });
       const fileId = filesRes?.data?.[0]?.id;
       if (fileId != null) {

@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 12;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
 
-  const criteria = Object.entries(req.body?.criteriaValue ?? {}).reduce((acc: Record<string, any>[], [key, value]) => {
+  const criteria = Object.entries(req.body?.filters ?? {}).reduce((acc: Record<string, any>[], [key, value]) => {
     if (value && key) {
       acc.push({ fieldName: key, operator: "=", value });
     }
