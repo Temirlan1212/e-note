@@ -67,6 +67,7 @@ export interface INotaryInfoData {
     id: number;
     $version: number;
     region: {
+      fullName: string;
       code: string;
       name: string;
       id: number;

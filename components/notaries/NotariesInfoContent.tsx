@@ -73,11 +73,11 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
     },
     {
       text:
-        notaryData[0]?.address.region.name +
+        notaryData[0]?.address.fullName +
         ", " +
-        notaryData[0]?.address.district.name +
+        notaryData[0]?.notaryDistrict.name +
         ", " +
-        notaryData[0]?.address.city.fullName,
+        notaryData[0]?.address.fullName,
       icon: <LocationOnOutlinedIcon />,
       type: "text",
       array: [],
