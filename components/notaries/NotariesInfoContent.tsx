@@ -42,7 +42,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const infoArray = [
     {
-      text: notaryData[0]?.typeOfNotary,
+      text: notaryData[0]?.typeOfNotary === "state" ? "Государственный нотариус" : "Частный нотариус",
       icon: <AccountCircleOutlinedIcon />,
       type: "text",
       array: [],
@@ -72,12 +72,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: [],
     },
     {
-      text:
-        notaryData[0]?.address.fullName +
-        ", " +
-        notaryData[0]?.notaryDistrict.name +
-        ", " +
-        notaryData[0]?.address.fullName,
+      text: notaryData[0]?.notaryDistrict.name + ", " + notaryData[0]?.address.fullName,
       icon: <LocationOnOutlinedIcon />,
       type: "text",
       array: [],
@@ -233,6 +228,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
           display: "flex",
           flexDirection: "column",
           gap: "30px",
+          marginTop: { sm: "30px", md: "unset", lg: "unset" },
         }}
       >
         <Link href="/applications/create">

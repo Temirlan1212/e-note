@@ -12,6 +12,7 @@ import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import EraserIcon from "@/public/icons/eraser.svg";
 import Radio from "../ui/Radio";
 import useFetch from "@/hooks/useFetch";
+import { useRouter } from "next/router";
 
 interface INotariesFiltrationProps {
   setSearchQuery: (val: string) => void;
@@ -45,6 +46,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
   onFilterClear,
 }) => {
   const t = useTranslations();
+  const { locale } = useRouter();
 
   // Search
 
@@ -264,7 +266,9 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
                     <Select
                       placeholder="select"
                       selectType="success"
-                      labelField={el.type === "second" ? "title" : "name"}
+                      labelField={
+                        el.type === "second" ? (locale === "ru" || locale === "kg" ? "title_ru" : "title") : "name"
+                      }
                       valueField={el.type === "second" ? "value" : "id"}
                       data={el.options}
                       value={field.value != null ? field.value : ""}
