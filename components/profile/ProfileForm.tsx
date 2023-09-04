@@ -11,11 +11,12 @@ import ProfilePasswordForm from "./ProfilePasswordForm";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { userProfileSchema } from "@/validator-schemas/profile";
-import { useProfileStore } from "@/stores/profile";
+import { IProfileState, useProfileStore } from "@/stores/profile";
 import { IUserData } from "@/models/user";
 
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
+import TelInput from "../ui/TelInput";
 
 interface IProfileFormProps {}
 
@@ -35,11 +36,12 @@ async function blobToFile(blob: Blob, fileName: string): Promise<File> {
 }
 
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
-  const profile = useProfileStore((state) => state);
+  const profile = useProfileStore<IProfileState>((state) => state);
   const userData: IExtendedUserData | null = profile.getUserData();
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [mobilePhone, setMobilePhone] = useState<string | undefined>("");
 
   const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
     returnResponse: true,
@@ -61,6 +63,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
     setImagePreview(url);
     setSelectedImage(convertedFile);
+    setMobilePhone(userData?.["partner.mobilePhone"]);
   }, [imageData]);
 
   const form = useForm<IUserProfile>({
@@ -107,7 +110,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             partner: {
               id: userData?.partner.id,
               version: userData?.partner.$version,
-              mobilePhone: data.mobilePhone,
+              mobilePhone: mobilePhone,
             },
           }).then((res) => {
             if (res.ok) {
@@ -132,7 +135,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           partner: {
             id: userData?.partner.id,
             version: userData?.partner.$version,
-            mobilePhone: data.mobilePhone,
+            mobilePhone: mobilePhone,
           },
         }).then((res) => {
           if (res.ok) {
@@ -155,6 +158,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const handleDeleteClick = () => {
     setSelectedImage(null);
     setImagePreview(null);
+  };
+
+  const handleMobilePhoneChange = (newPhoneNumber: string) => {
+    setMobilePhone(newPhoneNumber);
   };
 
   return (
@@ -357,12 +364,12 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               >
                 {t("Phone number")}
               </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.mobilePhone?.message ?? false}
+              <TelInput
+                inputType={errors.mobilePhone?.message ? "error" : mobilePhone ? "secondary" : "success"}
                 helperText={errors.mobilePhone?.message ? t(errors.mobilePhone?.message) : ""}
-                register={form.register}
+                value={mobilePhone}
                 name="mobilePhone"
+                onChange={(value) => typeof value === "string" && handleMobilePhoneChange(value)}
               />
             </FormControl>
           </Box>
