@@ -63,7 +63,7 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
   ],
   userRoutes: [
     {
-      title: userData?.group.id === 4 ? "Notarial actions" : "Applications",
+      title: "Notarial actions",
       link: "/applications",
       type: "menu",
       icon: "BorderColor",

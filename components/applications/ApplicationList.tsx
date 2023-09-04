@@ -3,11 +3,8 @@ import { ValueOf } from "next/dist/shared/lib/constants";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { IActionType } from "@/models/action-type";
-import { IUserData } from "@/models/user";
 import { IStatus } from "@/models/application-status";
-import { useProfileStore } from "@/stores/profile";
 import useFetch from "@/hooks/useFetch";
-import useEffectOnce from "@/hooks/useEffectOnce";
 import { Box, Typography } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import PostAddIcon from "@mui/icons-material/PostAdd";
@@ -35,13 +32,6 @@ export default function ApplicationList() {
     "/api/dictionaries/selection/notary.filter.saleorder.by.performer.type.select",
     "POST"
   );
-  const [user, setUser] = useState<IUserData | null>();
-
-  const userData: IUserData | null = useProfileStore((state) => state.getUserData());
-
-  useEffectOnce(() => {
-    setUser(userData);
-  }, [userData]);
 
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,
@@ -112,11 +102,11 @@ export default function ApplicationList() {
     <Box height={{ xs: "600px", md: "700px" }}>
       <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
         <Typography variant="h4" color="primary">
-          {user?.group.id === 4 ? t("Notarial actions") : t("Your applications")}
+          {t("Notarial actions")}
         </Typography>
         <Link href="applications/create">
           <Button sx={{ py: "10px", px: "20px" }} component="label" startIcon={<PostAddIcon />}>
-            {user?.group.id === 4 ? t("Create notarial action") : t("Create application")}
+            {t("Create")}
           </Button>
         </Link>
       </Box>
