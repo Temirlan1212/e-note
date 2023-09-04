@@ -33,7 +33,6 @@
     "eslint-config-next": "13.4.8",
     "formidable": "^3.5.0",
     "html5-qrcode": "^2.3.8",
-    "jsqr": "^1.4.0",
     "leaflet": "^1.9.4",
     "mui-file-input": "^2.0.6",
     "mui-tel-input": "^3.2.2",
