@@ -15,7 +15,7 @@ export type ITelInputProps = MuiTelInputProps & {
   onChange?: (value: string) => void;
 };
 
-export default forwardRef<HTMLDivElement, ITelInputProps>(function FileInput(
+export default forwardRef<HTMLDivElement, ITelInputProps>(function TelInput(
   { inputType = "secondary", helperText, value, onChange, ...rest }: ITelInputProps,
   ref
 ) {
