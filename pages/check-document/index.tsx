@@ -6,12 +6,11 @@ import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 
 import Button from "@/components/ui/Button";
-import CheckByID from "@/components/check-power-of-attorney/CheckByID";
-import CheckByQR from "@/components/check-power-of-attorney/CheckByQR";
+import CheckByID from "@/components/check-document/CheckByID";
+import CheckByQR from "@/components/check-document/CheckByQR";
 
-export default function CheckPowerOfAttorney() {
+export default function CheckDocument() {
   const [isVariantClicked, setIsVariantClicked] = useState(false);
-  const [showRemind, setShowRemind] = useState(true);
   const [isCheckByID, setIsCheckByID] = useState(true);
   const [isCheckByQR, setIsCheckByQR] = useState(false);
   const t = useTranslations();
@@ -20,17 +19,12 @@ export default function CheckPowerOfAttorney() {
     setIsVariantClicked(!isVariantClicked);
     setIsCheckByID(!isCheckByID);
     setIsCheckByQR(!isCheckByQR);
-    setShowRemind(true);
-  };
-
-  const closeRemind = () => {
-    setShowRemind(false);
   };
 
   return (
     <>
       <Head>
-        <title>{t("Power of Attorney verification")}</title>
+        <title>{t("Check document")}</title>
       </Head>
       <Container
         sx={{
@@ -51,7 +45,7 @@ export default function CheckPowerOfAttorney() {
           }}
         >
           <Typography align="center" fontSize={{ xs: "24px", sm: "24px", md: "36px" }} fontWeight={600}>
-            {t("Power of Attorney verification")}
+            {t("Check document")}
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={6}>
@@ -95,7 +89,7 @@ export default function CheckPowerOfAttorney() {
               </Button>
             </Grid>
           </Grid>
-          {isCheckByID && <CheckByID closeRemind={closeRemind} showRemind={showRemind} />}
+          {isCheckByID && <CheckByID />}
           {isCheckByQR && <CheckByQR />}
         </Container>
       </Container>
@@ -108,7 +102,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     props: {
       messages: {
         ...(await import(`locales/${context.locale}/common.json`)).default,
-        ...(await import(`locales/${context.locale}/check-power-of-attorney.json`)).default,
+        ...(await import(`locales/${context.locale}/check-document.json`)).default,
       },
     },
   };
