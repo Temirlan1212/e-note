@@ -3,5 +3,8 @@
   "Your messages": "Your messages",
   "Choose an interlocutor": "Choose an interlocutor to start a conversation with",
   "online": "online",
-  "offline": "offline"
+  "offline": "offline",
+  "Chat is not available": "Chat is not available",
+  "Select a chat from the list on the left": "Select a chat from the list on the left",
+  "Start chatting": "To start chatting, follow this link"
 }

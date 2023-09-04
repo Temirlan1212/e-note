@@ -10,41 +10,41 @@ import ChatMessageBoard from "./message/ChatMessageBoard";
 
 import useFetch from "@/hooks/useFetch";
 
-interface IChatContentProps {}
-
-export interface IContact {
-  appName: string;
-  chatCreator: string;
-  chatId: number;
-  chatRoomLink: string;
-  guestEmail: null;
-  guestId: number;
-  notary: {
-    id: number;
+interface IContact {
+  status: number;
+  data: {
+    appName: string;
+    chatCreator: string;
+    chatId: number;
+    chatRoomLink: string;
+    guestEmail: null;
+    guestId: number;
+    notary: {
+      id: number;
+    };
+    userToken: string;
   };
-  userToken: string;
 }
 
-const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
-  const [activeContactId, setActiveContactId] = useState<number>(0);
+const ChatContent: FC = () => {
+  const [activeContactId, setActiveContactId] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
   const t = useTranslations();
 
-  const { data: contacts } = useFetch("/api/chat", "GET");
+  const { data } = useFetch("/api/profile/users", "POST");
+  const { data: contact, update } = useFetch<IContact>("", "POST");
 
-  const filteredContacts: IContact[] = contacts?.data.filter((contact) =>
-    contact.appName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const { data: contact, update } = useFetch("", "POST");
-
-  const activeContact = contacts?.data.find((contact) => contact.notary.id === activeContactId);
-
-  const handleContactClick = async (contactId: number) => {
-    await update(`/api/chat/create/${contactId}`, { id: contactId });
+  const handleContactClick = (contactId: number) => {
+    update(`/api/chat/create/${contactId}`, { id: contactId });
     setActiveContactId(contactId);
   };
+
+  const filteredUsers: Array<{ name: string; id: number }> = data?.data?.filter((user: { name: string; id: number }) =>
+    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const activeContact = filteredUsers?.find((user) => user.id === activeContactId);
 
   const onBackToContacts = () => {
     setActiveContactId(0);
@@ -65,7 +65,7 @@ const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
           color: "#1BAA75",
           fontSize: "16px",
           display: {
-            xs: "flex",
+            xs: activeContact?.id ? "flex" : "none",
             md: "none",
           },
           margin: "0 0 20px auto",
@@ -82,19 +82,15 @@ const ChatContent: FC<IChatContentProps> = (props: IChatContentProps) => {
         }}
       >
         <ChatListBoard
-          setSearchQuery={setSearchQuery}
-          filteredContacts={filteredContacts}
+          users={filteredUsers}
           handleContactClick={handleContactClick}
           activeContact={activeContact}
           searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
         />
 
         {activeContact ? (
-          <ChatMessageBoard
-            name={contact?.data.appName}
-            sourceLink={contact?.data.chatRoomLink}
-            activeContactId={contact?.data.notary.id}
-          />
+          <ChatMessageBoard name={contact?.data?.appName} chatLink={contact?.data?.chatRoomLink} />
         ) : (
           <Box
             sx={{

@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { ChangeEvent, FC } from "react";
 
 import { useTranslations } from "next-intl";
 
@@ -7,35 +7,38 @@ import { Search } from "@mui/icons-material";
 
 import Input from "../../ui/Input";
 import ChatListItem from "./ChatListItem";
-import { IContact } from "../ChatContent";
 
 interface IChatListBoardProps {
-  setSearchQuery: (query: string) => void;
-  filteredContacts: IContact[];
   handleContactClick: (id: number) => void;
-  activeContact: IContact | null;
+  activeContact?: { name: string; id: number };
+  users: Array<{ name: string; id: number }>;
   searchQuery: string;
+  setSearchQuery: (query: string) => void;
 }
 
 const ChatListBoard: FC<IChatListBoardProps> = (props) => {
-  const { setSearchQuery, filteredContacts, handleContactClick, activeContact, searchQuery } = props;
+  const { handleContactClick, activeContact, users, searchQuery, setSearchQuery } = props;
 
   const t = useTranslations();
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
     <Box
       display="flex"
       flexDirection="column"
+      gap="16px"
       sx={{
         display: {
-          xs: activeContact?.notary.id ? "none" : "flex",
+          xs: activeContact?.id ? "none" : "flex",
           md: "flex",
         },
         width: {
           xs: "100%",
           md: "320px",
         },
-        gap: "16px",
       }}
     >
       <Box
@@ -66,7 +69,7 @@ const ChatListBoard: FC<IChatListBoardProps> = (props) => {
           },
         }}
         value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        onChange={handleChange}
         InputProps={{
           endAdornment: <Search />,
         }}
@@ -81,14 +84,14 @@ const ChatListBoard: FC<IChatListBoardProps> = (props) => {
           overflowY: "auto",
         }}
       >
-        {filteredContacts?.map((contact) => {
+        {users?.map((user) => {
           return (
             <ChatListItem
-              activeContact={activeContact?.notary.id}
-              key={contact.notary.id}
-              contactName={contact.appName}
-              contactId={contact.notary.id}
-              onContactClick={() => handleContactClick(contact.notary.id)}
+              key={user.id}
+              activeContact={activeContact?.id}
+              contactName={user.name}
+              contactId={user.id}
+              onContactClick={() => handleContactClick(user.id)}
             />
           );
         })}

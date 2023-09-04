@@ -1,28 +1,19 @@
 import { FC } from "react";
 
-import { Avatar, Box, IconButton, Typography } from "@mui/material";
-import MoreVert from "@mui/icons-material/MoreVert";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Avatar, Box, Typography } from "@mui/material";
 
 interface IChatRightPartProps {
-  name: string;
-  activeContactId?: number;
-  sourceLink?: string;
+  name?: string;
+  chatLink?: string;
 }
 
-const ChatMessageBoard: FC<IChatRightPartProps> = (props) => {
-  const { activeContactId, name, sourceLink } = props;
+const ChatMessageBoard: FC<IChatRightPartProps> = ({ name, chatLink }) => {
+  const t = useTranslations();
 
   return (
-    <Box
-      flexDirection="column"
-      width="100%"
-      sx={{
-        display: {
-          xs: activeContactId ? "flex" : "none",
-          md: "flex",
-        },
-      }}
-    >
+    <Box display="flex" flexDirection="column" width="100%" gap="16px">
       <Box
         sx={{
           display: "flex",
@@ -47,7 +38,6 @@ const ChatMessageBoard: FC<IChatRightPartProps> = (props) => {
               width: "40px",
               height: "40px",
             }}
-            aria-label="recipe"
           />
 
           <Box
@@ -62,21 +52,25 @@ const ChatMessageBoard: FC<IChatRightPartProps> = (props) => {
                 fontSize: "16px",
               }}
             >
-              {name}
+              {name ? name : t("Chat is not available")}
             </Typography>
           </Box>
         </Box>
-        <IconButton
-          sx={{
-            "& svg": {
-              color: "white",
-            },
-          }}
-        >
-          <MoreVert />
-        </IconButton>
       </Box>
-      <iframe src={sourceLink} width={"100%"} height={"100%"} style={{ minHeight: 400 }} />
+      <Box
+        sx={{
+          padding: "16px",
+          background: "#F6F6F6",
+        }}
+      >
+        {chatLink ? (
+          <Link href={chatLink} rel="noopener noreferrer" target="_blank">
+            {t("Start chatting")}
+          </Link>
+        ) : (
+          <Typography sx={{ fontSize: "16px" }}>{t("Select a chat from the list on the left")}</Typography>
+        )}
+      </Box>
     </Box>
   );
 };
