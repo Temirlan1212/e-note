@@ -75,7 +75,9 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
   const getDynamicFormAppData = async () => {
     const productId = form.watch("product.id");
-    const { data } = await getDocumentTemplateData(`/api/dictionaries/document-type/template/${productId}`);
+    const { data } = (await getDocumentTemplateData(`/api/dictionaries/document-type/template/${productId}`)) ?? {
+      data: null,
+    };
 
     if (Array.isArray(data) && data.length > 0 && id) {
       const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();

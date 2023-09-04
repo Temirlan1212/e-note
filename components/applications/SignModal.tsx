@@ -4,7 +4,7 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 
 import { Box } from "@mui/material";
 import Button from "@/components/ui/Button";
-import CreateIcon from "@mui/icons-material/Create";
+import KeyIcon from "@mui/icons-material/Key";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import FingerprintScanner from "@/components/ui/FingerprintScanner";
 
@@ -102,7 +102,7 @@ export default function SignModal() {
       }}
       onToggle={handleToggle}
     >
-      <Button startIcon={<CreateIcon />} sx={{ width: "auto" }}>
+      <Button startIcon={<KeyIcon />} sx={{ width: "auto" }}>
         {t("Sign")}
       </Button>
     </ConfirmationModal>
