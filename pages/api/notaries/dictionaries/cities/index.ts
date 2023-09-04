@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_PUBLIC_API_URL + "/search/axelor-erp/com.axelor.apps.base.db.City", {
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.City/search", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

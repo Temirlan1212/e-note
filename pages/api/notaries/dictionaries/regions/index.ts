@@ -7,18 +7,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
-  const response = await fetch(
-    process.env.BACKEND_PUBLIC_API_URL + "/search/axelor-erp/com.axelor.apps.base.db.Region",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fields: ["name"],
-      }),
-    }
-  );
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Region/search", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      fields: ["name"],
+    }),
+  });
 
   if (!response.ok) {
     return res.status(response.status).json(null);

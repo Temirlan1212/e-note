@@ -10,33 +10,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 8;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
 
-  const response = await fetch(
-    process.env.BACKEND_PUBLIC_API_URL + "/search/axelor-erp/com.axelor.apps.base.db.Company",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: req.headers["server-cookie"]?.toString() ?? "",
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Company/search", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: req.headers["server-cookie"]?.toString() ?? "",
+    },
+    body: JSON.stringify({
+      offset: page,
+      limit: pageSize,
+      fields: [
+        "partner.simpleFullName",
+        "partner.rating",
+        "logo.fileName",
+        "address.region",
+        "address.district",
+        "address.city",
+      ],
+      data: {
+        criteria: req.body["criteria"] ?? [],
+        sortBy: req.body["sortBy"] ?? [],
       },
-      body: JSON.stringify({
-        offset: page,
-        limit: pageSize,
-        fields: [
-          "partner.simpleFullName",
-          "partner.rating",
-          "logo.fileName",
-          "address.region",
-          "address.district",
-          "address.city",
-        ],
-        data: {
-          criteria: req.body["criteria"] ?? [],
-          sortBy: req.body["sortBy"] ?? [],
-        },
-        ...req.body,
-      }),
-    }
-  );
+      ...req.body,
+    }),
+  });
 
   if (!response.ok) {
     return res.status(response.status).json(null);
