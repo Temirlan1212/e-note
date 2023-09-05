@@ -21,9 +21,10 @@ interface IAppQueryParams {
   };
   searchValue?: string | null;
   requestType?: string | null;
+  requestData?: any;
 }
 
-interface Criteria {
+export interface Criteria {
   value: any;
   fieldName: string;
   operator: string;
@@ -31,7 +32,7 @@ interface Criteria {
 
 interface INotariesContentProps {}
 
-interface INotaryFilterData {
+export interface INotaryFilterData {
   city: number | null;
   district: number | null;
   notaryDistrict: number | null;
@@ -61,6 +62,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
     sortBy: null,
     requestType: null,
     searchValue: null,
+    requestData: null,
   });
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -101,107 +103,16 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   const onFilterClear = () => {
     reset();
     setRadioValue("");
-    updateAppQueryParams("data", {
-      operator: "and",
-      criteria: [],
-    });
-  };
-
-  // Filtration
-  const buildFilterCriteria = (filterData: INotaryFilterData) => {
-    const criteria: Criteria[] = [];
-
-    if (filterData.city !== null) {
-      criteria.push({
-        fieldName: "address.city.id",
-        operator: "=",
-        value: filterData.city,
-      });
-    }
-
-    if (filterData.district !== null) {
-      criteria.push({
-        fieldName: "address.district.id",
-        operator: "=",
-        value: filterData.district,
-      });
-    }
-
-    if (filterData.notaryDistrict !== null) {
-      criteria.push({
-        fieldName: "notaryDistrict.id",
-        operator: "=",
-        value: filterData.notaryDistrict,
-      });
-    }
-
-    if (filterData.region !== null) {
-      criteria.push({
-        fieldName: "address.region.id",
-        operator: "=",
-        value: filterData.region,
-      });
-    }
-
-    if (filterData.workDays !== null) {
-      criteria.push({
-        fieldName: "workingDay.weekDayNumber",
-        operator: "in",
-        value: filterData.workDays.split(",").map(Number),
-      });
-    }
-
-    if (filterData.typeOfNotary !== null) {
-      criteria.push({
-        fieldName: "typeOfNotary",
-        operator: "=",
-        value: filterData.typeOfNotary,
-      });
-    }
-
-    return criteria;
+    updateAppQueryParams("requestType", null);
+    updateAppQueryParams("requestData", null);
   };
 
   const onFilterSubmit = (data: any) => {
-    const newArr = buildFilterCriteria(data);
-    const radioChecked = () => {
-      if (radioValue === "roundClock") {
-        return [
-          {
-            fieldName: "roundClock",
-            operator: "=",
-            value: true,
-          },
-          {
-            fieldName: "checkOut",
-            operator: "=",
-            value: false,
-          },
-        ];
-      } else if (radioValue === "checkOut") {
-        return [
-          {
-            fieldName: "roundClock",
-            operator: "=",
-            value: false,
-          },
-          {
-            fieldName: "checkOut",
-            operator: "=",
-            value: true,
-          },
-        ];
-      } else {
-        return [];
-      }
-    };
-
-    const criteriaArr = newArr.concat(radioChecked());
-
-    updateAppQueryParams("data", {
-      criteria: criteriaArr,
-      operator: "and",
-    });
+    setAppQueryParams((prevParams) => ({
+      ...prevParams,
+      requestType: "filterSearch",
+      requestData: data,
+    }));
   };
 
   return (

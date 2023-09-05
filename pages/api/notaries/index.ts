@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { INotaryData } from "@/models/notaries";
+import { Criteria, INotaryFilterData } from "@/components/notaries/NotariesContent";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<INotaryData | null>) {
   if (req.method !== "POST" && req.body == null) {
@@ -10,25 +11,65 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 8;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
 
-  const criteria: any[] = [];
+  const criteria: Criteria[] = [];
   let data: any = {};
 
   const radioValue = req.body["radioValue"];
   const requestType = req.body["requestType"];
   const searchValue = req.body["searchValue"];
+  const requestData = req.body["requestData"];
 
-  if (requestType === "keywordSearch") {
-    data = {
-      operator: "and",
-      criteria: [
-        {
-          fieldName: "name",
-          operator: "like",
-          value: searchValue,
-        },
-      ],
-    };
-  }
+  const buildFilterCriteria = (filterData: INotaryFilterData) => {
+    if (filterData.city !== null) {
+      criteria.push({
+        fieldName: "address.city.id",
+        operator: "=",
+        value: filterData.city,
+      });
+    }
+
+    if (filterData.district !== null) {
+      criteria.push({
+        fieldName: "address.district.id",
+        operator: "=",
+        value: filterData.district,
+      });
+    }
+
+    if (filterData.notaryDistrict !== null) {
+      criteria.push({
+        fieldName: "notaryDistrict.id",
+        operator: "=",
+        value: filterData.notaryDistrict,
+      });
+    }
+
+    if (filterData.region !== null) {
+      criteria.push({
+        fieldName: "address.region.id",
+        operator: "=",
+        value: filterData.region,
+      });
+    }
+
+    if (filterData.workDays !== null) {
+      criteria.push({
+        fieldName: "workingDay.weekDayNumber",
+        operator: "in",
+        value: filterData.workDays.split(",").map(Number),
+      });
+    }
+
+    if (filterData.typeOfNotary !== null) {
+      criteria.push({
+        fieldName: "typeOfNotary",
+        operator: "=",
+        value: filterData.typeOfNotary,
+      });
+    }
+
+    return criteria;
+  };
 
   const radioChecked = () => {
     if (radioValue === "roundClock") {
@@ -61,6 +102,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       return [];
     }
   };
+
+  if (requestType === "keywordSearch") {
+    data = {
+      operator: "and",
+      criteria: [
+        {
+          fieldName: "name",
+          operator: "like",
+          value: searchValue,
+        },
+      ],
+    };
+  }
+
+  if (requestType === "filterSearch") {
+    const newArr = buildFilterCriteria(requestData);
+    const criteriaArr = newArr.concat(radioChecked());
+    data = {
+      criteria: criteriaArr,
+      operator: "and",
+    };
+  }
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Company/search", {
     method: "POST",
