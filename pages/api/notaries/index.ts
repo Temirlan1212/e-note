@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { INotaryData } from "@/models/notaries";
-import { Criteria, INotaryFilterData } from "@/components/notaries/NotariesContent";
+import { Criteria, Data, INotaryFilterData } from "@/components/notaries/NotariesContent";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<INotaryData | null>) {
   if (req.method !== "POST" && req.body == null) {
@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
 
   const criteria: Criteria[] = [];
-  let data: any = {};
+  let data: Data = {};
 
   const radioValue = req.body["radioValue"];
   const requestType = req.body["requestType"];

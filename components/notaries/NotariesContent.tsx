@@ -15,13 +15,16 @@ interface IAppQueryParams {
   pageSize: number;
   page: number;
   sortBy: string[] | null;
-  data?: {
-    operator: string;
-    criteria: Criteria[];
-  };
+  data?: Data;
   searchValue?: string | null;
   requestType?: string | null;
   requestData?: any;
+}
+
+export interface Data {
+  operator?: string;
+  sortBy?: string[] | null;
+  criteria?: Criteria[];
 }
 
 export interface Criteria {
