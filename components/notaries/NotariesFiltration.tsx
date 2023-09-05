@@ -48,14 +48,10 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
   const t = useTranslations();
   const { locale } = useRouter();
 
-  // Search
-
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setSearchQuery(value);
   };
-
-  // Filtration
 
   const { data: regionsData } = useFetch("/api/notaries/dictionaries/regions", "POST");
   const { data: citiesData } = useFetch("/api/notaries/dictionaries/cities", "POST");
@@ -122,14 +118,12 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
     },
   ];
 
-  // Show/Hide
   const [isVisible, setIsVisible] = useState(true);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
   };
 
-  // Sort
   const notariesSortOptionsData = [{ value: "partner.simpleFullName", label: "В алфавитном порядке" }];
 
   return (
