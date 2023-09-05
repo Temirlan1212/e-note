@@ -1,6 +1,7 @@
 import { number, object, InferType, string, mixed, date, array, boolean } from "yup";
 import { personSchema } from "./person";
 import { addressSchema } from "./address";
+import { filesSchema } from "./files";
 
 export type IApplicationSchema = InferType<typeof applicationSchema>;
 
