@@ -19,6 +19,8 @@ interface IAppQueryParams {
     operator: string;
     criteria: Criteria[];
   };
+  searchValue?: string | null;
+  requestType?: string | null;
 }
 
 interface Criteria {
@@ -57,10 +59,8 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
     pageSize: 8,
     page: 1,
     sortBy: null,
-    data: {
-      operator: "and",
-      criteria: [], // Empty array to start
-    },
+    requestType: null,
+    searchValue: null,
   });
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -91,18 +91,10 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
       return;
     }
 
-    const searchData: Criteria = {
-      fieldName: "name",
-      operator: "like",
-      value: searchQuery,
-    };
-
     setAppQueryParams((prevParams) => ({
       ...prevParams,
-      data: {
-        operator: "and",
-        criteria: [searchData],
-      },
+      requestType: "keywordSearch",
+      searchValue: searchQuery,
     }));
   };
 

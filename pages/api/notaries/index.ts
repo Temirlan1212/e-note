@@ -10,6 +10,58 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 8;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
 
+  const criteria: any[] = [];
+  let data: any = {};
+
+  const radioValue = req.body["radioValue"];
+  const requestType = req.body["requestType"];
+  const searchValue = req.body["searchValue"];
+
+  if (requestType === "keywordSearch") {
+    data = {
+      operator: "and",
+      criteria: [
+        {
+          fieldName: "name",
+          operator: "like",
+          value: searchValue,
+        },
+      ],
+    };
+  }
+
+  const radioChecked = () => {
+    if (radioValue === "roundClock") {
+      return [
+        {
+          fieldName: "roundClock",
+          operator: "=",
+          value: true,
+        },
+        {
+          fieldName: "checkOut",
+          operator: "=",
+          value: false,
+        },
+      ];
+    } else if (radioValue === "checkOut") {
+      return [
+        {
+          fieldName: "roundClock",
+          operator: "=",
+          value: false,
+        },
+        {
+          fieldName: "checkOut",
+          operator: "=",
+          value: true,
+        },
+      ];
+    } else {
+      return [];
+    }
+  };
+
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Company/search", {
     method: "POST",
     headers: {
@@ -27,10 +79,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         "address.district",
         "address.city",
       ],
-      data: {
-        criteria: req.body["criteria"] ?? [],
-        sortBy: req.body["sortBy"] ?? [],
-      },
+      // data: {
+      //   criteria: req.body["criteria"] ?? [],
+      //   sortBy: req.body["sortBy"] ?? [],
+      // },
+      data: data,
       ...req.body,
     }),
   });
