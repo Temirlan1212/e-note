@@ -75,6 +75,12 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
       icon: "Folder",
     },
     {
+      title: "Correspondence",
+      link: "/chat",
+      type: "menu",
+      icon: "Chat",
+    },
+    {
       title: "Registries",
       link: "",
       type: "group",

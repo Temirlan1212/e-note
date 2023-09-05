@@ -1,6 +1,10 @@
 {
+  "Correspondence": "Кат алышуу",
   "Your messages": "Сиздин билдирүүлөр",
   "Choose an interlocutor": "Сүйлөшүүнү баштоо үчүн маектешти тандаңыз",
   "online": "онлайн",
-  "offline": "офлайн"
+  "offline": "офлайн",
+  "Chat is not available": "Чат жеткиликсиз",
+  "Select a chat from the list on the left": "Сол жактагы тизмеден чатты тандаңыз",
+  "Start chatting": "Чатты баштоо үчүн бул шилтемени басыңыз"
 }

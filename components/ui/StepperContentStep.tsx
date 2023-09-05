@@ -1,80 +1,40 @@
-import React from "react";
-import { useTranslations } from "next-intl";
-import { Box, Typography } from "@mui/material";
+import { Box, BoxProps, CircularProgress, Typography } from "@mui/material";
 
 interface IStepperProps {
-  currentStep: number;
-  stepNext?: number;
-  stepNextTitle?: string;
-  onlyCurrentStep?: boolean;
+  step: number;
+  title: string;
+  stepColor?: "primary" | "secondary" | "error" | "warning" | "success";
+  titleColor?: "primary" | "secondary" | "error" | "warning" | "success";
+  loading?: boolean;
+  sx?: BoxProps["sx"];
 }
 
 const StepperContentStep: React.FC<IStepperProps> = (props) => {
-  const t = useTranslations();
-
-  const { currentStep, stepNext, stepNextTitle, onlyCurrentStep } = props;
+  const { step, title, stepColor = "primary", titleColor = "secondary", loading = false, sx = {} } = props;
 
   return (
-    <Box sx={{ display: { md: "flex", xs: "none" }, flexDirection: "column" }}>
-      <Typography
-        fontSize={18}
-        fontWeight={600}
-        color="primary"
-        sx={{
-          borderRadius: "50%",
-          border: "2px solid",
-          borderColor: "primary",
-          width: "64px",
-          minHeight: "64px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
+    <Box display="flex" alignItems="center" gap="15px" sx={sx}>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        flexShrink={0}
+        width={50}
+        height={50}
+        border={2}
+        borderRadius={50}
+        borderColor={loading ? "transparent" : stepColor + ".main"}
       >
-        {currentStep}
+        <Typography color={stepColor} variant="h4">
+          {step}
+        </Typography>
+
+        {loading && <CircularProgress size={50} thickness={2} color={stepColor} sx={{ position: "absolute" }} />}
+      </Box>
+
+      <Typography variant="h4" color={titleColor}>
+        {title}
       </Typography>
-      {!onlyCurrentStep && (
-        <>
-          <Box
-            width={"50%"}
-            height={"calc(100% - 64px)"}
-            sx={{
-              borderRight: "2px solid",
-              borderColor: "grey.300",
-            }}
-          ></Box>
-          <Box position="relative">
-            <Typography
-              fontSize={18}
-              fontWeight={600}
-              color="primary"
-              sx={{
-                borderRadius: "50%",
-                border: "2px solid",
-                borderColor: "primary",
-                width: "64px",
-                minHeight: "64px",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {stepNext}
-            </Typography>
-            <Typography
-              fontSize="18px"
-              minWidth="max-content"
-              fontWeight={600}
-              color="grey.300"
-              position="absolute"
-              top="18px"
-              left="84px"
-            >
-              {t(`${stepNextTitle}`)}
-            </Typography>
-          </Box>
-        </>
-      )}
     </Box>
   );
 };

@@ -276,69 +276,48 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
   };
 
   return (
-    <Box display="flex" gap="20px">
-      <StepperContentStep currentStep={4} stepNext={5} stepNextTitle={"Additional information"} />
-      <Box
-        width="100%"
-        display="flex"
-        gap="20px"
-        flexDirection="column"
-        sx={{
-          marginTop: { xs: "0", md: "16px" },
-          paddingBottom: { xs: "0", md: "90px" },
-        }}
-      >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          gap={{ xs: "20px", md: "200px" }}
-          flexDirection={{ xs: "column", md: "row" }}
-        >
-          <Typography variant="h4" whiteSpace="nowrap">
-            {t("fifth-step-title")}
-          </Typography>
-        </Box>
+    <Box display="flex" gap="20px" flexDirection="column">
+      <StepperContentStep step={4} title={t("fifth-step-title")} />
 
-        <Tabs
-          data={items.map(({ getElement }, index) => {
-            return {
-              tabErrorsCount: tabsErrorsCounts[index] ?? 0,
-              tabLabel: `${t("Member")} ${index + 1}`,
-              tabPanelContent: getElement(index) ?? <></>,
-            };
-          })}
-          actionsContent={
-            <>
-              <Button
-                buttonType="primary"
-                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-                onClick={handleAddTabClick}
-              >
-                <AddIcon />
-              </Button>
-              <Button
-                buttonType="secondary"
-                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-                onClick={handleRemoveTabClick}
-              >
-                <RemoveIcon />
-              </Button>
-            </>
-          }
-        />
+      <Tabs
+        data={items.map(({ getElement }, index) => {
+          return {
+            tabErrorsCount: tabsErrorsCounts[index] ?? 0,
+            tabLabel: `${t("Member")} ${index + 1}`,
+            tabPanelContent: getElement(index) ?? <></>,
+          };
+        })}
+        actionsContent={
+          <>
+            <Button
+              buttonType="primary"
+              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+              onClick={handleAddTabClick}
+            >
+              <AddIcon />
+            </Button>
+            <Button
+              buttonType="secondary"
+              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+              onClick={handleRemoveTabClick}
+            >
+              <RemoveIcon />
+            </Button>
+          </>
+        }
+      />
 
-        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-          {onPrev != null && (
-            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
-              {t("Prev")}
-            </Button>
-          )}
-          {onNext != null && (
-            <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
-              {t("Next")}
-            </Button>
-          )}
-        </Box>
+      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+        {onPrev != null && (
+          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+            {t("Prev")}
+          </Button>
+        )}
+        {onNext != null && (
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+            {t("Next")}
+          </Button>
+        )}
       </Box>
     </Box>
   );

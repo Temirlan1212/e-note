@@ -1,15 +1,16 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Controller, UseFormReturn } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Typography } from "@mui/material";
-import Button from "@/components/ui/Button";
-import PDFViewer from "@/components/PDFViewer";
+import { Box } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import Button from "@/components/ui/Button";
+import PDFViewer from "@/components/PDFViewer";
+import Link from "@/components/ui/Link";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
@@ -21,19 +22,21 @@ export interface IStepFieldsProps {
 export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
 
-  const { trigger, control, watch, resetField } = form;
+  const { trigger, control, watch, setValue } = form;
 
   const id = watch("id");
-  const version = watch("version");
 
-  const { update: getDocument } = useFetch("", "GET");
+  const { data, loading } = useFetch(id != null ? `/api/files/prepare/${id}` : "", "GET");
+  const { data: conversionData, loading: conversionLoading } = useFetch(
+    id != null ? `/api/files/document-conversion/${id}` : "",
+    "GET"
+  );
 
-  useEffectOnce(async () => {
-    if (id != null && version != null) {
-      const res = await getDocument(`/api/files/prepare/${id}`);
-      console.log(res, id);
+  useEffectOnce(() => {
+    if (data?.data?.saleOrderVersion != null) {
+      setValue("version", data.data.saleOrderVersion);
     }
-  }, [id, version]);
+  }, [data]);
 
   const triggerFields = async () => {
     return await trigger([]);
@@ -49,36 +52,34 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
   };
 
   return (
-    <Box display="flex" gap="20px">
-      <StepperContentStep currentStep={6} onlyCurrentStep />
-      <Box
-        width="100%"
-        display="flex"
-        gap="30px"
-        flexDirection="column"
-        sx={{
-          marginTop: { xs: "0", md: "16px" },
-        }}
-      >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          gap={{ xs: "20px", md: "200px" }}
-          flexDirection={{ xs: "column", md: "row" }}
-        >
-          <Typography variant="h4" whiteSpace="nowrap">
-            {t("View document")}
-          </Typography>
-        </Box>
+    <Box display="flex" gap="20px" flexDirection="column">
+      <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", lg: "row" }}>
+        <StepperContentStep step={6} title={t("View document")} loading={loading || conversionLoading} />
 
-        <Box display="flex" justifyContent="end">
-          <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
-            {t("Download PDF")}
-          </Button>
-        </Box>
+        {!loading && !conversionLoading && data?.data?.token && (
+          <Link
+            href={`/api/iframe?url=${data?.data?.downloadUrl}&token=${data?.data?.token}`}
+            download={data?.data?.fileName}
+            target="_blank"
+          >
+            <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
+              {t("Download PDF")}
+            </Button>
+          </Link>
+        )}
+      </Box>
 
-        <PDFViewer fileUrl="/documents/example.pdf" />
+      {!conversionLoading && data?.data?.token && (
+        <PDFViewer
+          fileUrl={
+            conversionData?.data?.pdfLink
+              ? `/api/iframe?url=${conversionData?.data?.pdfLink}&token=${data?.data?.token}`
+              : "/"
+          }
+        />
+      )}
 
+      {!loading && !conversionLoading && (
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
           {onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
@@ -91,7 +92,7 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
             </Button>
           )}
         </Box>
-      </Box>
+      )}
     </Box>
   );
 }
