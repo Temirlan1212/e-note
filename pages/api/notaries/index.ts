@@ -18,6 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const requestType = req.body["requestType"];
   const searchValue = req.body["searchValue"];
   const requestData = req.body["requestData"];
+  const sortBy = req.body["sortBy"];
 
   const buildFilterCriteria = (filterData: INotaryFilterData) => {
     if (filterData.city !== null) {
@@ -125,6 +126,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     };
   }
 
+  if (requestType === "sortBy") {
+    data = {
+      criteria: criteria ?? [],
+      sortBy: sortBy ?? [],
+    };
+  }
+
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Company/search", {
     method: "POST",
     headers: {
@@ -142,10 +150,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         "address.district",
         "address.city",
       ],
-      // data: {
-      //   criteria: req.body["criteria"] ?? [],
-      //   sortBy: req.body["sortBy"] ?? [],
-      // },
       data: data,
       ...req.body,
     }),
