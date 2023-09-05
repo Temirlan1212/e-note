@@ -103,8 +103,11 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   const onFilterClear = () => {
     reset();
     setRadioValue("");
-    updateAppQueryParams("requestType", null);
-    updateAppQueryParams("requestData", null);
+    setAppQueryParams((prevParams) => ({
+      ...prevParams,
+      requestType: null,
+      requestData: null,
+    }));
   };
 
   const onFilterSubmit = (data: any) => {
