@@ -23,7 +23,6 @@ import CloudMessageIcon from "@/public/icons/cloud-message.svg";
 import useFetch from "@/hooks/useFetch";
 import { useEffect, useState } from "react";
 import { IContact } from "@/components/chat/ChatContent";
-import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface INotariesInfoContentProps {}
 
@@ -42,9 +41,14 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const [chatLink, setChatLink] = useState<string>("");
 
   const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
-  const { data: contact, update: contactUpdate } = useFetch<IContact>("", "POST");
+
+  const { data: contact } = useFetch<IContact>("/api/chat/create/" + router.query.id, "POST");
 
   const notaryData = data?.data || [];
+
+  useEffect(() => {
+    setChatLink(contact?.data?.chatRoomLink ? contact.data.chatRoomLink : "/chat");
+  }, [contact]);
 
   const infoArray = [
     {
@@ -90,11 +94,6 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: notaryData[0]?.workingDay,
     },
   ];
-
-  useEffectOnce(async () => {
-    await contactUpdate(`/api/chat/create/${router.query.id}`, { id: router.query.id });
-    setChatLink(contact?.data?.chatRoomLink ?? "/chat");
-  }, [data]);
 
   return (
     <Box
