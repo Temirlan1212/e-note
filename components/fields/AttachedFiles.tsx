@@ -121,7 +121,7 @@ const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, 
               const file = new File([blob], item.fileName, {
                 type: item.fileType,
               });
-              return { file, id: item?.id ?? null };
+              return { file };
             }
           })
           .filter((item: File | undefined) => Boolean(item));
