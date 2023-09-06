@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
@@ -11,8 +11,8 @@ import Address from "@/components/fields/Address";
 import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
-import UploadFiles from "@/components/fields/UploadFiles";
 import StepperContentStep from "@/components/ui/StepperContentStep";
+import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 
 interface IBaseEntityFields {
   id?: number;
@@ -28,6 +28,7 @@ export interface IStepFieldsProps {
 
 export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
+  const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
 
   const { trigger, resetField, getValues, setValue } = form;
 
@@ -168,6 +169,8 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
           );
         }
 
+        await attachedFilesRef.current?.next();
+
         if (onNext != null) onNext();
       }
 
@@ -215,7 +218,8 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
         <Contact form={form} names={getContactNames(0)} />
 
         <Typography variant="h5">{t("Files to upload")}</Typography>
-        <UploadFiles />
+
+        <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={0} />
 
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
           {onPrev != null && (

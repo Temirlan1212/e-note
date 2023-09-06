@@ -1,11 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<null>) {
-  const { model } = req.query;
+  const { model, id } = req.query;
   const filesId = req.body?.["filesId"];
-  const id = req.body?.["id"];
-
-  console.log(filesId, "filesId");
 
   if (req.method !== "PUT" || model == null || id == null || filesId == null) {
     return res.status(400).json(null);

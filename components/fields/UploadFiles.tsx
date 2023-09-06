@@ -42,6 +42,14 @@ export default function UploadFiles(props: IUploadFilesProps) {
     }
   });
 
+  const handleRemoveClick = (index: number) => {
+    remove(index);
+  };
+
+  const handleAddClick = () => {
+    append({ file: undefined });
+  };
+
   const isLastField = (index: number) => fields.length - 1 === index;
 
   return (
@@ -64,7 +72,7 @@ export default function UploadFiles(props: IUploadFilesProps) {
               <Button
                 buttonType={isLastField(index) ? "primary" : "secondary"}
                 sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-                onClick={() => (isLastField(index) ? append({ file: undefined }) : remove(index))}
+                onClick={() => (isLastField(index) ? handleAddClick() : handleRemoveClick(index))}
               >
                 {isLastField(index) ? <AddIcon /> : <RemoveIcon />}
               </Button>

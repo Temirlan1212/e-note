@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -17,8 +17,8 @@ import Address from "@/components/fields/Address";
 import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
-import UploadFiles from "@/components/fields/UploadFiles";
 import StepperContentStep from "@/components/ui/StepperContentStep";
+import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -44,6 +44,7 @@ export interface IStepFieldsProps {
 export default function FourthStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
   const userData = useProfileStore((state) => state.userData);
   const t = useTranslations();
+  const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
 
   const {
     control,
@@ -83,7 +84,8 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
             <Contact form={form} names={getContactNames(index)} />
 
             <Typography variant="h5">{t("Files to upload")}</Typography>
-            <UploadFiles form={form} name={`requester.${index}.files`} />
+
+            <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={index} />
           </Box>
         );
       },
@@ -94,9 +96,6 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
   const { update: tundukPersonalDataFetch } = useFetch("", "GET");
-  const { update: uploadUpdate } = useFetch("", "POST");
-  const { update: fileAttachmentUpdate } = useFetch("", "PUT");
-  const { update: filesAttachmentFetch } = useFetch("", "GET");
 
   const getPersonalDataNames = (index: number) => ({
     type: `requester.${index}.partnerTypeSelect`,
@@ -157,8 +156,6 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
         handleAddTabClick();
       }
     }
-
-    handleFileAttachmentFetch(0);
   });
 
   const triggerFields = async () => {
@@ -273,54 +270,12 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
           );
         }
 
-        await handleFileAttachment();
+        await attachedFilesRef.current?.next();
 
         if (onNext != null) onNext();
       }
 
       setLoading(false);
-    }
-  };
-
-  const handleFileAttachment = async () => {
-    for (let item of form.getValues("requester") || []) {
-      const filesId: { id: number }[] = [];
-
-      for (const { file } of item?.files || []) {
-        if (file != null) {
-          const formData = new FormData();
-          formData.append("file", file as File);
-          const res = await uploadUpdate("/api/files/upload", formData);
-          if (res?.id != null) filesId.push({ id: res.id });
-        }
-      }
-
-      if (item?.id != null && filesId.length > 0) {
-        await fileAttachmentUpdate(`/api/files/attachment/put/com.axelor.apps.base.db.Partner`, {
-          filesId,
-          id: item.id,
-        });
-      }
-    }
-  };
-
-  const handleFileAttachmentFetch = async (index: number) => {
-    const requester = form.getValues("requester");
-    const id = requester?.[index]?.id;
-
-    if (id != null) {
-      const res = await filesAttachmentFetch(`/api/files/attachment?model=com.axelor.apps.base.db.Partner&id=${id}`);
-      if (res?.data?.length > 0) {
-        const files = res.data.map((item: Record<string, any>) => {
-          const filename = item?.fileName ?? "";
-          const fileContent = new Blob([]);
-          const file = new File([fileContent], filename);
-
-          return file;
-        });
-
-        setValue(`requester.${index}.files`, files);
-      }
     }
   };
 
@@ -481,7 +436,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
               </Button>
             </>
           }
-          onTabChange={(index) => handleFileAttachmentFetch(index)}
+          onTabChange={(index) => attachedFilesRef.current?.tabChange(index)}
         />
 
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>

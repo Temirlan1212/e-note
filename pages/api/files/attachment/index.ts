@@ -15,8 +15,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     },
   });
 
-  console.log(response.body, "response body");
-
   if (!response.ok) {
     return res.status(response.status).json(null);
   }
