@@ -4,6 +4,7 @@ import { IApplicationSchema } from "@/validator-schemas/application";
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { UseFormReturn } from "react-hook-form";
 import UploadFiles from "./UploadFiles";
+import { CircularProgress } from "@mui/material";
 
 export interface IAttachedFilesProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -19,12 +20,13 @@ export interface IAttachedFilesMethodsProps {
 const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, IAttachedFilesProps> = (props, ref) => {
   const { form, name, index } = props;
   const { setValue, getValues } = form;
-  const filesIdRef = useRef<null | number[]>(null);
+  const filesIdRef = useRef<null | number[][]>(null);
+  const filesRef = useRef<null | Record<number, any>>(null);
 
   const { update: uploadUpdate } = useFetch("", "POST");
-  const { update: fileAttachmentUpdate } = useFetch("", "PUT");
-  const { update: filesAttachmentFetch } = useFetch("", "GET");
-  const { update: getDocument } = useFetch("", "POST");
+  const { update: attachmentsUpdate } = useFetch("", "PUT");
+  const { loading: attachmentsLoading, update: getAttachments } = useFetch("", "GET");
+  const { loading: filesLoading, update: getFiles } = useFetch("", "POST");
   const { update: deleteUpdate } = useFetch<Response>("", "DELETE");
 
   const handleDeleteFiles = async () => {
@@ -32,7 +34,7 @@ const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, 
 
     const statuses: number[] = [];
     if (filesId != null && filesId?.length > 0) {
-      filesId?.map(async (id) => {
+      filesId.flat()?.map(async (id) => {
         const res = await deleteUpdate(`/api/files/delete/${id}`);
         statuses.push(res?.status ?? -1);
       });
@@ -58,7 +60,7 @@ const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, 
       }
 
       if (item?.id != null && filesId.length > 0) {
-        await fileAttachmentUpdate(`/api/files/attachment/update?model=com.axelor.apps.base.db.Partner&id=${item.id}`, {
+        await attachmentsUpdate(`/api/files/attachments/update?model=com.axelor.apps.base.db.Partner&id=${item.id}`, {
           filesId,
         });
       }
@@ -68,9 +70,7 @@ const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, 
   const handleFilesIdFetch = async () => {
     const promises = getValues(name)?.map(async (item) => {
       if (item?.id != null && item?.files != null) {
-        const res = await filesAttachmentFetch(
-          `/api/files/attachment?model=com.axelor.apps.base.db.Partner&id=${item.id}`
-        );
+        const res = await getAttachments(`/api/files/attachments?model=com.axelor.apps.base.db.Partner&id=${item.id}`);
 
         if (res?.data?.length > 0) {
           const filesId = res.data.map((item: Record<string, any>) => {
@@ -88,16 +88,20 @@ const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, 
   };
 
   const handleFilesFetch = async (index: number) => {
-    const filesId = await handleFilesIdFetch();
-    if (filesId != null && filesId?.length > 0) filesIdRef.current = filesId.flat();
+    if (filesIdRef.current == null) {
+      const filesId = await handleFilesIdFetch();
+      if (filesId != null && filesId?.length > 0) filesIdRef.current = filesId;
+    }
 
-    if (filesId?.[index] != null && filesId?.[index]?.length > 0) {
-      const files = await getDocument(`/api/files`, {
-        filters: { id: filesId?.[index] },
-        operator: "in",
-      });
-
-      if (files?.data != null && files?.status !== -1) return files.data;
+    if (filesIdRef.current?.[index] != null && filesIdRef.current?.[index]?.length > 0) {
+      if (filesRef.current?.[index] == null) {
+        const files = await getFiles(`/api/files`, {
+          filters: { id: filesIdRef.current?.[index] },
+          operator: "in",
+        });
+        filesRef.current = { ...filesRef.current, [index]: files };
+        if (files?.data != null && files?.status !== -1) return files.data;
+      }
     }
   };
 
@@ -147,6 +151,10 @@ const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, 
     },
     []
   );
+
+  if (filesLoading || attachmentsLoading) {
+    return <CircularProgress color="success" sx={{ margin: "auto" }} />;
+  }
 
   return <UploadFiles form={form} name={`${name}.${index}.files`} />;
 };
