@@ -41,7 +41,7 @@ export interface IStepFieldsProps {
   onNext?: Function;
 }
 
-export default function FourthStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
+export default function FirstStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
   const userData = useProfileStore((state) => state.userData);
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
