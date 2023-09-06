@@ -179,60 +179,38 @@ export default function ThirdStepFields({ form, onPrev, onNext }: IStepFieldsPro
   };
 
   return (
-    <Box display="flex" gap="20px">
-      <StepperContentStep currentStep={3} stepNext={4} stepNextTitle={"fifth-step-title"} />
-      <Box
-        width="100%"
-        display="flex"
-        gap="20px"
-        flexDirection="column"
-        sx={{
-          marginTop: { xs: "0", md: "16px" },
-          paddingBottom: { xs: "0", md: "90px" },
-        }}
-      >
-        <Box
-          display="flex"
-          justifyContent="space-between"
-          gap={{ xs: "20px", md: "200px" }}
-          flexDirection={{ xs: "column", md: "row" }}
-        >
-          <Typography variant="h4" whiteSpace="nowrap">
-            {t("fourth-step-title")}
-          </Typography>
-        </Box>
+    <Box display="flex" gap="20px" flexDirection="column">
+      <StepperContentStep step={3} title={t("fourth-step-title")} />
 
-        <Typography variant="h5">{t("Personal data")}</Typography>
-        <PersonalData form={form} names={getPersonalDataNames(0)} />
+      <Typography variant="h5">{t("Personal data")}</Typography>
+      <PersonalData form={form} names={getPersonalDataNames(0)} />
 
-        <Typography variant="h5">{t("Identity document")}</Typography>
-        <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
+      <Typography variant="h5">{t("Identity document")}</Typography>
+      <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
 
-        <Typography variant="h5">{t("Place of residence")}</Typography>
-        <Address form={form} names={getAddressNames(0)} />
+      <Typography variant="h5">{t("Place of residence")}</Typography>
+      <Address form={form} names={getAddressNames(0)} />
 
-        <Typography variant="h5">{t("Actual place of residence")}</Typography>
-        <Address form={form} names={getActualAddressNames(0)} />
+      <Typography variant="h5">{t("Actual place of residence")}</Typography>
+      <Address form={form} names={getActualAddressNames(0)} />
 
-        <Typography variant="h5">{t("Contacts")}</Typography>
-        <Contact form={form} names={getContactNames(0)} />
+      <Typography variant="h5">{t("Contacts")}</Typography>
+      <Contact form={form} names={getContactNames(0)} />
 
-        <Typography variant="h5">{t("Files to upload")}</Typography>
+      <Typography variant="h5">{t("Files to upload")}</Typography>
+      <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={0} />
 
-        <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={0} />
-
-        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-          {onPrev != null && (
-            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
-              {t("Prev")}
-            </Button>
-          )}
-          {onNext != null && (
-            <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
-              {t("Next")}
-            </Button>
-          )}
-        </Box>
+      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+        {onPrev != null && (
+          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+            {t("Prev")}
+          </Button>
+        )}
+        {onNext != null && (
+          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+            {t("Next")}
+          </Button>
+        )}
       </Box>
     </Box>
   );
