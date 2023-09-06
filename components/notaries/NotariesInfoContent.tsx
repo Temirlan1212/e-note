@@ -21,6 +21,9 @@ import LicenseIcon from "@/public/icons/license.svg";
 import ContentPlusIcon from "@/public/icons/content-plus.svg";
 import CloudMessageIcon from "@/public/icons/cloud-message.svg";
 import useFetch from "@/hooks/useFetch";
+import { useEffect, useState } from "react";
+import { IContact } from "@/components/chat/ChatContent";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface INotariesInfoContentProps {}
 
@@ -33,16 +36,19 @@ const formatDate = (inputDate: string | number | Date) => {
 
 const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const t = useTranslations();
-
   const router = useRouter();
+  const { locale } = useRouter();
+
+  const [chatLink, setChatLink] = useState<string>("");
 
   const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
+  const { data: contact, update: contactUpdate } = useFetch<IContact>("", "POST");
 
   const notaryData = data?.data || [];
 
   const infoArray = [
     {
-      text: notaryData[0]?.typeOfNotary === "state" ? "Государственный нотариус" : "Частный нотариус",
+      text: notaryData[0]?.typeOfNotary,
       icon: <AccountCircleOutlinedIcon />,
       type: "text",
       array: [],
@@ -84,6 +90,11 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: notaryData[0]?.workingDay,
     },
   ];
+
+  useEffectOnce(async () => {
+    await contactUpdate(`/api/chat/create/${router.query.id}`, { id: router.query.id });
+    setChatLink(contact?.data?.chatRoomLink ?? "/chat");
+  }, [data]);
 
   return (
     <Box
@@ -246,22 +257,24 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
             {t("Create application")}
           </Button>
         </Link>
-        <Button
-          startIcon={<CloudMessageIcon />}
-          buttonType="secondary"
-          sx={{
-            width: {
-              sx: "100%",
-              md: "320px",
-            },
-            padding: "10px 0",
-            ":hover": {
-              backgroundColor: "#3F5984",
-            },
-          }}
-        >
-          {t("Write a message")}
-        </Button>
+        <Link href={chatLink} rel="noopener noreferrer" target="_blank">
+          <Button
+            startIcon={<CloudMessageIcon />}
+            buttonType="secondary"
+            sx={{
+              width: {
+                sx: "100%",
+                md: "320px",
+              },
+              padding: "10px 0",
+              ":hover": {
+                backgroundColor: "#3F5984",
+              },
+            }}
+          >
+            {t("Write a message")}
+          </Button>
+        </Link>
       </Box>
     </Box>
   );
