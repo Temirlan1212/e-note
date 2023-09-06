@@ -1,45 +1,46 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Box, Popover, IconButton } from "@mui/material";
+import { Typography, Box, Popover, IconButton, Badge } from "@mui/material";
 import { useTranslations } from "next-intl";
 
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import Button from "@/components/ui/Button";
 import { useProfileStore } from "../../stores/profile";
 import { IUserData } from "@/models/user";
-
+import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CircleIcon from "@mui/icons-material/Circle";
+import { INotification } from "@/models/notification";
 
-interface IRequestBody {
-  sortBy: Array<string>;
-  criteria: Array<{
-    fieldName: string;
-    operator: string;
-    value: string;
-  }> | null;
-  operator: string | null;
+interface INotificationData extends FetchResponseBody {
+  data: INotification[];
 }
 
 export default function PopupNotifications() {
-  const [notifications, setNotifications] = useState<{ createdOn: string; message: string }[]>([]);
   const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
+  const [limit, setLimit] = useState(5);
+  const [showLoadMore, setShowLoadMore] = useState(false);
+
   const t = useTranslations();
 
-  const [requestBody, setRequestBody] = useState<IRequestBody>({
-    sortBy: [""],
-    criteria: null,
-    operator: null,
-  });
+  const { data: messages, loading, update } = useFetch<INotificationData>("", "POST");
 
-  const { data: messages } = useFetch("/api/notifications/", "POST", {
-    body: requestBody,
-  });
+  const { data: message, update: messageUpdate } = useFetch("", "POST");
 
   const user: IUserData | null = useProfileStore((state) => state.getUserData());
 
   const handleNotificationPopupToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setAnchorEl(anchorEl == null ? event.currentTarget : null);
   };
+
+  const handleLoadMore = () => {
+    setLimit(limit + 4);
+  };
+
+  const handleRead = (id: number) => {
+    messageUpdate(`/api/notifications/isRead/${id}`);
+  };
+
+  const withBadge = messages?.data?.find((notification) => !notification.isRead);
 
   const getTimeAgo = (isoDate: string): string => {
     const timeDiff = Math.floor((Date.now() - new Date(isoDate).getTime()) / 1000);
@@ -59,35 +60,48 @@ export default function PopupNotifications() {
   };
 
   useEffect(() => {
-    setRequestBody((prev: any) => {
-      return {
-        ...prev,
-        sortBy: ["createdOn", "updatedOn"],
-        operator: "and",
-        criteria: [
-          {
-            fieldName: "user.id",
-            operator: "=",
-            value: user?.id ?? "",
-          },
-        ],
-      };
+    update("/api/notifications/", {
+      limit,
+      criteria: [
+        {
+          fieldName: "user.id",
+          operator: "=",
+          value: user?.id ?? "",
+        },
+      ],
     });
-  }, [messages]);
+  }, [limit, message]);
 
   useEffect(() => {
-    if (messages?.data && messages.data instanceof Array) {
-      setNotifications(messages?.data);
+    if (messages?.total! > limit) {
+      setShowLoadMore(true);
+    } else {
+      setShowLoadMore(false);
     }
-  }, [messages]);
+    if (messages?.total === limit) {
+      setShowLoadMore(false);
+    }
+  }, [messages?.data, limit]);
 
   return (
     <>
-      <IconButton aria-label="notifications" onClick={handleNotificationPopupToggle} sx={{ padding: 0 }}>
-        <NotificationsIcon fontSize="medium" color="success" />
+      <IconButton onClick={handleNotificationPopupToggle} sx={{ padding: 1, color: "black" }}>
+        {!!anchorEl ? (
+          <NotificationsIcon color="success" />
+        ) : withBadge ? (
+          <Badge badgeContent color="success" variant="dot">
+            <NotificationsOutlinedIcon color="inherit" />
+          </Badge>
+        ) : (
+          <NotificationsOutlinedIcon color="inherit" />
+        )}
       </IconButton>
+
       <Popover
-        open={Boolean(anchorEl)}
+        sx={{
+          maxHeight: "400px",
+        }}
+        open={!!anchorEl}
         anchorEl={anchorEl}
         onClose={handleNotificationPopupToggle}
         anchorOrigin={{
@@ -104,47 +118,33 @@ export default function PopupNotifications() {
             display: "flex",
             flexDirection: "column",
             alignItems: "flex-start",
-            boxShadow: "0px 10px 20px 0px #E9E9E9",
+            justifyContent: "space-between",
             width: { xs: "100%", sm: "100%", md: "320px" },
+            maxHeight: "280px",
+            overflowY: "auto",
           }}
         >
-          {notifications && notifications.length <= 0 ? (
-            <Box
-              sx={{
-                padding: "15px 10px 15px 15px",
-                display: "flex",
-                justifyContent: "center",
-                borderBottom: "1px solid #F6F6F6",
-                width: "100%",
-              }}
-            >
-              <Typography
-                fontSize={14}
-                alignSelf="center"
-                color="textPrimary"
-                sx={{
-                  maxHeight: "39px",
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                }}
-              >
-                {t("No notifications")}
-              </Typography>
-            </Box>
-          ) : (
-            notifications.map((notification) => (
+          {messages?.data?.length ? (
+            messages?.data.map((notification) => (
               <Box
-                key={notification.createdOn}
+                key={notification.id}
                 sx={{
-                  padding: "15px 10px 15px 15px",
+                  wordBreak: "break-word",
+                  padding: "15px",
                   display: "flex",
                   flexDirection: "row",
                   gap: "5px",
                   alignItems: "flex-start",
                   borderBottom: "1px solid #F6F6F6",
+                  width: "100%",
+                  cursor: "pointer",
+                  "&:hover": {
+                    backgroundColor: "#F6F6F6",
+                  },
                 }}
+                onClick={() => !notification.isRead && handleRead(notification.id)}
               >
-                <CircleIcon color="success" sx={{ width: "12px", height: "12px" }} />
+                {!notification.isRead && <CircleIcon color="success" sx={{ width: "12px", height: "12px" }} />}
                 <Box
                   sx={{
                     display: "flex",
@@ -157,11 +157,9 @@ export default function PopupNotifications() {
                     color="textPrimary"
                     sx={{
                       maxHeight: "39px",
-                      textOverflow: "ellipsis",
-                      overflow: "hidden",
                     }}
                   >
-                    {notification.message}
+                    {t(`${notification.message.subject}`)}
                   </Typography>
                   <Typography fontSize={12} color="textSecondary">
                     {getTimeAgo(notification.createdOn)}
@@ -169,42 +167,69 @@ export default function PopupNotifications() {
                 </Box>
               </Box>
             ))
-          )}
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              padding: "15px 10px 15px 15px",
-              gap: "15px",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "100%",
-            }}
-          >
-            <Button
-              href="/notifications"
-              variant="text"
-              color="success"
+          ) : (
+            <Box
               sx={{
+                padding: "15px",
+                display: "flex",
+                justifyContent: "center",
+                borderBottom: "1px solid #F6F6F6",
+                width: "100%",
+              }}
+            >
+              <Typography
+                fontSize={14}
+                alignSelf="center"
+                color="textPrimary"
+                sx={{
+                  fontWeight: 600,
+                  maxHeight: "39px",
+                }}
+              >
+                {t("No notifications")}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            alignItems: "center",
+            justifyContent: "center",
+            width: "100%",
+            padding: "10px",
+          }}
+        >
+          {showLoadMore && (
+            <Button
+              variant="text"
+              loading={loading}
+              sx={{
+                fontSize: "14px",
+                fontWeight: 600,
                 "&:hover": { backgroundColor: "unset", color: "success" },
                 padding: "unset",
               }}
+              onClick={handleLoadMore}
             >
-              <Typography fontSize={14}>{t("All notifications")}</Typography>
+              {t("Show more")}
             </Button>
-            <Button
-              onClick={handleNotificationPopupToggle}
-              variant="text"
-              sx={{
-                "&:hover": { backgroundColor: "unset", color: "secondary" },
-                padding: "unset",
-              }}
-            >
-              <Typography fontSize={14} color="#687C9B">
-                {t("Close")}
-              </Typography>
-            </Button>
-          </Box>
+          )}
+          <Button
+            onClick={handleNotificationPopupToggle}
+            variant="text"
+            buttonType="secondary"
+            sx={{
+              fontSize: "14px",
+              fontWeight: 600,
+              "&:hover": { backgroundColor: "unset", color: "secondary" },
+              padding: "unset",
+            }}
+          >
+            {t("Close")}
+          </Button>
         </Box>
       </Popover>
     </>

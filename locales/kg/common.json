@@ -165,5 +165,16 @@
   "Copy link": "Шилтемени көчүрүү",
   "Address: Bishkek, blvd Molodoy Guardii 32": "Дарек: Бишкек ш., Жаш Гвардия бульвары 32",
   "Working hours: Mon-Fri, 09:00-18:00": "Иш убактысы: Дүйшөмбү-Жума, 09:00-18:00",
-  "Links": "Шилтемелер"
+  "Links": "Шилтемелер",
+  "All notifications": "Бардык билдирүүлөр",
+  "No notifications": "Билдирмелер жок",
+  "min": "мин",
+  "hour": "саат",
+  "hourGenitive": "саат",
+  "hourAccusative": "саат",
+  "day": "күн",
+  "dayGenitive": "күн",
+  "dayAccusative": "күн",
+  "Show more": "Көбүрөөк жүктөө",
+  "status change": "Статусу өзгөрдү"
 }

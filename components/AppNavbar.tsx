@@ -29,6 +29,7 @@ import Link from "./ui/Link";
 import ProfileDropdownButton from "./ProfileDropdownButton";
 import LocaleSwitcher from "./LocaleSwitcher";
 import Tooltip from "@mui/material/Tooltip";
+import PopupNotifications from "@/components/notifications/PopupNotifications";
 
 const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) => {
   const router = useRouter();
@@ -182,6 +183,7 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
           )}
 
           <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
+            {type === "private" && <PopupNotifications />}
             <ProfileDropdownButton />
             <LocaleSwitcher />
 

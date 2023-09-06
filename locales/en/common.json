@@ -165,5 +165,16 @@
   "Copy link": "Copy link",
   "Address: Bishkek, blvd Molodoy Guardii 32": "Address: Bishkek, blvd. Molodoy Guardii 32",
   "Working hours: Mon-Fri, 09:00-18:00": "Working hours: Mon-Fri, 09:00-18:00",
-  "Links": "Links"
+  "Links": "Links",
+  "All notifications": "All notifications",
+  "No notifications": "No notifications",
+  "min": "min",
+  "hour": "hour",
+  "hourGenivite": "hour",
+  "hourAccusative": "hours",
+  "day": "day",
+  "dayGenitive": "days",
+  "dayAccusative": "days",
+  "Show more": "Show more",
+  "status changed": "Status changed"
 }

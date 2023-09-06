@@ -1,13 +1,12 @@
 export interface INotification {
-  id: number;
-  version: number;
-  $version: number;
+  createdOn: string;
   isArchived: boolean;
   isRead: boolean;
   isStarred: boolean;
-  message: string;
-  "message.body": string;
-  userId: string;
-  createdOn: string;
-  updatedOn: string;
+  message: {
+    subject: string;
+    id: number;
+  };
+  id: number;
+  subject: string;
 }

@@ -1,26 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
+  const { id } = req.query;
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }
-  const limit = req.body["limit"];
-  const criteria = req.body["criteria"];
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.mail.db.MailFlags/search", {
+  const response = await fetch(process.env.BACKEND_API_URL + `/ws/rest/com.axelor.mail.db.MailFlags/${id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      offset: 0,
-      limit: limit,
-      fields: ["version", "isArchived", "isRead", "isStarred", "message", "message.body", "userId", "createdOn"],
-      sortBy: ["-id"],
       data: {
-        operator: "and",
-        criteria: criteria,
+        version: 0,
+        isRead: true,
+        isArchived: true,
       },
       ...req.body,
     }),
