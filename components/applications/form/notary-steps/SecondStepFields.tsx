@@ -44,7 +44,6 @@ export default function SecondStepFields({ form, stepState, onPrev, onNext }: IS
   }, [profile]);
 
   useEffectOnce(() => {
-    console.log(myDocuments);
     const isMy =
       myDocuments?.data?.length > 0 ? myDocuments?.data?.find((item: { id: number }) => item.id === productId) : false;
     const isSystem =

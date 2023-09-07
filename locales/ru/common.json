@@ -165,5 +165,8 @@
   "Copy link": "Скопировать ссылку",
   "Address: Bishkek, blvd Molodoy Guardii 32": "Адрес: г. Бишкек, бул. Молодой Гвардии 32",
   "Working hours: Mon-Fri, 09:00-18:00": "Время работы: Пн-Пт, 09:00-18:00",
-  "Links": "Ссылки"
+  "Links": "Ссылки",
+  "Type": "Тип",
+  "Device": "Устройтсво",
+  "Container": "Контейнер"
 }
