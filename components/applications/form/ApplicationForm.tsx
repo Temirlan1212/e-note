@@ -7,7 +7,7 @@ import { IApplicationSchema, applicationSchema } from "@/validator-schemas/appli
 import { IApplication } from "@/models/application";
 import { useProfileStore } from "@/stores/profile";
 import { IUserData } from "@/models/user";
-import { Box, Step, StepIcon, Stepper, StepConnector, Skeleton } from "@mui/material";
+import { Box, Step, StepIcon, Stepper, StepConnector, LinearProgress } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import FirstStepFields from "./steps/FirstStepFields";
@@ -174,10 +174,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
   const onSubmit = async (data: IApplicationSchema) => {};
 
-  if (loading || dynamicFormAppLoading || documentTemplateDataLoading) {
-    return <></>;
-  }
-
   return (
     <Box>
       <Box display="flex" justifyContent="center" my={2}>
@@ -218,7 +214,11 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
         borderRadius={1}
         onSubmit={form.handleSubmit(onSubmit)}
       >
-        {steps.map((component, index) => step === index && component)}
+        {(loading || dynamicFormAppLoading || documentTemplateDataLoading) && <LinearProgress />}
+        {!loading &&
+          !dynamicFormAppLoading &&
+          !documentTemplateDataLoading &&
+          steps.map((component, index) => step === index && component)}
       </Box>
     </Box>
   );
