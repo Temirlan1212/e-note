@@ -122,6 +122,12 @@ export default function ApplicationList() {
             renderCell: (params: any) => <ApplicationListQRMenu params={params} />,
           },
           {
+            field: "notaryUniqNumber",
+            headerName: "Unique number",
+            width: 200,
+            sortable: true,
+          },
+          {
             field: "typeNotarialAction",
             headerName: "Type of action",
             width: 200,
