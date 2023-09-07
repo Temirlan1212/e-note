@@ -22,32 +22,39 @@ const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, 
   const { setValue, getValues } = form;
   const filesIdRef = useRef<null | number[][]>(null);
   const filesRef = useRef<null | Record<number, any>>(null);
+  const blobsRef = useRef<null | Record<number, any>>(null);
+  const tabActivatedIndexesRef = useRef<null | number[]>([0]);
 
   const { update: uploadUpdate } = useFetch("", "POST");
   const { update: attachmentsUpdate } = useFetch("", "PUT");
   const { loading: attachmentsLoading, update: getAttachments } = useFetch("", "GET");
   const { loading: filesLoading, update: getFiles } = useFetch("", "POST");
   const { update: deleteUpdate } = useFetch<Response>("", "DELETE");
+  const { loading: downloadLoading, update: downloadUpdate } = useFetch<Response>("", "GET", {
+    returnResponse: true,
+  });
 
-  const handleDeleteFiles = async () => {
+  const deleteFiles = async () => {
     const filesId = filesIdRef.current;
-
     const statuses: number[] = [];
-    if (filesId != null && filesId?.length > 0) {
-      filesId.flat()?.map(async (id) => {
-        const res = await deleteUpdate(`/api/files/delete/${id}`);
-        statuses.push(res?.status ?? -1);
-      });
-    }
+
+    tabActivatedIndexesRef.current?.map((index) => {
+      if (filesId != null && filesId?.length > 0) {
+        filesId?.[index]?.map(async (id) => {
+          const res = await deleteUpdate(`/api/files/delete/${id}`);
+          statuses.push(res?.status ?? -1);
+        });
+      }
+    });
 
     if (statuses.every((item) => item === -1) && statuses.length > 0) return -1;
     return 0;
   };
 
-  const handleAttachFiles = async () => {
+  const attachFiles = async () => {
     const values = getValues(name);
-
-    for (let item of values || []) {
+    tabActivatedIndexesRef.current?.map(async (index) => {
+      const item = values?.[index];
       const filesId: { id: number }[] = [];
 
       for (const file of item?.files || []) {
@@ -64,10 +71,10 @@ const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, 
           filesId,
         });
       }
-    }
+    });
   };
 
-  const handleFilesIdFetch = async () => {
+  const filesIdFetch = async () => {
     const promises = getValues(name)?.map(async (item) => {
       if (item?.id != null && item?.files != null) {
         const res = await getAttachments(`/api/files/attachments?model=com.axelor.apps.base.db.Partner&id=${item.id}`);
@@ -87,16 +94,11 @@ const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, 
     }
   };
 
-  const handleFilesFetch = async (index: number) => {
-    if (filesIdRef.current == null) {
-      const filesId = await handleFilesIdFetch();
-      if (filesId != null && filesId?.length > 0) filesIdRef.current = filesId;
-    }
-
-    if (filesIdRef.current?.[index] != null && filesIdRef.current?.[index]?.length > 0) {
+  const filesFetch = async (index: number, filesId: number[] | undefined) => {
+    if (filesId != null && filesId?.length > 0) {
       if (filesRef.current?.[index] == null) {
         const files = await getFiles(`/api/files`, {
-          filters: { id: filesIdRef.current?.[index] },
+          filters: { id: filesId },
           operator: "in",
         });
         filesRef.current = { ...filesRef.current, [index]: files };
@@ -105,34 +107,44 @@ const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, 
     }
   };
 
-  const handleAttachedFilesDefaultValue = async (index: number) => {
+  const setFilesValue = async (index: number, data: Record<string, any>[] | undefined) => {
+    if (data != null) {
+      const filesPromiseArray = data.map(async (item: Record<string, any>) => {
+        if (item?.id != null && blobsRef.current?.[item?.id] == null) {
+          const res = await downloadUpdate(`/api/files/download/${item.id}`);
+          const blob = await res.blob();
+          blobsRef.current = { [item.id]: blob };
+
+          if (blob != null && item?.fileName != null && item?.fileType != null) {
+            const file = new File([blob], item.fileName, {
+              type: item.fileType,
+            });
+
+            return { file };
+          }
+        }
+      });
+
+      const files = await Promise.all(filesPromiseArray);
+      setValue(`${name}.${index}.files`, files?.filter((item) => Boolean(item)) as Record<string, File>[]);
+    }
+  };
+
+  const handleTabChange = async (index: number) => {
     const id = getValues(name)?.[index]?.id;
 
     if (id != null) {
-      const data = await handleFilesFetch(index);
-      if (data != null) {
-        const files = data
-          .map((item: Record<string, any>) => {
-            const sizeText = item?.["metaFile.sizeText"];
-            const sizeInKB = sizeText ? parseFloat(sizeText) : null;
-            if (sizeInKB && item?.fileName && item?.fileType) {
-              const sizeInBytes = sizeInKB * 1024;
-              const blob = new Blob([new ArrayBuffer(sizeInBytes)]);
-              const file = new File([blob], item.fileName, {
-                type: item.fileType,
-              });
-              return { file };
-            }
-          })
-          .filter((item: File | undefined) => Boolean(item));
-
-        setValue(`${name}.${index}.files`, files);
+      if (filesIdRef.current == null) {
+        const res = await filesIdFetch();
+        if (res != null && res?.length > 0) filesIdRef.current = res;
       }
+      const data = await filesFetch(index, filesIdRef.current?.[index]);
+      await setFilesValue(index, data);
     }
   };
 
   useEffectOnce(() => {
-    handleAttachedFilesDefaultValue(0);
+    handleTabChange(0);
   });
 
   useImperativeHandle(
@@ -140,19 +152,20 @@ const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, 
     () => {
       return {
         async next() {
-          const status = await handleDeleteFiles();
-          if (status === 0) await handleAttachFiles();
+          const status = await deleteFiles();
+          if (status === 0) await attachFiles();
         },
 
         async tabChange(index) {
-          await handleAttachedFilesDefaultValue(index);
+          await handleTabChange(index);
+          if (!tabActivatedIndexesRef.current?.includes(index)) tabActivatedIndexesRef.current?.push(index);
         },
       };
     },
     []
   );
 
-  if (filesLoading || attachmentsLoading) {
+  if (filesLoading || attachmentsLoading || downloadLoading) {
     return <CircularProgress color="success" sx={{ margin: "auto" }} />;
   }
 
