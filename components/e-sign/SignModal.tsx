@@ -1,32 +1,25 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import useEffectOnce from "@/hooks/useEffectOnce";
-
-import { Box } from "@mui/material";
-import Button from "@/components/ui/Button";
+import { Box, InputLabel, SelectChangeEvent } from "@mui/material";
 import KeyIcon from "@mui/icons-material/Key";
+import Button from "@/components/ui/Button";
+import Select from "@/components/ui/Select";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import FingerprintScanner from "@/components/ui/FingerprintScanner";
+import JacartaSign from "./JacartaSign";
 
-type IWindow = Window &
-  typeof globalThis & {
-    JCWebClient2?: Record<string, any>;
-  };
+enum SignType {
+  Jacarta = "jacarta",
+}
 
-export default function SignModal() {
+const signTypes = Object.entries(SignType).map(([label, value]) => ({ label, value }));
+
+export default function SignModal({ base64Doc, onSign }: { base64Doc: string; onSign: (sign: string) => void }) {
+  const t = useTranslations();
   const [state, setState] = useState<"error" | "success" | "primary" | "signed">("primary");
   const [isSigned, setIsSigned] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [jc, setJc] = useState<Record<string, any> | null>(null);
-  const t = useTranslations();
-
-  useEffectOnce(() => {
-    const w = window as IWindow;
-    if (w.JCWebClient2 != null) {
-      w.JCWebClient2?.initialize();
-      setJc(w.JCWebClient2 ?? null);
-    }
-  });
+  const [signType, setSignType] = useState<SignType>();
 
   const handleState = () => {
     setLoading(true);
@@ -38,16 +31,6 @@ export default function SignModal() {
   const handleSign = () => {
     setIsSigned(true);
     setState("signed");
-    const slots = jc?.getAllSlots();
-    console.log(slots);
-    const tokenInfo = jc?.getTokenInfo({
-      args: {
-        tokenID: slots[0].id,
-      },
-    });
-    console.log(tokenInfo, slots?.[0].id);
-    const containers = jc?.getContainerList(slots?.[0].id);
-    console.log(containers);
   };
 
   const handleToggle = () => {
@@ -90,13 +73,31 @@ export default function SignModal() {
           </Box>
         ),
         body: () => (
-          <Box pb="50px">
-            <FingerprintScanner
-              width="100%"
-              loading={loading}
-              type={state}
-              onClick={() => state === "primary" && handleState()}
-            />
+          <Box pb={5}>
+            {state === "success" && (
+              <Box display="flex" flexDirection="column" my={2}>
+                <InputLabel>{t("Type")}</InputLabel>
+                <Select
+                  data={signTypes}
+                  onChange={(event: SelectChangeEvent<SignType>) => {
+                    setSignType(event.target.value as SignType);
+                  }}
+                />
+              </Box>
+            )}
+
+            {state === "success" && signType === SignType.Jacarta && (
+              <JacartaSign base64Doc={base64Doc} onSign={onSign} />
+            )}
+
+            {state !== "success" && (
+              <FingerprintScanner
+                width="100%"
+                loading={loading}
+                type={state}
+                onClick={() => state === "primary" && handleState()}
+              />
+            )}
           </Box>
         ),
       }}

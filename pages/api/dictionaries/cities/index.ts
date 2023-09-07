@@ -25,8 +25,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
-  console.log(criteria);
-
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.City/search", {
     method: "POST",
     headers: {

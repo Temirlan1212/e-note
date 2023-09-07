@@ -116,10 +116,15 @@ export default function ApplicationList() {
           {
             field: "QR",
             headerName: "QR",
-            width: 90,
+            width: 70,
             sortable: false,
-            type: "actions",
             renderCell: (params: any) => <ApplicationListQRMenu params={params} />,
+          },
+          {
+            field: "notaryUniqNumber",
+            headerName: "Unique number",
+            width: 200,
+            sortable: true,
           },
           {
             field: "typeNotarialAction",

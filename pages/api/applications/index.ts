@@ -55,6 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "createdBy",
         "company.name",
         "uniqueQrCode",
+        "notaryUniqNumber",
       ],
       sortBy: req.body["sortBy"] ?? [],
       ...requestBody,
