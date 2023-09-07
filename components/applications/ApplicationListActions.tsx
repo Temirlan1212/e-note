@@ -31,7 +31,7 @@ export const ApplicationListActions = ({
   };
 
   return (
-    <Box display="flex" alignItems="center" gap="10px">
+    <Box display="flex" alignItems="center">
       <Link href={`/applications/status/${params.row.id}`}>
         <Tooltip title={t("More detailed")} arrow>
           <IconButton>
