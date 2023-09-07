@@ -59,7 +59,7 @@ export default function CheckByQR() {
 
   useEffectOnce(() => {
     if (data?.data) {
-      router.push(`/check-document/${data?.data[0]?.uniqueQrCode}`);
+      router.push(`/check-document/${encodeURIComponent(data?.data[0]?.uniqueQrCode as string)}`);
     }
   }, [data?.data]);
 
