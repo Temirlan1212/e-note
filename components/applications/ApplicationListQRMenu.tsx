@@ -33,7 +33,10 @@ export const ApplicationListQRMenu = ({
   const { update: getDocument } = useFetch("", "POST");
 
   const handleCopyLinkClick = () => {
-    if (!copied) copyToClipboard(`${window.location.href}/check-document/${params?.row?.uniqueQrCode ?? 0}`);
+    if (!copied)
+      copyToClipboard(
+        `${window.location.origin}/check-document/${encodeURIComponent(params?.row?.uniqueQrCode as string) ?? 0}`
+      );
   };
 
   const handlePopupToggle = (event: React.MouseEvent<HTMLButtonElement>) => {

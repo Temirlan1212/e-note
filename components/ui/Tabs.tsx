@@ -12,6 +12,7 @@ enum colors {
 export interface ITabsProps extends TabsProps {
   color?: keyof typeof colors;
   actionsContent?: ReactNode;
+  onTabChange?: (arg: number) => void;
   data: { tabErrorsCount: number; tabLabel: string; tabPanelContent: ReactNode }[];
 }
 
@@ -26,6 +27,7 @@ export default function Tabs({ color = "primary", actionsContent = <></>, data, 
 
   const handleTabChange = (event: SyntheticEvent, value: number) => {
     setTab(value);
+    rest.onTabChange && rest.onTabChange(value);
   };
 
   const styles = {
