@@ -46,7 +46,7 @@ const NotariesList: FC<INotaryListProps> = ({ loading, data, appQueryParams, han
               >
                 <Grid item key={notary?.id} xs={12} sm={12} md={3}>
                   <NotariesCard
-                    fullName={notary["partner.simpleFullName"]}
+                    fullName={notary.name}
                     image={notary["logo.fileName"]}
                     rating={notary["partner.rating"]}
                     region={notary["address.region"]?.name}
