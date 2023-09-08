@@ -79,6 +79,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       text: notaryData[0]?.partner?.email || "balancha@gmail.com",
       icon: <EmailOutlinedIcon />,
       type: "link",
+      href: `mailto:${notaryData[0]?.partner?.email || "#"}`,
       array: [],
     },
     {
@@ -198,13 +199,13 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
           </Typography>
           <Box>
             <Box display="flex" gap="20px" flexDirection="column">
-              {infoArray.map(({ text, icon: Icon, type, array }) => {
+              {infoArray.map(({ text, icon: Icon, type, array, href }) => {
                 return (
                   <Box display="flex" gap="15px" key={text}>
                     {Icon}
                     {type === "link" ? (
                       <a
-                        href="#"
+                        href={href}
                         style={{
                           color: "#1BAA75",
                         }}
