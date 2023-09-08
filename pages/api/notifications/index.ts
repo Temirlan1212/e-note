@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
   const criteria: Record<string, string | number>[] = [];
 
-  if (userId != null && typeof userId === "string") {
+  if (typeof userId === "string") {
     criteria.push({
       fieldName: "user.id",
       operator: "=",
