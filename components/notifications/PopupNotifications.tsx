@@ -10,28 +10,15 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CircleIcon from "@mui/icons-material/Circle";
 import { INotification } from "@/models/notification";
-import { ValueOf } from "next/dist/shared/lib/constants";
 
 interface INotificationData extends FetchResponseBody {
   data: INotification[];
 }
 
-interface IAppQueryParams {
-  pageSize: number;
-  criteria: Array<{
-    fieldName: string;
-    operator: string;
-    value: number;
-  }> | null;
-}
-
 export default function PopupNotifications() {
   const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
   const [showLoadMore, setShowLoadMore] = useState(false);
-  const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
-    pageSize: 5,
-    criteria: null,
-  });
+  const [limit, setLimit] = useState(5);
 
   const t = useTranslations();
 
@@ -39,9 +26,11 @@ export default function PopupNotifications() {
 
   const user: IUserData | null = useProfileStore((state) => state.getUserData());
 
-  const { data: messages, loading } = useFetch<INotificationData>("/api/notifications/", "POST", {
-    body: appQueryParams,
-  });
+  const {
+    data: messages,
+    update,
+    loading,
+  } = useFetch<INotificationData>(user?.id ? `/api/notifications?userId=${user?.id}` : "", "POST");
 
   const handleNotificationPopupToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setAnchorEl(anchorEl == null ? event.currentTarget : null);
@@ -68,45 +57,40 @@ export default function PopupNotifications() {
     }
   };
 
-  const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
-    setAppQueryParams((prev) => {
-      return { ...prev, [key]: newValue };
+  const handleLoadMore = () => {
+    setLimit(limit + 4);
+  };
+
+  const withBadge = () => {
+    if (Array.isArray(messages?.data)) {
+      return messages?.data.find((notification) => !notification.isRead);
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    update(user?.id ? `/api/notifications?userId=${user?.id}` : "", {
+      pageSize: limit,
     });
-  };
-
-  const handleChangeLimit = () => {
-    if (appQueryParams.pageSize) updateAppQueryParams("pageSize", appQueryParams.pageSize + 4);
-  };
-
-  const withBadge = messages && Object.values(messages?.data).find((notification) => !notification.isRead);
+  }, [limit, message]);
 
   useEffect(() => {
-    updateAppQueryParams("criteria", [
-      {
-        fieldName: "user.id",
-        operator: "=",
-        value: user?.id ?? 0,
-      },
-    ]);
-  }, [appQueryParams.pageSize, message]);
-
-  useEffect(() => {
-    if (messages?.total! > appQueryParams.pageSize) {
+    if (messages?.total! > limit) {
       setShowLoadMore(true);
     } else {
       setShowLoadMore(false);
     }
-    if (messages?.total === appQueryParams.pageSize) {
+    if (messages?.total === limit) {
       setShowLoadMore(false);
     }
-  }, [messages?.data, appQueryParams.pageSize]);
+  }, [messages?.data, limit]);
 
   return (
     <>
       <IconButton onClick={handleNotificationPopupToggle} sx={{ padding: 1, color: "black" }}>
         {!!anchorEl ? (
           <NotificationsIcon color="success" />
-        ) : withBadge ? (
+        ) : withBadge() ? (
           <Badge badgeContent color="success" variant="dot">
             <NotificationsOutlinedIcon color="inherit" />
           </Badge>
@@ -230,7 +214,7 @@ export default function PopupNotifications() {
                 "&:hover": { backgroundColor: "unset", color: "success" },
                 padding: "unset",
               }}
-              onClick={handleChangeLimit}
+              onClick={handleLoadMore}
             >
               {t("Show more")}
             </Button>
