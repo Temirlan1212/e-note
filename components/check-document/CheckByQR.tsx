@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { Html5Qrcode } from "html5-qrcode";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Alert, Collapse } from "@mui/material";
 import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
 
 import Button from "../ui/Button";
@@ -12,12 +12,13 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 
 export default function CheckByQR() {
   const [isEnabled, setEnabled] = useState(false);
-  const [qrMessage, setQrMessage] = useState("");
+  const [alertOpen, setAlertOpen] = useState(false);
+
   const t = useTranslations();
 
   const router = useRouter();
 
-  const { data, update } = useFetch("", "POST");
+  const { data, update, error } = useFetch("", "POST");
 
   useEffect(() => {
     const config = { fps: 10, qrbox: { width: 200, height: 200 } };
@@ -28,26 +29,23 @@ export default function CheckByQR() {
       if (html5QrCode && html5QrCode.isScanning) {
         html5QrCode.stop();
       }
+    };
 
+    const qrCodeSuccess = (decodedText: string) => {
       update("/api/check-document", {
         criteria: [
           {
             fieldName: "uniqueQrCode",
             operator: "=",
-            value: qrMessage,
+            value: decodedText,
           },
         ],
       });
-    };
-
-    const qrCodeSuccess = (decodedText: string) => {
-      setQrMessage(decodedText);
       setEnabled(false);
     };
 
     if (isEnabled) {
       html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccess, () => {});
-      setQrMessage("");
     } else {
       qrScanerStop();
     }
@@ -58,14 +56,22 @@ export default function CheckByQR() {
   }, [isEnabled]);
 
   useEffectOnce(() => {
+    if (data?.total === 0 || error !== null) {
+      setAlertOpen(true);
+    }
     if (data?.data) {
       router.push(`/check-document/${encodeURIComponent(data?.data[0]?.uniqueQrCode as string)}`);
     }
-  }, [data?.data]);
+  }, [data, error]);
 
   return (
     <Box>
-      <Box position="relative">
+      <Collapse sx={{ width: "100%" }} in={alertOpen}>
+        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+          {t("Document not found")}
+        </Alert>
+      </Collapse>
+      <Box position="relative" mt="20px">
         <Box
           sx={{
             height: isEnabled ? "unset" : "296px",
@@ -92,11 +98,6 @@ export default function CheckByQR() {
           <Typography fontWeight={600}>{t("Turn on camera")}</Typography>
         </Button>
       </Box>
-      {qrMessage && (
-        <Hint type="hint" title="Document Found" maxWidth="100%" sx={{ marginTop: "20px" }}>
-          <Typography>{qrMessage}</Typography>
-        </Hint>
-      )}
       <Button
         variant="contained"
         color="success"
