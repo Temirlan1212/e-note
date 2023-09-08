@@ -14,6 +14,28 @@ import Radio from "../ui/Radio";
 import useFetch from "@/hooks/useFetch";
 import { useRouter } from "next/router";
 
+interface IOptionData {
+  regionsBody: {
+    optionName: string | null;
+    optionId: string | null;
+  };
+  districtsBody: {
+    optionName: string | null;
+    optionId: string | null;
+  };
+  citiesBody: {
+    optionName: string | null;
+    optionId: string | null;
+  };
+  notaryDistrictsBody: {
+    cityId?: string | null;
+    districtId?: string | null;
+    regionId?: string | null;
+    optionName?: string | null;
+    optionId?: string | null;
+  };
+}
+
 interface INotariesFiltrationProps {
   setSearchQuery: (val: string) => void;
   searchQuery: string;
@@ -53,7 +75,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
     setSearchQuery(value);
   };
 
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<IOptionData>({
     citiesBody: {
       optionName: null,
       optionId: null,
@@ -151,7 +173,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
 
   const onChangeSelect = (optionId: string | null, optionName: string) => {
     if (optionName === "region") {
-      setFormData((prevData: any) => ({
+      setFormData((prevData: IOptionData) => ({
         ...prevData,
         regionsBody: {
           optionName: optionName,
@@ -164,7 +186,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
       }));
     }
     if (optionName === "district") {
-      setFormData((prevData: any) => ({
+      setFormData((prevData: IOptionData) => ({
         ...prevData,
         citiesBody: {
           optionName: optionName,
@@ -173,7 +195,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
       }));
     }
     if (optionName === "city") {
-      setFormData((prevData: any) => ({
+      setFormData((prevData: IOptionData) => ({
         ...prevData,
         notaryDistrictsBody: {
           cityId: optionId,
