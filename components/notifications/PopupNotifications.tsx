@@ -10,43 +10,52 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CircleIcon from "@mui/icons-material/Circle";
 import { INotification } from "@/models/notification";
+import { ValueOf } from "next/dist/shared/lib/constants";
 
 interface INotificationData extends FetchResponseBody {
   data: INotification[];
 }
 
+interface IAppQueryParams {
+  pageSize: number;
+  criteria: Array<{
+    fieldName: string;
+    operator: string;
+    value: number;
+  }> | null;
+}
+
 export default function PopupNotifications() {
   const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
-  const [limit, setLimit] = useState(5);
   const [showLoadMore, setShowLoadMore] = useState(false);
+  const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
+    pageSize: 5,
+    criteria: null,
+  });
 
   const t = useTranslations();
-
-  const { data: messages, loading, update } = useFetch<INotificationData>("", "POST");
 
   const { data: message, update: messageUpdate } = useFetch("", "POST");
 
   const user: IUserData | null = useProfileStore((state) => state.getUserData());
 
+  const { data: messages, loading } = useFetch<INotificationData>("/api/notifications/", "POST", {
+    body: appQueryParams,
+  });
+
   const handleNotificationPopupToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setAnchorEl(anchorEl == null ? event.currentTarget : null);
-  };
-
-  const handleLoadMore = () => {
-    setLimit(limit + 4);
   };
 
   const handleRead = (id: number) => {
     messageUpdate(`/api/notifications/isRead/${id}`);
   };
 
-  const withBadge = messages?.data?.find((notification) => !notification.isRead);
-
   const getTimeAgo = (isoDate: string): string => {
     const timeDiff = Math.floor((Date.now() - new Date(isoDate).getTime()) / 1000);
 
     if (timeDiff < 60) {
-      return `${timeDiff} ${t("min")}`;
+      return `${timeDiff} ${t("sec")}`;
     } else if (timeDiff < 3600) {
       const minutes = Math.floor(timeDiff / 60);
       return `${minutes} ${minutes === 1 ? t("min") : minutes < 5 ? t("min") : t("min")}`;
@@ -59,29 +68,38 @@ export default function PopupNotifications() {
     }
   };
 
-  useEffect(() => {
-    update("/api/notifications/", {
-      limit,
-      criteria: [
-        {
-          fieldName: "user.id",
-          operator: "=",
-          value: user?.id ?? "",
-        },
-      ],
+  const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
+    setAppQueryParams((prev) => {
+      return { ...prev, [key]: newValue };
     });
-  }, [limit, message]);
+  };
+
+  const handleChangeLimit = () => {
+    if (appQueryParams.pageSize) updateAppQueryParams("pageSize", appQueryParams.pageSize + 4);
+  };
+
+  const withBadge = messages && Object.values(messages?.data).find((notification) => !notification.isRead);
 
   useEffect(() => {
-    if (messages?.total! > limit) {
+    updateAppQueryParams("criteria", [
+      {
+        fieldName: "user.id",
+        operator: "=",
+        value: user?.id ?? 0,
+      },
+    ]);
+  }, [appQueryParams.pageSize, message]);
+
+  useEffect(() => {
+    if (messages?.total! > appQueryParams.pageSize) {
       setShowLoadMore(true);
     } else {
       setShowLoadMore(false);
     }
-    if (messages?.total === limit) {
+    if (messages?.total === appQueryParams.pageSize) {
       setShowLoadMore(false);
     }
-  }, [messages?.data, limit]);
+  }, [messages?.data, appQueryParams.pageSize]);
 
   return (
     <>
@@ -212,7 +230,7 @@ export default function PopupNotifications() {
                 "&:hover": { backgroundColor: "unset", color: "success" },
                 padding: "unset",
               }}
-              onClick={handleLoadMore}
+              onClick={handleChangeLimit}
             >
               {t("Show more")}
             </Button>

@@ -4,7 +4,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }
-  const limit = req.body["limit"];
+
+  const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
   const criteria = req.body["criteria"];
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.mail.db.MailFlags/search", {
@@ -15,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     },
     body: JSON.stringify({
       offset: 0,
-      limit: limit,
+      limit: pageSize,
       fields: ["version", "isArchived", "isRead", "isStarred", "message", "message.body", "userId", "createdOn"],
       sortBy: ["-id"],
       data: {
