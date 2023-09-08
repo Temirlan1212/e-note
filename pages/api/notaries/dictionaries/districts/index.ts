@@ -7,6 +7,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
+  const optionName = req.body["optionName"];
+  const optionId = req.body["optionId"];
+
+  const data: any =
+    optionName && optionId
+      ? {
+          _domain: `self.${optionName}.id = :${optionName}`,
+          _domainContext: {
+            [optionName]: optionId,
+          },
+        }
+      : {};
+
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.District/search", {
     method: "POST",
     headers: {
@@ -15,6 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     },
     body: JSON.stringify({
       fields: ["name"],
+      data: data,
     }),
   });
 

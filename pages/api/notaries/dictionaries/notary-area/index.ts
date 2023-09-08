@@ -7,6 +7,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
+  const regionId = req.body["regionId"];
+  const cityId = req.body["cityId"];
+  const districtId = req.body["districtId"];
+
+  const data: any =
+    regionId && cityId && districtId
+      ? {
+          criteria: [
+            {
+              operator: "and",
+              criteria: [
+                {
+                  fieldName: "district.region.id",
+                  operator: "=",
+                  value: regionId,
+                },
+                {
+                  fieldName: "district.id",
+                  operator: "=",
+                  value: districtId,
+                },
+                {
+                  fieldName: "city.id",
+                  operator: "=",
+                  value: cityId,
+                },
+              ],
+            },
+          ],
+        }
+      : {};
+
   const response = await fetch(
     process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.notary.db.NotaryDistrict/search",
     {
@@ -17,6 +49,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       },
       body: JSON.stringify({
         fields: ["name"],
+        data: data,
       }),
     }
   );

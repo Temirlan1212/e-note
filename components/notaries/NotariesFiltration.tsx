@@ -53,10 +53,33 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
     setSearchQuery(value);
   };
 
-  const { data: regionsData } = useFetch("/api/notaries/dictionaries/regions", "POST");
-  const { data: citiesData } = useFetch("/api/notaries/dictionaries/cities", "POST");
-  const { data: districtsData } = useFetch("/api/notaries/dictionaries/districts", "POST");
-  const { data: notaryAreaData } = useFetch("/api/notaries/dictionaries/notary-area", "POST");
+  const [formData, setFormData] = useState<any>({
+    citiesBody: {
+      optionName: null,
+      optionId: null,
+    },
+    districtsBody: {
+      optionName: null,
+      optionId: null,
+    },
+    notaryDistrictsBody: {
+      optionName: null,
+      optionId: null,
+    },
+    regionsBody: {
+      optionName: null,
+      optionId: null,
+    },
+  });
+
+  const { citiesBody, districtsBody, notaryDistrictsBody, regionsBody } = formData;
+
+  const { data: regionsData } = useFetch("/api/notaries/dictionaries/regions", "POST", { body: regionsBody });
+  const { data: citiesData } = useFetch("/api/notaries/dictionaries/cities", "POST", { body: citiesBody });
+  const { data: districtsData } = useFetch("/api/notaries/dictionaries/districts", "POST", { body: districtsBody });
+  const { data: notaryAreaData } = useFetch("/api/notaries/dictionaries/notary-area", "POST", {
+    body: notaryDistrictsBody,
+  });
 
   const { data: workDaysAreaData } = useFetch("/api/notaries/dictionaries/work-days", "POST");
   const { data: notaryTypesData } = useFetch("/api/notaries/dictionaries/notary-types", "POST");
@@ -125,6 +148,41 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
   };
 
   const notariesSortOptionsData = [{ value: "partner.simpleFullName", label: "В алфавитном порядке" }];
+
+  const onChangeSelect = (optionId: string | null, optionName: string) => {
+    if (optionName === "region") {
+      setFormData((prevData: any) => ({
+        ...prevData,
+        regionsBody: {
+          optionName: optionName,
+          optionId: optionId,
+        },
+        districtsBody: {
+          optionName: optionName,
+          optionId: optionId,
+        },
+      }));
+    }
+    if (optionName === "district") {
+      setFormData((prevData: any) => ({
+        ...prevData,
+        citiesBody: {
+          optionName: optionName,
+          optionId: optionId,
+        },
+      }));
+    }
+    if (optionName === "city") {
+      setFormData((prevData: any) => ({
+        ...prevData,
+        notaryDistrictsBody: {
+          cityId: optionId,
+          districtId: prevData.districtsBody.optionId,
+          regionId: prevData.regionsBody.optionId,
+        },
+      }));
+    }
+  };
 
   return (
     <Box
@@ -269,6 +327,9 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
                       onBlur={field.onBlur}
                       onChange={(...event: any[]) => {
                         field.onChange(...event);
+                        const optionId = event[0].target?.value?.toString();
+                        const optionName = el.name;
+                        onChangeSelect(optionId, optionName);
                       }}
                     ></Select>
                   </Box>

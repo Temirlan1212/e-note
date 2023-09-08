@@ -51,8 +51,6 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
 
   const { handleSubmit, control, reset } = form;
 
-  // Sort
-
   const [notariesSortOptions, setNotariesSortOptions] = useState("");
 
   const [radioValue, setRadioValue] = useState<string>("");
@@ -114,10 +112,18 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   };
 
   const onFilterSubmit = (data: any) => {
+    const filteredData: any = {};
+
+    for (const key in data) {
+      if (data.hasOwnProperty(key)) {
+        filteredData[key] = data[key] === "" ? null : data[key];
+      }
+    }
+
     setAppQueryParams((prevParams) => ({
       ...prevParams,
       requestType: "filterSearch",
-      requestData: data,
+      requestData: filteredData,
     }));
   };
 

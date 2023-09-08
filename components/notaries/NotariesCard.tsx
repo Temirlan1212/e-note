@@ -104,7 +104,7 @@ const NotariesCard: FC<INotaryProps> = ({ fullName, image, rating, region, area,
               fontWeight: 600,
             }}
           >
-            4,0
+            {rating ?? "4,0"}
           </Typography>
           <Typography
             sx={{
