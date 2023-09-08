@@ -75,7 +75,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
     setSearchQuery(value);
   };
 
-  const [formData, setFormData] = useState<IOptionData>({
+  const [optionData, setOptionData] = useState<IOptionData>({
     citiesBody: {
       optionName: null,
       optionId: null,
@@ -94,7 +94,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
     },
   });
 
-  const { citiesBody, districtsBody, notaryDistrictsBody, regionsBody } = formData;
+  const { citiesBody, districtsBody, notaryDistrictsBody, regionsBody } = optionData;
 
   const { data: regionsData } = useFetch("/api/notaries/dictionaries/regions", "POST", { body: regionsBody });
   const { data: citiesData } = useFetch("/api/notaries/dictionaries/cities", "POST", { body: citiesBody });
@@ -173,7 +173,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
 
   const onChangeSelect = (optionId: string | null, optionName: string) => {
     if (optionName === "region") {
-      setFormData((prevData: IOptionData) => ({
+      setOptionData((prevData: IOptionData) => ({
         ...prevData,
         regionsBody: {
           optionName: optionName,
@@ -186,7 +186,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
       }));
     }
     if (optionName === "district") {
-      setFormData((prevData: IOptionData) => ({
+      setOptionData((prevData: IOptionData) => ({
         ...prevData,
         citiesBody: {
           optionName: optionName,
@@ -195,7 +195,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
       }));
     }
     if (optionName === "city") {
-      setFormData((prevData: IOptionData) => ({
+      setOptionData((prevData: IOptionData) => ({
         ...prevData,
         notaryDistrictsBody: {
           cityId: optionId,
