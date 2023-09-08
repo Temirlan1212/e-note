@@ -46,6 +46,8 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const notaryData = data?.data || [];
 
+  const normalizePhoneNumber = (phoneNumber: string) => phoneNumber?.replace(/\D/g, "");
+
   useEffect(() => {
     setChatLink(contact?.data?.chatRoomLink ? contact.data.chatRoomLink : "/chat");
   }, [contact]);
@@ -66,20 +68,22 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
     {
       text: notaryData[0]?.partner?.mobilePhone || "+996 700 000 000, 555 000 000",
       icon: <PhoneEnabledOutlinedIcon />,
-      type: "text",
+      type: notaryData[0]?.partner?.mobilePhone ? "link" : "text",
+      href: `tel:${notaryData[0]?.partner?.mobilePhone}`,
       array: [],
     },
     {
       text: notaryData[0]?.partner?.mobilePhone || "+996 700 000 000",
       icon: <WhatsAppIcon />,
       type: "link",
+      href: `https://wa.me/${normalizePhoneNumber(notaryData[0]?.partner?.mobilePhone)}`,
       array: [],
     },
     {
       text: notaryData[0]?.partner?.email || "balancha@gmail.com",
       icon: <EmailOutlinedIcon />,
       type: "link",
-      href: `mailto:${notaryData[0]?.partner?.email || "#"}`,
+      href: `mailto:${notaryData[0]?.partner?.email}`,
       array: [],
     },
     {
@@ -204,14 +208,16 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                   <Box display="flex" gap="15px" key={text}>
                     {Icon}
                     {type === "link" ? (
-                      <a
-                        href={href}
+                      <Link
+                        rel="noopener noreferrer"
+                        target="_blank"
+                        href={href ?? "#"}
                         style={{
                           color: "#1BAA75",
                         }}
                       >
                         {text}
-                      </a>
+                      </Link>
                     ) : (
                       type === "text" && <Typography>{text}</Typography>
                     )}
