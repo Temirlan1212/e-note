@@ -1,14 +1,29 @@
 import React, { FC } from "react";
+
 import { Avatar, Box, Card, CardContent, CardHeader, Typography } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
-import { INotary } from "./NotariesList";
+
 import Rating from "../ui/Rating";
 
-const NotariesCard: FC<{ notary: INotary }> = ({ notary }) => {
+interface INotaryProps {
+  id?: number;
+  fullName?: string;
+  image?: string;
+  rating?: number;
+  region?: string;
+  area?: string;
+  location?: string;
+}
+
+const NotariesCard: FC<INotaryProps> = ({ fullName, image, rating, region, area, location }) => {
   return (
     <Card
       sx={{
         width: { xs: "100%", md: "17.8rem" },
+        height: {
+          xs: "",
+          md: "360px",
+        },
         borderRadius: 0,
         boxShadow: 0,
         backgroundColor: "inherit",
@@ -34,6 +49,7 @@ const NotariesCard: FC<{ notary: INotary }> = ({ notary }) => {
         avatar={
           <Avatar
             sizes="100"
+            src={image}
             sx={{
               bgcolor: "success.main",
               width: {
@@ -77,18 +93,18 @@ const NotariesCard: FC<{ notary: INotary }> = ({ notary }) => {
             md: "normal",
           },
         }}
-        title={notary.name}
+        title={fullName}
       />
       <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "start" }}>
         <Box sx={{ display: "flex" }} gap="8px">
-          <Rating value={notary.rating} readOnly />
+          <Rating value={rating || 0} readOnly />
           <Typography
             sx={{
               fontSize: "16px",
               fontWeight: 600,
             }}
           >
-            4,0
+            {rating ?? "4,0"}
           </Typography>
           <Typography
             sx={{
@@ -110,9 +126,9 @@ const NotariesCard: FC<{ notary: INotary }> = ({ notary }) => {
             marginTop: "20px",
           }}
         >
-          <Typography>{notary.region},</Typography>
-          <Typography>{notary.area}.</Typography>
-          <Typography>{notary.location}</Typography>
+          <Typography>{region},</Typography>
+          <Typography>{area}.</Typography>
+          <Typography>{location}</Typography>
         </Box>
       </CardContent>
     </Card>
