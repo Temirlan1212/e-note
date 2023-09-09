@@ -33,7 +33,7 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
     {
       title: "Home page",
       link: "/",
-      type: "link",
+      type: "menu",
     },
     {
       title: "Login",
@@ -41,7 +41,7 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
       type: "link",
     },
     {
-      title: "About us",
+      title: "Notariat",
       link: "/about",
       type: "menu",
     },
