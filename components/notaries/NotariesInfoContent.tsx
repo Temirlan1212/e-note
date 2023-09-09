@@ -66,21 +66,21 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: [],
     },
     {
-      text: notaryData[0]?.partner?.mobilePhone || "+996 700 000 000, 555 000 000",
+      text: notaryData[0]?.partner?.mobilePhone,
       icon: <PhoneEnabledOutlinedIcon />,
-      type: notaryData[0]?.partner?.mobilePhone ? "link" : "text",
-      href: `tel:${notaryData[0]?.partner?.mobilePhone}`,
+      type: "link",
+      href: `tel:+${normalizePhoneNumber(notaryData[0]?.partner?.mobilePhone)}`,
       array: [],
     },
     {
-      text: notaryData[0]?.partner?.mobilePhone || "+996 700 000 000",
+      text: notaryData[0]?.partner?.mobilePhone,
       icon: <WhatsAppIcon />,
       type: "link",
       href: `https://wa.me/${normalizePhoneNumber(notaryData[0]?.partner?.mobilePhone)}`,
       array: [],
     },
     {
-      text: notaryData[0]?.partner?.email || "balancha@gmail.com",
+      text: notaryData[0]?.partner?.email,
       icon: <EmailOutlinedIcon />,
       type: "link",
       href: `mailto:${notaryData[0]?.partner?.email}`,
@@ -99,6 +99,8 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: notaryData[0]?.workingDay,
     },
   ];
+
+  const filteredInfoArray = infoArray.filter((item) => item.text);
 
   return (
     <Box
@@ -203,7 +205,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
           </Typography>
           <Box>
             <Box display="flex" gap="20px" flexDirection="column">
-              {infoArray.map(({ text, icon: Icon, type, array, href }) => {
+              {filteredInfoArray.map(({ text, icon: Icon, type, array, href }) => {
                 return (
                   <Box display="flex" gap="15px" key={text}>
                     {Icon}
