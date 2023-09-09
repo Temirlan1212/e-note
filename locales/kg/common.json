@@ -169,5 +169,17 @@
   "Links": "Шилтемелер",
   "Type": "Түрү",
   "Device": "Жабдык",
-  "Container": "Контейнер"
+  "Container": "Контейнер",
+  "All notifications": "Бардык билдирүүлөр",
+  "No notifications": "Билдирмелер жок",
+  "sec": "сек",
+  "min": "мин",
+  "hour": "саат",
+  "hourGenitive": "саат",
+  "hourAccusative": "саат",
+  "day": "күн",
+  "dayGenitive": "күн",
+  "dayAccusative": "күн",
+  "Show more": "Көбүрөөк жүктөө",
+  "status change": "Статусу өзгөрдү"
 }

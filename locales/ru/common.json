@@ -169,5 +169,17 @@
   "Links": "Ссылки",
   "Type": "Тип",
   "Device": "Устройтсво",
-  "Container": "Контейнер"
+  "Container": "Контейнер",
+  "All notifications": "Все уведомления",
+  "No notifications": "Нет уведомлений",
+  "sec": "сек",
+  "min": "мин",
+  "hour": "час",
+  "hourGenitive": "часа",
+  "hourAccusative": "часов",
+  "day": "день",
+  "dayGenitive": "дня",
+  "dayAccusative": "дней",
+  "Show more": "Показать еще",
+  "status changed": "Статус изменен"
 }

@@ -169,5 +169,17 @@
   "Links": "Links",
   "Type": "Type",
   "Device": "Device",
-  "Container": "Container"
+  "Container": "Container",
+  "All notifications": "All notifications",
+  "No notifications": "No notifications",
+  "sec": "sec",
+  "min": "min",
+  "hour": "hour",
+  "hourGenivite": "hour",
+  "hourAccusative": "hours",
+  "day": "day",
+  "dayGenitive": "days",
+  "dayAccusative": "days",
+  "Show more": "Show more",
+  "status changed": "Status changed"
 }
