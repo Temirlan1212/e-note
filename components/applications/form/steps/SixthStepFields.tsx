@@ -58,7 +58,7 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
         {!loading && !conversionLoading && data?.data?.token && (
           <Link
-            href={`/api/iframe?url=${data?.data?.downloadUrl}&token=${data?.data?.token}`}
+            href={`/api/adapter?url=${data?.data?.downloadUrl}&token=${data?.data?.token}`}
             download={data?.data?.fileName}
             target="_blank"
           >
@@ -73,7 +73,7 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
         <PDFViewer
           fileUrl={
             conversionData?.data?.pdfLink
-              ? `/api/iframe?url=${conversionData?.data?.pdfLink}&token=${data?.data?.token}`
+              ? `/api/adapter?url=${conversionData?.data?.pdfLink}&token=${data?.data?.token}`
               : "/"
           }
         />
