@@ -7,13 +7,9 @@ export default function PublicLayout({ children }: { children: JSX.Element }) {
   const routes = useRouteStore((state) => state.getRoutes(state.guestRoutes, "menu", "user", true));
 
   return (
-    <>
-      <AppNavbar type="public" routes={routes}>
-        {children}
-      </AppNavbar>
-      <footer>
-        <Footer />
-      </footer>
-    </>
+    <AppNavbar type="public" routes={routes}>
+      {children}
+      <Footer />
+    </AppNavbar>
   );
 }
