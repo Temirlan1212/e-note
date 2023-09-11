@@ -5,29 +5,22 @@ import { GetStaticPropsContext } from "next";
 import Accordion from "@/components/ui/Accordion";
 import React from "react";
 import Image from "next/image";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 
-const qaTypesData = [
-  {
-    title: "What is a power of attorney?",
-    text: "QA-text-1",
-  },
-  {
-    title: "What is needed to provide proof?",
-    text: "QA-text-2",
-  },
-  {
-    title: "For how long and when is the Certificate of Inheritance issued?",
-    text: "QA-text-3",
-  },
-  {
-    title: "For how long can I make a Power of Attorney for the management and disposal of property?",
-    text: "QA-text-4",
-  },
-];
+interface QAData extends FetchResponseBody {
+  data: {
+    answer: string;
+    id: number;
+    question: string;
+    version: number;
+  }[];
+}
 
 export default function QA() {
   const t = useTranslations();
   const [expanded, setExpanded] = React.useState<number | false>(0);
+
+  const { data } = useFetch<QAData>("/api/qa", "POST");
 
   const handleQAExpanding = (panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     if (expanded === panel) {
@@ -61,16 +54,16 @@ export default function QA() {
               {t("Questions and answers")}
             </Typography>
 
-            {qaTypesData.map(({ title, text }, index) => (
+            {data?.data.map(({ question, answer }, index) => (
               <Accordion
-                key={title}
+                key={question}
                 expanded={expanded === index}
-                title={title}
-                type={title}
+                title={question}
+                type={question}
                 handleChange={handleQAExpanding(index)}
                 sx={{ bgcolor: "transparent" }}
               >
-                {t(text)}
+                {answer}
               </Accordion>
             ))}
           </Box>
