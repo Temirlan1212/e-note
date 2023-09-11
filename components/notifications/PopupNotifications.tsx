@@ -87,7 +87,7 @@ export default function PopupNotifications() {
 
   return (
     <>
-      <IconButton onClick={handleNotificationPopupToggle} sx={{ padding: 1, color: "black" }}>
+      <IconButton onClick={handleNotificationPopupToggle} sx={{ padding: 1, color: "inherit" }}>
         {!!anchorEl ? (
           <NotificationsIcon color="success" />
         ) : withBadge() ? (
