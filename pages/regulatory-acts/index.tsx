@@ -5,18 +5,20 @@ import Link from "@/components/ui/Link";
 import Image from "next/image";
 import Head from "next/head";
 import { GetStaticPropsContext } from "next";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 
-interface IRegulatoryActs {
-  title: string;
-  url: string;
-  id: number;
+interface IRegulatoryActs extends FetchResponseBody {
+  data: {
+    title: string;
+    url: string;
+    id: number;
+  }[];
 }
 
 const RegulatoryActs: React.FC = () => {
   const t = useTranslations();
 
-  const { data: regulatoryActsData } = useFetch("/api/regulatory-acts", "POST");
+  const { data: regulatoryActsData } = useFetch<IRegulatoryActs>("/api/regulatory-acts", "POST");
 
   return (
     <>
@@ -42,7 +44,7 @@ const RegulatoryActs: React.FC = () => {
             </Typography>
 
             <List sx={{ display: "flex", flexDirection: "column", gap: "35px" }}>
-              {regulatoryActsData?.data?.map(({ title, url, id }: IRegulatoryActs) => (
+              {regulatoryActsData?.data?.map(({ title, url, id }) => (
                 <ListItem disablePadding key={id}>
                   <Link
                     href={url}
@@ -59,7 +61,7 @@ const RegulatoryActs: React.FC = () => {
                     underline="hover"
                     gap="30px"
                   >
-                    <Typography color="inherit">{t(title)}</Typography>
+                    <Typography color="inherit">{title}</Typography>
                     <Box>
                       <LinkIcon />
                     </Box>
@@ -85,7 +87,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
     props: {
       messages: {
         ...(await import(`locales/${context.locale}/common.json`)).default,
-        ...(await import(`locales/${context.locale}/regulatory-acts.json`)).default,
       },
     },
   };
