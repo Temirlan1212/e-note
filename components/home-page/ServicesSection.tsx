@@ -13,9 +13,9 @@ const ServicesSection: React.FC = () => {
   const servicesData = [
     { title: "Verification of the power of attorney", link: "/check-document", icon: CheckDocIcon },
     { title: "Checking of mortgaged movable property", link: "/", icon: CarIcon },
-    { title: "Search for heirs", link: "/", icon: SearchHeirs },
-    { title: "Hereditary affairs", link: "/", icon: HereditaryAffairs },
-    { title: "Register of Notaries of the KR", link: "/", icon: Register },
+    { title: "Search for heirs", link: "/search-for-heirs", icon: SearchHeirs },
+    { title: "Hereditary affairs", link: "/inheritance-cases", icon: HereditaryAffairs },
+    { title: "Register of Notaries of the KR", link: "/notaries", icon: Register },
   ];
 
   return (
