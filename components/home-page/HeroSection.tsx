@@ -10,7 +10,8 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { IUser, IUserCredentials } from "@/models/user";
 import { useProfileStore } from "@/stores/profile";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const HeroSection: React.FC = () => {
   const t = useTranslations();
@@ -18,6 +19,8 @@ const HeroSection: React.FC = () => {
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const captchaRef = useRef<ReCAPTCHA | null>(null);
 
   const form = useForm<IUserCredentials>({
     resolver: yupResolver(loginSchema),
@@ -29,6 +32,13 @@ const HeroSection: React.FC = () => {
   } = form;
 
   const onSubmit = async (data: IUserCredentials) => {
+    const token = captchaRef?.current?.getValue();
+
+    if (!token) {
+      setError("root.serverError", { type: "custom", message: "Please confirm that you are not a robot" });
+      return;
+    }
+
     setLoading(true);
     await profile.logIn(data);
     const user = profile.getUser();
@@ -37,8 +47,11 @@ const HeroSection: React.FC = () => {
 
     if (user == null) {
       setError("root.serverError", { type: "custom", message: "Incorrect password or username" });
+      captchaRef?.current?.reset();
     } else {
+      console.log("token", token);
       form.reset();
+      captchaRef?.current?.reset();
       router.push("/applications");
     }
   };
@@ -98,6 +111,7 @@ const HeroSection: React.FC = () => {
                 name="password"
                 type="password"
               />
+              <ReCAPTCHA sitekey="6LdZVBwoAAAAAFjhQbUlEdfpyrz5HT9LPQyHhfGr" ref={captchaRef} />
             </Box>
             <FormHelperText sx={{ color: "red" }}>
               {errors.root?.serverError?.message && t(errors.root?.serverError?.message)}
