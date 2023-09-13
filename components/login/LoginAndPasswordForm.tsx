@@ -15,7 +15,6 @@ import ReCAPTCHA from "@/components/recaptcha/Recaptcha";
 
 const LoginAndPasswordForm: React.FC = () => {
   const t = useTranslations();
-
   const profile = useProfileStore((state) => state);
 
   const [showPassword, setShowPassword] = useState(false);
