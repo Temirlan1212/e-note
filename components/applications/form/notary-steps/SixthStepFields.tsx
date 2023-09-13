@@ -181,7 +181,7 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
 
       {!applicationLoading && !prepareLoading && !pdfLoading && !signLoading && !syncLoading && (
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-          {onPrev != null && (
+          {!isSigned && onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
               {t("Prev")}
             </Button>

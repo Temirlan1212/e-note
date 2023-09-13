@@ -27,6 +27,7 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
   const id = watch("id");
 
   const [docUrl, setDocUrl] = useState<string>();
+  const [isSigned, setIsSigned] = useState(false);
 
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
   const { loading: prepareLoading, update: getPrepare } = useFetch("", "GET");
@@ -44,6 +45,7 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
     switch (applicationData?.statusSelect) {
       case 1:
+        setIsSigned(true);
         break;
       case 2:
         const prepareData = await getPrepare(`/api/files/prepare/${id}`);
@@ -103,7 +105,7 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
       {!applicationLoading && !prepareLoading && !pdfLoading && (
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-          {onPrev != null && (
+          {!isSigned && onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
               {t("Prev")}
             </Button>
