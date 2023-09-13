@@ -269,7 +269,15 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
                 {group?.fields
                   ?.sort((a: any, b: any) => Number(a?.sequence ?? 0) - Number(b?.sequence ?? 0))
                   .map((item: Record<string, any>, index: number) => (
-                    <Grid item md={12} key={index}>
+                    <Grid
+                      item
+                      md={item?.elementWidth ?? 12}
+                      key={index}
+                      width="100%"
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="end"
+                    >
                       <Controller
                         control={control}
                         name={getDynamicName(item?.path, item?.fieldName)}

@@ -1,4 +1,4 @@
-import { GetStaticPaths, GetStaticPropsContext } from "next";
+import { GetStaticPropsContext } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useTranslations } from "next-intl";
@@ -13,9 +13,6 @@ interface NotariesDetailPageProps {}
 const center: [number, number] = [42.882004, 74.582748];
 
 const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
-  const router = useRouter();
-  const { id } = router.query;
-
   const t = useTranslations();
 
   const LeafletMap = dynamic(
@@ -72,9 +69,6 @@ export async function getStaticProps(context: GetStaticPropsContext) {
   };
 }
 
-export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
-  return {
-    paths: [], //indicates that no page needs be created at build time
-    fallback: "blocking", //indicates the type of fallback
-  };
-};
+export async function getStaticPaths() {
+  return { paths: [], fallback: "blocking" };
+}

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -17,8 +17,8 @@ import Address from "@/components/fields/Address";
 import IdentityDocument from "@/components/fields/IdentityDocument";
 import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
-import UploadFiles from "@/components/fields/UploadFiles";
 import StepperContentStep from "@/components/ui/StepperContentStep";
+import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -41,9 +41,10 @@ export interface IStepFieldsProps {
   onNext?: Function;
 }
 
-export default function FourthStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
+export default function FirstStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
   const userData = useProfileStore((state) => state.userData);
   const t = useTranslations();
+  const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
 
   const {
     control,
@@ -83,7 +84,8 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
             <Contact form={form} names={getContactNames(index)} />
 
             <Typography variant="h5">{t("Files to upload")}</Typography>
-            <UploadFiles />
+
+            <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={index} />
           </Box>
         );
       },
@@ -268,6 +270,8 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
           );
         }
 
+        await attachedFilesRef.current?.next();
+
         if (onNext != null) onNext();
       }
 
@@ -412,6 +416,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
             </Button>
           </>
         }
+        onTabChange={(index) => attachedFilesRef.current?.tabChange(index)}
       />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>

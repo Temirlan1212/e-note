@@ -33,11 +33,42 @@ export default function About() {
   return (
     <>
       <Head>
-        <title>{t("About us")}</title>
+        <title>{t("Notariat")}</title>
       </Head>
 
       <Container>
-        <h1>{t("About us")}</h1>
+        <Typography variant="h1" fontWeight={600} my={4}>
+          {t("Notariat")}
+        </Typography>
+
+        <Typography style={styled_p} component="p">
+          {t("paragraph-9")}
+        </Typography>
+
+        <Box>
+          <Typography
+            variant="h4"
+            m="20px 0 10px 0"
+            sx={{
+              color: "success.main",
+            }}
+          >
+            {t("Notarial actions")}
+          </Typography>
+          <Typography style={styled_p} component="p">
+            {t("paragraph-10")}
+          </Typography>
+          <Typography style={styled_p} component="p">
+            {t("paragraph-11")}
+          </Typography>
+          <Typography style={styled_p} component="p">
+            {t("paragraph-12")}
+          </Typography>
+          <Typography style={styled_p} component="p">
+            {t("paragraph-13")}
+          </Typography>
+        </Box>
+
         <Box>
           <Typography
             variant="h4"
@@ -165,13 +196,15 @@ export default function About() {
               </Typography>
               <Typography sx={{ display: "flex" }} gap="10px" component="div">
                 <Typography sx={{ fontWeight: 600 }}>{t("title phone")}</Typography>
-                <Typography component="a" href="tel:996312343527">
-                  {t("phone")}
+                <Typography component="a" href="tel:+996312651010">
+                  +996 (312) 65-10-10
                 </Typography>
               </Typography>
               <Typography sx={{ display: "flex" }} gap="10px" component="div">
                 <Typography sx={{ fontWeight: 600 }}>{t("title e-mail")} </Typography>
-                <Typography> {t("e-mail")} </Typography>
+                <Typography component="a" href="mail:ep@minjust.gov.kg">
+                  ep@minjust.gov.kg
+                </Typography>
               </Typography>
               <Typography sx={{ display: "flex" }} gap="10px" component="div">
                 <Typography sx={{ fontWeight: 600 }}>{t("title schedule")}</Typography>

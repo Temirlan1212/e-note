@@ -29,8 +29,8 @@ const Footer: React.FC = () => {
     })),
     Contacts: [
       { title: "Address: Bishkek, blvd Molodoy Guardii 32", link: "https://go.2gis.com/divf1" },
-      { title: "Phone number", content: ": +996 (312) 34-35-27", link: "tel:+996312343527" },
-      { title: "E-mail", content: ": not.palata.kr@gmail.com", link: "mailto:not.palata.kr@gmail.com" },
+      { title: "Phone number", content: ": +996 (312) 65-10-10", link: "tel:+996312651010" },
+      { title: "E-mail", content: ": ep@minjust.gov.kg", link: "mailto:ep@minjust.gov.kg" },
       { title: "Working hours: Mon-Fri, 09:00-18:00", link: "/#" },
     ],
   };

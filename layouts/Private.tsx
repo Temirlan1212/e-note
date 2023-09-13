@@ -10,10 +10,8 @@ export default function PrivateLayout({ children }: { children: JSX.Element }) {
   );
 
   return (
-    <>
-      <AppNavbar type="private" routes={routes}>
-        {children}
-      </AppNavbar>
-    </>
+    <AppNavbar type="private" routes={routes}>
+      {children}
+    </AppNavbar>
   );
 }

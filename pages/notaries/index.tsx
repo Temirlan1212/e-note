@@ -7,6 +7,7 @@ import { GetStaticPropsContext } from "next";
 
 import NotariesFiltration from "@/components/notaries/NotariesFiltration";
 import NotariesList from "@/components/notaries/NotariesList";
+import NotariesContent from "@/components/notaries/NotariesContent";
 
 const center: [number, number] = [42.882004, 74.582748];
 
@@ -27,22 +28,7 @@ export default function Notaries() {
       </Head>
 
       <Container>
-        <Box component="section" py={10} display="flex" flexDirection="column" gap="60px" marginBottom="40px">
-          <Typography
-            component="h1"
-            sx={{
-              fontSize: "36px",
-              fontWeight: 600,
-            }}
-          >
-            {t("Register of Notaries of the Kyrgyz Republic")}
-          </Typography>
-
-          <NotariesFiltration />
-
-          <NotariesList />
-        </Box>
-
+        <NotariesContent />
         <Box paddingBottom="80px" display="flex" flexDirection="column" gap="50px">
           <Typography
             component="h1"

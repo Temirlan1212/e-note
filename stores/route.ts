@@ -33,7 +33,7 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
     {
       title: "Home page",
       link: "/",
-      type: "link",
+      type: "menu",
     },
     {
       title: "Login",
@@ -41,7 +41,7 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
       type: "link",
     },
     {
-      title: "About us",
+      title: "Notariat",
       link: "/about",
       type: "menu",
     },
@@ -99,12 +99,12 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
           type: "menu",
           icon: "LocalLibrary",
         },
-        // {
-        //   title: "Register of Notaries of the KR",
-        //   link: "",
-        //   type: "menu",
-        //   icon: "ListAlt",
-        // },
+        {
+          title: "Register of Notaries of the KR",
+          link: "/notaries",
+          type: "menu",
+          icon: "ListAlt",
+        },
         // {
         //   title: "Register of notarial acts",
         //   link: "",

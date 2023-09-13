@@ -1,14 +1,23 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
+  const { userId } = req.query;
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }
-  const criteria = req.body["criteria"];
-  const operator = req.body["operator"];
-  const sortBy = req.body["sortBy"];
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Product/search", {
+  const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
+  const criteria: Record<string, string | number>[] = [];
+
+  if (typeof userId === "string") {
+    criteria.push({
+      fieldName: "user.id",
+      operator: "=",
+      value: !Number.isNaN(parseInt(userId)) ? parseInt(userId) : 0,
+    });
+  }
+
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.mail.db.MailFlags/search", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -16,11 +25,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     },
     body: JSON.stringify({
       offset: 0,
-      limit: 5,
-      fields: ["version", "isArchived", "isRead", "isStarred", "message", "message.body", "userId"],
-      sortBy: sortBy ?? [],
+      limit: pageSize,
+      fields: ["version", "isArchived", "isRead", "isStarred", "message", "message.body", "userId", "createdOn"],
+      sortBy: ["-id"],
       data: {
-        operator: operator,
+        operator: "and",
         criteria: criteria,
       },
       ...req.body,

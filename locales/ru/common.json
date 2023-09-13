@@ -1,5 +1,6 @@
 {
   "E-notariat": "E-notariat",
+  "Notariat": "Нотариат",
   "Home page": "Главная страница",
   "About us": "О нас",
   "Notaries": "Нотариусы",
@@ -98,6 +99,7 @@
   "Delete": "Удалить",
   "More detailed": "Подробнее",
   "Edit": "Редактировать",
+  "Nothing has been found yet": "Пока ничего не найдено",
   "QR": "QR",
   "Registry number": "Номер реестра",
   "Enter number": "Введите номер",
@@ -168,5 +170,17 @@
   "Links": "Ссылки",
   "Type": "Тип",
   "Device": "Устройтсво",
-  "Container": "Контейнер"
+  "Container": "Контейнер",
+  "All notifications": "Все уведомления",
+  "No notifications": "Нет уведомлений",
+  "sec": "сек",
+  "min": "мин",
+  "hour": "час",
+  "hourGenitive": "часа",
+  "hourAccusative": "часов",
+  "day": "день",
+  "dayGenitive": "дня",
+  "dayAccusative": "дней",
+  "Show more": "Показать еще",
+  "status changed": "Статус изменен"
 }

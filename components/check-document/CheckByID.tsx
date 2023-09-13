@@ -21,7 +21,7 @@ export default function CheckByID() {
   const [alertOpen, setAlertOpen] = useState(false);
   const t = useTranslations();
 
-  const { data, update } = useFetch<ICheckedDocument>("", "POST");
+  const { data, update, error } = useFetch<ICheckedDocument>("", "POST");
 
   const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(event.target.value);
@@ -45,13 +45,13 @@ export default function CheckByID() {
   };
 
   useEffect(() => {
-    if (data?.total === 0) {
+    if (data?.total === 0 || error !== null) {
       setAlertOpen(true);
     }
     if (data?.data) {
-      router.push(`/check-document/${data?.data[0]?.uniqueQrCode}`);
+      router.push(`/check-document/${encodeURIComponent(data?.data[0]?.uniqueQrCode as string)}`);
     }
-  }, [data]);
+  }, [data, error]);
 
   return (
     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", gap: "30px" }}>

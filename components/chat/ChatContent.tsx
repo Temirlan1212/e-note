@@ -10,7 +10,7 @@ import ChatMessageBoard from "./message/ChatMessageBoard";
 
 import useFetch from "@/hooks/useFetch";
 
-interface IContact {
+export interface IContact {
   status: number;
   data: {
     appName: string;
