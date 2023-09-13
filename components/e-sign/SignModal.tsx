@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Box, InputLabel, SelectChangeEvent } from "@mui/material";
 import KeyIcon from "@mui/icons-material/Key";
@@ -6,7 +6,7 @@ import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import FingerprintScanner from "@/components/ui/FingerprintScanner";
-import JacartaSign from "./JacartaSign";
+import JacartaSign, { IJacartaSignRef } from "./JacartaSign";
 
 enum SignType {
   Jacarta = "jacarta",
@@ -16,30 +16,35 @@ const signTypes = Object.entries(SignType).map(([label, value]) => ({ label, val
 
 export default function SignModal({ base64Doc, onSign }: { base64Doc: string; onSign: (sign: string) => void }) {
   const t = useTranslations();
-  const [state, setState] = useState<"error" | "success" | "primary" | "signed">("primary");
+  const [fingerScanner, setFingerScanner] = useState<"error" | "success" | "primary" | "signed">("primary");
   const [isSigned, setIsSigned] = useState(false);
   const [loading, setLoading] = useState(false);
   const [signType, setSignType] = useState<SignType>();
 
+  const jcRef = useRef<IJacartaSignRef>(null);
+
   const handleState = () => {
     setLoading(true);
     new Promise((resolve) => setTimeout(resolve, 1000, "success"))
-      .then((value) => setState(value as typeof state))
+      .then((value) => setFingerScanner(value as typeof fingerScanner))
       .finally(() => setLoading(false));
   };
 
-  const handleSign = () => {
-    setIsSigned(true);
-    setState("signed");
+  const handleSign = (openModal: (open: boolean) => void) => {
+    if (jcRef == null) return;
+
+    const sign = jcRef.current?.handleSign(onSign);
+    if (sign) {
+      setIsSigned(true);
+      setFingerScanner("signed");
+      openModal(false);
+    }
   };
 
   const handleToggle = () => {
-    setState("primary");
+    setFingerScanner("primary");
     setIsSigned(false);
-  };
-
-  const handleAssignUniqueNumber = (callback: Function) => {
-    callback(false);
+    setSignType(undefined);
   };
 
   return (
@@ -53,28 +58,22 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
       slots={{
         button: (callback) => (
           <Box width="100%">
-            {!isSigned && state !== "error" && (
-              <Button disabled={state !== "success"} onClick={handleSign}>
+            {!isSigned && fingerScanner !== "error" && (
+              <Button disabled={fingerScanner !== "success"} onClick={() => handleSign(callback)}>
                 {t("Sign")}
               </Button>
             )}
 
-            {state === "error" && (
-              <Button disabled={state !== "error"} onClick={handleState}>
+            {fingerScanner === "error" && (
+              <Button disabled={fingerScanner !== "error"} onClick={handleState}>
                 {t("Try again")}
-              </Button>
-            )}
-
-            {isSigned && (
-              <Button onClick={() => handleAssignUniqueNumber(callback)}>
-                {t("Assign a unique number and enter it in the registry")}
               </Button>
             )}
           </Box>
         ),
         body: () => (
           <Box pb={5}>
-            {state === "success" && (
+            {fingerScanner === "success" && (
               <Box display="flex" flexDirection="column" my={2}>
                 <InputLabel>{t("Type")}</InputLabel>
                 <Select
@@ -86,16 +85,16 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
               </Box>
             )}
 
-            {state === "success" && signType === SignType.Jacarta && (
-              <JacartaSign base64Doc={base64Doc} onSign={onSign} />
+            {fingerScanner === "success" && signType === SignType.Jacarta && (
+              <JacartaSign base64Doc={base64Doc} ref={jcRef} />
             )}
 
-            {state !== "success" && (
+            {fingerScanner !== "success" && (
               <FingerprintScanner
                 width="100%"
                 loading={loading}
-                type={state}
-                onClick={() => state === "primary" && handleState()}
+                type={fingerScanner}
+                onClick={() => fingerScanner === "primary" && handleState()}
               />
             )}
           </Box>
