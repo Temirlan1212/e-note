@@ -154,7 +154,7 @@ const HeroSection: React.FC = () => {
             </Box>
 
             <Link
-              href={"/"}
+              href={"/reset-password"}
               color="text.primary"
               marginTop={{ xs: "10px", md: "20px" }}
               sx={{ textDecoration: "underline", textAlign: { xs: "center", md: "start" }, display: "block" }}

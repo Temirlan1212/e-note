@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Ref, forwardRef, useImperativeHandle, useState } from "react";
 import { useTranslations } from "next-intl";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { Box, InputLabel, SelectChangeEvent } from "@mui/material";
@@ -9,89 +9,84 @@ type IWindow = Window &
     JCWebClient2?: Record<string, any>;
   };
 
-export default function JacartaSign({ base64Doc, onSign }: { base64Doc: string; onSign: (sign: string) => void }) {
+export interface IJacartaSignProps {
+  base64Doc: string;
+}
+
+export interface IJacartaSignRef {
+  handleSign: (callback?: (sign: string) => void) => string;
+}
+
+export default forwardRef(function JacartaSign({ base64Doc }: IJacartaSignProps, ref: Ref<IJacartaSignRef>) {
   const t = useTranslations();
-  const [sign, setSign] = useState<any>();
-  const [jcData, setJcData] = useState<Record<string, any> | null>(null);
+  const [device, setDevice] = useState<number>();
+  const [container, setContainer] = useState<number>();
+  const [jc, setJc] = useState<Record<string, any>>();
 
   useEffectOnce(() => {
     const w = window as IWindow;
     if (w.JCWebClient2 != null) {
-      w.JCWebClient2?.initialize();
-
-      setJcData({
-        jc: w.JCWebClient2,
-        slots: w.JCWebClient2.getAllSlots().map(({ id, device }: { id: number; device: { serialNumber: string } }) => ({
-          label: `${id}_${device.serialNumber}`,
-          value: id,
-        })),
-      });
+      w.JCWebClient2.initialize();
+      setJc(w.JCWebClient2);
     }
   });
 
-  useEffectOnce(() => {
-    if (sign == null) return;
-    onSign(sign);
-  }, [sign]);
+  useImperativeHandle(ref, () => ({
+    handleSign,
+  }));
+
+  const handleSign: IJacartaSignRef["handleSign"] = (callback) => {
+    if (jc == null) return;
+
+    const authState = jc.getLoggedInState();
+    if (authState?.state === 0) jc.bindToken({ args: { tokenID: device, useUI: true } });
+
+    const sign = jc.signBase64EncodedData({
+      args: {
+        contID: container,
+        data: base64Doc,
+        attachedSignature: false,
+        addSigningTime: true,
+      },
+    });
+
+    if (authState?.state === 1) jc.unbindToken();
+
+    if (callback != null) callback(sign);
+
+    return sign;
+  };
 
   return (
     <>
       <Box display="flex" flexDirection="column" my={2}>
         <InputLabel>{t("Device")}</InputLabel>
         <Select
-          data={jcData?.slots}
+          data={jc?.getAllSlots().map(({ id, device }: { id: number; device: { serialNumber: string } }) => ({
+            label: `${id}_${device.serialNumber}`,
+            value: id,
+          }))}
           onChange={(event: SelectChangeEvent<number>) => {
-            setJcData((prev) => ({
-              ...prev,
-              tokenID: event.target.value ? event.target.value : null,
-              containers: event.target.value
-                ? jcData?.jc
-                    .getContainerList({ args: { tokenID: event.target.value } })
-                    .map((value: Record<string, any>) => ({
-                      ...value,
-                      label: `${value?.algorithm}: ${value?.description}`,
-                      value: value?.id,
-                    }))
-                : null,
-            }));
+            setDevice(event.target.value as number);
           }}
         />
       </Box>
 
-      {jcData?.tokenID && (
+      {device && (
         <Box display="flex" flexDirection="column" my={2}>
           <InputLabel>{t("Container")}</InputLabel>
           <Select
-            data={jcData?.containers}
+            data={jc?.getContainerList({ args: { tokenID: device } }).map((value: Record<string, any>) => ({
+              ...value,
+              label: `${value?.algorithm}: ${value?.description}`,
+              value: value?.id,
+            }))}
             onChange={(event: SelectChangeEvent<number>) => {
-              const authState = jcData?.jc.getLoggedInState();
-              if (authState?.state === 0) {
-                jcData?.jc.bindToken({
-                  args: {
-                    tokenID: jcData?.tokenID,
-                    useUI: true,
-                  },
-                });
-              }
-
-              setSign(
-                jcData?.jc.signBase64EncodedData({
-                  args: {
-                    contID: event.target.value,
-                    data: base64Doc,
-                    attachedSignature: false,
-                    addSigningTime: true,
-                  },
-                })
-              );
-
-              if (authState?.state === 1) {
-                jcData?.jc.unbindToken();
-              }
+              setContainer(event.target.value as number);
             }}
           />
         </Box>
       )}
     </>
   );
-}
+});

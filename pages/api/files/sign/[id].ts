@@ -3,16 +3,19 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export default async function handler(req: NextApiRequest, res: NextApiResponse<null>) {
   const { id } = req.query;
 
-  if (req.method !== "GET" || id == null) {
+  if (req.method !== "POST" || id == null) {
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/files/document-conversion/" + id, {
+  const response = await fetch(`${process.env.BACKEND_API_URL}/ws/files/document-sign/${id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
+    body: JSON.stringify({
+      data: req.body,
+    }),
   });
 
   if (!response.ok) {

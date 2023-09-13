@@ -5,11 +5,12 @@ import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import useConvert from "@/hooks/useConvert";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box } from "@mui/material";
+import { Box, Backdrop, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import EditIcon from "@mui/icons-material/Edit";
+import SyncIcon from "@mui/icons-material/Sync";
 import Button from "@/components/ui/Button";
 import PDFViewer from "@/components/PDFViewer";
 import Link from "@/components/ui/Link";
@@ -30,33 +31,49 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
   const { trigger, control, watch, setValue } = form;
 
   const id = watch("id");
+  const version = watch("version");
 
   const [base64Doc, setBase64Doc] = useState<string>();
   const [docUrl, setDocUrl] = useState<string>();
+  const [token, setToken] = useState<string>();
+  const [isSigned, setIsSigned] = useState(false);
+  const [isBackdropOpen, setIsBackdropOpen] = useState(false);
 
-  const { data, loading } = useFetch(id != null ? `/api/files/prepare/${id}` : "", "GET");
-  const { data: conversionData, loading: conversionLoading } = useFetch(
-    id != null ? `/api/files/document-conversion/${id}` : "",
-    "GET"
+  const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
+  const { data: prepare, loading: prepareLoading, update: getPrepare } = useFetch("", "GET");
+  const { loading: syncLoading, update: getSync } = useFetch("", "GET");
+  const { update: applicationUpdate } = useFetch("", "PUT");
+  const { loading: signLoading, update: signDocument } = useFetch("", "POST");
+  const { data: application, loading: applicationLoading } = useFetch(
+    id != null ? `/api/applications/${id}` : "",
+    "POST"
   );
-  const { update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
-
-  useEffectOnce(() => {
-    if (data?.data?.saleOrderVersion != null) {
-      setValue("version", data.data.saleOrderVersion);
-    }
-  }, [data]);
 
   useEffectOnce(async () => {
-    if (conversionData?.data?.pdfLink != null && data?.data?.token != null) {
-      const pdfResponse = await getPdf(`/api/adapter?url=${conversionData?.data?.pdfLink}&token=${data?.data?.token}`);
-      const blob = await pdfResponse?.blob();
-      if (blob == null) return;
+    const applicationData = application?.data?.[0];
 
-      setBase64Doc(await convert.blob.toBase64Async(blob));
-      setDocUrl(URL.createObjectURL(blob));
+    if (applicationData?.documentInfo?.pdfLink != null && applicationData?.documentInfo?.token != null) {
+      setToken(applicationData.documentInfo.token);
+      handlePdfDownload(applicationData.documentInfo.pdfLink, applicationData.documentInfo.token);
     }
-  }, [data, conversionData]);
+
+    switch (applicationData?.statusSelect) {
+      case 1:
+        setIsSigned(true);
+        break;
+      case 2:
+        const prepareData = await getPrepare(`/api/files/prepare/${id}`);
+        if (prepareData?.data?.saleOrderVersion != null) {
+          setValue("version", prepareData.data.saleOrderVersion);
+        }
+
+        if (prepareData?.data?.pdfLink != null && prepareData?.data?.token != null) {
+          setToken(prepareData.data.token);
+          handlePdfDownload(prepareData.data.pdfLink, prepareData.data.token);
+        }
+        break;
+    }
+  }, [application]);
 
   const triggerFields = async () => {
     return await trigger([]);
@@ -71,14 +88,69 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
     if (onNext != null && validated) onNext();
   };
 
-  const handleSign = (sign: string) => {
-    console.log(sign);
+  const handleSyncClick = async () => {
+    setIsBackdropOpen(false);
+
+    const syncData = await getSync(`/api/files/sync/${id}`);
+    if (syncData?.data?.pdfLink != null && token != null) {
+      handlePdfDownload(syncData.data.pdfLink, token);
+    }
+  };
+
+  const handlePdfDownload = async (pdfLink: string, token: string) => {
+    if (!pdfLink || !token) return;
+
+    const pdfResponse = await getPdf(`/api/adapter?url=${pdfLink}&token=${token}`);
+    const blob = await pdfResponse?.blob();
+    if (blob == null) return;
+
+    setBase64Doc(await convert.blob.toBase64Async(blob));
+    setDocUrl(URL.createObjectURL(blob));
+  };
+
+  const handleSign = async (sign: string) => {
+    const signedPdf = await signDocument(`/api/files/sign/${id}`, { hash: sign });
+
+    if (signedPdf?.data?.pdfLink != null && token != null) {
+      await handlePdfDownload(signedPdf.data.pdfLink, token);
+
+      const result = await applicationUpdate(`/api/applications/update/${id}`, {
+        version,
+        statusSelect: 1,
+      });
+
+      if (result?.data?.[0]?.id != null) {
+        setValue("version", result.data[0].version);
+      }
+
+      setIsSigned(true);
+    }
   };
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
+      <Backdrop open={isBackdropOpen} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+        <IconButton onClick={handleSyncClick}>
+          <SyncIcon
+            sx={{
+              width: 100,
+              height: 100,
+              borderRadius: 100,
+              boxShadow: 10,
+              p: 1,
+              bgcolor: "secondary.main",
+              color: "secondary.contrastText",
+            }}
+          />
+        </IconButton>
+      </Backdrop>
+
       <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", lg: "row" }}>
-        <StepperContentStep step={6} title={t("View document")} loading={loading || conversionLoading} />
+        <StepperContentStep
+          step={6}
+          title={t("View document")}
+          loading={applicationLoading || prepareLoading || pdfLoading || signLoading || syncLoading}
+        />
 
         <Box display="flex" gap="10px" flexDirection={{ xs: "column", md: "row" }}>
           {docUrl && (
@@ -89,10 +161,11 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
             </Link>
           )}
 
-          {data?.data?.token && (
+          {!isSigned && token && prepare?.data?.editUrl != null && (
             <Link
-              href={`${data?.data?.editUrl}?AuthorizationBasic=${data?.data?.token.replace(/Basic /, "")}`}
+              href={`${prepare.data.editUrl}?AuthorizationBasic=${token.replace(/Basic /, "")}`}
               target="_blank"
+              onClick={() => setIsBackdropOpen(true)}
             >
               <Button startIcon={<EditIcon />} sx={{ width: "auto" }}>
                 {t("Edit")}
@@ -100,15 +173,15 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
             </Link>
           )}
 
-          {base64Doc != null && <SignModal base64Doc={base64Doc} onSign={handleSign} />}
+          {!isSigned && base64Doc != null && <SignModal base64Doc={base64Doc} onSign={handleSign} />}
         </Box>
       </Box>
 
       {docUrl && <PDFViewer fileUrl={docUrl} />}
 
-      {!loading && !conversionLoading && (
+      {!applicationLoading && !prepareLoading && !pdfLoading && !signLoading && !syncLoading && (
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-          {onPrev != null && (
+          {!isSigned && onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
               {t("Prev")}
             </Button>

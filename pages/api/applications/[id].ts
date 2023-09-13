@@ -101,6 +101,7 @@ const related: Record<string, typeof fields> = {
     "notaryLegalParticipantsQty",
     "notaryTotalParticipantsQty",
   ],
+  documentInfo: ["token", "pdfLink", "editUrl", "fileName"],
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

@@ -1,15 +1,16 @@
-import { Box, IconButton, Input, Typography } from "@mui/material";
-import { useLocale, useTranslations } from "next-intl";
-import { GridSortModel } from "@mui/x-data-grid";
-import { GridTable } from "../ui/GridTable";
-import Pagination from "../ui/Pagination";
-import useFetch from "@/hooks/useFetch";
 import { useState } from "react";
-import Button from "../ui/Button";
+import { useLocale, useTranslations } from "next-intl";
+import useFetch from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
+import { useProfileStore } from "@/stores/profile";
+import { Box, IconButton, Input, Typography } from "@mui/material";
+import { GridSortModel } from "@mui/x-data-grid";
 import UploadIcon from "@mui/icons-material/Upload";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
-import useEffectOnce from "@/hooks/useEffectOnce";
+import Button from "../ui/Button";
+import { GridTable } from "../ui/GridTable";
+import Pagination from "../ui/Pagination";
 
 function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onDelete: Function }) {
   const { data: downloadData, update: downloadUpdate } = useFetch<Response>("", "GET", {
@@ -63,18 +64,29 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
 export default function FileList() {
   const t = useTranslations();
   const locale = useLocale();
+  const profile = useProfileStore((state) => state);
 
-  const [pagination, setPagination] = useState<{ pageSize: number; page: number; sortBy: string[] }>({
+  const [requestBody, setRequestBody] = useState<{
+    pageSize: number;
+    page: number;
+    sortBy: string[];
+    filters: Record<string, any>;
+  }>({
     pageSize: 12,
     page: 1,
-    sortBy: [],
+    sortBy: ["-createdOn"],
+    filters: { "createdBy.id": null },
   });
 
-  const { data, loading, update } = useFetch(`/api/files`, "POST", {
-    body: pagination,
+  const { data, loading, update } = useFetch(requestBody.filters["createdBy.id"] != null ? `/api/files` : "", "POST", {
+    body: requestBody,
   });
 
   const { loading: uploadLoading, update: uploadUpdate } = useFetch("", "POST");
+
+  useEffectOnce(() => {
+    setRequestBody((prev) => ({ ...prev, filters: { "createdBy.id": profile.userData?.id } }));
+  }, [profile.userData]);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const elem = event.target;
@@ -88,18 +100,18 @@ export default function FileList() {
   };
 
   const handlePageChange = (page: number) => {
-    setPagination({
-      ...pagination,
+    setRequestBody((prev) => ({
+      ...prev,
       page,
-    });
+    }));
   };
 
   const handleSortChange = (sort: GridSortModel) => {
     const sortBy = sort.map((s) => (s.sort === "asc" ? s.field : `-${s.field}`));
-    setPagination({
-      ...pagination,
+    setRequestBody((prev) => ({
+      ...prev,
       sortBy,
-    });
+    }));
   };
 
   return (
@@ -160,10 +172,11 @@ export default function FileList() {
         sortingMode="server"
         onSortModelChange={handleSortChange}
       ></GridTable>
+
       <Pagination
         sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
-        totalPages={data?.total ? Math.ceil(data.total / pagination.pageSize) : 1}
-        currentPage={pagination.page}
+        totalPages={data?.total ? Math.ceil(data.total / requestBody.pageSize) : 1}
+        currentPage={requestBody.page}
         onPageChange={handlePageChange}
       />
     </Box>

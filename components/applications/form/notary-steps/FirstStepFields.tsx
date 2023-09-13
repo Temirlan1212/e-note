@@ -207,6 +207,7 @@ export default function FirstStepFields({ form, stepState, onPrev, onNext }: ISt
         creationDate: format(new Date(), "yyyy-MM-dd"),
         company: { id: userData?.activeCompany?.id },
         requester: values.requester,
+        statusSelect: 2,
       };
 
       let result = null;
@@ -215,7 +216,6 @@ export default function FirstStepFields({ form, stepState, onPrev, onNext }: ISt
         data.version = values.version;
         result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       } else {
-        data.statusSelect = 2;
         result = await applicationCreate("/api/applications/create", data);
       }
 

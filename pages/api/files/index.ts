@@ -38,7 +38,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         ],
         sortBy: req.body["sortBy"] ?? [],
       },
-      ...req.body,
     }),
   });
 
