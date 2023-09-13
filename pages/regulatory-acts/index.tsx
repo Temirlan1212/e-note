@@ -5,21 +5,20 @@ import Link from "@/components/ui/Link";
 import Image from "next/image";
 import Head from "next/head";
 import { GetStaticPropsContext } from "next";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
+
+interface IRegulatoryActs extends FetchResponseBody {
+  data: {
+    title: string;
+    url: string;
+    id: number;
+  }[];
+}
 
 const RegulatoryActs: React.FC = () => {
   const t = useTranslations();
 
-  const legalFrameworkData = [
-    { title: "Code of the Kyrgyz Republic on non-tax income", link: "http://cbd.minjust.gov.kg/act/view/ru-ru/111820" },
-    { title: "The Law of the Kyrgyz Republic 'On Notary", link: "http://cbd.minjust.gov.kg/act/view/ru-ru/78" },
-    { title: "Civil Code of the Kyrgyz Republic", link: "http://cbd.minjust.gov.kg/act/view/ru-ru/111521?cl=ru-ru" },
-    { title: "Labor Code of the Kyrgyz Republic", link: "http://cbd.minjust.gov.kg/act/view/ru-ru/1505" },
-    { title: "Land Code of the Kyrgyz Republic", link: "http://cbd.minjust.gov.kg/act/view/ru-ru/8" },
-    {
-      title: "Resolution of the Government of the Kyrgyz Republic 'On Issues of notarial activity'",
-      link: "http://cbd.minjust.gov.kg/act/view/ru-ru/95037",
-    },
-  ];
+  const { data: regulatoryActsData } = useFetch<IRegulatoryActs>("/api/regulatory-acts", "POST");
 
   return (
     <>
@@ -45,10 +44,10 @@ const RegulatoryActs: React.FC = () => {
             </Typography>
 
             <List sx={{ display: "flex", flexDirection: "column", gap: "35px" }}>
-              {legalFrameworkData.map(({ title, link }, index) => (
-                <ListItem disablePadding key={index}>
+              {regulatoryActsData?.data?.map(({ title, url, id }) => (
+                <ListItem disablePadding key={id}>
                   <Link
-                    href={link}
+                    href={url}
                     display="flex"
                     maxWidth={602}
                     sx={{
@@ -62,7 +61,7 @@ const RegulatoryActs: React.FC = () => {
                     underline="hover"
                     gap="30px"
                   >
-                    <Typography color="inherit">{t(title)}</Typography>
+                    <Typography color="inherit">{title}</Typography>
                     <Box>
                       <LinkIcon />
                     </Box>
