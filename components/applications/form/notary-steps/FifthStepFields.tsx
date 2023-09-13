@@ -28,7 +28,8 @@ export interface IStepFieldsProps {
   dynamicForm: UseFormReturn<any>;
   stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
-  onNext?: Function;
+  onNext?: (arg: { step: number | undefined }) => void;
+  handleStepNextClick?: Function;
 }
 
 interface IDynamicComponentProps {
@@ -179,7 +180,7 @@ const getDynamicName = (path: string | null, name: string | null) => {
   return name ?? "";
 };
 
-export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: IStepFieldsProps) {
+export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
@@ -226,7 +227,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
     }
   }, [productId]);
 
-  const handleNextClick = async () => {
+  const handleNextClick = async (stepIndex?: number) => {
     const validated = await triggerFields();
     const { setValue, getValues } = form;
 
@@ -243,7 +244,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
-        onNext();
+        onNext({ step: stepIndex });
       }
     }
   };
@@ -251,6 +252,10 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
   const handlePrevClick = () => {
     if (onPrev != null) onPrev();
   };
+
+  useEffectOnce(async () => {
+    if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -327,7 +332,12 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext }: I
               {t("Prev")}
             </Button>
           )}
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+          <Button
+            loading={loading}
+            onClick={() => handleNextClick()}
+            endIcon={<ArrowForwardIcon />}
+            sx={{ width: "auto" }}
+          >
             {t("Next")}
           </Button>
         </Box>

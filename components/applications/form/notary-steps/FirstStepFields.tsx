@@ -38,10 +38,11 @@ export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
-  onNext?: Function;
+  onNext?: (arg: { step: number | undefined }) => void;
+  handleStepNextClick?: Function;
 }
 
-export default function FirstStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
+export default function FirstStepFields({ form, stepState, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const userData = useProfileStore((state) => state.userData);
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
@@ -194,7 +195,7 @@ export default function FirstStepFields({ form, stepState, onPrev, onNext }: ISt
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async () => {
+  const handleNextClick = async (stepIndex?: number) => {
     const validated = await triggerFields();
 
     if (validated) {
@@ -272,11 +273,11 @@ export default function FirstStepFields({ form, stepState, onPrev, onNext }: ISt
 
         await attachedFilesRef.current?.next();
 
-        if (onNext != null) onNext();
+        if (onNext != null) onNext({ step: stepIndex });
       }
-
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   const handleAddTabClick = () => {
@@ -380,6 +381,10 @@ export default function FirstStepFields({ form, stepState, onPrev, onNext }: ISt
     }
   };
 
+  useEffectOnce(async () => {
+    if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <StepperContentStep step={1} title={t("Choose requester")} />
@@ -426,7 +431,12 @@ export default function FirstStepFields({ form, stepState, onPrev, onNext }: ISt
           </Button>
         )}
         {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+          <Button
+            loading={loading}
+            onClick={() => handleNextClick()}
+            endIcon={<ArrowForwardIcon />}
+            sx={{ width: "auto" }}
+          >
             {t("Next")}
           </Button>
         )}

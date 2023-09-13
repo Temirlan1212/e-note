@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -7,7 +7,7 @@ import { IApplicationSchema, applicationSchema } from "@/validator-schemas/appli
 import { IApplication } from "@/models/application";
 import { useProfileStore } from "@/stores/profile";
 import { IUserData } from "@/models/user";
-import { Box, Step, StepIcon, Stepper, StepConnector, LinearProgress } from "@mui/material";
+import { Box, Step, StepIcon, Stepper, StepConnector, LinearProgress, CircularProgress } from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import FirstStepFields from "./steps/FirstStepFields";
@@ -36,8 +36,12 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const profile = useProfileStore.getState();
 
   const [loading, setLoading] = useState(true);
+  const [stepLoading, setStepLoading] = useState(false);
+  const [isValidStep, setIsValidStep] = useState(true);
   const [step, setStep] = useState(0);
   const [userData, setUserData] = useState<IUserData | null>(null);
+  const stepNextClickMethod = useRef<(skipNumber: number) => Promise<void>>();
+  const stepProgress = useRef(0);
 
   const { data, update } = useFetch("", "POST");
   const {
@@ -102,33 +106,75 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     }
   };
 
+  const handleStepNextClick = async (callback?: (skipNumber: number) => Promise<void>) => {
+    if (callback) stepNextClickMethod.current = callback;
+  };
+
+  const handleStepChangeByStepper = async (target: number) => {
+    setStepLoading(true);
+    if (stepNextClickMethod.current != null) await stepNextClickMethod.current(target);
+    setStepLoading(false);
+  };
+
+  useEffectOnce(() => {
+    if (step > stepProgress.current) stepProgress.current = step;
+  }, [step]);
+
   const steps =
     userData?.group?.id === 4
       ? [
-          <NotaryFirstStepFields key={0} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
+          <NotaryFirstStepFields
+            key={0}
+            form={form}
+            stepState={[step, setStep]}
+            onNext={({ step }) =>
+              setStep((prev) => {
+                if (step != null) return step;
+                return prev + 1;
+              })
+            }
+            handleStepNextClick={handleStepNextClick}
+          />,
           <NotarySecondStepFields
             key={1}
             form={form}
             stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
-            onNext={getDynamicFormAppData}
+            onNext={({ step, isStepByStep }) => {
+              getDynamicFormAppData();
+              setStep((prev) => {
+                if (step != null) return step;
+                if (!isStepByStep) return prev + 2;
+                return prev + 1;
+              });
+            }}
+            handleStepNextClick={handleStepNextClick}
           />,
           <NotaryThirdStepFields
             key={2}
             form={form}
             stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
-            onNext={() => {
-              getDynamicFormAppData();
-              setStep(step + 1);
-            }}
+            onNext={({ step }) =>
+              setStep((prev) => {
+                if (step != null) return step;
+                return prev + 1;
+              })
+            }
+            handleStepNextClick={handleStepNextClick}
           />,
           <NotaryFourthStepFields
             key={3}
             form={form}
             stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
-            onNext={() => setStep(step + 1)}
+            onNext={({ step }) =>
+              setStep((prev) => {
+                if (step != null) return step;
+                return prev + 1;
+              })
+            }
+            handleStepNextClick={handleStepNextClick}
           />,
 
           <NotaryFifthStepFields
@@ -137,14 +183,26 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             form={form}
             stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
-            onNext={() => setStep(step + 1)}
+            onNext={({ step }) =>
+              setStep((prev) => {
+                if (step != null) return step;
+                return prev + 1;
+              })
+            }
+            handleStepNextClick={handleStepNextClick}
           />,
           <NotarySixthStepFields
             key={5}
             form={form}
             stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
-            onNext={() => setStep(step + 1)}
+            onNext={({ step }) =>
+              setStep((prev) => {
+                if (step != null) return step;
+                return prev + 1;
+              })
+            }
+            handleStepNextClick={handleStepNextClick}
           />,
           <NotarySuccessStepFields key={7} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
         ]
@@ -187,12 +245,36 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
               <Step key={index} completed={step - 1 === index} sx={{ display: "flex", p: 0 }}>
                 <StepIcon
                   icon={
-                    step - 1 >= index ? (
-                      <CheckCircleIcon color="success" sx={{ width: "30px", height: "30px" }} />
+                    stepLoading && step === index ? (
+                      <CircularProgress sx={{ width: "30px !important", height: "30px !important" }} />
+                    ) : step - 1 >= index ? (
+                      <CheckCircleIcon
+                        color="success"
+                        sx={{ width: "30px", height: "30px" }}
+                        cursor={stepProgress.current >= index ? "pointer" : "initial"}
+                        onClick={async () =>
+                          stepProgress.current >= index && step !== index && (await handleStepChangeByStepper(index))
+                        }
+                      />
                     ) : (
                       <RadioButtonCheckedIcon
-                        color={step === index ? "success" : "secondary"}
-                        sx={{ width: "30px", height: "30px" }}
+                        onClick={async () =>
+                          stepProgress.current >= index && step !== index && (await handleStepChangeByStepper(index))
+                        }
+                        color={
+                          step === index
+                            ? isValidStep
+                              ? "success"
+                              : "error"
+                            : stepProgress.current >= index
+                            ? "warning"
+                            : "secondary"
+                        }
+                        sx={{
+                          width: "30px",
+                          height: "30px",
+                        }}
+                        cursor={stepProgress.current >= index ? "pointer" : "initial"}
                       />
                     )
                   }
@@ -223,3 +305,15 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     </Box>
   );
 }
+
+// color={
+//   step === index
+//     ? isValidStep
+//       ? "success"
+//       : "error"
+//     : stepProgress.current <= index
+//     ? isValidStep
+//       ? "secondary"
+//       : "disabled"
+//     : "secondary"
+// }

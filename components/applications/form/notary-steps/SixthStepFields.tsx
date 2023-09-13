@@ -21,10 +21,11 @@ export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
-  onNext?: Function;
+  onNext?: (arg: { step: number | undefined }) => void;
+  handleStepNextClick?: Function;
 }
 
-export default function SixthStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
+export default function SixthStepFields({ form, stepState, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const convert = useConvert();
 
@@ -83,9 +84,9 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async () => {
+  const handleNextClick = async (stepIndex?: number) => {
     const validated = await triggerFields();
-    if (onNext != null && validated) onNext();
+    if (onNext != null && validated) onNext({ step: stepIndex });
   };
 
   const handleSyncClick = async () => {
@@ -126,6 +127,10 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
       setIsSigned(true);
     }
   };
+
+  useEffectOnce(async () => {
+    if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -187,7 +192,7 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
             </Button>
           )}
           {onNext != null && (
-            <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+            <Button onClick={() => handleNextClick()} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
               {t("Next")}
             </Button>
           )}
