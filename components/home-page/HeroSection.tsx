@@ -16,6 +16,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 const HeroSection: React.FC = () => {
   const t = useTranslations();
   const router = useRouter();
+  const { locale } = useRouter();
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -49,7 +50,6 @@ const HeroSection: React.FC = () => {
       setError("root.serverError", { type: "custom", message: "Incorrect password or username" });
       captchaRef?.current?.reset();
     } else {
-      console.log("token", token);
       form.reset();
       captchaRef?.current?.reset();
       router.push("/applications");
@@ -111,7 +111,12 @@ const HeroSection: React.FC = () => {
                 name="password"
                 type="password"
               />
-              <ReCAPTCHA sitekey="6LdZVBwoAAAAAFjhQbUlEdfpyrz5HT9LPQyHhfGr" ref={captchaRef} />
+
+              <ReCAPTCHA
+                sitekey="6LdZVBwoAAAAAFjhQbUlEdfpyrz5HT9LPQyHhfGr"
+                ref={captchaRef}
+                hl={locale === "kg" ? "ru" : locale}
+              />
             </Box>
             <FormHelperText sx={{ color: "red" }}>
               {errors.root?.serverError?.message && t(errors.root?.serverError?.message)}

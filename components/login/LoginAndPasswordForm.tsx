@@ -1,23 +1,29 @@
 import { Box, FormHelperText, IconButton, InputAdornment } from "@mui/material";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/router";
 import Hint from "../ui/Hint";
 import Link from "../ui/Link";
 import Button from "../ui/Button";
 import Input from "../ui/Input";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useProfileStore } from "@/stores/profile";
 import { IUserCredentials } from "@/models/user";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { login as loginSchema } from "@/validator-schemas/login";
+import ReCAPTCHA from "react-google-recaptcha";
 
 const LoginAndPasswordForm: React.FC = () => {
   const t = useTranslations();
+  const { locale } = useRouter();
+
   const profile = useProfileStore((state) => state);
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const captchaRef = useRef<ReCAPTCHA | null>(null);
 
   const form = useForm<IUserCredentials>({
     resolver: yupResolver(loginSchema),
@@ -29,6 +35,13 @@ const LoginAndPasswordForm: React.FC = () => {
   } = form;
 
   const onSubmit = async (data: IUserCredentials) => {
+    const token = captchaRef?.current?.getValue();
+
+    if (!token) {
+      setError("root.serverError", { type: "custom", message: "Please confirm that you are not a robot" });
+      return;
+    }
+
     setLoading(true);
     await profile.logIn(data);
     const user = profile.getUser();
@@ -36,9 +49,11 @@ const LoginAndPasswordForm: React.FC = () => {
 
     if (user == null) {
       setError("root.serverError", { type: "custom", message: "Incorrect password or username" });
+      captchaRef?.current?.reset();
       console.log(errors);
     } else {
       form.reset();
+      captchaRef?.current?.reset();
     }
   };
 
@@ -98,6 +113,12 @@ const LoginAndPasswordForm: React.FC = () => {
             error={!!errors.password?.message ?? false}
             helperText={errors.password?.message && t(errors.password?.message)}
             register={form.register}
+          />
+
+          <ReCAPTCHA
+            sitekey="6LdZVBwoAAAAAFjhQbUlEdfpyrz5HT9LPQyHhfGr"
+            ref={captchaRef}
+            hl={locale === "kg" ? "ru" : locale}
           />
 
           <FormHelperText sx={{ color: "red" }}>
