@@ -49,18 +49,13 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
     resetField,
     getValues,
     setValue,
-    watch,
     formState: { errors },
   } = form;
-
-  const [step, setStep] = stepState;
 
   const { remove } = useFieldArray({
     control,
     name: "members",
   });
-
-  const object = watch("object");
 
   const [loading, setLoading] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -191,7 +186,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
   };
 
   const handlePrevClick = () => {
-    if (onPrev != null) object == null || !object ? setStep(step - 2) : onPrev();
+    if (onPrev != null) onPrev();
   };
 
   const handleNextClick = async () => {

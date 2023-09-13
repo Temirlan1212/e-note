@@ -6,13 +6,14 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { useProfileStore } from "@/stores/profile";
 import { IProduct } from "@/models/product";
-import { Box, InputLabel, Typography } from "@mui/material";
+import { Box, InputLabel } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import Hint from "@/components/ui/Hint";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import StepperContentStep from "@/components/ui/StepperContentStep";
+import { criteriaFieldNames } from "@/pages/api/dictionaries/document-type";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -35,24 +36,33 @@ export default function SecondStepFields({ form, stepState, onPrev, onNext }: IS
 
   const { data: myDocuments, loading: myDocumentsLoading, update: getMyDocuments } = useFetch("", "POST");
   const { data: systemDocuments, loading: systemDocumentsLoading, update: getSystemDocuments } = useFetch("", "POST");
-
   const { update: applicationUpdate } = useFetch("", "PUT");
 
-  useEffectOnce(() => {
-    getSystemDocuments("/api/dictionaries/document-type", { formValues: { isSystem: true } });
-    getMyDocuments("/api/dictionaries/document-type", { formValues: { createdBy: profile.userData?.id } });
-  }, [profile]);
+  useEffectOnce(async () => {
+    const myDocs = await getMyDocuments("/api/dictionaries/document-type", {
+      formValues: { createdBy: profile.userData?.id },
+    });
+    const findedMyDoc =
+      myDocs?.data?.length > 0 ? myDocs?.data?.find((item: { id: number }) => item.id === productId) : null;
+    if (findedMyDoc != null) {
+      setSelectedInput("my");
+      return Object.entries(criteriaFieldNames).map(([k, v]) => {
+        setValue(k as any, findedMyDoc[v]);
+      });
+    }
 
-  useEffectOnce(() => {
-    const isMy =
-      myDocuments?.data?.length > 0 ? myDocuments?.data?.find((item: { id: number }) => item.id === productId) : false;
-    const isSystem =
-      systemDocuments?.data?.length > 0
-        ? systemDocuments?.data?.find((item: { id: number }) => item.id === productId)
-        : false;
+    const sysDocs = await getSystemDocuments("/api/dictionaries/document-type", { formValues: { isSystem: true } });
+    const findedSystemDoc =
+      sysDocs?.data?.length > 0 ? sysDocs?.data?.find((item: { id: number }) => item.id === productId) : null;
+    if (findedSystemDoc != null) {
+      setSelectedInput("system");
+      return Object.entries(criteriaFieldNames).map(([k, v]) => {
+        setValue(k as any, findedSystemDoc[v]);
+      });
+    }
 
-    setSelectedInput(isMy ? "my" : isSystem ? "system" : null);
-  }, [productId]);
+    if (selectedInput != null) setSelectedInput(null);
+  }, [productId, profile]);
 
   const triggerFields = async () => {
     return await trigger(["product"]);
@@ -73,6 +83,11 @@ export default function SecondStepFields({ form, stepState, onPrev, onNext }: IS
         id: values.id,
         version: values.version,
         product: values.product,
+        object: values.object,
+        objectType: values.objectType,
+        notarialAction: values.notarialAction,
+        typeNotarialAction: values.typeNotarialAction,
+        action: values.action,
       };
 
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
