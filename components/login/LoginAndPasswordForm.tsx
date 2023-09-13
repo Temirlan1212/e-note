@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { login as loginSchema } from "@/validator-schemas/login";
 import ReCAPTCHA from "react-google-recaptcha";
+import useFetch from "@/hooks/useFetch";
 
 const LoginAndPasswordForm: React.FC = () => {
   const t = useTranslations();
@@ -22,8 +23,9 @@ const LoginAndPasswordForm: React.FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const captchaRef = useRef<ReCAPTCHA | null>(null);
+
+  const { data: captchaVerifyToken, update: updateCaptchaVerifyToken } = useFetch<any>("", "POST");
 
   const form = useForm<IUserCredentials>({
     resolver: yupResolver(loginSchema),
@@ -34,10 +36,12 @@ const LoginAndPasswordForm: React.FC = () => {
     setError,
   } = form;
 
-  const onSubmit = async (data: IUserCredentials) => {
-    const token = captchaRef?.current?.getValue();
+  const handleCaptchaChange = async (token: any) => {
+    await updateCaptchaVerifyToken("/api/recaptcha", { token: token });
+  };
 
-    if (!token) {
+  const onSubmit = async (data: IUserCredentials) => {
+    if (!captchaVerifyToken?.success) {
       setError("root.serverError", { type: "custom", message: "Please confirm that you are not a robot" });
       return;
     }
@@ -118,6 +122,7 @@ const LoginAndPasswordForm: React.FC = () => {
           <ReCAPTCHA
             sitekey="6LdZVBwoAAAAAFjhQbUlEdfpyrz5HT9LPQyHhfGr"
             ref={captchaRef}
+            onChange={handleCaptchaChange}
             hl={locale === "kg" ? "ru" : locale}
           />
 
