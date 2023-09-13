@@ -70,9 +70,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     if (Number.isInteger(id)) {
       const application = await update(`/api/applications/${id}`);
       const status = application?.data?.[0]?.statusSelect;
-      if (status != null && status === 1) {
-        router.push("/applications");
-      }
+      if (status === 1) router.push("/applications");
     }
     setLoading(false);
   });
