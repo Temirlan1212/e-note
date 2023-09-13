@@ -10,20 +10,20 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { IUser, IUserCredentials } from "@/models/user";
 import { useProfileStore } from "@/stores/profile";
-import { useEffect, useState, useRef } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
-import useFetch from "@/hooks/useFetch";
+import { useEffect, useState } from "react";
+import ReCAPTCHA from "@/components/recaptcha/Recaptcha";
 
 const HeroSection: React.FC = () => {
   const t = useTranslations();
   const router = useRouter();
-  const { locale } = useRouter();
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
   const [loading, setLoading] = useState(false);
-  const captchaRef = useRef<ReCAPTCHA | null>(null);
+  const [recaptchaSuccess, setRecaptchaSuccess] = useState(false);
 
-  const { data: captchaVerifyToken, update: updateCaptchaVerifyToken } = useFetch<any>("", "POST");
+  const handleRecaptchaSuccess = (success: boolean) => {
+    setRecaptchaSuccess(success);
+  };
 
   const form = useForm<IUserCredentials>({
     resolver: yupResolver(loginSchema),
@@ -34,12 +34,8 @@ const HeroSection: React.FC = () => {
     setError,
   } = form;
 
-  const handleCaptchaChange = async (token: any) => {
-    await updateCaptchaVerifyToken("/api/recaptcha", { token: token });
-  };
-
   const onSubmit = async (data: IUserCredentials) => {
-    if (!captchaVerifyToken?.success) {
+    if (!recaptchaSuccess) {
       setError("root.serverError", { type: "custom", message: "Please confirm that you are not a robot" });
       return;
     }
@@ -52,10 +48,8 @@ const HeroSection: React.FC = () => {
 
     if (user == null) {
       setError("root.serverError", { type: "custom", message: "Incorrect password or username" });
-      captchaRef?.current?.reset();
     } else {
       form.reset();
-      captchaRef?.current?.reset();
       router.push("/applications");
     }
   };
@@ -116,12 +110,7 @@ const HeroSection: React.FC = () => {
                 type="password"
               />
 
-              <ReCAPTCHA
-                sitekey="6LdZVBwoAAAAAFjhQbUlEdfpyrz5HT9LPQyHhfGr"
-                ref={captchaRef}
-                onChange={handleCaptchaChange}
-                hl={locale === "kg" ? "ru" : locale}
-              />
+              <ReCAPTCHA onRecaptchaSuccess={handleRecaptchaSuccess} />
             </Box>
             <FormHelperText sx={{ color: "red" }}>
               {errors.root?.serverError?.message && t(errors.root?.serverError?.message)}
