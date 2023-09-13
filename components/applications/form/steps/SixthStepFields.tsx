@@ -26,17 +26,37 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
   const id = watch("id");
 
-  const { data, loading } = useFetch(id != null ? `/api/files/prepare/${id}` : "", "GET");
-  const { data: conversionData, loading: conversionLoading } = useFetch(
-    id != null ? `/api/files/document-conversion/${id}` : "",
-    "GET"
+  const [docUrl, setDocUrl] = useState<string>();
+
+  const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
+  const { loading: prepareLoading, update: getPrepare } = useFetch("", "GET");
+  const { data: application, loading: applicationLoading } = useFetch(
+    id != null ? `/api/applications/${id}` : "",
+    "POST"
   );
 
-  useEffectOnce(() => {
-    if (data?.data?.saleOrderVersion != null) {
-      setValue("version", data.data.saleOrderVersion);
+  useEffectOnce(async () => {
+    const applicationData = application?.data?.[0];
+
+    if (applicationData?.documentInfo?.pdfLink != null && applicationData?.documentInfo?.token != null) {
+      handlePdfDownload(applicationData.documentInfo.pdfLink, applicationData.documentInfo.token);
     }
-  }, [data]);
+
+    switch (applicationData?.statusSelect) {
+      case 1:
+        break;
+      case 2:
+        const prepareData = await getPrepare(`/api/files/prepare/${id}`);
+        if (prepareData?.data?.saleOrderVersion != null) {
+          setValue("version", prepareData.data.saleOrderVersion);
+        }
+
+        if (prepareData?.data?.pdfLink != null && prepareData?.data?.token != null) {
+          handlePdfDownload(prepareData.data.pdfLink, prepareData.data.token);
+        }
+        break;
+    }
+  }, [application]);
 
   const triggerFields = async () => {
     return await trigger([]);
@@ -51,17 +71,27 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
     if (onNext != null && validated) onNext();
   };
 
+  const handlePdfDownload = async (pdfLink: string, token: string) => {
+    if (!pdfLink || !token) return;
+
+    const pdfResponse = await getPdf(`/api/adapter?url=${pdfLink}&token=${token}`);
+    const blob = await pdfResponse?.blob();
+    if (blob == null) return;
+
+    setDocUrl(URL.createObjectURL(blob));
+  };
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", lg: "row" }}>
-        <StepperContentStep step={6} title={t("View document")} loading={loading || conversionLoading} />
+        <StepperContentStep
+          step={6}
+          title={t("View document")}
+          loading={applicationLoading || prepareLoading || pdfLoading}
+        />
 
-        {!loading && !conversionLoading && data?.data?.token && (
-          <Link
-            href={`/api/adapter?url=${data?.data?.downloadUrl}&token=${data?.data?.token}`}
-            download={data?.data?.fileName}
-            target="_blank"
-          >
+        {docUrl && (
+          <Link href={docUrl} target="_blank">
             <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
               {t("Download PDF")}
             </Button>
@@ -69,17 +99,9 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
         )}
       </Box>
 
-      {!conversionLoading && data?.data?.token && (
-        <PDFViewer
-          fileUrl={
-            conversionData?.data?.pdfLink
-              ? `/api/adapter?url=${conversionData?.data?.pdfLink}&token=${data?.data?.token}`
-              : "/"
-          }
-        />
-      )}
+      {docUrl && <PDFViewer fileUrl={docUrl} />}
 
-      {!loading && !conversionLoading && (
+      {!applicationLoading && !prepareLoading && !pdfLoading && (
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
           {onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
