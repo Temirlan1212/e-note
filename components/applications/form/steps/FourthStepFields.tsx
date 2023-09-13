@@ -31,10 +31,11 @@ export interface ITabListItem {
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   onPrev?: Function | null;
-  onNext?: Function | null;
+  onNext?: (arg: { step: number | undefined }) => void;
+  handleStepNextClick?: Function;
 }
 
-export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
+export default function FourthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
 
@@ -182,7 +183,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async () => {
+  const handleNextClick = async (stepIndex?: number) => {
     const validated = await triggerFields();
 
     if (validated) {
@@ -248,7 +249,7 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
 
         await attachedFilesRef.current?.next();
 
-        if (onNext != null) onNext();
+        if (onNext != null) onNext({ step: stepIndex });
       }
 
       setLoading(false);
@@ -278,6 +279,10 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
       return [...next];
     });
   };
+
+  useEffectOnce(async () => {
+    if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -319,7 +324,12 @@ export default function FourthStepFields({ form, onPrev, onNext }: IStepFieldsPr
           </Button>
         )}
         {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+          <Button
+            loading={loading}
+            onClick={() => handleNextClick()}
+            endIcon={<ArrowForwardIcon />}
+            sx={{ width: "auto" }}
+          >
             {t("Next")}
           </Button>
         )}

@@ -37,7 +37,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
   const [loading, setLoading] = useState(true);
   const [stepLoading, setStepLoading] = useState(false);
-  const [isValidStep, setIsValidStep] = useState(true);
   const [step, setStep] = useState(0);
   const [userData, setUserData] = useState<IUserData | null>(null);
   const stepNextClickMethod = useRef<(skipNumber: number) => Promise<void>>();
@@ -112,7 +111,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
   const handleStepChangeByStepper = async (target: number) => {
     setStepLoading(true);
-    if (stepNextClickMethod.current != null) await stepNextClickMethod.current(target);
+    if (stepNextClickMethod.current != null && steps.length - 1 !== step) await stepNextClickMethod.current(target);
     setStepLoading(false);
   };
 
@@ -207,26 +206,79 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           <NotarySuccessStepFields key={7} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
         ]
       : [
-          <FirstStepFields key={0} form={form} onNext={() => setStep(step + 1)} />,
+          <FirstStepFields
+            key={0}
+            form={form}
+            onNext={({ step }) =>
+              setStep((prev) => {
+                if (step != null) return step;
+                return prev + 1;
+              })
+            }
+            handleStepNextClick={handleStepNextClick}
+          />,
           <SecondStepFields
             key={1}
             form={form}
             onPrev={() => setStep(step - 1)}
-            onNext={async () => {
+            onNext={({ step }) => {
               getDynamicFormAppData();
-              setStep(step + 1);
+              setStep((prev) => {
+                if (step != null) return step;
+                return prev + 1;
+              });
             }}
+            handleStepNextClick={handleStepNextClick}
           />,
-          <ThirdStepFields key={2} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
-          <FourthStepFields key={3} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <ThirdStepFields
+            key={2}
+            form={form}
+            onPrev={() => setStep(step - 1)}
+            onNext={({ step }) =>
+              setStep((prev) => {
+                if (step != null) return step;
+                return prev + 1;
+              })
+            }
+            handleStepNextClick={handleStepNextClick}
+          />,
+          <FourthStepFields
+            key={3}
+            form={form}
+            onPrev={() => setStep(step - 1)}
+            onNext={({ step }) =>
+              setStep((prev) => {
+                if (step != null) return step;
+                return prev + 1;
+              })
+            }
+            handleStepNextClick={handleStepNextClick}
+          />,
           <FifthStepFields
             key={4}
             form={form}
             dynamicForm={dynamicForm}
             onPrev={() => setStep(step - 1)}
-            onNext={() => setStep(step + 1)}
+            onNext={({ step }) =>
+              setStep((prev) => {
+                if (step != null) return step;
+                return prev + 1;
+              })
+            }
+            handleStepNextClick={handleStepNextClick}
           />,
-          <SixthStepFields key={5} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
+          <SixthStepFields
+            key={5}
+            form={form}
+            onPrev={() => setStep(step - 1)}
+            onNext={({ step }) =>
+              setStep((prev) => {
+                if (step != null) return step;
+                return prev + 1;
+              })
+            }
+            handleStepNextClick={handleStepNextClick}
+          />,
           <SuccessStepFields key={7} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
         ];
 
@@ -249,9 +301,9 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
                       <CircularProgress sx={{ width: "30px !important", height: "30px !important" }} />
                     ) : step - 1 >= index ? (
                       <CheckCircleIcon
-                        color="success"
+                        color={steps.length - 1 === step ? "disabled" : "success"}
                         sx={{ width: "30px", height: "30px" }}
-                        cursor={stepProgress.current >= index ? "pointer" : "initial"}
+                        cursor={stepProgress.current >= index && steps.length - 1 !== step ? "pointer" : "initial"}
                         onClick={async () =>
                           stepProgress.current >= index && step !== index && (await handleStepChangeByStepper(index))
                         }
@@ -261,15 +313,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
                         onClick={async () =>
                           stepProgress.current >= index && step !== index && (await handleStepChangeByStepper(index))
                         }
-                        color={
-                          step === index
-                            ? isValidStep
-                              ? "success"
-                              : "error"
-                            : stepProgress.current >= index
-                            ? "warning"
-                            : "secondary"
-                        }
+                        color={step === index ? "success" : stepProgress.current >= index ? "secondary" : "disabled"}
                         sx={{
                           width: "30px",
                           height: "30px",
@@ -305,15 +349,3 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     </Box>
   );
 }
-
-// color={
-//   step === index
-//     ? isValidStep
-//       ? "success"
-//       : "error"
-//     : stepProgress.current <= index
-//     ? isValidStep
-//       ? "secondary"
-//       : "disabled"
-//     : "secondary"
-// }
