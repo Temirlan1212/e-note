@@ -46,7 +46,9 @@ export default function SecondStepFields({ form, stepState, onPrev, onNext }: IS
       myDocs?.data?.length > 0 ? myDocs?.data?.find((item: { id: number }) => item.id === productId) : null;
     if (findedMyDoc != null) {
       setSelectedInput("my");
-      return Object.keys(criteriaFieldNames).map((item) => setValue(item as any, findedMyDoc[item]));
+      return Object.entries(criteriaFieldNames).map(([k, v]) => {
+        setValue(k as any, findedMyDoc[v]);
+      });
     }
 
     const sysDocs = await getSystemDocuments("/api/dictionaries/document-type", { formValues: { isSystem: true } });
