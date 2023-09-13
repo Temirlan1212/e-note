@@ -38,19 +38,22 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const router = useRouter();
   const { locale } = useRouter();
 
-  const [chatLink, setChatLink] = useState<string>("");
-
   const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
 
-  const { data: contact } = useFetch<IContact>("/api/chat/create/" + router.query.id, "POST");
+  const { update: contactUpdate } = useFetch<IContact>("", "POST");
 
   const notaryData = data?.data || [];
 
   const normalizePhoneNumber = (phoneNumber: string) => phoneNumber?.replace(/\D/g, "");
 
-  useEffect(() => {
-    setChatLink(contact?.data?.chatRoomLink ? contact.data.chatRoomLink : "/chat");
-  }, [contact]);
+  const handleOpenChat = async () => {
+    const res = await contactUpdate("/api/chat/create/" + router.query.id);
+    redirectToChat(res?.data?.chatRoomLink as string);
+  };
+
+  const redirectToChat = (url: string) => {
+    router.push(url);
+  };
 
   const infoArray = [
     {
@@ -265,24 +268,23 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
             {t("Create application")}
           </Button>
         </Link>
-        <Link href={chatLink} rel="noopener noreferrer" target="_blank">
-          <Button
-            startIcon={<CloudMessageIcon />}
-            buttonType="secondary"
-            sx={{
-              width: {
-                sx: "100%",
-                md: "320px",
-              },
-              padding: "10px 0",
-              ":hover": {
-                backgroundColor: "#3F5984",
-              },
-            }}
-          >
-            {t("Write a message")}
-          </Button>
-        </Link>
+        <Button
+          startIcon={<CloudMessageIcon />}
+          buttonType="secondary"
+          sx={{
+            width: {
+              sx: "100%",
+              md: "320px",
+            },
+            padding: "10px 0",
+            ":hover": {
+              backgroundColor: "#3F5984",
+            },
+          }}
+          onClick={handleOpenChat}
+        >
+          {t("Write a message")}
+        </Button>
       </Box>
     </Box>
   );

@@ -133,11 +133,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     };
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Company/search", {
+  const response = await fetch(process.env.BACKEND_XAPI_URL + "/search/axelor-erp/com.axelor.apps.base.db.Company", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
       offset: page,

@@ -103,8 +103,8 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
     body: notaryDistrictsBody,
   });
 
-  const { data: workDaysAreaData } = useFetch("/api/notaries/dictionaries/work-days", "POST");
-  const { data: notaryTypesData } = useFetch("/api/notaries/dictionaries/notary-types", "POST");
+  const { data: workDaysAreaData } = useFetch("/api/notaries/dictionaries/work-days", "GET");
+  const { data: notaryTypesData } = useFetch("/api/notaries/dictionaries/notary-types", "GET");
 
   const optionSelectData: any = [
     {
