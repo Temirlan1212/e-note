@@ -195,7 +195,7 @@ export default function FirstStepFields({ form, stepState, onPrev, onNext, handl
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async (stepIndex?: number) => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
 
     if (validated) {
@@ -273,7 +273,7 @@ export default function FirstStepFields({ form, stepState, onPrev, onNext, handl
 
         await attachedFilesRef.current?.next();
 
-        if (onNext != null) onNext({ step: stepIndex });
+        if (onNext != null) onNext({ step: targetStep });
       }
     }
 

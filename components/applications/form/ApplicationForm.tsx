@@ -39,7 +39,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const [stepLoading, setStepLoading] = useState(false);
   const [step, setStep] = useState(0);
   const [userData, setUserData] = useState<IUserData | null>(null);
-  const stepNextClickMethod = useRef<(skipNumber: number) => Promise<void>>();
+  const stepNextClickMethod = useRef<(target: number) => Promise<void>>();
   const stepProgress = useRef(0);
 
   const { data, update } = useFetch("", "POST");
@@ -105,7 +105,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     }
   };
 
-  const handleStepNextClick = async (callback?: (skipNumber: number) => Promise<void>) => {
+  const handleStepNextClick = async (callback?: (target: number) => Promise<void>) => {
     if (callback) stepNextClickMethod.current = callback;
   };
 

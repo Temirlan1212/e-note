@@ -84,9 +84,9 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext, handl
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async (stepIndex?: number) => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
-    if (onNext != null && validated) onNext({ step: stepIndex });
+    if (onNext != null && validated) onNext({ step: targetStep });
   };
 
   const handleSyncClick = async () => {

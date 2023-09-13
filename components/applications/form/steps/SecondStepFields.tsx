@@ -61,7 +61,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async (stepIndex?: number) => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
 
     if (validated) {
@@ -82,7 +82,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("version", result.data[0].version);
-        if (onNext != null) onNext({ step: stepIndex });
+        if (onNext != null) onNext({ step: targetStep });
       }
 
       setLoading(false);

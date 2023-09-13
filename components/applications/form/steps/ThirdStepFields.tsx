@@ -107,7 +107,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async (stepIndex?: number) => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
 
     if (validated) {
@@ -173,7 +173,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
 
         await attachedFilesRef.current?.next();
 
-        if (onNext != null) onNext({ step: stepIndex });
+        if (onNext != null) onNext({ step: targetStep });
       }
 
       setLoading(false);

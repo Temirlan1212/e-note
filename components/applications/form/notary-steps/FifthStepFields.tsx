@@ -227,7 +227,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     }
   }, [productId]);
 
-  const handleNextClick = async (stepIndex?: number) => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
     const { setValue, getValues } = form;
 
@@ -244,7 +244,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
-        onNext({ step: stepIndex });
+        onNext({ step: targetStep });
       }
     }
   };
