@@ -304,14 +304,14 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
                         color={steps.length - 1 === step ? "disabled" : "success"}
                         sx={{ width: "30px", height: "30px" }}
                         cursor={stepProgress.current >= index && steps.length - 1 !== step ? "pointer" : "initial"}
-                        onClick={async () =>
-                          stepProgress.current >= index && step !== index && (await handleStepChangeByStepper(index))
+                        onClick={() =>
+                          stepProgress.current >= index && step !== index && handleStepChangeByStepper(index)
                         }
                       />
                     ) : (
                       <RadioButtonCheckedIcon
-                        onClick={async () =>
-                          stepProgress.current >= index && step !== index && (await handleStepChangeByStepper(index))
+                        onClick={() =>
+                          stepProgress.current >= index && step !== index && handleStepChangeByStepper(index)
                         }
                         color={step === index ? "success" : stepProgress.current >= index ? "secondary" : "disabled"}
                         sx={{
