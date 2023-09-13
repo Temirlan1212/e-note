@@ -40,14 +40,6 @@ export const ApplicationListActions = ({
         </Tooltip>
       </Link>
 
-      <Link href={`/applications/edit/${params.row.id}`}>
-        <Tooltip title={t("Edit")} arrow>
-          <IconButton>
-            <ModeEditIcon />
-          </IconButton>
-        </Tooltip>
-      </Link>
-
       <Link href="applications/">
         <Tooltip title={t("Download")} arrow>
           <IconButton>
@@ -56,17 +48,29 @@ export const ApplicationListActions = ({
         </Tooltip>
       </Link>
 
-      <ConfirmationModal
-        hintTitle="Do you really want to remove the application from the platform?"
-        title="Deleting an application"
-        onConfirm={(callback) => handleDeleteClick(callback)}
-      >
-        <Tooltip title={t("Delete")} arrow>
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </ConfirmationModal>
+      {params.row.statusSelect != 1 && (
+        <>
+          <Link href={`/applications/edit/${params.row.id}`}>
+            <Tooltip title={t("Edit")} arrow>
+              <IconButton>
+                <ModeEditIcon />
+              </IconButton>
+            </Tooltip>
+          </Link>
+
+          <ConfirmationModal
+            hintTitle="Do you really want to remove the application from the platform?"
+            title="Deleting an application"
+            onConfirm={(callback) => handleDeleteClick(callback)}
+          >
+            <Tooltip title={t("Delete")} arrow>
+              <IconButton>
+                <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </ConfirmationModal>
+        </>
+      )}
     </Box>
   );
 };
