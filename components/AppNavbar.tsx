@@ -31,15 +31,7 @@ import LocaleSwitcher from "./LocaleSwitcher";
 import Tooltip from "@mui/material/Tooltip";
 import PopupNotifications from "@/components/notifications/PopupNotifications";
 
-const DrawerListItems = ({
-  routes,
-  open,
-  onItemClick,
-}: {
-  routes: IRoute[];
-  open: boolean;
-  onItemClick: (open: boolean) => void;
-}) => {
+const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) => {
   const router = useRouter();
   const t = useTranslations();
 
@@ -77,7 +69,6 @@ const DrawerListItems = ({
                 <ListItem disablePadding onClick={() => route.type === "group" && handleGroupToggle(route.title)}>
                   <Link href={route.link !== router.route ? route.link : ""} width="100%">
                     <ListItemButton
-                      onClick={() => route.type !== "group" && onItemClick(false)}
                       sx={{
                         justifyContent: open ? "initial" : "center",
                         color: "#fff",
@@ -115,7 +106,7 @@ const DrawerListItems = ({
             {route.type === "group" && route.children != null && (
               <Collapse in={openedGroup === route.title} timeout="auto" unmountOnExit>
                 <List>
-                  <DrawerListItems routes={route.children} open={open} onItemClick={onItemClick} />
+                  <DrawerListItems routes={route.children} open={open} />
                 </List>
               </Collapse>
             )}
@@ -138,7 +129,8 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
 
   const [open, setOpen] = useState(false);
 
-  const handleDrawerToggle = (v?: boolean) => {
+  const handleDrawerToggle = (e?: any, v?: boolean) => {
+    if (e?.stopPropagation != null) e.stopPropagation();
     setOpen((open) => v ?? !open);
   };
 
@@ -151,7 +143,7 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
         position="static"
         color="transparent"
         sx={{ boxShadow: "none" }}
-        onClick={() => handleDrawerToggle(false)}
+        onClick={(e) => handleDrawerToggle(e, false)}
       >
         <Toolbar
           sx={{
@@ -202,7 +194,7 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
             <ProfileDropdownButton />
             <LocaleSwitcher />
 
-            <IconButton color="inherit" onClick={() => handleDrawerToggle()} sx={{ display: { md: "none" } }}>
+            <IconButton color="inherit" onClick={handleDrawerToggle} sx={{ display: { md: "none" } }}>
               <MenuIcon />
             </IconButton>
           </Box>
@@ -211,7 +203,6 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
 
       <Drawer
         open={open}
-        onClose={() => handleDrawerToggle(false)}
         variant="permanent"
         PaperProps={{ sx: { backgroundColor: "success.main", overflowX: "hidden" } }}
         sx={{
@@ -251,13 +242,13 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
           })}
         >
           <IconButton
-            onClick={() => handleDrawerToggle()}
+            onClick={handleDrawerToggle}
             sx={{ color: "#fff", display: { xs: "none", md: open ? "none" : "flex" } }}
           >
             <MenuIcon />
           </IconButton>
           <IconButton
-            onClick={() => handleDrawerToggle()}
+            onClick={handleDrawerToggle}
             sx={{ color: "#fff", display: { xs: "flex", md: open ? "flex" : "none" } }}
           >
             {theme.direction === "rtl" ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -267,13 +258,13 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
         <Divider sx={{ backgroundColor: (theme) => lighten(theme.palette.success.main, 0.5) }} />
 
         <List>
-          <DrawerListItems routes={routes} open={open} onItemClick={handleDrawerToggle} />
+          <DrawerListItems routes={routes} open={open} />
         </List>
       </Drawer>
 
       <Box
         component="main"
-        onClick={() => handleDrawerToggle(false)}
+        onClick={(e) => handleDrawerToggle(e, false)}
         sx={{
           flex: 1,
           pl: { xs: 0, md: type === "private" ? 7 : 0 },

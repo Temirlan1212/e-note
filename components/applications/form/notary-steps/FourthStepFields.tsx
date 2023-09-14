@@ -34,8 +34,8 @@ export interface ITabListItem {
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
+  onPrev?: Function;
   onNext?: (arg: { step: number | undefined }) => void;
-  onPrev?: (arg: { isStepByStep: boolean }) => void;
   handleStepNextClick?: Function;
 }
 
@@ -49,7 +49,6 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     resetField,
     getValues,
     setValue,
-    watch,
     formState: { errors },
   } = form;
 
@@ -57,8 +56,6 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     control,
     name: "members",
   });
-
-  const object = watch("object");
 
   const [loading, setLoading] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -189,7 +186,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   };
 
   const handlePrevClick = () => {
-    if (onPrev != null) object == null || !object ? onPrev({ isStepByStep: false }) : onPrev({ isStepByStep: true });
+    if (onPrev != null) onPrev();
   };
 
   const handleNextClick = async (targetStep?: number) => {

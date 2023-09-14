@@ -71,7 +71,9 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
   useEffectOnce(async () => {
     if (Number.isInteger(id)) {
-      await update(`/api/applications/${id}`);
+      const application = await update(`/api/applications/${id}`);
+      const status = application?.data?.[0]?.statusSelect;
+      if (status === 1) router.push("/applications");
     }
     setLoading(false);
   });
