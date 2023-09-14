@@ -341,7 +341,13 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
                       placeholder="select"
                       selectType="success"
                       labelField={
-                        el.type === "second" ? (locale === "ru" || locale === "kg" ? "title_ru" : "title") : "name"
+                        el.type === "second"
+                          ? locale === "ru" || locale === "kg"
+                            ? "title_ru"
+                            : "title"
+                          : locale === "ru" || locale === "kg"
+                          ? "$t:name"
+                          : "name"
                       }
                       valueField={el.type === "second" ? "value" : "id"}
                       data={el.options}

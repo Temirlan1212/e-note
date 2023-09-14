@@ -48,7 +48,9 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const handleOpenChat = async () => {
     const res = await contactUpdate("/api/chat/create/" + router.query.id);
-    redirectToChat(res?.data?.chatRoomLink as string);
+    if (res?.data?.chatRoomLink) {
+      redirectToChat(res?.data?.chatRoomLink as string);
+    }
   };
 
   const redirectToChat = (url: string) => {
@@ -90,7 +92,8 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: [],
     },
     {
-      text: notaryData[0]?.notaryDistrict.name + ", " + notaryData[0]?.address.fullName,
+      text: `${notaryData[0]?.notaryDistrict[locale === "ru" || locale === "kg" ? "$t:name" : "name"]}, ${notaryData[0]
+        ?.address.fullName}`,
       icon: <LocationOnOutlinedIcon />,
       type: "text",
       array: [],
