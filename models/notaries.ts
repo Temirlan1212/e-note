@@ -1,8 +1,8 @@
 export interface INotaryGeo {
   fullName?: string | undefined;
-  name?: string | undefined;
+  name?: string;
   id?: number;
-  "$t:name"?: string | undefined;
+  "$t:name"?: string;
 }
 export interface INotary {
   "partner.rating": number;
