@@ -20,7 +20,7 @@ import DatePicker from "@/components/ui/DatePicker";
 import CheckBox from "@/components/ui/Checkbox";
 import TimePicker from "@/components/ui/TimePicker";
 import DateTimePicker from "@/components/ui/DateTimePicker";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {

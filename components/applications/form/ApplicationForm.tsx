@@ -164,12 +164,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           <NotaryFourthStepFields
             key={3}
             form={form}
-            onPrev={({ isStepByStep }) => {
-              setStep((prev) => {
-                if (!isStepByStep) return prev - 2;
-                return prev - 1;
-              });
-            }}
+            onPrev={() => setStep(step - 1)}
             onNext={({ step }) =>
               setStep((prev) => {
                 if (step != null) return step;
