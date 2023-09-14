@@ -36,13 +36,12 @@ export interface ITabListItem {
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
   onNext?: (arg: { step: number | undefined }) => void;
   handleStepNextClick?: Function;
 }
 
-export default function FirstStepFields({ form, stepState, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+export default function FirstStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const userData = useProfileStore((state) => state.userData);
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
@@ -60,7 +59,6 @@ export default function FirstStepFields({ form, stepState, onPrev, onNext, handl
     name: "requester",
   });
 
-  const [step, setStep] = stepState;
   const [loading, setLoading] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});

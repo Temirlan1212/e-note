@@ -34,13 +34,12 @@ export interface ITabListItem {
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  stepState: [number, Dispatch<SetStateAction<number>>];
-  onPrev?: Function;
   onNext?: (arg: { step: number | undefined }) => void;
+  onPrev?: (arg: { isStepByStep: boolean }) => void;
   handleStepNextClick?: Function;
 }
 
-export default function FourthStepFields({ form, stepState, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+export default function FourthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
 
@@ -53,8 +52,6 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext, hand
     watch,
     formState: { errors },
   } = form;
-
-  const [step, setStep] = stepState;
 
   const { remove } = useFieldArray({
     control,
@@ -192,7 +189,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext, hand
   };
 
   const handlePrevClick = () => {
-    if (onPrev != null) object == null || !object ? setStep(step - 2) : onPrev();
+    if (onPrev != null) object == null || !object ? onPrev({ isStepByStep: false }) : onPrev({ isStepByStep: true });
   };
 
   const handleNextClick = async (targetStep?: number) => {

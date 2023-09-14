@@ -125,7 +125,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           <NotaryFirstStepFields
             key={0}
             form={form}
-            stepState={[step, setStep]}
             onNext={({ step }) =>
               setStep((prev) => {
                 if (step != null) return step;
@@ -137,7 +136,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           <NotarySecondStepFields
             key={1}
             form={form}
-            stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
             onNext={({ step, isStepByStep }) => {
               getDynamicFormAppData();
@@ -152,7 +150,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           <NotaryThirdStepFields
             key={2}
             form={form}
-            stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
             onNext={({ step }) =>
               setStep((prev) => {
@@ -165,8 +162,12 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           <NotaryFourthStepFields
             key={3}
             form={form}
-            stepState={[step, setStep]}
-            onPrev={() => setStep(step - 1)}
+            onPrev={({ isStepByStep }) => {
+              setStep((prev) => {
+                if (!isStepByStep) return prev - 2;
+                return prev - 1;
+              });
+            }}
             onNext={({ step }) =>
               setStep((prev) => {
                 if (step != null) return step;
@@ -180,7 +181,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             key={4}
             dynamicForm={dynamicForm}
             form={form}
-            stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
             onNext={({ step }) =>
               setStep((prev) => {
@@ -193,7 +193,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           <NotarySixthStepFields
             key={5}
             form={form}
-            stepState={[step, setStep]}
             onPrev={() => setStep(step - 1)}
             onNext={({ step }) =>
               setStep((prev) => {
@@ -203,7 +202,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             }
             handleStepNextClick={handleStepNextClick}
           />,
-          <NotarySuccessStepFields key={7} form={form} stepState={[step, setStep]} onNext={() => setStep(step + 1)} />,
+          <NotarySuccessStepFields key={7} form={form} onNext={() => setStep(step + 1)} />,
         ]
       : [
           <FirstStepFields

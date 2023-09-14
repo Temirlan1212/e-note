@@ -19,13 +19,12 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
   onNext?: (arg: { step: number | undefined }) => void;
   handleStepNextClick?: Function;
 }
 
-export default function SixthStepFields({ form, stepState, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+export default function SixthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const convert = useConvert();
 

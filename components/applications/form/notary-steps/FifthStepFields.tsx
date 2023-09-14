@@ -26,7 +26,6 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   dynamicForm: UseFormReturn<any>;
-  stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
   onNext?: (arg: { step: number | undefined }) => void;
   handleStepNextClick?: Function;

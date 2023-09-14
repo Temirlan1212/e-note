@@ -16,18 +16,16 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
   onNext?: (arg: { step: number | undefined }) => void;
   handleStepNextClick?: Function;
 }
 
-export default function ThirdStepFields({ form, stepState, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
 
   const { trigger, control, watch, resetField, getValues, setValue } = form;
-  const [step, setStep] = stepState;
 
   const objectVal = watch("object");
   const objectTypeVal = watch("objectType");

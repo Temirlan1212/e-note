@@ -16,18 +16,16 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
   onNext?: (arg: { step: number | undefined; isStepByStep: boolean }) => void;
   handleStepNextClick?: Function;
 }
 
-export default function SecondStepFields({ form, stepState, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+export default function SecondStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const profile = useProfileStore.getState();
   const t = useTranslations();
 
   const { trigger, control, getValues, setValue, watch } = form;
-  const [step, setStep] = stepState;
 
   const productId = watch("product.id");
 
@@ -90,8 +88,7 @@ export default function SecondStepFields({ form, stepState, onPrev, onNext, hand
 
   const handleStepByStepClick = () => {
     if (onNext != null) {
-      onNext({ step: step, isStepByStep: true });
-      setStep(step + 1);
+      onNext({ step: undefined, isStepByStep: true });
     }
   };
 
