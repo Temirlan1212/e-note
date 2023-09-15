@@ -88,6 +88,8 @@ export default function useFetch<T = FetchResponseBody>(
           profile.logOut();
           return router.push("/login");
         }
+
+        setNotification(error.message);
       })
       .finally(() => setLoading(false));
   };
