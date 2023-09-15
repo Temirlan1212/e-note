@@ -7,10 +7,8 @@ import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import Button from "@/components/ui/Button";
 import PDFViewer from "@/components/PDFViewer";
-import Link from "@/components/ui/Link";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
@@ -85,21 +83,11 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
-      <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", lg: "row" }}>
-        <StepperContentStep
-          step={6}
-          title={t("View document")}
-          loading={applicationLoading || prepareLoading || pdfLoading}
-        />
-
-        {docUrl && (
-          <Link href={docUrl} target="_blank">
-            <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
-              {t("Download PDF")}
-            </Button>
-          </Link>
-        )}
-      </Box>
+      <StepperContentStep
+        step={6}
+        title={t("View document")}
+        loading={applicationLoading || prepareLoading || pdfLoading}
+      />
 
       {docUrl && <PDFViewer fileUrl={docUrl} />}
 

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Typography, Box, Popover, IconButton, Badge } from "@mui/material";
 import { useTranslations } from "next-intl";
-
+import useEffectOnce from "@/hooks/useEffectOnce";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import Button from "@/components/ui/Button";
-import { useProfileStore } from "../../stores/profile";
+import { useProfileStore } from "../stores/profile";
 import { IUserData } from "@/models/user";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -19,18 +19,18 @@ export default function PopupNotifications() {
   const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
   const [showLoadMore, setShowLoadMore] = useState(false);
   const [limit, setLimit] = useState(5);
+  const [userData, setUserData] = useState<IUserData | null>();
 
   const t = useTranslations();
+  const profile = useProfileStore((state) => state);
 
   const { data: message, update: messageUpdate } = useFetch("", "POST");
-
-  const user: IUserData | null = useProfileStore((state) => state.getUserData());
 
   const {
     data: messages,
     update,
     loading,
-  } = useFetch<INotificationData>(user?.id ? `/api/notifications?userId=${user?.id}` : "", "POST");
+  } = useFetch<INotificationData>(userData?.id ? `/api/notifications?userId=${userData?.id}` : "", "POST");
 
   const handleNotificationPopupToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setAnchorEl(anchorEl == null ? event.currentTarget : null);
@@ -68,13 +68,17 @@ export default function PopupNotifications() {
     return false;
   };
 
-  useEffect(() => {
-    update(user?.id ? `/api/notifications?userId=${user?.id}` : "", {
+  useEffectOnce(() => {
+    setUserData(profile.userData);
+  }, [profile.userData]);
+
+  useEffectOnce(() => {
+    update(userData?.id ? `/api/notifications?userId=${userData?.id}` : "", {
       pageSize: limit,
     });
   }, [limit, message]);
 
-  useEffect(() => {
+  useEffectOnce(() => {
     if (messages?.total! > limit) {
       setShowLoadMore(true);
     } else {
@@ -87,17 +91,19 @@ export default function PopupNotifications() {
 
   return (
     <>
-      <IconButton onClick={handleNotificationPopupToggle} sx={{ padding: 1, color: "inherit" }}>
-        {!!anchorEl ? (
-          <NotificationsIcon color="success" />
-        ) : withBadge() ? (
-          <Badge badgeContent color="success" variant="dot">
+      {userData?.id && (
+        <IconButton onClick={handleNotificationPopupToggle} sx={{ padding: 1, color: "inherit" }}>
+          {!!anchorEl ? (
+            <NotificationsIcon color="success" />
+          ) : withBadge() ? (
+            <Badge badgeContent color="success" variant="dot">
+              <NotificationsOutlinedIcon color="inherit" />
+            </Badge>
+          ) : (
             <NotificationsOutlinedIcon color="inherit" />
-          </Badge>
-        ) : (
-          <NotificationsOutlinedIcon color="inherit" />
-        )}
-      </IconButton>
+          )}
+        </IconButton>
+      )}
 
       <Popover
         sx={{
