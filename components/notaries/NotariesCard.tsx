@@ -19,7 +19,6 @@ interface INotaryProps {
 
 const NotariesCard: FC<INotaryProps> = ({ fullName, image, rating, region, area, location }) => {
   const { locale } = useRouter();
-  console.log(region, area);
   return (
     <Card
       sx={{

@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       : {};
 
   const response = await fetch(
-    process.env.BACKEND_XAPI_URL + "/search/axelor-erp/com.axelor.apps.notary.db.NotaryDistrict",
+    process.env.BACKEND_OPEN_API_URL + "/search/axelor-erp/com.axelor.apps.notary.db.NotaryDistrict",
     {
       method: "POST",
       headers: {

@@ -20,16 +20,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         }
       : {};
 
-  const response = await fetch(process.env.BACKEND_XAPI_URL + "/search/axelor-erp/com.axelor.apps.base.db.District", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      fields: ["name"],
-      data: data,
-    }),
-  });
+  const response = await fetch(
+    process.env.BACKEND_OPEN_API_URL + "/search/axelor-erp/com.axelor.apps.base.db.District",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fields: ["name"],
+        data: data,
+      }),
+    }
+  );
 
   if (!response.ok) {
     return res.status(response.status).json(null);

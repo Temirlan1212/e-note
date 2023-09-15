@@ -133,27 +133,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     };
   }
 
-  const response = await fetch(process.env.BACKEND_XAPI_URL + "/search/axelor-erp/com.axelor.apps.base.db.Company", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      offset: page,
-      limit: pageSize,
-      fields: [
-        "partner.simpleFullName",
-        "partner.rating",
-        "logo.fileName",
-        "address.region",
-        "address.district",
-        "address.city",
-        "name",
-      ],
-      data: data,
-      ...req.body,
-    }),
-  });
+  const response = await fetch(
+    process.env.BACKEND_OPEN_API_URL + "/search/axelor-erp/com.axelor.apps.base.db.Company",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        offset: page,
+        limit: pageSize,
+        fields: [
+          "partner.simpleFullName",
+          "partner.rating",
+          "logo.fileName",
+          "address.region",
+          "address.district",
+          "address.city",
+          "name",
+        ],
+        data: data,
+        ...req.body,
+      }),
+    }
+  );
 
   if (!response.ok) {
     return res.status(response.status).json(null);
