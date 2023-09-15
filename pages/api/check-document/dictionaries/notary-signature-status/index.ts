@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const response = await fetch(
-    process.env.BACKEND_XAPI_URL + "/selection/axelor-erp/notary.request.sign.status.select",
+    process.env.BACKEND_OPEN_API_URL + "/selection/axelor-erp/notary.request.sign.status.select",
     {
       method: "GET",
       headers: {
