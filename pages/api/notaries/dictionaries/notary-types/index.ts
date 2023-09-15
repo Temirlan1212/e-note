@@ -3,19 +3,15 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { INotaryTypeSelections } from "@/models/notaries";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<INotaryTypeSelections | null>) {
-  if (req.method !== "POST" && req.body == null) {
+  if (req.method !== "GET" && req.body == null) {
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/selection/select.company.type", {
-    method: "POST",
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/selection/axelor-erp/select.company.type", {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
-    body: JSON.stringify({
-      translate: true,
-    }),
   });
 
   if (!response.ok) {

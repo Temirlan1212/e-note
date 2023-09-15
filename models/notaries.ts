@@ -1,7 +1,8 @@
 export interface INotaryGeo {
-  fullName: string | undefined;
-  name: string;
-  id: number;
+  fullName?: string | undefined;
+  name?: string;
+  id?: number;
+  "$t:name"?: string;
 }
 export interface INotary {
   "partner.rating": number;
@@ -50,6 +51,7 @@ export interface INotaryInfoData {
     name: string;
     id: number;
     $version: number;
+    "$t:name": string;
   };
   licenseNo: string;
   address: {
