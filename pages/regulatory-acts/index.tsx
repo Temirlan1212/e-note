@@ -6,17 +6,20 @@ import Image from "next/image";
 import Head from "next/head";
 import { GetStaticPropsContext } from "next";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
+import { useRouter } from "next/router";
 
 interface IRegulatoryActs extends FetchResponseBody {
   data: {
     title: string;
     url: string;
     id: number;
+    "$t:title": string;
   }[];
 }
 
 const RegulatoryActs: React.FC = () => {
   const t = useTranslations();
+  const { locale } = useRouter();
 
   const { data: regulatoryActsData } = useFetch<IRegulatoryActs>("/api/regulatory-acts", "POST");
 
@@ -44,7 +47,7 @@ const RegulatoryActs: React.FC = () => {
             </Typography>
 
             <List sx={{ display: "flex", flexDirection: "column", gap: "35px" }}>
-              {regulatoryActsData?.data?.map(({ title, url, id }) => (
+              {regulatoryActsData?.data?.map(({ title, url, id, ["$t:title"]: tTitle }) => (
                 <ListItem disablePadding key={id}>
                   <Link
                     href={url}
@@ -61,7 +64,7 @@ const RegulatoryActs: React.FC = () => {
                     underline="hover"
                     gap="30px"
                   >
-                    <Typography color="inherit">{title}</Typography>
+                    <Typography color="inherit">{locale === "en" ? title : tTitle}</Typography>
                     <Box>
                       <LinkIcon />
                     </Box>
