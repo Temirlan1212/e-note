@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocale } from "next-intl";
 import { useRouter } from "next/router";
+import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -20,7 +21,6 @@ export default function LocaleSwitcher() {
   const locale = useLocale();
   const locales = router.locales ?? [];
   const [menu, setMenu] = useState<HTMLElement | null>(null);
-  const open = !!menu;
 
   const handlePopupToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMenu(menu == null ? event.currentTarget : null);
@@ -32,12 +32,12 @@ export default function LocaleSwitcher() {
   };
 
   return (
-    <div>
+    <Box>
       <IconButton onClick={handlePopupToggle} color="inherit">
         <LanguageIcon />
       </IconButton>
 
-      <Menu anchorEl={menu} open={open} onClose={handlePopupToggle}>
+      <Menu anchorEl={menu} open={!!menu} onClose={handlePopupToggle}>
         {locales.map((itemLocale) => {
           return (
             <MenuItem
@@ -50,6 +50,6 @@ export default function LocaleSwitcher() {
           );
         })}
       </Menu>
-    </div>
+    </Box>
   );
 }
