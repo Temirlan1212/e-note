@@ -17,7 +17,6 @@ import Link from "@/components/ui/Link";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
   onNext?: Function;
 }
@@ -29,7 +28,7 @@ const getFullName = (name: string | null, lastName: string | null) => {
   return name ? name : lastName ? lastName : "";
 };
 
-export default function SuccessStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
+export default function SuccessStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
   const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");

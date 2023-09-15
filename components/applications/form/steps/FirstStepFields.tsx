@@ -19,10 +19,11 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   onPrev?: Function | null;
-  onNext?: Function | null;
+  onNext?: (arg: { step: number | undefined }) => void;
+  handleStepNextClick?: Function;
 }
 
-export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
+export default function FirstStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const locale = useLocale();
 
@@ -57,7 +58,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async () => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
 
     if (validated) {
@@ -82,7 +83,7 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
-        if (onNext != null) onNext();
+        if (onNext != null) onNext({ step: targetStep });
       }
 
       setLoading(false);
@@ -96,6 +97,10 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
     }
     return "name";
   };
+
+  useEffectOnce(async () => {
+    if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -179,7 +184,12 @@ export default function FirstStepFields({ form, onPrev, onNext }: IStepFieldsPro
           </Button>
         )}
         {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+          <Button
+            loading={loading}
+            onClick={() => handleNextClick()}
+            endIcon={<ArrowForwardIcon />}
+            sx={{ width: "auto" }}
+          >
             {t("Next")}
           </Button>
         )}

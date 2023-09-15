@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -34,12 +34,12 @@ export interface ITabListItem {
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
-  onNext?: Function;
+  onNext?: (arg: { step: number | undefined }) => void;
+  handleStepNextClick?: Function;
 }
 
-export default function FourthStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
+export default function FourthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
 
@@ -189,7 +189,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async () => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
 
     if (validated) {
@@ -255,7 +255,7 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
 
         await attachedFilesRef.current?.next();
 
-        if (onNext != null) onNext();
+        if (onNext != null) onNext({ step: targetStep });
       }
 
       setLoading(false);
@@ -363,6 +363,10 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
     }
   };
 
+  useEffectOnce(async () => {
+    if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <StepperContentStep step={4} title={t("fifth-step-title")} />
@@ -409,7 +413,12 @@ export default function FourthStepFields({ form, stepState, onPrev, onNext }: IS
           </Button>
         )}
         {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+          <Button
+            loading={loading}
+            onClick={() => handleNextClick()}
+            endIcon={<ArrowForwardIcon />}
+            sx={{ width: "auto" }}
+          >
             {t("Next")}
           </Button>
         )}

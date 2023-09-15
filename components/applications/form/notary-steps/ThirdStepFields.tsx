@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
@@ -16,17 +16,16 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
-  onNext?: Function;
+  onNext?: (arg: { step: number | undefined }) => void;
+  handleStepNextClick?: Function;
 }
 
-export default function ThirdStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
+export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
 
   const { trigger, control, watch, resetField, getValues, setValue } = form;
-  const [step, setStep] = stepState;
 
   const objectVal = watch("object");
   const objectTypeVal = watch("objectType");
@@ -62,7 +61,7 @@ export default function ThirdStepFields({ form, stepState, onPrev, onNext }: ISt
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async () => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
 
     if (validated) {
@@ -83,12 +82,16 @@ export default function ThirdStepFields({ form, stepState, onPrev, onNext }: ISt
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("version", result.data[0].version);
-        if (onNext != null) onNext();
+        if (onNext != null) onNext({ step: targetStep });
       }
 
       setLoading(false);
     }
   };
+
+  useEffectOnce(async () => {
+    if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -312,7 +315,12 @@ export default function ThirdStepFields({ form, stepState, onPrev, onNext }: ISt
           </Button>
         )}
         {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+          <Button
+            loading={loading}
+            onClick={() => handleNextClick()}
+            endIcon={<ArrowForwardIcon />}
+            sx={{ width: "auto" }}
+          >
             {t("Next")}
           </Button>
         )}
