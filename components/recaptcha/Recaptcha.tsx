@@ -12,15 +12,17 @@ const Recaptcha: React.FC<IRecaptchaProps> = ({ onRecaptchaSuccess }) => {
   const [publicSiteKey, setPublicSiteKey] = useState<string | null>(null);
   const { locale } = useRouter();
 
-  const { update } = useFetch("", "POST");
-  const { data: getKeyData, update: getKey } = useFetch("", "POST");
+  const { update: checkRecaptcha } = useFetch("", "POST");
+  const { data: recaptchaKey, update: getRecaptchaKey } = useFetch("", "POST");
 
-  const handleRecaptchaChange = async (token: string | null) => {
-    await update("/api/recaptcha", { token: token }).then((data) => onRecaptchaSuccess(data.success));
+  const handleRecaptchaChange = (token: string | null) => {
+    checkRecaptcha("/api/recaptcha", { token: token }).then((data) => onRecaptchaSuccess(data.success));
   };
 
-  useEffectOnce(async () => {
-    await getKey("/api/recaptcha", { requestType: "getPublicKey" }).then((getKeyData) => setPublicSiteKey(getKeyData));
+  useEffectOnce(() => {
+    getRecaptchaKey("/api/recaptcha", { requestType: "getPublicKey" }).then((recaptchaKey) =>
+      setPublicSiteKey(recaptchaKey)
+    );
   });
 
   return (
