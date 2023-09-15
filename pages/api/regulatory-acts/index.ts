@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     body: JSON.stringify({
       offset: 0,
       limit: 100,
-      fields: ["title", "url", "category"],
+      fields: ["title", "$t:title", "url", "category"],
       data: {
         translate: true,
         criteria: [
