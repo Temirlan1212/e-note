@@ -73,6 +73,8 @@ export default function PopupNotifications() {
   }, [profile.userData]);
 
   useEffectOnce(() => {
+    if (userData?.id == null) return;
+
     update(userData?.id ? `/api/notifications?userId=${userData?.id}` : "", {
       pageSize: limit,
     });

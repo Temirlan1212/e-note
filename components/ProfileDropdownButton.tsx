@@ -36,11 +36,10 @@ export default function ProfileDropdownButton() {
   };
 
   const handleLogoutClick = () => {
-    router.push("/");
-    if (router.pathname === "/") {
+    router.push("/").then(() => {
       profile.logOut();
-    }
-    setUser(profile.getUser());
+      setUser(profile.getUser());
+    });
   };
 
   if (user) {
