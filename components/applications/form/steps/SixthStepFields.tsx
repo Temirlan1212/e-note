@@ -7,19 +7,18 @@ import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import Button from "@/components/ui/Button";
 import PDFViewer from "@/components/PDFViewer";
-import Link from "@/components/ui/Link";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   onPrev?: Function | null;
-  onNext?: Function | null;
+  onNext?: (arg: { step: number | undefined }) => void;
+  handleStepNextClick?: Function;
 }
 
-export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
+export default function SixthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, setValue } = form;
@@ -68,9 +67,9 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async () => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
-    if (onNext != null && validated) onNext();
+    if (onNext != null && validated) onNext({ step: targetStep });
   };
 
   const handlePdfDownload = async (pdfLink: string, token: string) => {
@@ -83,23 +82,17 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
     setDocUrl(URL.createObjectURL(blob));
   };
 
+  useEffectOnce(async () => {
+    if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
-      <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", lg: "row" }}>
-        <StepperContentStep
-          step={6}
-          title={t("View document")}
-          loading={applicationLoading || prepareLoading || pdfLoading}
-        />
-
-        {docUrl && (
-          <Link href={docUrl} target="_blank">
-            <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
-              {t("Download PDF")}
-            </Button>
-          </Link>
-        )}
-      </Box>
+      <StepperContentStep
+        step={6}
+        title={t("View document")}
+        loading={applicationLoading || prepareLoading || pdfLoading}
+      />
 
       {docUrl && <PDFViewer fileUrl={docUrl} />}
 
@@ -111,7 +104,7 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
             </Button>
           )}
           {onNext != null && (
-            <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+            <Button onClick={() => handleNextClick()} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
               {t("Next")}
             </Button>
           )}

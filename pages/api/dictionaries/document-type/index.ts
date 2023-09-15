@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-enum criteriaFieldNames {
+export enum criteriaFieldNames {
   isSystem = "isSystem",
   createdBy = "createdBy.id",
   object = "notaryObject",
@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     body: JSON.stringify({
       offset: 0,
       limit: 100,
-      fields: ["name", "fullName"],
+      fields: ["name", "fullName", ...Object.values(criteriaFieldNames)],
       translate: true,
       data: {
         operator: "and",

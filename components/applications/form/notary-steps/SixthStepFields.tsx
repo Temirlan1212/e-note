@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
@@ -8,7 +8,6 @@ import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box, Backdrop, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import EditIcon from "@mui/icons-material/Edit";
 import SyncIcon from "@mui/icons-material/Sync";
 import Button from "@/components/ui/Button";
@@ -19,12 +18,12 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
-  onNext?: Function;
+  onNext?: (arg: { step: number | undefined }) => void;
+  handleStepNextClick?: Function;
 }
 
-export default function SixthStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
+export default function SixthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const convert = useConvert();
 
@@ -83,9 +82,9 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async () => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
-    if (onNext != null && validated) onNext();
+    if (onNext != null && validated) onNext({ step: targetStep });
   };
 
   const handleSyncClick = async () => {
@@ -127,6 +126,10 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
     }
   };
 
+  useEffectOnce(async () => {
+    if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Backdrop open={isBackdropOpen} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -152,29 +155,23 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
           loading={applicationLoading || prepareLoading || pdfLoading || signLoading || syncLoading}
         />
 
-        <Box display="flex" gap="10px" flexDirection={{ xs: "column", md: "row" }}>
-          {docUrl && (
-            <Link href={docUrl} target="_blank">
-              <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
-                {t("Download PDF")}
-              </Button>
-            </Link>
-          )}
+        {!applicationLoading && !prepareLoading && !pdfLoading && !signLoading && !syncLoading && (
+          <Box display="flex" gap="10px" flexDirection={{ xs: "column", md: "row" }}>
+            {!isSigned && token && prepare?.data?.editUrl != null && (
+              <Link
+                href={`${prepare.data.editUrl}?AuthorizationBasic=${token.replace(/Basic /, "")}`}
+                target="_blank"
+                onClick={() => setIsBackdropOpen(true)}
+              >
+                <Button startIcon={<EditIcon />} sx={{ width: "auto" }}>
+                  {t("Edit")}
+                </Button>
+              </Link>
+            )}
 
-          {!isSigned && token && prepare?.data?.editUrl != null && (
-            <Link
-              href={`${prepare.data.editUrl}?AuthorizationBasic=${token.replace(/Basic /, "")}`}
-              target="_blank"
-              onClick={() => setIsBackdropOpen(true)}
-            >
-              <Button startIcon={<EditIcon />} sx={{ width: "auto" }}>
-                {t("Edit")}
-              </Button>
-            </Link>
-          )}
-
-          {!isSigned && base64Doc != null && <SignModal base64Doc={base64Doc} onSign={handleSign} />}
-        </Box>
+            {!isSigned && base64Doc != null && <SignModal base64Doc={base64Doc} onSign={handleSign} />}
+          </Box>
+        )}
       </Box>
 
       {docUrl && <PDFViewer fileUrl={docUrl} />}
@@ -187,7 +184,7 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
             </Button>
           )}
           {onNext != null && (
-            <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+            <Button onClick={() => handleNextClick()} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
               {t("Next")}
             </Button>
           )}
