@@ -29,7 +29,7 @@ export default function useFetch<T = FetchResponseBody>(
 ) {
   const router = useRouter();
   const profile = useProfileStore.getState();
-  // const setNotification = useNotificationStore((state) => state.setNotification);
+  const setNotification = useNotificationStore((state) => state.setNotification);
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<FetchError | null>(null);
@@ -69,6 +69,7 @@ export default function useFetch<T = FetchResponseBody>(
       .then((res) => {
         if (!res.ok) {
           const error: FetchError = { status: res.status, message: res.statusText };
+          setNotification(error.message);
           throw new Error(JSON.stringify(error));
         }
 
@@ -88,7 +89,7 @@ export default function useFetch<T = FetchResponseBody>(
           return router.push("/login");
         }
 
-        // setNotification(error.message);
+        setNotification(error.message);
       })
       .finally(() => setLoading(false));
   };
