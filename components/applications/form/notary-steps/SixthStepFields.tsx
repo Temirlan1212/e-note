@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
@@ -19,12 +19,12 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
-  stepState: [number, Dispatch<SetStateAction<number>>];
   onPrev?: Function;
-  onNext?: Function;
+  onNext?: (arg: { step: number | undefined }) => void;
+  handleStepNextClick?: Function;
 }
 
-export default function SixthStepFields({ form, stepState, onPrev, onNext }: IStepFieldsProps) {
+export default function SixthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const convert = useConvert();
 
@@ -83,9 +83,9 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async () => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
-    if (onNext != null && validated) onNext();
+    if (onNext != null && validated) onNext({ step: targetStep });
   };
 
   const handleSyncClick = async () => {
@@ -126,6 +126,10 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
       setIsSigned(true);
     }
   };
+
+  useEffectOnce(async () => {
+    if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -187,7 +191,7 @@ export default function SixthStepFields({ form, stepState, onPrev, onNext }: ISt
             </Button>
           )}
           {onNext != null && (
-            <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+            <Button onClick={() => handleNextClick()} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
               {t("Next")}
             </Button>
           )}

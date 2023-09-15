@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const response = await fetch(
-    process.env.BACKEND_XAPI_URL + `/read/axelor-erp/com.axelor.apps.sale.db.SaleOrder/${id}`,
+    process.env.BACKEND_OPEN_API_URL + `/read/axelor-erp/com.axelor.apps.sale.db.SaleOrder/${id}`,
     {
       method: "POST",
       headers: {

@@ -16,10 +16,11 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   onPrev?: Function | null;
-  onNext?: Function | null;
+  onNext?: (arg: { step: number | undefined }) => void;
+  handleStepNextClick?: Function;
 }
 
-export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
+export default function SixthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, setValue } = form;
@@ -68,9 +69,9 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async () => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
-    if (onNext != null && validated) onNext();
+    if (onNext != null && validated) onNext({ step: targetStep });
   };
 
   const handlePdfDownload = async (pdfLink: string, token: string) => {
@@ -82,6 +83,10 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
 
     setDocUrl(URL.createObjectURL(blob));
   };
+
+  useEffectOnce(async () => {
+    if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -111,7 +116,7 @@ export default function SixthStepFields({ form, onPrev, onNext }: IStepFieldsPro
             </Button>
           )}
           {onNext != null && (
-            <Button onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+            <Button onClick={() => handleNextClick()} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
               {t("Next")}
             </Button>
           )}

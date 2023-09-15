@@ -17,10 +17,11 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   onPrev?: Function | null;
-  onNext?: Function | null;
+  onNext?: (arg: { step: number | undefined }) => void;
+  handleStepNextClick?: Function;
 }
 
-export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
+export default function SecondStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
 
@@ -60,7 +61,7 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
     if (onPrev != null) onPrev();
   };
 
-  const handleNextClick = async () => {
+  const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
 
     if (validated) {
@@ -81,12 +82,16 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("version", result.data[0].version);
-        if (onNext != null) onNext();
+        if (onNext != null) onNext({ step: targetStep });
       }
 
       setLoading(false);
     }
   };
+
+  useEffectOnce(async () => {
+    if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -310,7 +315,12 @@ export default function SecondStepFields({ form, onPrev, onNext }: IStepFieldsPr
           </Button>
         )}
         {onNext != null && (
-          <Button loading={loading} onClick={handleNextClick} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+          <Button
+            loading={loading}
+            onClick={() => handleNextClick()}
+            endIcon={<ArrowForwardIcon />}
+            sx={{ width: "auto" }}
+          >
             {t("Next")}
           </Button>
         )}
