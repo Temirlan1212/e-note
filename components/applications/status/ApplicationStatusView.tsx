@@ -50,7 +50,7 @@ const ApplicationStatusView: FC<IApplicationStatusViewProps> = (props) => {
         </Typography>
       </Box>
 
-      {pdfLoading ? (
+      {!pdfLoading ? (
         docUrl && <PDFViewer fileUrl={docUrl} />
       ) : (
         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
