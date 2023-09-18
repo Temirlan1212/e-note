@@ -27,7 +27,8 @@ export default function CheckByQR() {
     };
 
     const qrCodeSuccess = (decodedText: string) => {
-      router.push(decodedText);
+      const uniqueQrCode = decodedText.split("/").pop();
+      router.push(`/check-document/${encodeURIComponent(uniqueQrCode as string)}`);
       setEnabled(false);
     };
 
