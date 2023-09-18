@@ -29,16 +29,6 @@ const ApplicationStatusView: FC<IApplicationStatusViewProps> = (props) => {
 
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
 
-  const handlePdfDownload = async (pdfLink: string, token: string) => {
-    if (!pdfLink || !token) return;
-
-    const pdfResponse = await getPdf(`/api/adapter?url=${pdfLink}&token=${token}`);
-    const blob = await pdfResponse?.blob();
-    if (blob == null) return;
-
-    setDocUrl(URL.createObjectURL(blob));
-  };
-
   useEffectOnce(async () => {
     if (data?.documentInfo?.pdfLink != null && data?.documentInfo?.token != null) {
       const pdfResponse = await getPdf(
@@ -64,25 +54,6 @@ const ApplicationStatusView: FC<IApplicationStatusViewProps> = (props) => {
         >
           {t("Viewing a document")}
         </Typography>
-        <Button
-          variant="outlined"
-          sx={{
-            backgroundColor: "none",
-            border: "1px dashed #CDCDCD",
-            color: "#1BAA75",
-            fontSize: "14px",
-            padding: "10px 20px",
-            width: "auto",
-            ":hover": {
-              backgroundColor: "transparent !important",
-              border: "1px dashed #CDCDCD",
-            },
-          }}
-          startIcon={<PictureAsPdfOutlinedIcon />}
-          onClick={() => handlePdfDownload(data?.documentInfo?.pdfLink, data?.documentInfo?.token)}
-        >
-          {t("Download PDF")}
-        </Button>
       </Box>
 
       {pdfLoading ? (
