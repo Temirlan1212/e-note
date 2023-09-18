@@ -61,7 +61,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
         </Link>
       </Box>
       <ApplicationStatusRead data={data?.data[0]} />
-      <ApplicationStatusView />
+      <ApplicationStatusView data={data?.data[0]} />
     </Box>
   );
 };
