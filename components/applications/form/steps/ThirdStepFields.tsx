@@ -14,6 +14,7 @@ import PersonalData from "@/components/fields/PersonalData";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 import useEffectOnce from "@/hooks/useEffectOnce";
+import { useProfileStore } from "@/stores/profile";
 
 interface IBaseEntityFields {
   id?: number;
@@ -30,12 +31,20 @@ export interface IStepFieldsProps {
 
 export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
+  const profile = useProfileStore((state) => state);
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
 
-  const { trigger, resetField, getValues, setValue } = form;
+  const { trigger, watch, getValues, setValue } = form;
+
+  const requester = watch("requester");
 
   const [loading, setLoading] = useState(false);
+  const [partnerId, setPartnerId] = useState<number>();
 
+  const { data: requesterData } = useFetch(
+    partnerId != null && requester?.[0].id == null ? `/api/profile/partner/${partnerId}` : "",
+    "POST"
+  );
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
 
@@ -183,6 +192,30 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
+
+  useEffectOnce(() => {
+    setPartnerId(profile.userData?.partner.id);
+  }, [profile]);
+
+  useEffectOnce(() => {
+    if (requesterData?.data?.[0]?.id == null || requester?.[0].id != null) return;
+
+    const index = 0;
+    setValue("requester", requesterData.data);
+    setValue(`requester.${index}.citizenship`, requesterData.data[index].citizenship);
+    setValue(`requester.${index}.mainAddress.region`, requesterData.data[index].mainAddress.region);
+    setValue(`requester.${index}.mainAddress.district`, requesterData.data[index].mainAddress.district);
+    setValue(`requester.${index}.mainAddress.city`, requesterData.data[index].mainAddress.city);
+    setValue(
+      `requester.${index}.actualResidenceAddress.region`,
+      requesterData.data[index].actualResidenceAddress.region
+    );
+    setValue(
+      `requester.${index}.actualResidenceAddress.district`,
+      requesterData.data[index].actualResidenceAddress.district
+    );
+    setValue(`requester.${index}.actualResidenceAddress.city`, requesterData.data[index].actualResidenceAddress.city);
+  }, [requesterData]);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
