@@ -8,16 +8,10 @@ import Button from "@/components/ui/Button";
 import PDFViewer from "@/components/PDFViewer";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import useFetch from "@/hooks/useFetch";
+import { IApplication } from "@/models/application";
 
 interface IApplicationStatusViewProps {
-  data: {
-    documentInfo: {
-      pdfLink: string;
-      token: string;
-      fileName: string;
-      editUrl: string;
-    };
-  };
+  data: IApplication;
 }
 
 const ApplicationStatusView: FC<IApplicationStatusViewProps> = (props) => {

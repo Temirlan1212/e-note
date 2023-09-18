@@ -17,4 +17,10 @@ export interface IApplication {
   product: IProduct;
   requester: IPartner[];
   members: IPartner[];
+  documentInfo: {
+    pdfLink: string;
+    token: string;
+    fileName: string;
+    editUrl: string;
+  };
 }
