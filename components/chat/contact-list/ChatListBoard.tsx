@@ -7,11 +7,12 @@ import { Search } from "@mui/icons-material";
 
 import Input from "../../ui/Input";
 import ChatListItem from "./ChatListItem";
+import { IContact } from "@/components/chat/ChatContent";
 
 interface IChatListBoardProps {
-  handleContactClick: (id: number) => void;
-  activeContact?: { name: string; id: number };
-  users: Array<{ name: string; id: number }>;
+  handleContactClick: (chatId: number) => void;
+  activeContact?: IContact;
+  users: IContact[];
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 }
@@ -32,12 +33,12 @@ const ChatListBoard: FC<IChatListBoardProps> = (props) => {
       gap="16px"
       sx={{
         display: {
-          xs: activeContact?.id ? "none" : "flex",
+          xs: activeContact?.chatId ? "none" : "flex",
           md: "flex",
         },
         width: {
           xs: "100%",
-          md: "320px",
+          md: "500px",
         },
       }}
     >
@@ -87,11 +88,11 @@ const ChatListBoard: FC<IChatListBoardProps> = (props) => {
         {users?.map((user) => {
           return (
             <ChatListItem
-              key={user.id}
-              activeContact={activeContact?.id}
-              contactName={user.name}
-              contactId={user.id}
-              onContactClick={() => handleContactClick(user.id)}
+              key={user.chatId}
+              activeContact={activeContact?.chatId}
+              contactName={user.appName}
+              contactId={user.chatId}
+              onContactClick={() => handleContactClick(user.chatId)}
             />
           );
         })}

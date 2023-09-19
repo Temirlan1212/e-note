@@ -6,10 +6,11 @@ import { Avatar, Box, Typography } from "@mui/material";
 
 interface IChatRightPartProps {
   name?: string;
+  chatCreator?: string;
   chatLink?: string;
 }
 
-const ChatMessageBoard: FC<IChatRightPartProps> = ({ name, chatLink }) => {
+const ChatMessageBoard: FC<IChatRightPartProps> = ({ name, chatCreator, chatLink }) => {
   const t = useTranslations();
 
   return (
@@ -63,6 +64,13 @@ const ChatMessageBoard: FC<IChatRightPartProps> = ({ name, chatLink }) => {
           background: "#F6F6F6",
         }}
       >
+        <Typography
+          sx={{
+            fontSize: "16px",
+          }}
+        >
+          {t("Chat created by")}: {chatCreator}
+        </Typography>
         {chatLink ? (
           <Link href={chatLink} rel="noopener noreferrer" target="_blank">
             {t("Start chatting")}

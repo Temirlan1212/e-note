@@ -11,19 +11,21 @@ import ChatMessageBoard from "./message/ChatMessageBoard";
 import useFetch from "@/hooks/useFetch";
 
 export interface IContact {
-  status: number;
-  data: {
-    appName: string;
-    chatCreator: string;
-    chatId: number;
-    chatRoomLink: string;
-    guestEmail: null;
-    guestId: number;
-    notary: {
-      id: number;
-    };
-    userToken: string;
+  appName: string;
+  chatCreator: string;
+  chatId: number;
+  chatRoomLink: string;
+  guestEmail: null;
+  guestId: number;
+  notary: {
+    id: number;
   };
+  userToken: string;
+}
+
+interface IContactData {
+  status: number;
+  data: IContact[];
 }
 
 const ChatContent: FC = () => {
@@ -32,23 +34,23 @@ const ChatContent: FC = () => {
 
   const t = useTranslations();
 
-  const { data } = useFetch("/api/profile/users", "POST");
-  const { data: contact, update } = useFetch<IContact>("", "POST");
+  const { data } = useFetch<IContactData>("/api/chat", "GET");
 
   const handleContactClick = (contactId: number) => {
-    update(`/api/chat/create/${contactId}`, { id: contactId });
     setActiveContactId(contactId);
   };
 
-  const filteredUsers: Array<{ name: string; id: number }> = data?.data?.filter((user: { name: string; id: number }) =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredUsers = (data?.data ?? []).filter(
+    (user) => user?.appName?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const activeContact = filteredUsers?.find((user) => user.id === activeContactId);
+  const activeContact = filteredUsers?.find((user) => user.chatId === activeContactId);
 
   const onBackToContacts = () => {
     setActiveContactId(0);
   };
+
+  const contact = (data?.data ?? []).find((user) => user.chatId === activeContactId);
 
   return (
     <>
@@ -65,7 +67,7 @@ const ChatContent: FC = () => {
           color: "#1BAA75",
           fontSize: "16px",
           display: {
-            xs: activeContact?.id ? "flex" : "none",
+            xs: activeContact?.chatId ? "flex" : "none",
             md: "none",
           },
           margin: "0 0 20px auto",
@@ -90,7 +92,11 @@ const ChatContent: FC = () => {
         />
 
         {activeContact ? (
-          <ChatMessageBoard name={contact?.data?.appName} chatLink={contact?.data?.chatRoomLink} />
+          <ChatMessageBoard
+            name={contact?.appName}
+            chatCreator={contact?.chatCreator}
+            chatLink={contact?.chatRoomLink}
+          />
         ) : (
           <Box
             sx={{
