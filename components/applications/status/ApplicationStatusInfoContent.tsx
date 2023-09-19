@@ -24,6 +24,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
   const [accessToView, setAccessToView] = useState(false);
 
   const { data } = useFetch(id != null ? `/api/applications/${id}` : "", "POST");
+
   const profile = useProfileStore((state) => state);
 
   const extractIDs = (...data: any) => {
