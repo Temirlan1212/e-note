@@ -10,7 +10,7 @@ import Input from "../ui/Input";
 import ProfilePasswordForm from "./ProfilePasswordForm";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { userProfileSchema } from "@/validator-schemas/profile";
+import { IUserProfileSchema, userProfileSchema } from "@/validator-schemas/profile";
 import { IProfileState, useProfileStore } from "@/stores/profile";
 import { IUserData } from "@/models/user";
 
@@ -19,13 +19,6 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import TelInput from "../ui/TelInput";
 
 interface IProfileFormProps {}
-
-interface IUserProfile {
-  fullName: string;
-  login: string;
-  email: string;
-  mobilePhone: string;
-}
 
 interface IExtendedUserData extends IUserData {
   "partner.mobilePhone"?: string;
@@ -66,13 +59,15 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     setMobilePhone(userData?.["partner.mobilePhone"]);
   }, [imageData]);
 
-  const form = useForm<IUserProfile>({
+  const form = useForm<IUserProfileSchema>({
     resolver: yupResolver(userProfileSchema),
     defaultValues: {
       fullName: userData?.name,
       login: userData?.code,
       email: userData?.email,
-      mobilePhone: userData?.["partner.mobilePhone"],
+      partner: {
+        mobilePhone: userData?.["partner.mobilePhone"],
+      },
     },
   });
 
@@ -96,7 +91,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     }
   };
 
-  const onSubmit = async (data: IUserProfile) => {
+  const onSubmit = async (data: IUserProfileSchema) => {
     if (selectedImage) {
       const reader = new FileReader();
       reader.onload = async () => {
@@ -108,8 +103,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             name: data.fullName,
             image: reader.result.toString(),
             partner: {
-              id: userData?.partner.id,
-              version: userData?.partner.$version,
+              id: userData?.partner?.id,
+              version: userData?.partner?.$version,
               mobilePhone: mobilePhone,
             },
           }).then((res) => {
@@ -133,8 +128,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           name: data.fullName,
           image: null,
           partner: {
-            id: userData?.partner.id,
-            version: userData?.partner.$version,
+            id: userData?.partner?.id,
+            version: userData?.partner?.$version,
             mobilePhone: mobilePhone,
           },
         }).then((res) => {
@@ -365,10 +360,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 {t("Phone number")}
               </InputLabel>
               <TelInput
-                inputType={errors.mobilePhone?.message ? "error" : mobilePhone ? "secondary" : "success"}
-                helperText={errors.mobilePhone?.message ? t(errors.mobilePhone?.message) : ""}
+                inputType={errors.partner?.mobilePhone?.message ? "error" : mobilePhone ? "secondary" : "success"}
+                helperText={errors.partner?.mobilePhone?.message ? t(errors.partner.mobilePhone?.message) : ""}
                 value={mobilePhone}
-                name="mobilePhone"
+                name="partner.mobilePhone"
                 onChange={(value) => typeof value === "string" && handleMobilePhoneChange(value)}
               />
             </FormControl>
