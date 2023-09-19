@@ -16,7 +16,13 @@ import { IUserData } from "@/models/user";
 
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
-import TelInput from "../ui/TelInput";
+import { Controller } from "react-hook-form";
+import TelInput from "@/components/ui/TelInput";
+import dynamic from "next/dynamic";
+
+const ClientInputTell = dynamic(() => import("@/components/ui/TelInput"), {
+  ssr: false,
+});
 
 interface IProfileFormProps {}
 
@@ -34,7 +40,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [mobilePhone, setMobilePhone] = useState<string | undefined>("");
 
   const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
     returnResponse: true,
@@ -56,7 +61,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
     setImagePreview(url);
     setSelectedImage(convertedFile);
-    setMobilePhone(userData?.["partner.mobilePhone"]);
   }, [imageData]);
 
   const form = useForm<IUserProfileSchema>({
@@ -105,7 +109,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             partner: {
               id: userData?.partner?.id,
               version: userData?.partner?.$version,
-              mobilePhone: mobilePhone,
+              mobilePhone: data?.partner?.mobilePhone,
             },
           }).then((res) => {
             if (res.ok) {
@@ -130,7 +134,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           partner: {
             id: userData?.partner?.id,
             version: userData?.partner?.$version,
-            mobilePhone: mobilePhone,
+            mobilePhone: data?.partner?.mobilePhone,
           },
         }).then((res) => {
           if (res.ok) {
@@ -153,10 +157,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const handleDeleteClick = () => {
     setSelectedImage(null);
     setImagePreview(null);
-  };
-
-  const handleMobilePhoneChange = (newPhoneNumber: string) => {
-    setMobilePhone(newPhoneNumber);
   };
 
   return (
@@ -359,12 +359,16 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               >
                 {t("Phone number")}
               </InputLabel>
-              <TelInput
-                inputType={errors.partner?.mobilePhone?.message ? "error" : mobilePhone ? "secondary" : "success"}
-                helperText={errors.partner?.mobilePhone?.message ? t(errors.partner.mobilePhone?.message) : ""}
-                value={mobilePhone}
+              <Controller
                 name="partner.mobilePhone"
-                onChange={(value) => typeof value === "string" && handleMobilePhoneChange(value)}
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <ClientInputTell
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    {...field}
+                  />
+                )}
               />
             </FormControl>
           </Box>
