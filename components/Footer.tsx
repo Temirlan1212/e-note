@@ -4,7 +4,8 @@ import Link from "@/components/ui/Link";
 import { WhatsApp, Instagram, Facebook } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
-import { getRoutes } from "@/routes";
+import { guestRoutes } from "@/routes/guest";
+import { getRoutes } from "@/routes/data";
 
 interface IFooterDataItem {
   title: string;
@@ -17,12 +18,12 @@ interface IFooterSection {
   items: IFooterDataItem[];
 }
 
-const guestRoutes = getRoutes("guestRoutes", "menu");
+const routes = getRoutes(guestRoutes, "menu");
 
 const Footer: React.FC = () => {
   const t = useTranslations();
   const footerData: Record<string, IFooterDataItem[]> = {
-    Links: guestRoutes.map((route) => ({
+    Links: routes.map((route) => ({
       title: route.title,
       link: route.link,
     })),

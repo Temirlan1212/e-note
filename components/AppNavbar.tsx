@@ -29,7 +29,7 @@ import DynamicIcon from "./DynamicIcon";
 import ProfileDropdownButton from "./ProfileDropdownButton";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PopupNotifications from "./PopupNotifications";
-import { IRoute } from "@/routes/index.data";
+import { IRoute } from "@/routes/data";
 
 const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) => {
   const router = useRouter();

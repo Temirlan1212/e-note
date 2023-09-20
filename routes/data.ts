@@ -1,18 +1,42 @@
-import { IChildRoute, IRoute, guestRoutes, userRoutes } from "./index.data";
+import { guestRoutes } from "./guest";
+import { userRoutes } from "./user";
 
-const routes = { userRoutes, guestRoutes };
+export interface IChildRoute {
+  title: string;
+  link: string;
+  type: "link" | "menu";
+  role?: "user" | "notary";
+  icon?: string;
+  bottomDivider?: boolean;
+}
+
+export interface IRoute extends Omit<IChildRoute, "type"> {
+  type: IChildRoute["type"] | "group";
+  children?: IChildRoute[];
+}
+
+export interface IRouteState {
+  guestRoutes: IRoute[];
+  userRoutes: IRoute[];
+  getRoutes: (
+    routeList: IRoute[],
+    type?: IRoute["type"] | "rendered",
+    role?: IChildRoute["role"],
+    rootOnly?: boolean
+  ) => IRoute[] | IChildRoute[];
+}
 
 export const getRoutes = (
-  routeListType: keyof typeof routes,
+  routeList: IRoute[],
   type: IRoute["type"] | "rendered",
   role?: IChildRoute["role"],
-  rootOnly = false,
-  routeList: typeof routes = routes
+  rootOnly = false
 ) => {
-  const selectedRouteList = routeList[routeListType];
-  if (type == null) return selectedRouteList;
+  if (type == null) {
+    return routeList;
+  }
 
-  return selectedRouteList.reduce((acc: IRoute[], val: IRoute) => {
+  return routeList.reduce((acc: IRoute[], val: IRoute) => {
     if (role != null && val.role != null && role !== val.role) return acc;
 
     if (rootOnly && val.children != null) {

@@ -13,9 +13,10 @@ import { IUser } from "@/models/user";
 import NavigationLoading from "@/components/ui/NavigationLoading";
 import useNotificationStore from "@/stores/notification";
 import Notification from "@/components/ui/Notification";
-import { getRoutes } from "@/routes";
+import { guestRoutes } from "@/routes/guest";
+import { getRoutes } from "@/routes/data";
 
-const guestRoutes = getRoutes("guestRoutes", "rendered");
+const routes = getRoutes(guestRoutes, "rendered");
 
 function Layout({ children }: { children: JSX.Element }) {
   const router = useRouter();
@@ -36,7 +37,7 @@ function Layout({ children }: { children: JSX.Element }) {
     }
   }, [profile.user, router.route]);
 
-  if (user != null && !guestRoutes.map((r) => r.link).includes(router.route)) {
+  if (user != null && !routes.map((r) => r.link).includes(router.route)) {
     return <PrivateLayout>{children}</PrivateLayout>;
   }
 
