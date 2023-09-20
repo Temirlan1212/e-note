@@ -15,6 +15,7 @@ import Area from "@/components/fields/Area";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import StepperContentStep from "@/components/ui/StepperContentStep";
+import useNotariesStore from "@/stores/notaries";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -24,6 +25,7 @@ export interface IStepFieldsProps {
 }
 
 export default function FirstStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+  const notaryData = useNotariesStore((state) => state.notaryData);
   const t = useTranslations();
   const locale = useLocale();
 
@@ -101,6 +103,10 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
+
+  useEffectOnce(() => {
+    if (notaryData != null) setValue("company", notaryData);
+  }, [notaryData]);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">

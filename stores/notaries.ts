@@ -1,14 +1,14 @@
-import { INotary } from "@/models/notaries";
+import { INotaryInfoData } from "@/models/notaries";
 import { create } from "zustand";
 
 interface INotariesState {
-  notary: INotary | null;
-  setNotary: (notary: INotary | null) => void;
+  notaryData: INotaryInfoData | null;
+  setNotaryData: (notary: INotaryInfoData | null) => void;
 }
 
 const useNotariesStore = create<INotariesState>((set) => ({
-  notary: null,
-  setNotary: (notary) => set({ notary }),
+  notaryData: null,
+  setNotaryData: (notaryData) => set({ notaryData }),
 }));
 
 export default useNotariesStore;
