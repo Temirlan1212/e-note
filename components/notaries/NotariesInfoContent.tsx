@@ -22,7 +22,10 @@ import ContentPlusIcon from "@/public/icons/content-plus.svg";
 import CloudMessageIcon from "@/public/icons/cloud-message.svg";
 import useFetch from "@/hooks/useFetch";
 import { useEffect, useState } from "react";
-import { IContact } from "@/components/chat/ChatContent";
+import { useProfileStore } from "@/stores/profile";
+import useEffectOnce from "@/hooks/useEffectOnce";
+import { IUserData } from "@/models/user";
+import { IContact } from "@/models/chat";
 
 interface INotariesInfoContentProps {}
 
@@ -34,10 +37,12 @@ const formatDate = (inputDate: string | number | Date) => {
 };
 
 const NotariesInfoContent = (props: INotariesInfoContentProps) => {
+  const [userData, setUserData] = useState<IUserData | null>(null);
   const t = useTranslations();
   const router = useRouter();
   const { locale } = useRouter();
 
+  const profile = useProfileStore((state) => state);
   const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
 
   const { update: contactUpdate } = useFetch<IContact>("", "POST");
@@ -49,12 +54,9 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const handleOpenChat = async () => {
     const res = await contactUpdate("/api/chat/create/" + router.query.id);
     if (res?.data?.chatRoomLink) {
-      redirectToChat(res?.data?.chatRoomLink as string);
+      const href = res?.data?.chatRoomLink as string;
+      window.open(href, "_blank");
     }
-  };
-
-  const redirectToChat = (url: string) => {
-    router.push(url);
   };
 
   const infoArray = [
@@ -105,6 +107,10 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: notaryData[0]?.workingDay,
     },
   ];
+
+  useEffectOnce(async () => {
+    setUserData(profile.getUserData());
+  }, [profile]);
 
   const filteredInfoArray = infoArray.filter((item) => item.text);
 
@@ -271,23 +277,25 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
             {t("Create application")}
           </Button>
         </Link>
-        <Button
-          startIcon={<CloudMessageIcon />}
-          buttonType="secondary"
-          sx={{
-            width: {
-              sx: "100%",
-              md: "320px",
-            },
-            padding: "10px 0",
-            ":hover": {
-              backgroundColor: "#3F5984",
-            },
-          }}
-          onClick={handleOpenChat}
-        >
-          {t("Write a message")}
-        </Button>
+        {userData?.group?.id === 4 ? null : (
+          <Button
+            startIcon={<CloudMessageIcon />}
+            buttonType="secondary"
+            sx={{
+              width: {
+                sx: "100%",
+                md: "320px",
+              },
+              padding: "10px 0",
+              ":hover": {
+                backgroundColor: "#3F5984",
+              },
+            }}
+            onClick={handleOpenChat}
+          >
+            {t("Write a message")}
+          </Button>
+        )}
       </Box>
     </Box>
   );
