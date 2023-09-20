@@ -1,13 +1,12 @@
-import { IRoute, useRouteStore } from "@/stores/route";
-import { useEffect, useState } from "react";
 import AppNavbar from "@/components/AppNavbar";
 import Footer from "@/components/Footer";
+import { getRoutes } from "@/routes";
+
+const guestRoutes = getRoutes("guestRoutes", "menu", "user", true);
 
 export default function PublicLayout({ children }: { children: JSX.Element }) {
-  const routes = useRouteStore((state) => state.getRoutes(state.guestRoutes, "menu", "user", true));
-
   return (
-    <AppNavbar type="public" routes={routes}>
+    <AppNavbar type="public" routes={guestRoutes}>
       {children}
       <Footer />
     </AppNavbar>
