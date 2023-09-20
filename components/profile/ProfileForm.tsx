@@ -5,8 +5,8 @@ import { PermIdentity } from "@mui/icons-material";
 import { Avatar, Box, CircularProgress, Divider, FormControl, InputLabel, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 
-import Button from "../ui/Button";
-import Input from "../ui/Input";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import ProfilePasswordForm from "./ProfilePasswordForm";
 
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -17,10 +17,9 @@ import { IUserData } from "@/models/user";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { Controller } from "react-hook-form";
-import TelInput from "@/components/ui/TelInput";
 import dynamic from "next/dynamic";
 
-const ClientInputTell = dynamic(() => import("@/components/ui/TelInput"), {
+const UserTelInput = dynamic(() => import("@/components/ui/TelInput"), {
   ssr: false,
 });
 
@@ -49,7 +48,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     data: imageData,
     loading: isImageLoading,
     update: getImage,
-  } = useFetch<Response>(userData?.id != undefined ? "/api/profile/download-image/" + userData?.id : "", "GET", {
+  } = useFetch<Response>(userData?.id != null ? "/api/profile/download-image/" + userData?.id : "", "GET", {
     returnResponse: true,
   });
 
@@ -112,7 +111,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               mobilePhone: data?.partner?.mobilePhone,
             },
           }).then((res) => {
-            if (res.ok) {
+            if (res && res.ok) {
               profile.loadUserData({
                 username: userData.code,
               });
@@ -137,7 +136,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             mobilePhone: data?.partner?.mobilePhone,
           },
         }).then((res) => {
-          if (res.ok) {
+          if (res && res.ok) {
             profile.loadUserData({
               username: userData.code,
             });
@@ -363,7 +362,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 name="partner.mobilePhone"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <ClientInputTell
+                  <UserTelInput
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                     {...field}
