@@ -7,7 +7,7 @@ import { Search } from "@mui/icons-material";
 
 import Input from "../../ui/Input";
 import ChatListItem from "./ChatListItem";
-import { IContact } from "@/components/chat/ChatContent";
+import { IContact } from "@/models/chat";
 
 interface IChatListBoardProps {
   handleContactClick: (chatId: number) => void;

@@ -22,10 +22,10 @@ import ContentPlusIcon from "@/public/icons/content-plus.svg";
 import CloudMessageIcon from "@/public/icons/cloud-message.svg";
 import useFetch from "@/hooks/useFetch";
 import { useEffect, useState } from "react";
-import { IContact } from "@/components/chat/ChatContent";
 import { useProfileStore } from "@/stores/profile";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IUserData } from "@/models/user";
+import { IContact } from "@/models/chat";
 
 interface INotariesInfoContentProps {}
 

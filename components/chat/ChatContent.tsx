@@ -9,19 +9,7 @@ import ChatListBoard from "./contact-list/ChatListBoard";
 import ChatMessageBoard from "./message/ChatMessageBoard";
 
 import useFetch from "@/hooks/useFetch";
-
-export interface IContact {
-  appName: string;
-  chatCreator: string;
-  chatId: number;
-  chatRoomLink: string;
-  guestEmail: null;
-  guestId: number;
-  notary: {
-    id: number;
-  };
-  userToken: string;
-}
+import { IContact } from "@/models/chat";
 
 interface IContactData {
   status: number;
