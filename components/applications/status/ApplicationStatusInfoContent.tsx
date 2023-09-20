@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
@@ -10,6 +10,8 @@ import Button from "@/components/ui/Button";
 import ApplicationStatusRead from "./ApplicationStatusRead";
 import ApplicationStatusView from "./ApplicationStatusView";
 import useFetch from "@/hooks/useFetch";
+import { useProfileStore } from "@/stores/profile";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface IApplicationStatusInfoContentProps {
   id?: number;
@@ -19,7 +21,40 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
   const { id } = props;
   const t = useTranslations();
 
+  const [accessToView, setAccessToView] = useState(false);
+
   const { data } = useFetch(id != null ? `/api/applications/${id}` : "", "POST");
+
+  const profile = useProfileStore((state) => state);
+
+  const extractIDs = (...data: any) => {
+    const allIDs: number[] = [];
+
+    data.forEach((data: any) => {
+      if (Array.isArray(data)) {
+        allIDs.push(...data.map((item) => item.id));
+      } else if (typeof data === "object" && data?.id != null) {
+        allIDs.push(data.id);
+      }
+    });
+
+    return allIDs;
+  };
+
+  useEffectOnce(() => {
+    if (data?.data[0] != null) {
+      const applicationData = data.data[0];
+      const { requester, members, createdBy } = applicationData;
+
+      const currentUserID = profile.getUserData()?.id;
+      const membersID = extractIDs(requester, members, createdBy);
+      const isUserInMembers = membersID.includes(currentUserID as number);
+
+      if (isUserInMembers) {
+        setAccessToView(true);
+      }
+    }
+  }, [data]);
 
   return (
     <Box
@@ -61,7 +96,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
         </Link>
       </Box>
       <ApplicationStatusRead data={data?.data[0]} />
-      <ApplicationStatusView />
+      {accessToView && <ApplicationStatusView data={data?.data[0]} />}
     </Box>
   );
 };
