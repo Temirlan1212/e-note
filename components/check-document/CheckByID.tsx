@@ -10,6 +10,9 @@ import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { useRouter } from "next/router";
 import Hint from "@/components/ui/Hint";
 import { IApplication } from "@/models/application";
+import { Controller, useForm } from "react-hook-form";
+import { checkDocumentById, ICheckDocumentById } from "@/validator-schemas/check-document-byId";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 interface ICheckedDocument extends FetchResponseBody {
   data: IApplication[];
@@ -17,28 +20,21 @@ interface ICheckedDocument extends FetchResponseBody {
 
 export default function CheckByID() {
   const router = useRouter();
-  const [keyword, setKeyword] = useState("");
   const [alertOpen, setAlertOpen] = useState(false);
   const t = useTranslations();
 
+  const { handleSubmit, formState, control } = useForm<ICheckDocumentById>({
+    resolver: yupResolver<ICheckDocumentById>(checkDocumentById),
+  });
   const { data, update, error } = useFetch<ICheckedDocument>("", "POST");
 
-  const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setKeyword(event.target.value);
-  };
-
-  const handleKeywordSearch: React.MouseEventHandler<HTMLDivElement> &
-    ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void) = (event) => {
-    event.preventDefault();
-    if (keyword.trim() === "") {
-      return;
-    }
+  const onSubmit = (data: { keyword: string }) => {
     update("/api/check-document", {
       criteria: [
         {
           fieldName: "uniqueQrCode",
           operator: "=",
-          value: keyword,
+          value: data?.keyword,
         },
       ],
     });
@@ -65,7 +61,25 @@ export default function CheckByID() {
           {t("Enter a unique number (ID) of the document to search:")}
         </InputLabel>
 
-        <SearchBar onChange={handleKeywordChange} onClick={handleKeywordSearch} value={keyword} name="search-field" />
+        <Box component="form" sx={{ display: "flex" }} onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="keyword"
+            control={control}
+            render={({ field }) => (
+              <Input
+                id="search-field"
+                placeholder={t("Search")}
+                fullWidth
+                {...field}
+                error={!!formState.errors.keyword?.message}
+                helperText={t(formState.errors.keyword?.message)}
+              />
+            )}
+          />
+          <Button sx={{ width: "80px", height: "43px" }} type="submit" color="success">
+            <SearchOutlined />
+          </Button>
+        </Box>
       </Box>
 
       <Hint
