@@ -134,7 +134,7 @@ export const userRoutes: IRoute[] = [
       },
       {
         title: "My templates",
-        link: "my-templates",
+        link: "/my-templates",
         type: "menu",
         icon: "CollectionsBookmark",
       },
