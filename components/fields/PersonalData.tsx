@@ -11,6 +11,7 @@ import Autocomplete from "@/components/ui/Autocomplete";
 import Button from "@/components/ui/Button";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import { MouseEventHandler } from "react";
+import { useRouter } from "next/router";
 
 export interface IPersonalDataProps {
   form: UseFormReturn<any>;
@@ -73,6 +74,8 @@ export interface IPersonalDataProps {
 
 export default function PersonalData({ form, names, defaultValues, fields, onPinCheck }: IPersonalDataProps) {
   const t = useTranslations();
+
+  const { locale } = useRouter();
 
   const { trigger, control, watch, resetField } = form;
 
@@ -251,7 +254,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Citizenship")}</InputLabel>
                     <Autocomplete
-                      labelField="name"
+                      labelField={locale === "ru" || locale === "kg" ? "$t:name" : "name"}
                       type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       options={
