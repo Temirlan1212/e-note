@@ -33,10 +33,8 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
     data.forEach((data: any) => {
       if (Array.isArray(data)) {
         allIDs.push(...data.map((item) => item.id));
-      } else if (typeof data === "object" && data !== null) {
-        if (data.id !== undefined) {
-          allIDs.push(data.id);
-        }
+      } else if (typeof data === "object" && data?.id != null) {
+        allIDs.push(data.id);
       }
     });
 
@@ -44,7 +42,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
   };
 
   useEffectOnce(() => {
-    if (data?.data[0] != null && data?.data[0] != undefined) {
+    if (data?.data[0] != null) {
       const applicationData = data.data[0];
       const { requester, members, createdBy } = applicationData;
 
