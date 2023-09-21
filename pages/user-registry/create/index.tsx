@@ -39,6 +39,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       messages: {
         ...(await import(`locales/${context.locale}/common.json`)).default,
         ...(await import(`locales/${context.locale}/user-registry.json`)).default,
+        ...(await import(`locales/${context.locale}/validator.json`)).default,
       },
     },
   };

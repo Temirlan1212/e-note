@@ -46,5 +46,9 @@
   "PhoneNumber": "Телефон номуру",
   "EnterPhoneNumber": "Телефон номери",
   "Check": "Текшерүү",
-  "Register": "Каттоо"
+  "Register": "Каттоо",
+  "User's role": "Колдонуучунун ролу",
+  "Sorry, such pin not found": "Кечиресиз, мындай ИНН табылган жок",
+  "Registration successfully completed": "Каттоо ийгиликтүү аяктады",
+  "Login and password have been sent to the specified E-mail": "Логин жана сырсөз көрсөтүлгөн электрондук почтага (E-mail) жөнөтүлдү"
 }

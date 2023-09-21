@@ -145,6 +145,12 @@ export const useRouteStore = create<IRouteState>()((set, get) => ({
         },
       ],
     },
+    {
+      title: "User Registry",
+      link: "/user-registry",
+      type: "menu",
+      icon: "PersonAddAlt1",
+    },
   ],
   getRoutes: (routeList, type, role, rootOnly = false) => {
     if (type == null) {

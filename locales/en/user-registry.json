@@ -46,5 +46,9 @@
   "PhoneNumber": "Phone Number",
   "EnterPhoneNumber": "Enter your phone number",
   "Check": "Check",
-  "Register": "Register"
+  "Register": "Register",
+  "User's role": "User's role",
+  "Sorry, such pin not found": "Sorry, such pin not found",
+  "Registration successfully completed": "Registration successfully completed",
+  "Login and password have been sent to the specified E-mail": "Login and password have been sent to the specified E-mail"
 }

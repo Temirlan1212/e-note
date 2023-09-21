@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { ChangeEvent, FC, useEffect, useState } from "react";
 
 import { useTranslations } from "next-intl";
 
@@ -13,40 +13,75 @@ import DatePicker from "../ui/DatePicker";
 
 import ExcelIcon from "@/public/icons/excel.svg";
 import EraserIcon from "@/public/icons/eraser.svg";
+import useFetch from "@/hooks/useFetch";
+import { Controller } from "react-hook-form";
 
-interface IUserRegistryFiltrationProps {}
+interface IUserRegistryFiltrationProps {
+  searchQuery: string;
+  setSearchQuery: (val: string) => void;
+  onSearchSubmit: () => void;
+  loading?: boolean;
+  handleSubmit: any;
+  control: any;
+  onFilterClear: any;
+  onFilterSubmit: (val: any) => void;
+}
 
-const notariesSortOptionsData = [
-  { value: 10, label: "Все" },
-  { value: 20, label: "В алфавитном порядке" },
-  { value: 30, label: "В алфавитном порядке" },
-];
+const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = ({
+  searchQuery,
+  setSearchQuery,
+  onSearchSubmit,
+  loading,
+  handleSubmit,
+  control,
+  onFilterClear,
+  onFilterSubmit,
+}) => {
+  const [fileName, setFileName] = useState<string | null>("");
+  const [excelReqBody, setExcelReqBody] = useState({
+    roleValue: "OMSU official",
+    filterValues: {},
+  });
 
-const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = (props) => {
-  const [fromDate, setFromDate] = useState<string | null>(null);
-  const [toDate, setToDate] = useState<string | null>(null);
+  const { data: rolesData } = useFetch("/api/user-registry/dictionaries/roles", "POST");
+  const { data: createdByData } = useFetch("/api/user-registry/dictionaries/createdBy", "POST");
+  const { update: downloadExcel } = useFetch("", "GET", {
+    returnResponse: true,
+  });
+  const { data: exportExcel } = useFetch("/api/officials/export", "POST", {
+    body: excelReqBody,
+  });
+
+  console.log(createdByData);
 
   const t = useTranslations();
 
-  const handleFromDateChange = (from: string) => {
-    const parsedDate = parse(from, "yyyy-MM-dd", new Date());
-
-    if (!isNaN(parsedDate.getTime())) {
-      setFromDate(format(parsedDate, "yyyy-MM-dd"));
-    } else {
-      setFromDate(null);
-    }
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
-  const handleToDateChange = (to: string) => {
-    const parsedDate = parse(to, "yyyy-MM-dd", new Date());
+  const download = async () => {
+    const response = await downloadExcel(`/api/officials/download/${fileName}`);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
 
-    if (!isNaN(parsedDate.getTime())) {
-      setToDate(format(parsedDate, "yyyy-MM-dd"));
-    } else {
-      setToDate(null);
-    }
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = fileName || "exported-data.csv";
+    document.body.appendChild(a);
+    a.click();
   };
+
+  useEffect(() => {
+    if (exportExcel?.data) {
+      setFileName(exportExcel.data.fileName);
+    }
+  }, [exportExcel?.data]);
+
+  const filteredData = createdByData?.data.filter(
+    (item: { "emailAddress.address": string }) => !!item?.["emailAddress.address"] && item?.["emailAddress.address"]
+  );
 
   return (
     <Box
@@ -68,6 +103,10 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = (props) => {
         }}
       >
         <SearchBar
+          value={searchQuery}
+          onChange={handleSearchChange}
+          onClick={onSearchSubmit}
+          loading={loading}
           boxSx={{
             width: {
               xs: "100%",
@@ -78,9 +117,10 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = (props) => {
         />
         <Button
           sx={{
-            ":hover": {},
+            ":hover": {
+              color: "#fff",
+            },
             display: {
-              xs: "none",
               md: "flex",
             },
             width: {
@@ -92,154 +132,197 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = (props) => {
           color="success"
           variant="outlined"
           endIcon={<ExcelIcon />}
+          onClick={download}
         >
           {t("Export to Excel")}
         </Button>
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          gap: "30px",
-          alignItems: "center",
-          flexDirection: {
-            xs: "column",
-            md: "row",
-          },
-        }}
-      >
+      <Box component="form" onSubmit={handleSubmit(onFilterSubmit)}>
         <Box
           sx={{
             display: "flex",
-            gap: "10px",
-            flexDirection: "column",
-            width: "100%",
+            gap: "30px",
+            alignItems: "center",
+            flexDirection: {
+              xs: "column",
+              md: "row",
+            },
           }}
         >
-          <Typography
-            sx={{
-              fontSize: "14px",
-              fontWeight: 500,
-            }}
-          >
-            {t("Registration period")}
-          </Typography>
           <Box
             sx={{
               display: "flex",
               gap: "10px",
-              alignItems: "center",
+              flexDirection: "column",
+              width: "100%",
             }}
           >
-            <DatePicker
+            <Typography
               sx={{
-                width: {
-                  xs: "100%",
-                  md: "150px",
-                },
+                fontSize: "14px",
+                fontWeight: 500,
               }}
-              onChange={handleFromDateChange}
-              placeholder="__/__/____"
+            >
+              {t("Registration period")}
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                gap: "10px",
+                alignItems: "center",
+              }}
+            >
+              <Controller
+                name="createdOn"
+                control={control}
+                defaultValue={null}
+                render={({ field }) => (
+                  <>
+                    <DatePicker
+                      sx={{
+                        width: {
+                          xs: "100%",
+                          md: "150px",
+                        },
+                      }}
+                      onChange={(date: Date) => field.onChange({ ...field.value, value: format(date, "yyyy-MM-dd") })}
+                      placeholder="__/__/____"
+                      value={field.value}
+                    />
+                    <Typography>{t("FromTo")}</Typography>
+                    <DatePicker
+                      sx={{
+                        width: {
+                          xs: "100%",
+                          md: "150px",
+                        },
+                      }}
+                      onChange={(date: Date) => field.onChange({ ...field.value, value2: format(date, "yyyy-MM-dd") })}
+                      placeholder="__/__/____"
+                      value={field.value}
+                    />
+                  </>
+                )}
+              />
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "10px",
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "14px",
+                fontWeight: 500,
+              }}
+            >
+              {t("User role")}
+            </Typography>
+            <Controller
+              name="role"
+              control={control}
+              defaultValue={null}
+              render={({ field }) => (
+                <Select
+                  data={rolesData?.data}
+                  value={field.value != null ? field.value : ""}
+                  valueField="name"
+                  labelField="name"
+                  startAdornment={<Search />}
+                  onChange={(...event: any[]) => {
+                    field.onChange(...event);
+                  }}
+                  selectType="primary"
+                />
+              )}
             />
-            <Typography>{t("FromTo")}</Typography>
-            <DatePicker
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              gap: "10px",
+              flexDirection: "column",
+              width: "100%",
+            }}
+          >
+            <Typography
               sx={{
-                width: {
-                  xs: "100%",
-                  md: "150px",
-                },
+                fontSize: "14px",
+                fontWeight: 500,
               }}
-              onChange={handleToDateChange}
-              placeholder="__/__/____"
+            >
+              {t("Registered by whom")}
+            </Typography>
+            <Controller
+              name="createdBy"
+              control={control}
+              defaultValue={null}
+              render={({ field }) => (
+                <Select
+                  data={filteredData}
+                  value={field.value ? field.value : null}
+                  labelField="emailAddress.address"
+                  valueField="emailAddress.address"
+                  startAdornment={<Search />}
+                  selectType="primary"
+                  onChange={(...event: any[]) => {
+                    field.onChange(...event);
+                  }}
+                />
+              )}
             />
           </Box>
         </Box>
         <Box
           sx={{
             display: "flex",
-            gap: "10px",
-            flexDirection: "column",
-            width: "100%",
+            gap: "30px",
+            mt: "40px",
+            flexDirection: {
+              xs: "column",
+              md: "row",
+            },
           }}
         >
-          <Typography
+          <Button
+            startIcon={<FilterAltOffOutlined />}
+            color="success"
+            buttonType="primary"
+            type="submit"
             sx={{
-              fontSize: "14px",
-              fontWeight: 500,
+              width: {
+                sx: "100%",
+                md: "320px",
+              },
+              padding: "10px 0",
             }}
+            loading={loading}
           >
-            {t("User role")}
-          </Typography>
-          <Select
-            data={notariesSortOptionsData}
-            startAdornment={<Search />}
-            defaultValue={notariesSortOptionsData[0].value}
-            selectType="primary"
-          />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            gap: "10px",
-            flexDirection: "column",
-            width: "100%",
-          }}
-        >
-          <Typography
+            {t("Apply a filter")}
+          </Button>
+          <Button
+            startIcon={<EraserIcon />}
+            buttonType="secondary"
             sx={{
-              fontSize: "14px",
-              fontWeight: 500,
+              width: {
+                sx: "100%",
+                md: "320px",
+              },
+              padding: "10px 0",
+              ":hover": {
+                backgroundColor: "#3F5984",
+              },
             }}
+            onClick={onFilterClear}
+            loading={loading}
           >
-            {t("Registered by whom")}
-          </Typography>
-          <Select
-            data={notariesSortOptionsData}
-            startAdornment={<Search />}
-            defaultValue={notariesSortOptionsData[0].value}
-            selectType="primary"
-          />
+            {t("Clear the filter")}
+          </Button>
         </Box>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          gap: "30px",
-          flexDirection: {
-            xs: "column",
-            md: "row",
-          },
-        }}
-      >
-        <Button
-          startIcon={<FilterAltOffOutlined />}
-          color="success"
-          buttonType="primary"
-          sx={{
-            width: {
-              sx: "100%",
-              md: "320px",
-            },
-            padding: "10px 0",
-          }}
-        >
-          {t("Apply a filter")}
-        </Button>
-        <Button
-          startIcon={<EraserIcon />}
-          buttonType="secondary"
-          sx={{
-            width: {
-              sx: "100%",
-              md: "320px",
-            },
-            padding: "10px 0",
-            ":hover": {
-              backgroundColor: "#3F5984",
-            },
-          }}
-        >
-          {t("Clear the filter")}
-        </Button>
       </Box>
     </Box>
   );
