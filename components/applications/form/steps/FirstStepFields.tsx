@@ -26,6 +26,7 @@ export interface IStepFieldsProps {
 
 export default function FirstStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const notaryData = useNotariesStore((state) => state.notaryData);
+  const setNotaryData = useNotariesStore((state) => state.setNotaryData);
   const t = useTranslations();
   const locale = useLocale();
 
@@ -105,7 +106,10 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   });
 
   useEffectOnce(() => {
-    if (notaryData != null) setValue("company", notaryData);
+    if (notaryData != null) {
+      setValue("company", notaryData);
+      setNotaryData(null);
+    }
   }, [notaryData]);
 
   return (
