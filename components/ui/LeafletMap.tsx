@@ -18,7 +18,7 @@ const LeafletMap: FC<ILeafletMapProps> = ({ children, ...options }) => {
   const { markerData } = options;
 
   const customIcon = new Icon({
-    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-image.png",
+    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
     shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
   });
 
@@ -37,6 +37,9 @@ const LeafletMap: FC<ILeafletMapProps> = ({ children, ...options }) => {
             <Popup>
               <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={600}>
                 {data.name}
+              </Typography>
+              <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={500}>
+                {data?.address?.fullName}
               </Typography>
             </Popup>
           </Marker>
