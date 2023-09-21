@@ -8,7 +8,6 @@ import PrivateLayout from "@/layouts/Private";
 import { ThemeProvider } from "@mui/material";
 import theme from "@/themes/default";
 import { useProfileStore } from "@/stores/profile";
-
 import { IUser } from "@/models/user";
 import NavigationLoading from "@/components/ui/NavigationLoading";
 import useNotificationStore from "@/stores/notification";
