@@ -1,6 +1,3 @@
-import { guestRoutes } from "./guest";
-import { userRoutes } from "./user";
-
 export interface IChildRoute {
   title: string;
   link: string;
