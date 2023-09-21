@@ -17,12 +17,16 @@ const Recaptcha: React.FC<IRecaptchaProps> = ({ onRecaptchaSuccess }) => {
   };
 
   return (
-    <ReCAPTCHA
-      sitekey={process.env.RECAPTCHA_PUBLIC_KEY as string}
-      ref={recaptchaRef}
-      hl={locale === "kg" ? "ru" : locale}
-      onChange={handleRecaptchaChange}
-    />
+    <>
+      {process.env.RECAPTCHA_PUBLIC_KEY && (
+        <ReCAPTCHA
+          sitekey={process.env.RECAPTCHA_PUBLIC_KEY as string}
+          ref={recaptchaRef}
+          hl={locale === "kg" ? "ru" : locale}
+          onChange={handleRecaptchaChange}
+        />
+      )}
+    </>
   );
 };
 
