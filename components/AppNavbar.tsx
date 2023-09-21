@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { IRoute } from "@/routes/data";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { useTheme } from "@mui/material/styles";
@@ -29,7 +30,6 @@ import DynamicIcon from "./DynamicIcon";
 import ProfileDropdownButton from "./ProfileDropdownButton";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PopupNotifications from "./PopupNotifications";
-import { IRoute } from "@/routes/data";
 
 const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) => {
   const router = useRouter();
