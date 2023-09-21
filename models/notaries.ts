@@ -10,6 +10,7 @@ export interface INotary {
   "address.district": INotaryGeo;
   "address.city": INotaryGeo;
   "address.region": INotaryGeo;
+  "address.fullName": string;
   id: number;
   "partner.simpleFullName": string;
   name: string;
@@ -90,8 +91,8 @@ export interface INotaryInfoData {
   $processInstanceId: any;
   id: number;
   typeOfNotary: string;
-  longitude: number;
-  latitude: number;
+  longitude: string;
+  latitude: string;
 }
 
 export interface ApiNotaryResponse {
