@@ -1,15 +1,13 @@
 import { FC, ReactNode } from "react";
 import type { MapOptions } from "leaflet";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import L from "leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
+import { Icon } from "leaflet";
 
 import "leaflet/dist/leaflet.css";
 import { Typography } from "@mui/material";
 
-L.Icon.Default.imagePath = "https://unpkg.com/leaflet@1.5.0/dist/images/";
-
 interface ILeafletMapProps extends MapOptions {
-  center: [number, number];
   markerData: any;
   children?: ReactNode;
   zoom: number;
@@ -18,6 +16,11 @@ interface ILeafletMapProps extends MapOptions {
 
 const LeafletMap: FC<ILeafletMapProps> = ({ children, ...options }) => {
   const { markerData } = options;
+
+  const customIcon = new Icon({
+    iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-image.png",
+    shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  });
 
   let markers = null;
 
@@ -30,7 +33,7 @@ const LeafletMap: FC<ILeafletMapProps> = ({ children, ...options }) => {
         const position: [number, number] = [latitude, longitude];
 
         return (
-          <Marker key={index} position={position}>
+          <Marker key={index} position={position} icon={customIcon}>
             <Popup>
               <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={600}>
                 {data.name}
@@ -50,12 +53,12 @@ const LeafletMap: FC<ILeafletMapProps> = ({ children, ...options }) => {
       const position: [number, number] = [latitude, longitude];
 
       markers = (
-        <Marker position={position}>
+        <Marker position={position} icon={customIcon}>
           <Popup>
             <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={600}>
               {markerData?.name}
             </Typography>
-            <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={600}>
+            <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={500}>
               {markerData?.address?.fullName}
             </Typography>
           </Popup>
@@ -65,12 +68,13 @@ const LeafletMap: FC<ILeafletMapProps> = ({ children, ...options }) => {
   }
 
   return (
-    <MapContainer maxZoom={18} {...options} center={options?.center}>
+    <MapContainer maxZoom={18} center={[42.8777895, 74.6066926]} {...options}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
-      {markers}
+      <MarkerClusterGroup>{markers}</MarkerClusterGroup>
+      {children}
     </MapContainer>
   );
 };

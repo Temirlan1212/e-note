@@ -49,7 +49,6 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
           <NotariesInfoContent />
           <LeafletMap
             zoom={12}
-            center={[42.8777895, 74.6066926]}
             markerData={data?.data[0]}
             style={{
               height: "600px",

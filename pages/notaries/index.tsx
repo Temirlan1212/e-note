@@ -42,7 +42,6 @@ export default function Notaries() {
           </Typography>
           <LeafletMap
             zoom={12}
-            center={[42.8777895, 74.6066926]}
             markerData={notaryData?.data}
             style={{
               height: "600px",
