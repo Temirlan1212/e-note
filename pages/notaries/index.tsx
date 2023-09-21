@@ -8,8 +8,7 @@ import { GetStaticPropsContext } from "next";
 import NotariesFiltration from "@/components/notaries/NotariesFiltration";
 import NotariesList from "@/components/notaries/NotariesList";
 import NotariesContent from "@/components/notaries/NotariesContent";
-
-const center: [number, number] = [42.882004, 74.582748];
+import useFetch from "@/hooks/useFetch";
 
 export default function Notaries() {
   const t = useTranslations();
@@ -20,6 +19,8 @@ export default function Notaries() {
     },
     { loading: () => <p>Loading...</p>, ssr: false }
   );
+
+  const { data: notaryData } = useFetch("/api/notaries", "POST");
 
   return (
     <>
@@ -40,8 +41,9 @@ export default function Notaries() {
             {t("Search for a notary on the map")}
           </Typography>
           <LeafletMap
-            center={center}
             zoom={12}
+            center={[42.8777895, 74.6066926]}
+            markerData={notaryData?.data}
             style={{
               height: "600px",
             }}

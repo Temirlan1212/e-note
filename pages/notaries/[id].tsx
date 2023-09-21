@@ -7,13 +7,15 @@ import { Container, Box } from "@mui/material";
 import { useRouter } from "next/router";
 
 import NotariesInfoContent from "@/components/notaries/NotariesInfoContent";
+import { ApiNotaryResponse } from "@/models/notaries";
+import useFetch from "@/hooks/useFetch";
 
 interface NotariesDetailPageProps {}
 
-const center: [number, number] = [42.882004, 74.582748];
-
 const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
   const t = useTranslations();
+
+  const router = useRouter();
 
   const LeafletMap = dynamic(
     () => {
@@ -21,6 +23,8 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
     },
     { loading: () => <p>Loading...</p>, ssr: false }
   );
+
+  const { data } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
 
   return (
     <>
@@ -44,8 +48,9 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
         >
           <NotariesInfoContent />
           <LeafletMap
-            center={center}
             zoom={12}
+            center={[42.8777895, 74.6066926]}
+            markerData={data?.data[0]}
             style={{
               height: "600px",
             }}
