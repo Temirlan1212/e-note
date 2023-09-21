@@ -6,11 +6,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const token = req.body["token"];
-  const requestType = req.body["requestType"];
-
-  if (requestType === "getPublicKey") {
-    return res.status(200).json(process.env.RECAPTCHA_PUBLIC_KEY);
-  }
 
   const response = await fetch(
     `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
