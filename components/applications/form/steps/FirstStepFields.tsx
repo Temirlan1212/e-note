@@ -16,6 +16,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import useNotariesStore from "@/stores/notaries";
+import { useProfileStore } from "@/stores/profile";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -25,8 +26,8 @@ export interface IStepFieldsProps {
 }
 
 export default function FirstStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
-  const notaryData = useNotariesStore((state) => state.notaryData);
-  const setNotaryData = useNotariesStore((state) => state.setNotaryData);
+  const [notaryData, setNotaryData] = useNotariesStore((state) => [state.notaryData, state.setNotaryData]);
+  const profile = useProfileStore.getState();
   const t = useTranslations();
   const locale = useLocale();
 
@@ -106,7 +107,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   });
 
   useEffectOnce(() => {
-    if (notaryData != null) {
+    if (notaryData != null && profile.user != null) {
       setValue("company", notaryData);
       setNotaryData(null);
     }
