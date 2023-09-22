@@ -103,8 +103,8 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
     body: notaryDistrictsBody,
   });
 
-  const { data: workDaysAreaData } = useFetch("/api/notaries/dictionaries/work-days", "POST");
-  const { data: notaryTypesData } = useFetch("/api/notaries/dictionaries/notary-types", "POST");
+  const { data: workDaysAreaData } = useFetch("/api/notaries/dictionaries/work-days", "GET");
+  const { data: notaryTypesData } = useFetch("/api/notaries/dictionaries/notary-types", "GET");
 
   const optionSelectData: any = [
     {
@@ -127,7 +127,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
     },
     {
       id: 3,
-      label: t("City"),
+      label: t("City") + ", " + t("Village"),
       name: "city",
       fieldName: "address.city.id",
       operator: "=",
@@ -169,8 +169,10 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
     setIsVisible(!isVisible);
   };
 
-  const notariesSortOptionsData = [{ value: "partner.simpleFullName", label: "В алфавитном порядке" }];
-
+  const notariesSortOptionsData = [
+    { value: "partner.rating", label: t("By ratings") },
+    { value: "partner.name", label: t("Alphabetically") },
+  ];
   const onChangeSelect = (optionId: string | null, optionName: string) => {
     if (optionName === "region") {
       setOptionData((prevData: IOptionData) => ({
@@ -341,7 +343,13 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
                       placeholder="select"
                       selectType="success"
                       labelField={
-                        el.type === "second" ? (locale === "ru" || locale === "kg" ? "title_ru" : "title") : "name"
+                        el.type === "second"
+                          ? locale === "ru" || locale === "kg"
+                            ? "title_ru"
+                            : "title"
+                          : locale === "ru" || locale === "kg"
+                          ? "$t:name"
+                          : "name"
                       }
                       valueField={el.type === "second" ? "value" : "id"}
                       data={el.options}

@@ -4,18 +4,21 @@ import { Avatar, Box, Card, CardContent, CardHeader, Typography } from "@mui/mat
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 
 import Rating from "../ui/Rating";
+import { useRouter } from "next/router";
+import { INotaryGeo } from "@/models/notaries";
 
 interface INotaryProps {
   id?: number;
   fullName?: string;
   image?: string;
   rating?: number;
-  region?: string;
-  area?: string;
+  region?: INotaryGeo;
+  area?: INotaryGeo;
   location?: string;
 }
 
 const NotariesCard: FC<INotaryProps> = ({ fullName, image, rating, region, area, location }) => {
+  const { locale } = useRouter();
   return (
     <Card
       sx={{
@@ -126,8 +129,10 @@ const NotariesCard: FC<INotaryProps> = ({ fullName, image, rating, region, area,
             marginTop: "20px",
           }}
         >
-          <Typography>{region},</Typography>
-          <Typography>{area}.</Typography>
+          <Typography>
+            {region ? (locale === "ru" || locale === "kg" ? region["$t:name"] : region.name) : ""},
+          </Typography>
+          <Typography>{area ? (locale === "ru" || locale === "kg" ? area["$t:name"] : area.name) : ""}.</Typography>
           <Typography>{location}</Typography>
         </Box>
       </CardContent>

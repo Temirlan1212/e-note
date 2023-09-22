@@ -20,11 +20,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         }
       : {};
 
-  const response = await fetch(process.env.BACKEND_API_URL + `/ws/rest/com.axelor.apps.base.db.City/search`, {
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + `/search/axelor-erp/com.axelor.apps.base.db.City`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
       fields: ["name"],

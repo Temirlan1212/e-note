@@ -22,7 +22,11 @@ import ContentPlusIcon from "@/public/icons/content-plus.svg";
 import CloudMessageIcon from "@/public/icons/cloud-message.svg";
 import useFetch from "@/hooks/useFetch";
 import { useEffect, useState } from "react";
-import { IContact } from "@/components/chat/ChatContent";
+import { useProfileStore } from "@/stores/profile";
+import useEffectOnce from "@/hooks/useEffectOnce";
+import { IUserData } from "@/models/user";
+import { IContact } from "@/models/chat";
+import useNotariesStore from "@/stores/notaries";
 
 interface INotariesInfoContentProps {}
 
@@ -34,23 +38,28 @@ const formatDate = (inputDate: string | number | Date) => {
 };
 
 const NotariesInfoContent = (props: INotariesInfoContentProps) => {
+  const [userData, setUserData] = useState<IUserData | null>(null);
   const t = useTranslations();
   const router = useRouter();
   const { locale } = useRouter();
 
-  const [chatLink, setChatLink] = useState<string>("");
-
+  const profile = useProfileStore((state) => state);
+  const setNotaryData = useNotariesStore((state) => state.setNotaryData);
   const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
 
-  const { data: contact } = useFetch<IContact>("/api/chat/create/" + router.query.id, "POST");
+  const { update: contactUpdate } = useFetch<IContact>("", "POST");
 
   const notaryData = data?.data || [];
 
   const normalizePhoneNumber = (phoneNumber: string) => phoneNumber?.replace(/\D/g, "");
 
-  useEffect(() => {
-    setChatLink(contact?.data?.chatRoomLink ? contact.data.chatRoomLink : "/chat");
-  }, [contact]);
+  const handleOpenChat = async () => {
+    const res = await contactUpdate("/api/chat/create/" + router.query.id);
+    if (res?.data?.chatRoomLink) {
+      const href = `${res.data.chatRoomLink}?AuthorizationBasic=${res.data.userToken.replace(/Basic /, "")}` as string;
+      window.open(href, "_blank");
+    }
+  };
 
   const infoArray = [
     {
@@ -87,7 +96,8 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: [],
     },
     {
-      text: notaryData[0]?.notaryDistrict.name + ", " + notaryData[0]?.address.fullName,
+      text: `${notaryData[0]?.notaryDistrict[locale === "ru" || locale === "kg" ? "$t:name" : "name"]}, ${notaryData[0]
+        ?.address.fullName}`,
       icon: <LocationOnOutlinedIcon />,
       type: "text",
       array: [],
@@ -99,6 +109,15 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: notaryData[0]?.workingDay,
     },
   ];
+
+  useEffectOnce(async () => {
+    setUserData(profile.getUserData());
+  }, [profile]);
+
+  const handleCreateAppClick = () => {
+    notaryData?.[0] != null && setNotaryData(notaryData[0]);
+    router.push("/applications/create");
+  };
 
   const filteredInfoArray = infoArray.filter((item) => item.text);
 
@@ -250,22 +269,22 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
           marginTop: { sm: "30px", md: "unset", lg: "unset" },
         }}
       >
-        <Link href="/applications/create">
-          <Button
-            startIcon={<ContentPlusIcon />}
-            color="success"
-            sx={{
-              width: {
-                sx: "100%",
-                md: "320px",
-              },
-              padding: "10px 0",
-            }}
-          >
-            {t("Create application")}
-          </Button>
-        </Link>
-        <Link href={chatLink} rel="noopener noreferrer" target="_blank">
+        <Button
+          onClick={handleCreateAppClick}
+          startIcon={<ContentPlusIcon />}
+          color="success"
+          sx={{
+            width: {
+              sx: "100%",
+              md: "320px",
+            },
+            padding: "10px 0",
+          }}
+        >
+          {t("Create application")}
+        </Button>
+
+        {userData?.group?.id === 4 ? null : (
           <Button
             startIcon={<CloudMessageIcon />}
             buttonType="secondary"
@@ -279,10 +298,11 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                 backgroundColor: "#3F5984",
               },
             }}
+            onClick={handleOpenChat}
           >
             {t("Write a message")}
           </Button>
-        </Link>
+        )}
       </Box>
     </Box>
   );

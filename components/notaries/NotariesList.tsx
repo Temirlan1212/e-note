@@ -49,8 +49,8 @@ const NotariesList: FC<INotaryListProps> = ({ loading, data, appQueryParams, han
                     fullName={notary.name}
                     image={notary["logo.fileName"]}
                     rating={notary["partner.rating"]}
-                    region={notary["address.region"]?.name}
-                    area={notary["address.district"]?.name}
+                    region={notary["address.region"]}
+                    area={notary["address.district"]}
                     location={notary["address.city"]?.fullName}
                   />
                 </Grid>
