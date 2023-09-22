@@ -127,7 +127,7 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
     },
     {
       id: 3,
-      label: t("City"),
+      label: t("City") + ", " + t("Village"),
       name: "city",
       fieldName: "address.city.id",
       operator: "=",
@@ -169,8 +169,10 @@ const NotariesFiltration: FC<INotariesFiltrationProps> = ({
     setIsVisible(!isVisible);
   };
 
-  const notariesSortOptionsData = [{ value: "partner.simpleFullName", label: "В алфавитном порядке" }];
-
+  const notariesSortOptionsData = [
+    { value: "partner.rating", label: t("By ratings") },
+    { value: "partner.name", label: t("Alphabetically") },
+  ];
   const onChangeSelect = (optionId: string | null, optionName: string) => {
     if (optionName === "region") {
       setOptionData((prevData: IOptionData) => ({
