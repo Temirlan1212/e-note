@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IRoute } from "@/stores/route";
+import { IRoute } from "@/routes/data";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { useTheme } from "@mui/material/styles";
