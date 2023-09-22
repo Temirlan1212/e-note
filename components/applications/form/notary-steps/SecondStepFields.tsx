@@ -64,7 +64,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   }, [productId, profile]);
 
   const triggerFields = async () => {
-    return await trigger(["product"]);
+    return await trigger(["product.id"]);
   };
 
   const handlePrevClick = () => {
