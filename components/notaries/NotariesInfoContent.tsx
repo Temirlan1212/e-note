@@ -54,7 +54,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const handleOpenChat = async () => {
     const res = await contactUpdate("/api/chat/create/" + router.query.id);
     if (res?.data?.chatRoomLink) {
-      const href = res?.data?.chatRoomLink as string;
+      const href = `${res.data.chatRoomLink}?AuthorizationBasic=${res.data.userToken.replace(/Basic /, "")}` as string;
       window.open(href, "_blank");
     }
   };

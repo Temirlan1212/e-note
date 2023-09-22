@@ -10,18 +10,23 @@ import ChatMessageBoard from "./message/ChatMessageBoard";
 
 import useFetch from "@/hooks/useFetch";
 import { IContact } from "@/models/chat";
+import { IUserData } from "@/models/user";
+import { useProfileStore } from "@/stores/profile";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
-interface IContactData {
+export interface IContactData {
   status: number;
   data: IContact[];
 }
 
 const ChatContent: FC = () => {
+  const [userData, setUserData] = useState<IUserData | null>(null);
   const [activeContactId, setActiveContactId] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
   const t = useTranslations();
 
+  const profile = useProfileStore((state) => state);
   const { data } = useFetch<IContactData>("/api/chat", "GET");
 
   const handleContactClick = (contactId: number) => {
@@ -29,7 +34,7 @@ const ChatContent: FC = () => {
   };
 
   const filteredUsers = (data?.data ?? []).filter(
-    (user) => user?.appName?.toLowerCase().includes(searchQuery.toLowerCase())
+    (user) => user?.chatCreator?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const activeContact = filteredUsers?.find((user) => user.chatId === activeContactId);
@@ -39,6 +44,10 @@ const ChatContent: FC = () => {
   };
 
   const contact = (data?.data ?? []).find((user) => user.chatId === activeContactId);
+
+  useEffectOnce(async () => {
+    setUserData(profile.getUserData());
+  }, [profile]);
 
   return (
     <>
@@ -72,6 +81,7 @@ const ChatContent: FC = () => {
         }}
       >
         <ChatListBoard
+          isNotary={userData?.group?.id === 4}
           users={filteredUsers}
           handleContactClick={handleContactClick}
           activeContact={activeContact}
@@ -81,8 +91,9 @@ const ChatContent: FC = () => {
 
         {activeContact ? (
           <ChatMessageBoard
-            name={contact?.appName}
-            chatCreator={contact?.chatCreator}
+            userToken={contact?.userToken}
+            name={userData?.group.id === 4 ? contact?.chatCreator : contact?.notary.name}
+            chatCreator={userData?.group.id === 4 ? contact?.chatCreator : contact?.notary.name}
             chatLink={contact?.chatRoomLink}
           />
         ) : (
