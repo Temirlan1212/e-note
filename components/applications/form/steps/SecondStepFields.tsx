@@ -54,7 +54,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   }, [actionVal]);
 
   const triggerFields = async () => {
-    return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action"]);
+    return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action", "product.id"]);
   };
 
   const handlePrevClick = () => {
