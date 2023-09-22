@@ -14,9 +14,6 @@ const nextConfig = {
     });
     return config;
   },
-  env: {
-    RECAPTCHA_PUBLIC_KEY: "6LdZVBwoAAAAAFjhQbUlEdfpyrz5HT9LPQyHhfGr",
-  },
 };
 
 module.exports = nextConfig;

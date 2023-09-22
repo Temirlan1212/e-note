@@ -18,9 +18,9 @@ const Recaptcha: React.FC<IRecaptchaProps> = ({ onRecaptchaSuccess }) => {
 
   return (
     <>
-      {process.env.RECAPTCHA_PUBLIC_KEY && (
+      {process.env.NEXT_PUBLIC_RECAPTCHA_PUBLIC_KEY && (
         <ReCAPTCHA
-          sitekey={process.env.RECAPTCHA_PUBLIC_KEY as string}
+          sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_PUBLIC_KEY as string}
           ref={recaptchaRef}
           hl={locale === "kg" ? "ru" : locale}
           onChange={handleRecaptchaChange}
