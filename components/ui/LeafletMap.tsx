@@ -6,10 +6,18 @@ import { Icon } from "leaflet";
 
 import "leaflet/dist/leaflet.css";
 import { Typography } from "@mui/material";
-import { INotaryInfoData } from "@/models/notaries";
+
+interface IMarkerData {
+  latitude: string;
+  longitude: string;
+  name?: string;
+  address?: {
+    fullName?: string;
+  };
+}
 
 interface ILeafletMapProps extends MapOptions {
-  markerData?: INotaryInfoData;
+  markerData?: IMarkerData;
   children?: ReactNode;
   zoom: number;
   style?: any;
@@ -22,7 +30,7 @@ const customIcon = new Icon({
 
 const isValidCoordinates = (latitude: number, longitude: number) => !isNaN(latitude) && !isNaN(longitude);
 
-const createMarker = (data: INotaryInfoData, index: number) => {
+const createMarker = (data: IMarkerData, index: number) => {
   const latitude = parseFloat(data.latitude);
   const longitude = parseFloat(data.longitude);
 
