@@ -8,9 +8,10 @@ interface IChatRightPartProps {
   name?: string;
   chatCreator?: string;
   chatLink?: string;
+  userToken?: string;
 }
 
-const ChatMessageBoard: FC<IChatRightPartProps> = ({ name, chatCreator, chatLink }) => {
+const ChatMessageBoard: FC<IChatRightPartProps> = ({ name, chatCreator, chatLink, userToken }) => {
   const t = useTranslations();
 
   return (
@@ -64,15 +65,12 @@ const ChatMessageBoard: FC<IChatRightPartProps> = ({ name, chatCreator, chatLink
           background: "#F6F6F6",
         }}
       >
-        <Typography
-          sx={{
-            fontSize: "16px",
-          }}
-        >
-          {t("Chat created by")}: {chatCreator}
-        </Typography>
-        {chatLink ? (
-          <Link href={chatLink} rel="noopener noreferrer" target="_blank">
+        {chatLink && userToken ? (
+          <Link
+            href={`${chatLink}?AuthorizationBasic=${userToken.replace(/Basic /, "")}`}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             {t("Start chatting")}
           </Link>
         ) : (

@@ -7,6 +7,7 @@ export interface IContact {
   guestId: number;
   notary: {
     id: number;
+    name: string;
   };
   userToken: string;
 }

@@ -15,10 +15,11 @@ interface IChatListBoardProps {
   users: IContact[];
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  isNotary: boolean;
 }
 
 const ChatListBoard: FC<IChatListBoardProps> = (props) => {
-  const { handleContactClick, activeContact, users, searchQuery, setSearchQuery } = props;
+  const { handleContactClick, activeContact, users, searchQuery, isNotary, setSearchQuery } = props;
 
   const t = useTranslations();
 
@@ -90,7 +91,7 @@ const ChatListBoard: FC<IChatListBoardProps> = (props) => {
             <ChatListItem
               key={user.chatId}
               activeContact={activeContact?.chatId}
-              contactName={user.appName}
+              contactName={isNotary ? user.chatCreator : user.notary.name}
               contactId={user.chatId}
               onContactClick={() => handleContactClick(user.chatId)}
             />
