@@ -194,7 +194,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
   });
 
   useEffectOnce(() => {
-    setPartnerId(profile.userData?.partner.id);
+    setPartnerId(profile.userData?.partner?.id);
   }, [profile]);
 
   useEffectOnce(() => {
