@@ -10,10 +10,8 @@ import { Typography } from "@mui/material";
 interface IMarkerData {
   latitude: string;
   longitude: string;
-  name?: string;
-  address?: {
-    fullName?: string;
-  };
+  name: string;
+  address: Record<string, any>;
 }
 
 interface ILeafletMapProps extends MapOptions {
@@ -24,8 +22,11 @@ interface ILeafletMapProps extends MapOptions {
 }
 
 const customIcon = new Icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+  iconUrl: "/icons/map-marker.svg",
+  iconSize: [35, 40],
+  shadowUrl: "/icons/map-marker-shadow.png",
+  shadowSize: [41, 41],
+  shadowAnchor: [12, 23],
 });
 
 const isValidCoordinates = (latitude: number, longitude: number) => !isNaN(latitude) && !isNaN(longitude);
