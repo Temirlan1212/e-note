@@ -15,6 +15,7 @@ import { IUserRegistrySchema, userRegistrySchema } from "@/validator-schemas/use
 import UserData from "@/components/fields/UserData";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { useRouter } from "next/router";
+import PersonalData from "@/components/fields/PersonalData";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -51,6 +52,16 @@ const UserCreateContent: FC = () => {
     firstName: "firstName",
     middleName: "middleName",
     pin: "personalNumber",
+    birthDate: "birthDate",
+    citizenship: "citizenship",
+    nameOfCompanyOfficial: "nameOfCompanyOfficial",
+    nameOfCompanyGov: "nameOfCompanyGov",
+    representativesName: "representativesName",
+    notaryRegistrationNumber: "notaryRegistrationNumber",
+    notaryOKPONumber: "notaryOKPONumber",
+    notaryPhysicalParticipantsQty: "notaryPhysicalParticipantsQty",
+    notaryLegalParticipantsQty: "notaryLegalParticipantsQty",
+    notaryTotalParticipantsQty: "notaryTotalParticipantsQty",
   };
 
   const getIdentityDocumentNames = {
@@ -239,7 +250,12 @@ const UserCreateContent: FC = () => {
       </Box>
 
       <Typography variant="h5">{t("DataFromTundukPortal")}</Typography>
-      <UserData form={form} names={getPersonalDataNames} onPinCheck={handlePinCheck} />
+      <PersonalData
+        form={form}
+        names={getPersonalDataNames}
+        fields={{ birthDate: false, citizenship: false, type: false }}
+        onPinCheck={handlePinCheck}
+      />
 
       <Typography variant="h5">{t("Identity document")}</Typography>
       <IdentityDocument form={form} names={getIdentityDocumentNames} />

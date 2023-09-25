@@ -53,6 +53,13 @@ export interface IPartner {
   simpleFullName: string;
   notaryWorkOrder: string;
   notaryCriminalRecord: string;
+  "user.roles.name": string;
+  "user.code": string;
+  "user.email": string;
+  createdOn: string;
+  "user.blocked": boolean;
+  "user.id": number;
+  "user.version": boolean;
 }
 
 export interface IUserGroup {

@@ -164,7 +164,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
         )}
       </Box>
 
-      {type == 2 && (
+      {(type == null || type == 2) && (
         <>
           <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
             {(fields?.lastName == null || !!fields?.lastName) && (

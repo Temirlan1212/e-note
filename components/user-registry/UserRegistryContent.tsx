@@ -11,7 +11,7 @@ import { ValueOf } from "next/dist/shared/lib/constants";
 import { useForm } from "react-hook-form";
 import HeirNotFoundData from "@/components/search-for-heirs/HeirNotFoundData";
 import { GridSortModel } from "@mui/x-data-grid";
-import { IUserRegistry } from "@/models/user-registry";
+import { IPartner } from "@/models/user";
 
 interface IUserRegistryContentProps {}
 
@@ -41,7 +41,7 @@ export interface IUserRegistryCriteria {
 }
 
 export interface IUserRegistryData extends Partial<FetchResponseBody> {
-  data: IUserRegistry[];
+  data: IPartner[];
 }
 
 const UserRegistryContent: FC<IUserRegistryContentProps> = (props) => {
