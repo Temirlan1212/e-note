@@ -50,5 +50,8 @@
   "User's role": "Роль пользователя",
   "Sorry, such pin not found": "Извините, такой инн не найден",
   "Registration successfully completed": "Регистрация успешно выполнена",
-  "Login and password have been sent to the specified E-mail": "Логин и пароль были отправлены на указанный E-mail"
+  "Login and password have been sent to the specified E-mail": "Логин и пароль были отправлены на указанный E-mail",
+  "Do you really want to delete a user?": "Вы действительно хотите удалить пользователя?",
+  "Deleting a user": "Удаление пользователя",
+  "Go to user registry": "Перейти в реестр пользователей"
 }

@@ -2,8 +2,8 @@ import { ChangeEvent, FC, useEffect, useState } from "react";
 
 import { useTranslations } from "next-intl";
 
-import { format, parse } from "date-fns";
-import { Box, InputLabel, Typography } from "@mui/material";
+import { format, isValid } from "date-fns";
+import { Box, Typography } from "@mui/material";
 import { FilterAltOffOutlined, Search } from "@mui/icons-material";
 
 import SearchBar from "../ui/SearchBar";
@@ -15,6 +15,7 @@ import ExcelIcon from "@/public/icons/excel.svg";
 import EraserIcon from "@/public/icons/eraser.svg";
 import useFetch from "@/hooks/useFetch";
 import { Controller } from "react-hook-form";
+import { IUserRegistryFilterData } from "@/components/user-registry/UserRegistryContent";
 
 interface IUserRegistryFiltrationProps {
   searchQuery: string;
@@ -23,7 +24,7 @@ interface IUserRegistryFiltrationProps {
   loading?: boolean;
   handleSubmit: any;
   control: any;
-  onFilterClear: any;
+  onFilterClear: () => void;
   onFilterSubmit: (val: any) => void;
 }
 
@@ -39,7 +40,7 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = ({
 }) => {
   const [fileName, setFileName] = useState<string | null>("");
   const [excelReqBody, setExcelReqBody] = useState({
-    roleValue: "OMSU official",
+    roleValue: "user registry",
     filterValues: {},
   });
 
@@ -51,8 +52,6 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = ({
   const { data: exportExcel } = useFetch("/api/officials/export", "POST", {
     body: excelReqBody,
   });
-
-  console.log(createdByData);
 
   const t = useTranslations();
 
@@ -79,9 +78,11 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = ({
     }
   }, [exportExcel?.data]);
 
-  const filteredData = createdByData?.data.filter(
-    (item: { "emailAddress.address": string }) => !!item?.["emailAddress.address"] && item?.["emailAddress.address"]
-  );
+  const filteredData = Array.isArray(createdByData?.data)
+    ? createdByData?.data.filter(
+        (item: { "emailAddress.address": string }) => !!item?.["emailAddress.address"] && item?.["emailAddress.address"]
+      )
+    : [];
 
   return (
     <Box
@@ -117,6 +118,7 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = ({
         />
         <Button
           sx={{
+            fontSize: "14px",
             ":hover": {
               color: "#fff",
             },
@@ -185,7 +187,12 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = ({
                           md: "150px",
                         },
                       }}
-                      onChange={(date: Date) => field.onChange({ ...field.value, value: format(date, "yyyy-MM-dd") })}
+                      onChange={(date: Date) =>
+                        field.onChange({
+                          ...field.value,
+                          value: isValid(date) ? format(date, "yyyy-MM-dd") : null,
+                        })
+                      }
                       placeholder="__/__/____"
                       value={field.value}
                     />
@@ -197,7 +204,12 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = ({
                           md: "150px",
                         },
                       }}
-                      onChange={(date: Date) => field.onChange({ ...field.value, value2: format(date, "yyyy-MM-dd") })}
+                      onChange={(date: Date) =>
+                        field.onChange({
+                          ...field.value,
+                          value2: isValid(date) ? format(date, "yyyy-MM-dd") : null,
+                        })
+                      }
                       placeholder="__/__/____"
                       value={field.value}
                     />
@@ -228,7 +240,7 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = ({
               defaultValue={null}
               render={({ field }) => (
                 <Select
-                  data={rolesData?.data}
+                  data={rolesData?.data ?? []}
                   value={field.value != null ? field.value : ""}
                   valueField="name"
                   labelField="name"
@@ -236,7 +248,7 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = ({
                   onChange={(...event: any[]) => {
                     field.onChange(...event);
                   }}
-                  selectType="primary"
+                  selectType="secondary"
                 />
               )}
             />
@@ -263,15 +275,15 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = ({
               defaultValue={null}
               render={({ field }) => (
                 <Select
-                  data={filteredData}
+                  data={filteredData ?? []}
                   value={field.value ? field.value : null}
                   labelField="emailAddress.address"
                   valueField="emailAddress.address"
                   startAdornment={<Search />}
-                  selectType="primary"
                   onChange={(...event: any[]) => {
                     field.onChange(...event);
                   }}
+                  selectType="secondary"
                 />
               )}
             />

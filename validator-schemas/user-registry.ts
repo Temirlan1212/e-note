@@ -3,6 +3,29 @@ import { addressSchema } from "./address";
 
 export type IUserRegistrySchema = InferType<typeof userRegistrySchema>;
 
+const userAddressSchema = object().shape({
+  id: number().integer().positive().nullable(),
+  version: number().integer().positive().nullable(),
+  region: object({
+    id: number().integer().positive(),
+  })
+    .default(null)
+    .required("required"),
+  district: object({
+    id: number().integer().positive(),
+  })
+    .required("required")
+    .default(null),
+  city: object({
+    id: number().integer().positive(),
+  })
+    .required("required")
+    .default(null),
+  addressL4: string().trim().required("required"),
+  addressL3: string().trim().required("required"),
+  addressL2: string().trim().required("required"),
+});
+
 export const userRegistrySchema = object()
   .shape({
     partnerTypeSelect: number()
@@ -37,15 +60,17 @@ export const userRegistrySchema = object()
     passportSeries: string().required("required"),
     passportNumber: string()
       .trim()
-      .matches(/^[0-9]*$/, "onlyNumbers"),
-    authority: string().trim(),
+      .matches(/^[0-9]*$/, "onlyNumbers")
+      .required("required"),
+    authority: string().trim().required("required"),
     authorityNumber: string()
       .trim()
-      .matches(/^[0-9]*$/, "onlyNumbers"),
+      .matches(/^[0-9]*$/, "onlyNumbers")
+      .required("required"),
     dateOfIssue: date().required("required"),
     foreigner: boolean(),
-    mainAddress: addressSchema,
-    actualResidenceAddress: addressSchema,
+    mainAddress: userAddressSchema,
+    actualResidenceAddress: userAddressSchema,
     mobilePhone: string()
       .trim()
       .required("required")
@@ -53,7 +78,7 @@ export const userRegistrySchema = object()
     emailAddress: object({
       id: number().integer().positive().nullable(),
       version: number().integer().positive().nullable(),
-      address: string().trim().email("email"),
+      address: string().trim().email("email").required("required"),
     }),
   })
-  .concat(addressSchema.pick(["region", "district", "city"]));
+  .concat(userAddressSchema.pick(["region", "district", "city"]));

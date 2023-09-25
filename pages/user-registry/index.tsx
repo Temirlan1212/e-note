@@ -10,7 +10,7 @@ export default function UserRegistry() {
   return (
     <>
       <Head>
-        <title>{t("User Registry")}</title>
+        <title>{t("User registry")}</title>
       </Head>
 
       <Container

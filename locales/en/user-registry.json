@@ -50,5 +50,8 @@
   "User's role": "User's role",
   "Sorry, such pin not found": "Sorry, such pin not found",
   "Registration successfully completed": "Registration successfully completed",
-  "Login and password have been sent to the specified E-mail": "Login and password have been sent to the specified E-mail"
+  "Login and password have been sent to the specified E-mail": "Login and password have been sent to the specified E-mail",
+  "Do you really want to delete a user?": "Do you really want to delete a user?",
+  "Deleting a user": "Deleting a user",
+  "Go to user registry": "Go to user registry"
 }

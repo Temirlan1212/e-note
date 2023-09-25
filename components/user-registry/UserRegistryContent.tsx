@@ -11,6 +11,7 @@ import { ValueOf } from "next/dist/shared/lib/constants";
 import { useForm } from "react-hook-form";
 import HeirNotFoundData from "@/components/search-for-heirs/HeirNotFoundData";
 import { GridSortModel } from "@mui/x-data-grid";
+import { IUserRegistry } from "@/models/user-registry";
 
 interface IUserRegistryContentProps {}
 
@@ -39,18 +40,8 @@ export interface IUserRegistryCriteria {
   operator: string;
 }
 
-export interface IUserRegistryData extends FetchResponseBody {
-  data: {
-    id: number;
-    fullName: string;
-    "user.roles.name": string;
-    "user.code": string;
-    personalNumber: string;
-    mobilePhone: string;
-    "user.email": string;
-    createdOn: string;
-    "emailAddress.address": string;
-  }[];
+export interface IUserRegistryData extends Partial<FetchResponseBody> {
+  data: IUserRegistry[];
 }
 
 const UserRegistryContent: FC<IUserRegistryContentProps> = (props) => {

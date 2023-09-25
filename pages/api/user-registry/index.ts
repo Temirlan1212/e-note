@@ -74,7 +74,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Partner/search", {
+  const response = await fetch("https://not.petabyte.pro/axelor-erp/ws/rest/com.axelor.apps.base.db.Partner/search", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -92,8 +92,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "user.email",
         "createdOn",
         "emailAddress.address",
+        "user.blocked",
+        "user.id",
+        "user.version",
       ],
-      data: data,
+      data: {
+        _domain: "self.user.blocked = :personalNumber", // Проверка ИНН гражданина в черном списке
+        _domainContext: {
+          personalNumber: "false",
+        },
+        ...data,
+      },
       ...req.body,
     }),
   });

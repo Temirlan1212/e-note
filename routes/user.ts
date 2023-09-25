@@ -84,4 +84,11 @@ export const userRoutes: IRoute[] = [
       },
     ],
   },
+  {
+    title: "User registry",
+    link: "/user-registry",
+    role: "notary",
+    type: "menu",
+    icon: "PersonAddAlt1",
+  },
 ];

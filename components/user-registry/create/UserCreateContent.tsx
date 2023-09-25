@@ -14,12 +14,14 @@ import { Search } from "@mui/icons-material";
 import { IUserRegistrySchema, userRegistrySchema } from "@/validator-schemas/user-registry";
 import UserData from "@/components/fields/UserData";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { useRouter } from "next/router";
 
 enum tundukFieldNames {
   name = "firstName",
 }
 
 const UserCreateContent: FC = () => {
+  const router = useRouter();
   const form = useForm<IUserRegistrySchema>({
     mode: "onTouched",
     resolver: yupResolver<IUserRegistrySchema>(userRegistrySchema),
@@ -198,6 +200,10 @@ const UserCreateContent: FC = () => {
     }
   };
 
+  const handleRedirect = () => {
+    router.push("/user-registry");
+  };
+
   const items: JSX.Element[] = [
     <Box key={1} display="flex" gap="20px" flexDirection="column">
       <Box
@@ -267,7 +273,7 @@ const UserCreateContent: FC = () => {
         hintText="Login and password have been sent to the specified E-mail"
         title="Create user"
         slots={{
-          button: () => <Button>{t("Close")}</Button>,
+          button: () => <Button onClick={handleRedirect}>{t("Go to user registry")}</Button>,
         }}
       />
       <Button loading={loading} onClick={handleCreate}>

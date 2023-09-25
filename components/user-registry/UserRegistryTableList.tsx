@@ -13,7 +13,7 @@ import { GridTable, IGridColDef } from "../../components/ui/GridTable";
 import { IUserRegistryData } from "@/components/user-registry/UserRegistryContent";
 import useFetch from "@/hooks/useFetch";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
-import { GridRenderCellParams, GridSortModel, GridTreeNodeWithRender } from "@mui/x-data-grid";
+import { GridRenderCellParams, GridSortModel } from "@mui/x-data-grid";
 import { format } from "date-fns";
 
 interface IUserRegistryTableListProps {
@@ -60,10 +60,12 @@ export default function UserRegistryTableList({
       type: "acitons",
       sortable: false,
       width: 120,
-      renderCell: (params: any) => {
+      renderCell: (params: GridRenderCellParams) => {
         const handleDeleteClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
-          if (params.row.id != null) {
-            await update("/api/user-registry/delete/" + params.row.id + "?version=" + params.row.version);
+          if (params.row?.["user.id"] != null) {
+            await update(
+              "/api/user-registry/delete/" + params.row?.["user.id"] + "?version=" + params.row?.["user.version"]
+            );
             callback(false);
             onDelete();
           }
@@ -85,8 +87,8 @@ export default function UserRegistryTableList({
               </IconButton>
             </Tooltip>
             <ConfirmationModal
-              hintTitle="Do you really want to remove the application from the platform?"
-              title="Deleting an application"
+              hintTitle="Do you really want to delete a user?"
+              title="Deleting a user"
               onConfirm={(callback) => handleDeleteClick(callback)}
             >
               <Tooltip title={t("Delete a user")}>
