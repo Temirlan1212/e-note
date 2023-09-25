@@ -85,7 +85,6 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   };
 
   const handleFormSubmit = (data: INotariesSchema) => {
-    console.log(data);
     const filteredData: any = {};
     for (const key in data) {
       const item = data[key as keyof typeof data];
