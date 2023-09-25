@@ -2,12 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { INotaryData, INotaryFilterData } from "@/models/notaries";
 
-interface Data {
-  operator?: string;
-  sortBy?: string[] | null;
-  criteria?: Criteria[];
-}
-
 interface Criteria {
   value: any;
   fieldName: string;
@@ -18,7 +12,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   if (req.method !== "POST" && req.body == null) {
     return res.status(400).json(null);
   }
-  let data: Data = {};
 
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 8;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
@@ -99,7 +92,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           "name",
         ],
         data: {
-          ...data,
           operator: "and",
           criteria: [
             { criteria: buildFilterCriteria(filterData).concat(radioChecked()), operator: "and" },

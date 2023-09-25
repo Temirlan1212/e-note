@@ -8,11 +8,11 @@ import HeirNotFoundData from "../search-for-heirs/HeirNotFoundData";
 import { useForm } from "react-hook-form";
 import { INotariesSchema } from "@/validator-schemas/notaries";
 import SearchBar from "@/components/ui/SearchBar";
-import NotariesForm from "./NotariesForm";
 import Select from "@/components/ui/Select";
 import Button from "@/components/ui/Button";
 import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
 import ClearIcon from "@mui/icons-material/Clear";
+import NotariesFilterForm from "./NotariesFilterForm";
 
 export interface INotariesQueryParams {
   pageSize: number;
@@ -167,7 +167,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
       </Box>
 
       <Box maxHeight={isCollapsed ? "1000px" : 0} overflow="hidden" sx={{ transition: "max-height 0.3s ease-out" }}>
-        <NotariesForm form={form} onFormSubmit={handleFormSubmit} onFormReset={handleFormReset} />
+        <NotariesFilterForm form={form} onFormSubmit={handleFormSubmit} onFormReset={handleFormReset} />
       </Box>
 
       {notaryData?.data && notaryData?.data?.length > 0 ? (

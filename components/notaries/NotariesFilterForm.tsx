@@ -11,7 +11,7 @@ import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import EraserIcon from "@/public/icons/eraser.svg";
 import Radio from "@/components/ui/Radio";
 
-export interface INotariesForm {
+export interface INotariesFilterForm {
   form: UseFormReturn<INotariesSchema>;
   onFormSubmit?: (form: INotariesSchema) => void;
   onFormReset?: () => void;
@@ -26,7 +26,7 @@ const getLabelField = (data: FetchResponseBody | null, locale: string) => {
   return "name";
 };
 
-export default function NotariesForm({ form, onFormSubmit, onFormReset }: INotariesForm) {
+export default function NotariesFilterForm({ form, onFormSubmit, onFormReset }: INotariesFilterForm) {
   const t = useTranslations();
   const locale = useLocale();
 
