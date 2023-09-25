@@ -91,6 +91,8 @@ export default function PopupNotifications() {
     }
   }, [messages?.data, limit]);
 
+  console.log(withBadge());
+
   return (
     <>
       {userData?.id && (
@@ -98,7 +100,7 @@ export default function PopupNotifications() {
           {!!anchorEl ? (
             <NotificationsIcon color="success" />
           ) : withBadge() ? (
-            <Badge badgeContent color="success" variant="dot">
+            <Badge color="success" variant="dot">
               <NotificationsOutlinedIcon color="inherit" />
             </Badge>
           ) : (
