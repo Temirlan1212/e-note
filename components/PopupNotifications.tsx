@@ -91,8 +91,6 @@ export default function PopupNotifications() {
     }
   }, [messages?.data, limit]);
 
-  console.log(withBadge());
-
   return (
     <>
       {userData?.id && (
