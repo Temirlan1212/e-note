@@ -116,6 +116,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
       const result = await applicationUpdate(`/api/applications/update/${id}`, {
         version,
         statusSelect: 1,
+        notarySignatureStatus: 1,
       });
 
       if (result?.data?.[0]?.id != null) {
