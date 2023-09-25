@@ -17,19 +17,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.District/search", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: req.headers["server-cookie"]?.toString() ?? "",
-    },
-    body: JSON.stringify({
-      fields: ["id", "version", "name", "region.id", "code"],
-      data: {
-        criteria,
+  const response = await fetch(
+    process.env.BACKEND_OPEN_API_URL + "/search/axelor-erp/com.axelor.apps.base.db.District",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: req.headers["server-cookie"]?.toString() ?? "",
       },
-    }),
-  });
+      body: JSON.stringify({
+        fields: ["id", "version", "name", "region.id", "code"],
+        data: {
+          criteria,
+        },
+      }),
+    }
+  );
 
   if (!response.ok) {
     return res.status(response.status).json(null);

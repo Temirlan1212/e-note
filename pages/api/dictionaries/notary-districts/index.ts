@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const response = await fetch(
-    process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.notary.db.NotaryDistrict/search",
+    process.env.BACKEND_OPEN_API_URL + "/search/axelor-erp/com.axelor.apps.notary.db.NotaryDistrict",
     {
       method: "POST",
       headers: {
