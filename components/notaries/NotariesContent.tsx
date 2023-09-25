@@ -32,7 +32,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   const t = useTranslations();
 
   const form = useForm<INotariesSchema>();
-  const { reset, register, watch } = form;
+  const { resetField, register, watch } = form;
 
   const [isCollapsed, setisCollapsed] = useState(true);
   const [notariesQueryParams, setNotariesQueryParams] = useState<INotariesQueryParams>({
@@ -71,29 +71,23 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   };
 
   const handleSearchReset = () => {
-    reset({ keyWord: "" });
+    resetField("keyWord");
     if (notariesQueryParams.searchValue) {
       updateNotariesQueryParams("searchValue", "");
     }
   };
 
   const handleFilterFormReset = () => {
-    reset({
-      notaryDistrict: null,
-      region: null,
-      district: null,
-      city: null,
-      workingDay: null,
-      typeOfNotary: null,
-      workMode: "",
-    });
+    const fields = ["notaryDistrict", "region", "district", "city", "workingDay", "typeOfNotary", "workMode"] as const;
+    fields.map((item) => resetField(item));
+
     if (notariesQueryParams.filterData != null) {
       updateNotariesQueryParams("filterData", null);
     }
   };
 
   const handleFilterFormSubmit = (data: INotariesSchema) => {
-    const filteredData: any = {};
+    const filteredData: Record<string, any> = {};
     for (const key in data) {
       const item = data[key as keyof typeof data];
       if (data.hasOwnProperty(key)) {
@@ -101,7 +95,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
         if (!isObject(item)) filteredData[key] = item === "" ? null : item;
       }
     }
-
+    if (Object.values(filteredData).every((item) => item == null)) return;
     updateNotariesQueryParams("filterData", filteredData);
   };
 
