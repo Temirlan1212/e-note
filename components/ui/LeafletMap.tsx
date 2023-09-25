@@ -75,7 +75,7 @@ const LeafletMap: FC<ILeafletMapProps> = ({ children, ...options }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
-      <MarkerClusterGroup maxClusterRadius={20} spiderfyDistanceMultiplier={1.5}>
+      <MarkerClusterGroup maxClusterRadius={40} spiderfyDistanceMultiplier={1.5}>
         {markers}
       </MarkerClusterGroup>
       {children}
