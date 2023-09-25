@@ -78,7 +78,15 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   };
 
   const handleFilterFormReset = () => {
-    reset();
+    reset({
+      notaryDistrict: null,
+      region: null,
+      district: null,
+      city: null,
+      workingDay: null,
+      typeOfNotary: null,
+      workMode: "",
+    });
     if (notariesQueryParams.filterData != null && form.formState.isSubmitted) {
       updateNotariesQueryParams("filterData", null);
     }
