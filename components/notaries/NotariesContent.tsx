@@ -19,7 +19,6 @@ export interface INotariesQueryParams {
   page: number;
   sortBy: string[] | null;
   searchValue?: string | null;
-  requestType?: string | null;
   filterData?: any;
 }
 
@@ -40,7 +39,6 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
     pageSize: 8,
     page: 1,
     sortBy: null,
-    requestType: null,
     searchValue: null,
     filterData: null,
   });
@@ -79,12 +77,14 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
     }
   };
 
-  const handleFormReset = () => {
+  const handleFilterFormReset = () => {
     reset();
-    updateNotariesQueryParams("filterData", null);
+    if (notariesQueryParams.filterData != null && form.formState.isSubmitted) {
+      updateNotariesQueryParams("filterData", null);
+    }
   };
 
-  const handleFormSubmit = (data: INotariesSchema) => {
+  const handleFilterFormSubmit = (data: INotariesSchema) => {
     const filteredData: any = {};
     for (const key in data) {
       const item = data[key as keyof typeof data];
@@ -166,7 +166,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
       </Box>
 
       <Box maxHeight={isCollapsed ? "1000px" : 0} overflow="hidden" sx={{ transition: "max-height 0.3s ease-out" }}>
-        <NotariesFilterForm form={form} onFormSubmit={handleFormSubmit} onFormReset={handleFormReset} />
+        <NotariesFilterForm form={form} onFormSubmit={handleFilterFormSubmit} onFormReset={handleFilterFormReset} />
       </Box>
 
       {notaryData?.data && notaryData?.data?.length > 0 ? (
