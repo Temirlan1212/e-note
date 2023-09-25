@@ -207,6 +207,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         company: { id: userData?.activeCompany?.id },
         requester: values.requester,
         statusSelect: 2,
+        notarySignatureStatus: 2,
       };
 
       let result = null;

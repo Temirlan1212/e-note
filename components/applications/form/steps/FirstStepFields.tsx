@@ -72,6 +72,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       const data: Partial<IApplicationSchema> & { creationDate: string } = {
         company: values.company,
         creationDate: format(new Date(), "yyyy-MM-dd"),
+        statusSelect: 2,
+        notarySignatureStatus: 2,
       };
 
       let result = null;
@@ -80,7 +82,6 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         data.version = values.version;
         result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       } else {
-        data.statusSelect = 2;
         result = await applicationCreate("/api/applications/create", data);
       }
 

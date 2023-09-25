@@ -16,6 +16,7 @@ const fields: string[] = [
   "product",
   "creationDate",
   "statusSelect",
+  "notarySignatureStatus",
 ];
 
 const related: Record<string, typeof fields> = {
