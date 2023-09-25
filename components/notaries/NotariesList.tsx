@@ -38,22 +38,20 @@ const NotariesList: FC<INotaryListProps> = ({ loading, data, notariesQueryParams
             container
           >
             {data?.data?.map((notary: INotary) => (
-              <Link
-                href={`/notaries/${encodeURIComponent(notary?.id)}`}
-                style={{ textDecoration: "none" }}
-                key={notary?.id}
-              >
-                <Grid item key={notary?.id} xs={12} sm={12} md={3}>
-                  <NotariesCard
-                    fullName={notary.name}
-                    image={notary["logo.fileName"]}
-                    rating={notary["partner.rating"]}
-                    region={notary["address.region"]}
-                    area={notary["address.district"]}
-                    location={notary["address.city"]?.fullName}
-                  />
-                </Grid>
-              </Link>
+              <Box width={{ xs: "100%", md: "initial" }} key={notary?.id}>
+                <Link href={`/notaries/${encodeURIComponent(notary?.id)}`} style={{ textDecoration: "none" }}>
+                  <Grid item key={notary?.id} xs={12} sm={12} md={3}>
+                    <NotariesCard
+                      fullName={notary.name}
+                      image={notary["logo.fileName"]}
+                      rating={notary["partner.rating"]}
+                      region={notary["address.region"]}
+                      area={notary["address.district"]}
+                      location={notary["address.city"]?.fullName}
+                    />
+                  </Grid>
+                </Link>
+              </Box>
             ))}
           </Grid>
           {data?.data && (
