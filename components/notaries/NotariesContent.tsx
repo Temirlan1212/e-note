@@ -87,7 +87,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
       typeOfNotary: null,
       workMode: "",
     });
-    if (notariesQueryParams.filterData != null && form.formState.isSubmitted) {
+    if (notariesQueryParams.filterData != null) {
       updateNotariesQueryParams("filterData", null);
     }
   };
