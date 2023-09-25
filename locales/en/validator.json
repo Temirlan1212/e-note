@@ -6,5 +6,10 @@
   "minLetters": "This field must be at least {min} letters",
   "minNumbers": "This field must be at least {min} numbers",
   "invalid format": "Invalid format",
-  "onlyLettersAndNumbers": "This field must contain only letters and numbers"
+  "onlyLettersAndNumbers": "This field must contain only letters and numbers",
+  "minCharacters": "This field must be at least {min} characters",
+  "lowCase": "Password must contain lower case letters",
+  "upperCase": "Password must contain upper case letters",
+  "digit": "Password must contain at least one digit",
+  "password": "Password mismatch"
 }

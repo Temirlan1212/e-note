@@ -2,9 +2,9 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import ResetPasswordForm from "@/components/reset-password/ResetPasswordForm";
+import NewPasswordForm from "@/components/new-password/NewPasswordForm";
 
-export default function ResetPasswordPage() {
+export default function NewPasswordPage() {
   const t = useTranslations();
 
   return (
@@ -14,7 +14,7 @@ export default function ResetPasswordPage() {
       </Head>
 
       <Container>
-        <ResetPasswordForm />
+        <NewPasswordForm />
       </Container>
     </>
   );
