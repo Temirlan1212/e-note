@@ -78,6 +78,7 @@ export default function FileList() {
     filters: { "createdBy.id": null },
   });
 
+  const { update: attachmentsUpdate } = useFetch("", "PUT");
   const { data, loading, update } = useFetch(requestBody.filters["createdBy.id"] != null ? `/api/files` : "", "POST", {
     body: requestBody,
   });
@@ -90,13 +91,18 @@ export default function FileList() {
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const elem = event.target;
+    if (!elem.files) return;
 
-    if (elem.files != null) {
-      const formData = new FormData();
-      formData.append("file", elem.files[0]);
-      await uploadUpdate("/api/files/upload", formData);
-      update();
-    }
+    const formData = new FormData();
+    formData.append("file", elem.files[0]);
+
+    const res = await uploadUpdate("/api/files/upload", formData);
+    if (res?.id == null) return;
+    await attachmentsUpdate(
+      `/api/files/attachments/update?model=com.axelor.apps.base.db.Partner&id=${profile.userData?.id}`,
+      { filesId: [{ id: res.id }] }
+    );
+    update();
   };
 
   const handlePageChange = (page: number) => {
