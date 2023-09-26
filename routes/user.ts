@@ -40,7 +40,7 @@ export const userRoutes: IRoute[] = [
       },
       {
         title: "Register of Notaries of the KR",
-        link: "/notaries",
+        link: "/notary-registry",
         type: "menu",
         icon: "ListAlt",
       },

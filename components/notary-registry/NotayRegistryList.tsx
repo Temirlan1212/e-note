@@ -1,0 +1,71 @@
+import { FC } from "react";
+import { Box, CircularProgress, Grid } from "@mui/material";
+import { INotary, INotaryData } from "@/models/notaries";
+import Link from "next/link";
+import Pagination from "../ui/Pagination";
+import { INotariesQueryParams } from "@/components/notary-registry/NotaryRegistry";
+import NotariesCard from "@/components/notaries/NotariesCard";
+
+interface INotaryListProps {
+  handlePageChange: (val: any) => void;
+  loading: boolean;
+  data: INotaryData | null;
+  notariesQueryParams: INotariesQueryParams;
+}
+
+const NotaryRegistryList: FC<INotaryListProps> = ({ loading, data, notariesQueryParams, handlePageChange }) => {
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "50px", alignItems: "center" }}>
+      {loading ? (
+        <Box sx={{ display: "flex", height: "100vh", paddingTop: "200px" }}>
+          <CircularProgress color="success" />
+        </Box>
+      ) : (
+        <>
+          <Grid
+            sx={{
+              justifyContent: "center",
+              alignItems: "flex-start",
+              flexDirection: {
+                xs: "column",
+                md: "row",
+              },
+              gridRowGap: {
+                xs: "15px",
+                md: 0,
+              },
+            }}
+            container
+          >
+            {data?.data?.map((notary: INotary) => (
+              <Box width={{ xs: "100%", md: "initial" }} key={notary?.id}>
+                <Link href={`/notary-registry/${encodeURIComponent(notary?.id)}`} style={{ textDecoration: "none" }}>
+                  <Grid item key={notary?.id} xs={12} sm={12} md={3}>
+                    <NotariesCard
+                      fullName={notary.name}
+                      image={notary["logo.fileName"]}
+                      rating={notary["partner.rating"]}
+                      region={notary["address.region"]}
+                      area={notary["address.district"]}
+                      location={notary["address.city"]?.fullName}
+                    />
+                  </Grid>
+                </Link>
+              </Box>
+            ))}
+          </Grid>
+          {data?.data && (
+            <Pagination
+              sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+              currentPage={notariesQueryParams?.page}
+              totalPages={data?.total ? Math.ceil(data.total / notariesQueryParams.pageSize) : 1}
+              onPageChange={handlePageChange}
+            />
+          )}
+        </>
+      )}
+    </Box>
+  );
+};
+
+export default NotaryRegistryList;
