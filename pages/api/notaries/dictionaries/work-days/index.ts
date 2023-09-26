@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/selection/axelor-erp/select.company.working.day", {
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/selection/select.company.working.day", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
