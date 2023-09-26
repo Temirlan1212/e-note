@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useTranslations } from "next-intl";
 
-import { Container, Box } from "@mui/material";
+import { Container, Box, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 
 import NotariesInfoContent from "@/components/notaries/NotariesInfoContent";
@@ -25,6 +25,19 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
   );
 
   const { data } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
+
+  const markerPopup = (data: any) => {
+    return (
+      <>
+        <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={600}>
+          {data?.name}
+        </Typography>
+        <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={500}>
+          {data?.address?.fullName}
+        </Typography>
+      </>
+    );
+  };
 
   return (
     <>
@@ -50,6 +63,7 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
           <LeafletMap
             zoom={12}
             markerData={data?.data[0]}
+            slots={markerPopup}
             style={{
               height: "600px",
             }}

@@ -22,6 +22,19 @@ export default function Notaries() {
 
   const { data: notaryData } = useFetch("/api/notaries", "POST");
 
+  const markerPopup = (data: any) => {
+    return (
+      <>
+        <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={600}>
+          {data?.name}
+        </Typography>
+        <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={500}>
+          {data?.address?.fullName}
+        </Typography>
+      </>
+    );
+  };
+
   return (
     <>
       <Head>
@@ -43,6 +56,7 @@ export default function Notaries() {
           <LeafletMap
             zoom={12}
             markerData={notaryData?.data}
+            slots={markerPopup}
             style={{
               height: "600px",
             }}

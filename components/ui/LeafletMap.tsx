@@ -5,17 +5,10 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 import { Icon } from "leaflet";
 
 import "leaflet/dist/leaflet.css";
-import { Typography } from "@mui/material";
-
-interface IMarkerData {
-  latitude: string;
-  longitude: string;
-  name: string;
-  address: Record<string, any>;
-}
 
 interface ILeafletMapProps extends MapOptions {
-  markerData?: IMarkerData;
+  markerData?: any;
+  slots?: (data: any) => ReactNode;
   children?: ReactNode;
   zoom: number;
   style?: any;
@@ -31,7 +24,7 @@ const customIcon = new Icon({
 
 const isValidCoordinates = (latitude: number, longitude: number) => !isNaN(latitude) && !isNaN(longitude);
 
-const createMarker = (data: IMarkerData, index: number) => {
+const createMarker = (data: { latitude: string; longitude: string }, index: number, slots: any) => {
   const latitude = parseFloat(data.latitude);
   const longitude = parseFloat(data.longitude);
 
@@ -43,29 +36,22 @@ const createMarker = (data: IMarkerData, index: number) => {
 
   return (
     <Marker key={index} position={position} icon={customIcon}>
-      <Popup>
-        <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={600}>
-          {data?.name}
-        </Typography>
-        <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={500}>
-          {data?.address?.fullName}
-        </Typography>
-      </Popup>
+      {slots && <Popup>{slots(data)}</Popup>}
     </Marker>
   );
 };
 
 const LeafletMap: FC<ILeafletMapProps> = ({ children, ...options }) => {
-  const { markerData } = options;
+  const { markerData, slots } = options;
 
   const mapCenterRef = useRef<[number, number] | null>(null);
 
   const markers = useMemo(() => {
     if (Array.isArray(markerData)) {
-      return markerData.map(createMarker);
+      return markerData.map((data, index) => createMarker(data, index, slots));
     } else if (typeof markerData === "object") {
       mapCenterRef.current = [parseFloat(markerData?.latitude), parseFloat(markerData?.longitude)];
-      return [createMarker(markerData, 0)];
+      return [createMarker(markerData, 0, slots)];
     }
     return [];
   }, [markerData]);
