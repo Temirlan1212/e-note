@@ -30,8 +30,19 @@ import DynamicIcon from "./DynamicIcon";
 import ProfileDropdownButton from "./ProfileDropdownButton";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PopupNotifications from "./PopupNotifications";
+import { Theme } from "@mui/material";
 
-const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) => {
+const DrawerListItems = ({
+  type,
+  routes,
+  open,
+  closeDrawer,
+}: {
+  type?: "private" | "public";
+  routes: IRoute[];
+  open: boolean;
+  closeDrawer?: () => void;
+}) => {
   const router = useRouter();
   const t = useTranslations();
 
@@ -53,12 +64,27 @@ const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) 
 
   const path = routes.find((route) => route.link && router.route.includes(route.link));
 
+  const handleClose = (route: IRoute) => {
+    if (route.type === "menu" && typeof closeDrawer === "function") {
+      closeDrawer();
+    }
+  };
+
+  const getBackgroundColor = (theme: Theme, route: IRoute) => {
+    if (type === "private") {
+      return path?.link === route.link ? darken(theme.palette.success.main, 0.15) : "success";
+    } else {
+      return router.route === route.link ? darken(theme.palette.success.main, 0.15) : "success";
+    }
+  };
+
   return (
     <>
       {routes.map((route) => {
         return (
           <Box
             key={route.title}
+            onClick={() => handleClose(route)}
             sx={{
               backgroundColor: (theme) =>
                 openedGroup === route.title ? darken(theme.palette.success.main, 0.1) : "success",
@@ -72,8 +98,7 @@ const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) 
                       sx={{
                         justifyContent: open ? "initial" : "center",
                         color: "#fff",
-                        backgroundColor: (theme) =>
-                          path?.link === route.link ? darken(theme.palette.success.main, 0.15) : "success",
+                        backgroundColor: (theme) => getBackgroundColor(theme, route),
                       }}
                     >
                       {route.icon && (
@@ -105,7 +130,7 @@ const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) 
 
             {route.type === "group" && route.children != null && (
               <Collapse in={openedGroup === route.title} timeout="auto" unmountOnExit>
-                <List>
+                <List onClick={closeDrawer}>
                   <DrawerListItems routes={route.children} open={open} />
                 </List>
               </Collapse>
@@ -258,7 +283,7 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
         <Divider sx={{ backgroundColor: (theme) => lighten(theme.palette.success.main, 0.5) }} />
 
         <List>
-          <DrawerListItems routes={routes} open={open} />
+          <DrawerListItems type={type} routes={routes} open={open} closeDrawer={handleDrawerToggle} />
         </List>
       </Drawer>
 
