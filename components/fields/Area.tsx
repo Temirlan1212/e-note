@@ -28,7 +28,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
 
   const region = watch(names.region);
   const district = watch(names.district);
-  const city = watch(names.city);
+  const isRegionalSignificance = region != null && district == null;
 
   const { data: regionDictionary, loading: regionDictionaryLoading } = useFetch("/api/dictionaries/regions", "GET");
   const { data: districtDictionary, loading: districtDictionaryLoading } = useFetch(
@@ -116,30 +116,31 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
           control={control}
           name={names.city}
           defaultValue={defaultValues?.city ?? null}
-          render={({ field, fieldState }) => (
-            <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("City")}</InputLabel>
-              <Autocomplete
-                labelField={getLabelField(cityDictionary)}
-                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!region}
-                options={cityDictionary?.status === 0 ? (cityDictionary?.data as Record<string, any>[]) ?? [] : []}
-                loading={cityDictionaryLoading}
-                value={
-                  field.value != null
-                    ? (cityDictionary?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ??
-                      null
-                    : null
-                }
-                onBlur={field.onBlur}
-                onChange={(event, value) => {
-                  field.onChange(value?.id != null ? { id: value.id } : null);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
-          )}
+          render={({ field, fieldState }) => {
+            const options: Record<string, any>[] = isRegionalSignificance
+              ? cityDictionary?.data?.filter((item: Record<string, any>) => Boolean(item?.isRegionalSignificance))
+              : cityDictionary?.data;
+
+            return (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel>{t("City")}, Село</InputLabel>
+                <Autocomplete
+                  labelField={getLabelField(cityDictionary)}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  disabled={!region}
+                  options={options ?? []}
+                  loading={cityDictionaryLoading}
+                  value={field.value != null ? (options ?? []).find((item) => item.id == field.value.id) ?? null : null}
+                  onBlur={field.onBlur}
+                  onChange={(event, value) => {
+                    field.onChange(value?.id != null ? { id: value.id } : null);
+                    trigger(field.name);
+                  }}
+                />
+              </Box>
+            );
+          }}
         />
       </Box>
     </Box>
