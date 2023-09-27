@@ -7,20 +7,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const criteria = req.body["criteria"] ?? [];
 
-  const response = await fetch(
-    process.env.BACKEND_OPEN_API_URL + "/search/axelor-erp/com.axelor.apps.sale.db.SaleOrder",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/search/com.axelor.apps.sale.db.SaleOrder", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      data: {
+        criteria,
       },
-      body: JSON.stringify({
-        data: {
-          criteria,
-        },
-      }),
-    }
-  );
+    }),
+  });
 
   if (!response.ok) {
     return res.status(response.status).json(null);

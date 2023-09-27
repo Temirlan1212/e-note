@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const criteria: Record<string, string | number>[] = [];
 
-  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/search/axelor-erp/com.axelor.apps.base.db.Region", {
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/search/com.axelor.apps.base.db.Region", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
