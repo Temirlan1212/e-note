@@ -54,18 +54,19 @@ export default function QA() {
               {t("Questions and answers")}
             </Typography>
 
-            {data?.data.map(({ question, answer }, index) => (
-              <Accordion
-                key={question}
-                expanded={expanded === index}
-                title={question}
-                type={question}
-                handleChange={handleQAExpanding(index)}
-                sx={{ bgcolor: "transparent" }}
-              >
-                {answer}
-              </Accordion>
-            ))}
+            {Array.isArray(data?.data) &&
+              data?.data?.map(({ question, answer }, index) => (
+                <Accordion
+                  key={question}
+                  expanded={expanded === index}
+                  title={question}
+                  type={question}
+                  handleChange={handleQAExpanding(index)}
+                  sx={{ bgcolor: "transparent" }}
+                >
+                  {answer}
+                </Accordion>
+              ))}
           </Box>
         </Box>
       </Container>

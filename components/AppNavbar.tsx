@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IRoute } from "@/stores/route";
+import { IRoute } from "@/routes/data";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { useTheme } from "@mui/material/styles";
@@ -18,7 +18,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import AppBar from "@mui/material/AppBar";
 import Collapse from "@mui/material/Collapse";
-import DynamicIcon from "./DynamicIcon";
+import Tooltip from "@mui/material/Tooltip";
 import { darken, lighten } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -26,10 +26,10 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Link from "./ui/Link";
+import DynamicIcon from "./DynamicIcon";
 import ProfileDropdownButton from "./ProfileDropdownButton";
 import LocaleSwitcher from "./LocaleSwitcher";
-import Tooltip from "@mui/material/Tooltip";
-import PopupNotifications from "@/components/notifications/PopupNotifications";
+import PopupNotifications from "./PopupNotifications";
 
 const DrawerListItems = ({ routes, open }: { routes: IRoute[]; open: boolean }) => {
   const router = useRouter();
@@ -190,9 +190,9 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
           )}
 
           <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
-            {type === "private" && <PopupNotifications />}
-            <ProfileDropdownButton />
             <LocaleSwitcher />
+            <PopupNotifications />
+            <ProfileDropdownButton />
 
             <IconButton color="inherit" onClick={handleDrawerToggle} sx={{ display: { md: "none" } }}>
               <MenuIcon />

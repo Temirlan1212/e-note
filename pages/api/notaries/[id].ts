@@ -9,11 +9,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + `/ws/rest/com.axelor.apps.base.db.Company/${id}/fetch`, {
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + `/read/com.axelor.apps.base.db.Company/${id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
       offset: 0,

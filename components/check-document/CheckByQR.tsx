@@ -6,9 +6,6 @@ import { Typography, Box, Alert, Collapse } from "@mui/material";
 import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
 
 import Button from "../ui/Button";
-import Hint from "@/components/ui/Hint";
-import useFetch from "@/hooks/useFetch";
-import useEffectOnce from "@/hooks/useEffectOnce";
 
 export default function CheckByQR() {
   const [isEnabled, setEnabled] = useState(false);
@@ -17,8 +14,6 @@ export default function CheckByQR() {
   const t = useTranslations();
 
   const router = useRouter();
-
-  const { data, update, error } = useFetch("", "POST");
 
   useEffect(() => {
     const config = { fps: 10, qrbox: { width: 200, height: 200 } };
@@ -32,15 +27,8 @@ export default function CheckByQR() {
     };
 
     const qrCodeSuccess = (decodedText: string) => {
-      update("/api/check-document", {
-        criteria: [
-          {
-            fieldName: "uniqueQrCode",
-            operator: "=",
-            value: decodedText,
-          },
-        ],
-      });
+      const uniqueQrCode = decodedText.split("/").pop();
+      router.push(`/check-document/${encodeURIComponent(uniqueQrCode as string)}`);
       setEnabled(false);
     };
 
@@ -54,15 +42,6 @@ export default function CheckByQR() {
       qrScanerStop();
     };
   }, [isEnabled]);
-
-  useEffectOnce(() => {
-    if (data?.total === 0 || error !== null) {
-      setAlertOpen(true);
-    }
-    if (data?.data) {
-      router.push(`/check-document/${encodeURIComponent(data?.data[0]?.uniqueQrCode as string)}`);
-    }
-  }, [data, error]);
 
   return (
     <Box>

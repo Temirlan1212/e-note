@@ -59,7 +59,7 @@ const ChatListItem = (props: IChatListItemProps) => {
             className="username"
             sx={{
               color: activeContact === contactId ? "#fff" : "#24334B",
-              fontSize: "16px",
+              fontSize: "14px",
             }}
           >
             {contactName}

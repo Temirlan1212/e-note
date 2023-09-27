@@ -80,6 +80,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
   const getDynamicFormAppData = async () => {
     const productId = form.watch("product.id");
+    if (!Boolean(productId)) return;
     const { data } = (await getDocumentTemplateData(`/api/dictionaries/document-type/template/${productId}`)) ?? {
       data: null,
     };
@@ -140,7 +141,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             form={form}
             onPrev={() => setStep(step - 1)}
             onNext={({ step, isStepByStep }) => {
-              getDynamicFormAppData();
+              if (!isStepByStep) getDynamicFormAppData();
               setStep((prev) => {
                 if (step != null) return step;
                 if (!isStepByStep) return prev + 2;
@@ -153,12 +154,13 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             key={2}
             form={form}
             onPrev={() => setStep(step - 1)}
-            onNext={({ step }) =>
+            onNext={({ step }) => {
+              getDynamicFormAppData();
               setStep((prev) => {
                 if (step != null) return step;
                 return prev + 1;
-              })
-            }
+              });
+            }}
             handleStepNextClick={handleStepNextClick}
           />,
           <NotaryFourthStepFields

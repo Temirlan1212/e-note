@@ -1,20 +1,19 @@
 import { FC } from "react";
-
 import { Box, CircularProgress, Grid } from "@mui/material";
-
 import NotariesCard from "./NotariesCard";
 import { INotary, INotaryData } from "@/models/notaries";
 import Link from "next/link";
 import Pagination from "../ui/Pagination";
+import { INotariesQueryParams } from "./NotariesContent";
 
 interface INotaryListProps {
   handlePageChange: (val: any) => void;
   loading: boolean;
   data: INotaryData | null;
-  appQueryParams: any;
+  notariesQueryParams: INotariesQueryParams;
 }
 
-const NotariesList: FC<INotaryListProps> = ({ loading, data, appQueryParams, handlePageChange }) => {
+const NotariesList: FC<INotaryListProps> = ({ loading, data, notariesQueryParams, handlePageChange }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "50px", alignItems: "center" }}>
       {loading ? (
@@ -39,29 +38,27 @@ const NotariesList: FC<INotaryListProps> = ({ loading, data, appQueryParams, han
             container
           >
             {data?.data?.map((notary: INotary) => (
-              <Link
-                href={`/notaries/${encodeURIComponent(notary?.id)}`}
-                style={{ textDecoration: "none" }}
-                key={notary?.id}
-              >
-                <Grid item key={notary?.id} xs={12} sm={12} md={3}>
-                  <NotariesCard
-                    fullName={notary.name}
-                    image={notary["logo.fileName"]}
-                    rating={notary["partner.rating"]}
-                    region={notary["address.region"]?.name}
-                    area={notary["address.district"]?.name}
-                    location={notary["address.city"]?.fullName}
-                  />
-                </Grid>
-              </Link>
+              <Box width={{ xs: "100%", md: "initial" }} key={notary?.id}>
+                <Link href={`/notaries/${encodeURIComponent(notary?.id)}`} style={{ textDecoration: "none" }}>
+                  <Grid item key={notary?.id} xs={12} sm={12} md={3}>
+                    <NotariesCard
+                      fullName={notary.name}
+                      image={notary["logo.fileName"]}
+                      rating={notary["partner.rating"]}
+                      region={notary["address.region"]}
+                      area={notary["address.district"]}
+                      location={notary["address.city"]?.fullName}
+                    />
+                  </Grid>
+                </Link>
+              </Box>
             ))}
           </Grid>
           {data?.data && (
             <Pagination
               sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
-              currentPage={appQueryParams?.page}
-              totalPages={data?.total ? Math.ceil(data.total / appQueryParams.pageSize) : 1}
+              currentPage={notariesQueryParams?.page}
+              totalPages={data?.total ? Math.ceil(data.total / notariesQueryParams.pageSize) : 1}
               onPageChange={handlePageChange}
             />
           )}

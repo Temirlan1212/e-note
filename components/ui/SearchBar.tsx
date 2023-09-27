@@ -1,38 +1,22 @@
-import { UseFormRegister } from "react-hook-form";
-import { Box, TextFieldProps } from "@mui/material";
+import { Box, SxProps, Theme } from "@mui/material";
 import { SearchOutlined } from "@mui/icons-material";
-
-import Input from "./Input";
-import Button from "./Button";
+import Input, { IInputProps } from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
 import { useTranslations } from "next-intl";
 
-type ISearchBarProps = TextFieldProps & {
-  register?: UseFormRegister<any>;
-  name?: string;
-  sx?: any;
+type ISearchBarProps = IInputProps & {
   loading?: boolean;
-  error?: any;
-  helperText?: any;
-  boxSx?: any;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  boxSx?: SxProps<Theme> | undefined;
 };
 
 const SearchBar: React.FC<ISearchBarProps> = (props) => {
   const t = useTranslations();
-
-  const { register, name, loading, error, helperText, boxSx, onClick, ...rest } = props;
+  const { loading, onClick, boxSx, ...rest } = props;
 
   return (
     <Box display="flex" sx={boxSx}>
-      <Input
-        {...rest}
-        fullWidth
-        name={name}
-        placeholder={t("Search")}
-        {...(register && name && register(name))}
-        error={error}
-        helperText={helperText}
-      />
+      <Input fullWidth placeholder={t("Search")} {...rest} />
       <Button sx={{ width: "80px" }} type="submit" color="success" loading={loading} onClick={onClick}>
         <SearchOutlined />
       </Button>

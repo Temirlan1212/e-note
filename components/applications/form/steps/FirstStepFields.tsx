@@ -15,6 +15,8 @@ import Area from "@/components/fields/Area";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import StepperContentStep from "@/components/ui/StepperContentStep";
+import useNotariesStore from "@/stores/notaries";
+import { useProfileStore } from "@/stores/profile";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -24,6 +26,8 @@ export interface IStepFieldsProps {
 }
 
 export default function FirstStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+  const [notaryData, setNotaryData] = useNotariesStore((state) => [state.notaryData, state.setNotaryData]);
+  const profile = useProfileStore.getState();
   const t = useTranslations();
   const locale = useLocale();
 
@@ -68,6 +72,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       const data: Partial<IApplicationSchema> & { creationDate: string } = {
         company: values.company,
         creationDate: format(new Date(), "yyyy-MM-dd"),
+        statusSelect: 2,
+        notarySignatureStatus: 2,
       };
 
       let result = null;
@@ -76,7 +82,6 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         data.version = values.version;
         result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
       } else {
-        data.statusSelect = 2;
         result = await applicationCreate("/api/applications/create", data);
       }
 
@@ -101,6 +106,13 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
+
+  useEffectOnce(() => {
+    if (notaryData != null && profile.user != null) {
+      setValue("company", notaryData);
+      setNotaryData(null);
+    }
+  }, [notaryData]);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">

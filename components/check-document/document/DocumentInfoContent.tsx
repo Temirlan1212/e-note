@@ -40,9 +40,10 @@ const DocumentInfoContent: FC<IDocumentInfoContentProps> = ({ id }) => {
         >
           {t("Document Validation")}
         </Typography>
-        <Link href="/check-document">
+        <Link href="/check-document" style={{ textDecoration: "none" }}>
           <Button
             variant="text"
+            href="/check-document"
             sx={{
               backgroundColor: "none",
               color: "#1BAA75",

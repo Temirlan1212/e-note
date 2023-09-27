@@ -8,7 +8,6 @@ import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box, Backdrop, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import EditIcon from "@mui/icons-material/Edit";
 import SyncIcon from "@mui/icons-material/Sync";
 import Button from "@/components/ui/Button";
@@ -117,6 +116,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
       const result = await applicationUpdate(`/api/applications/update/${id}`, {
         version,
         statusSelect: 1,
+        notarySignatureStatus: 1,
       });
 
       if (result?.data?.[0]?.id != null) {
@@ -156,29 +156,23 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
           loading={applicationLoading || prepareLoading || pdfLoading || signLoading || syncLoading}
         />
 
-        <Box display="flex" gap="10px" flexDirection={{ xs: "column", md: "row" }}>
-          {docUrl && (
-            <Link href={docUrl} target="_blank">
-              <Button startIcon={<PictureAsPdfIcon />} sx={{ width: "auto" }}>
-                {t("Download PDF")}
-              </Button>
-            </Link>
-          )}
+        {!applicationLoading && !prepareLoading && !pdfLoading && !signLoading && !syncLoading && (
+          <Box display="flex" gap="10px" flexDirection={{ xs: "column", md: "row" }}>
+            {!isSigned && token && prepare?.data?.editUrl != null && (
+              <Link
+                href={`${prepare.data.editUrl}?AuthorizationBasic=${token.replace(/Basic /, "")}`}
+                target="_blank"
+                onClick={() => setIsBackdropOpen(true)}
+              >
+                <Button startIcon={<EditIcon />} sx={{ width: "auto" }}>
+                  {t("Edit")}
+                </Button>
+              </Link>
+            )}
 
-          {!isSigned && token && prepare?.data?.editUrl != null && (
-            <Link
-              href={`${prepare.data.editUrl}?AuthorizationBasic=${token.replace(/Basic /, "")}`}
-              target="_blank"
-              onClick={() => setIsBackdropOpen(true)}
-            >
-              <Button startIcon={<EditIcon />} sx={{ width: "auto" }}>
-                {t("Edit")}
-              </Button>
-            </Link>
-          )}
-
-          {!isSigned && base64Doc != null && <SignModal base64Doc={base64Doc} onSign={handleSign} />}
-        </Box>
+            {!isSigned && base64Doc != null && <SignModal base64Doc={base64Doc} onSign={handleSign} />}
+          </Box>
+        )}
       </Box>
 
       {docUrl && <PDFViewer fileUrl={docUrl} />}

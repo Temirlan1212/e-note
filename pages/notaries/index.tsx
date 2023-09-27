@@ -1,12 +1,8 @@
 import Head from "next/head";
 import dynamic from "next/dynamic";
-
 import { Box, Container, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-
-import NotariesFiltration from "@/components/notaries/NotariesFiltration";
-import NotariesList from "@/components/notaries/NotariesList";
 import NotariesContent from "@/components/notaries/NotariesContent";
 
 const center: [number, number] = [42.882004, 74.582748];
