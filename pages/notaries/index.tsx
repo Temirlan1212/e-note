@@ -25,7 +25,7 @@ export default function Notaries() {
           {data?.name}
         </Typography>
         <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={500}>
-          {data?.address?.fullName}
+          {data?.["address.fullName"]}
         </Typography>
       </>
     );
@@ -51,8 +51,8 @@ export default function Notaries() {
           </Typography>
           <LeafletMap
             zoom={12}
-            markerData={notaryData?.data}
-            slots={markerPopup}
+            marker={notaryData?.data}
+            popup={markerPopup}
             style={{
               height: "600px",
             }}

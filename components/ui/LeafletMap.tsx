@@ -7,11 +7,16 @@ import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 interface ILeafletMapProps extends MapOptions {
-  markerData?: any;
-  slots?: (data: any) => ReactNode;
+  marker?: any;
   children?: ReactNode;
-  zoom: number;
+  popup?: (data: any) => ReactNode;
   style?: any;
+}
+
+interface IMarkers {
+  latitude: string;
+  longitude: string;
+  // popup?: ReactNode;
 }
 
 const customIcon = new Icon({
@@ -24,7 +29,7 @@ const customIcon = new Icon({
 
 const isValidCoordinates = (latitude: number, longitude: number) => !isNaN(latitude) && !isNaN(longitude);
 
-const createMarker = (data: { latitude: string; longitude: string }, index: number, slots: any) => {
+const createMarker = (data: { latitude: string; longitude: string }, index: number, popup: any) => {
   const latitude = parseFloat(data.latitude);
   const longitude = parseFloat(data.longitude);
 
@@ -36,25 +41,25 @@ const createMarker = (data: { latitude: string; longitude: string }, index: numb
 
   return (
     <Marker key={index} position={position} icon={customIcon}>
-      {slots && <Popup>{slots(data)}</Popup>}
+      {popup && <Popup>{popup(data)}</Popup>}
     </Marker>
   );
 };
 
-const LeafletMap: FC<ILeafletMapProps> = ({ children, ...options }) => {
-  const { markerData, slots } = options;
+const LeafletMap: FC<ILeafletMapProps> = ({ children, popup, ...options }) => {
+  const { marker } = options;
 
   const mapCenterRef = useRef<[number, number] | null>(null);
 
-  const markers = useMemo(() => {
-    if (Array.isArray(markerData)) {
-      return markerData.map((data, index) => createMarker(data, index, slots));
-    } else if (typeof markerData === "object") {
-      mapCenterRef.current = [parseFloat(markerData?.latitude), parseFloat(markerData?.longitude)];
-      return [createMarker(markerData, 0, slots)];
+  const markers: IMarkers[] | {} = useMemo(() => {
+    if (Array.isArray(marker)) {
+      return marker.map((data, index) => createMarker(data, index, popup));
+    } else if (typeof marker === "object") {
+      mapCenterRef.current = [parseFloat(marker?.latitude), parseFloat(marker?.longitude)];
+      return [createMarker(marker, 0, popup)];
     }
     return [];
-  }, [markerData]);
+  }, [marker]);
 
   return (
     <MapContainer maxZoom={18} center={mapCenterRef.current || [42.8777895, 74.6066926]} {...options}>

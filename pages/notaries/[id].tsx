@@ -62,8 +62,8 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
           <NotariesInfoContent />
           <LeafletMap
             zoom={12}
-            markerData={data?.data[0]}
-            slots={markerPopup}
+            marker={data?.data[0]}
+            popup={markerPopup}
             style={{
               height: "600px",
             }}
