@@ -5,11 +5,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.notary.db.Reference/search", {
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/search/com.axelor.apps.notary.db.Reference", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
       offset: 0,

@@ -3,13 +3,16 @@ import { Typography, Box, InputLabel, Collapse, Alert } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { SearchOutlined } from "@mui/icons-material";
 
-import SearchBar from "@/components/ui/SearchBar";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { useRouter } from "next/router";
 import Hint from "@/components/ui/Hint";
 import { IApplication } from "@/models/application";
+import { Controller, useForm } from "react-hook-form";
+import { checkDocumentById, ICheckDocumentById } from "@/validator-schemas/check-document-byId";
+import { yupResolver } from "@hookform/resolvers/yup";
+import SearchBar from "@/components/ui/SearchBar";
 
 interface ICheckedDocument extends FetchResponseBody {
   data: IApplication[];
@@ -17,20 +20,16 @@ interface ICheckedDocument extends FetchResponseBody {
 
 export default function CheckByID() {
   const router = useRouter();
-  const [keyword, setKeyword] = useState("");
   const [alertOpen, setAlertOpen] = useState(false);
   const t = useTranslations();
 
+  const { handleSubmit, formState, control } = useForm<ICheckDocumentById>({
+    resolver: yupResolver<ICheckDocumentById>(checkDocumentById),
+  });
   const { data, update, error } = useFetch<ICheckedDocument>("", "POST");
 
-  const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setKeyword(event.target.value);
-  };
-
-  const handleKeywordSearch: React.MouseEventHandler<HTMLDivElement> &
-    ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void) = (event) => {
-    event.preventDefault();
-    if (keyword.trim() === "") {
+  const onSubmit = (data: { keyword?: string }) => {
+    if (!data?.keyword || data.keyword?.trim() === "") {
       return;
     }
     update("/api/check-document", {
@@ -38,7 +37,7 @@ export default function CheckByID() {
         {
           fieldName: "uniqueQrCode",
           operator: "=",
-          value: keyword,
+          value: data?.keyword,
         },
       ],
     });
@@ -65,7 +64,25 @@ export default function CheckByID() {
           {t("Enter a unique number (ID) of the document to search:")}
         </InputLabel>
 
-        <SearchBar onChange={handleKeywordChange} onClick={handleKeywordSearch} value={keyword} name="search-field" />
+        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="keyword"
+            control={control}
+            render={({ field }) => (
+              <SearchBar
+                boxSx={{
+                  ".css-19gtboq-MuiButtonBase-root-MuiButton-root": {
+                    height: "43px",
+                  },
+                }}
+                id="search-field"
+                {...field}
+                error={!!formState.errors.keyword?.message}
+                helperText={t(formState.errors.keyword?.message)}
+              />
+            )}
+          />
+        </Box>
       </Box>
 
       <Hint

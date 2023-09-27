@@ -8,18 +8,19 @@ import PrivateLayout from "@/layouts/Private";
 import { ThemeProvider } from "@mui/material";
 import theme from "@/themes/default";
 import { useProfileStore } from "@/stores/profile";
-import { IRoute, useRouteStore } from "@/stores/route";
 import { IUser } from "@/models/user";
 import NavigationLoading from "@/components/ui/NavigationLoading";
 import useNotificationStore from "@/stores/notification";
 import Notification from "@/components/ui/Notification";
+import { guestRoutes } from "@/routes/guest";
+import { getRoutes } from "@/routes/data";
+
+const routes = getRoutes(guestRoutes, "rendered");
 
 function Layout({ children }: { children: JSX.Element }) {
   const router = useRouter();
   const profile = useProfileStore((state) => state);
-  const routes = useRouteStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
-  const [guestRoutes, setGuestRoutes]: [IRoute[], Function] = useState([]);
 
   useEffect(() => {
     setUser(profile.user);
@@ -35,11 +36,7 @@ function Layout({ children }: { children: JSX.Element }) {
     }
   }, [profile.user, router.route]);
 
-  useEffect(() => {
-    setGuestRoutes(routes.getRoutes(routes.guestRoutes, "rendered"));
-  }, [routes.guestRoutes]);
-
-  if (user != null && !guestRoutes.map((r) => r.link).includes(router.route)) {
+  if (user != null && !routes.map((r) => r.link).includes(router.route)) {
     return <PrivateLayout>{children}</PrivateLayout>;
   }
 

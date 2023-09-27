@@ -1,7 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { INotaryData } from "@/models/notaries";
-import { Criteria, Data, INotaryFilterData } from "@/components/notaries/NotariesContent";
+import { INotaryData, INotaryFilterData } from "@/models/notaries";
+
+interface Criteria {
+  value: any;
+  fieldName: string;
+  operator: string;
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<INotaryData | null>) {
   if (req.method !== "POST" && req.body == null) {
@@ -11,155 +16,95 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 8;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
 
-  const criteria: Criteria[] = [];
-  let data: Data = {};
-
   const radioValue = req.body["radioValue"];
-  const requestType = req.body["requestType"];
   const searchValue = req.body["searchValue"];
-  const requestData = req.body["requestData"];
+  const filterData = req.body["filterData"];
   const sortBy = req.body["sortBy"];
 
   const buildFilterCriteria = (filterData: INotaryFilterData) => {
-    if (filterData.city !== null) {
-      criteria.push({
-        fieldName: "address.city.id",
-        operator: "=",
-        value: filterData.city,
-      });
-    }
+    const criteria: Criteria[] = [];
+    if (filterData != null) {
+      const fieldsMap = {
+        city: "address.city.id",
+        district: "address.district.id",
+        notaryDistrict: "notaryDistrict.id",
+        region: "address.region.id",
+        workingDay: "workingDay.weekDayNumber",
+        typeOfNotary: "typeOfNotary",
+      };
 
-    if (filterData.district !== null) {
-      criteria.push({
-        fieldName: "address.district.id",
-        operator: "=",
-        value: filterData.district,
-      });
-    }
+      for (const field in fieldsMap) {
+        const key = field as keyof typeof fieldsMap;
+        if (filterData[key] !== null) {
+          criteria.push({
+            fieldName: fieldsMap[key],
+            operator: "=",
+            value: filterData[key],
+          });
+        }
+      }
 
-    if (filterData.notaryDistrict !== null) {
-      criteria.push({
-        fieldName: "notaryDistrict.id",
-        operator: "=",
-        value: filterData.notaryDistrict,
-      });
+      if (filterData.workingDay !== null) {
+        criteria.push({
+          fieldName: "workingDay.weekDayNumber",
+          operator: "in",
+          value: filterData.workingDay.split(",").map(Number),
+        });
+      }
     }
-
-    if (filterData.region !== null) {
-      criteria.push({
-        fieldName: "address.region.id",
-        operator: "=",
-        value: filterData.region,
-      });
-    }
-
-    if (filterData.workDays !== null) {
-      criteria.push({
-        fieldName: "workingDay.weekDayNumber",
-        operator: "in",
-        value: filterData.workDays.split(",").map(Number),
-      });
-    }
-
-    if (filterData.typeOfNotary !== null) {
-      criteria.push({
-        fieldName: "typeOfNotary",
-        operator: "=",
-        value: filterData.typeOfNotary,
-      });
-    }
-
     return criteria;
   };
 
   const radioChecked = () => {
     if (radioValue === "roundClock") {
       return [
-        {
-          fieldName: "roundClock",
-          operator: "=",
-          value: true,
-        },
-        {
-          fieldName: "checkOut",
-          operator: "=",
-          value: false,
-        },
+        { fieldName: "roundClock", operator: "=", value: true },
+        { fieldName: "checkOut", operator: "=", value: false },
       ];
     } else if (radioValue === "checkOut") {
       return [
-        {
-          fieldName: "roundClock",
-          operator: "=",
-          value: false,
-        },
-        {
-          fieldName: "checkOut",
-          operator: "=",
-          value: true,
-        },
+        { fieldName: "roundClock", operator: "=", value: false },
+        { fieldName: "checkOut", operator: "=", value: true },
       ];
     } else {
       return [];
     }
   };
 
-  if (requestType === "keywordSearch") {
-    data = {
-      operator: "and",
-      criteria: [
-        {
-          fieldName: "name",
-          operator: "like",
-          value: searchValue,
-        },
-      ],
-    };
-  }
-
-  if (requestType === "filterSearch") {
-    const newArr = buildFilterCriteria(requestData);
-    const criteriaArr = newArr.concat(radioChecked());
-    data = {
-      criteria: criteriaArr,
-      operator: "and",
-    };
-  }
-
-  if (requestType === "sortBy") {
-    data = {
-      criteria: criteria ?? [],
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/search/com.axelor.apps.base.db.Company", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      offset: page,
+      limit: pageSize,
       sortBy: sortBy ?? [],
-    };
-  }
-
-  const response = await fetch(
-    process.env.BACKEND_OPEN_API_URL + "/search/axelor-erp/com.axelor.apps.base.db.Company",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        offset: page,
-        limit: pageSize,
-        fields: [
-          "partner.simpleFullName",
-          "partner.rating",
-          "logo.fileName",
-          "address.region",
-          "address.district",
-          "address.city",
-          "address.fullName",
-          "latitude",
-          "longitude",
-          "name",
+      fields: [
+        "partner.simpleFullName",
+        "partner.rating",
+        "logo.fileName",
+        "address.region",
+        "address.district",
+        "address.city",
+        "address.fullName",
+        "latitude",
+        "longitude",
+        "name",
+      ],
+      data: {
+        operator: "and",
+        criteria: [
+          { criteria: buildFilterCriteria(filterData).concat(radioChecked()), operator: "and" },
+          {
+            fieldName: "name",
+            operator: "like",
+            value: searchValue ?? "",
+          },
         ],
-        data: data,
-        ...req.body,
-      }),
-    }
-  );
+      },
+    }),
+  });
 
   if (!response.ok) {
     return res.status(response.status).json(null);

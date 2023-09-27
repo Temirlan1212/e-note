@@ -98,3 +98,12 @@ export interface ApiNotaryResponse {
   status: number;
   data: INotaryInfoData[];
 }
+
+export interface INotaryFilterData {
+  city: number | null;
+  district: number | null;
+  notaryDistrict: number | null;
+  region: number | null;
+  typeOfNotary: string | null;
+  workingDay: string | null;
+}

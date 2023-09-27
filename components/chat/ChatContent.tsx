@@ -9,46 +9,45 @@ import ChatListBoard from "./contact-list/ChatListBoard";
 import ChatMessageBoard from "./message/ChatMessageBoard";
 
 import useFetch from "@/hooks/useFetch";
+import { IContact } from "@/models/chat";
+import { IUserData } from "@/models/user";
+import { useProfileStore } from "@/stores/profile";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
-export interface IContact {
+export interface IContactData {
   status: number;
-  data: {
-    appName: string;
-    chatCreator: string;
-    chatId: number;
-    chatRoomLink: string;
-    guestEmail: null;
-    guestId: number;
-    notary: {
-      id: number;
-    };
-    userToken: string;
-  };
+  data: IContact[];
 }
 
 const ChatContent: FC = () => {
+  const [userData, setUserData] = useState<IUserData | null>(null);
   const [activeContactId, setActiveContactId] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
   const t = useTranslations();
 
-  const { data } = useFetch("/api/profile/users", "POST");
-  const { data: contact, update } = useFetch<IContact>("", "POST");
+  const profile = useProfileStore((state) => state);
+  const { data } = useFetch<IContactData>("/api/chat", "GET");
 
   const handleContactClick = (contactId: number) => {
-    update(`/api/chat/create/${contactId}`, { id: contactId });
     setActiveContactId(contactId);
   };
 
-  const filteredUsers: Array<{ name: string; id: number }> = data?.data?.filter((user: { name: string; id: number }) =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredUsers = (data?.data ?? []).filter(
+    (user) => user?.chatCreator?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const activeContact = filteredUsers?.find((user) => user.id === activeContactId);
+  const activeContact = filteredUsers?.find((user) => user.chatId === activeContactId);
 
   const onBackToContacts = () => {
     setActiveContactId(0);
   };
+
+  const contact = (data?.data ?? []).find((user) => user.chatId === activeContactId);
+
+  useEffectOnce(async () => {
+    setUserData(profile.getUserData());
+  }, [profile]);
 
   return (
     <>
@@ -65,7 +64,7 @@ const ChatContent: FC = () => {
           color: "#1BAA75",
           fontSize: "16px",
           display: {
-            xs: activeContact?.id ? "flex" : "none",
+            xs: activeContact?.chatId ? "flex" : "none",
             md: "none",
           },
           margin: "0 0 20px auto",
@@ -82,6 +81,7 @@ const ChatContent: FC = () => {
         }}
       >
         <ChatListBoard
+          isNotary={userData?.group?.id === 4}
           users={filteredUsers}
           handleContactClick={handleContactClick}
           activeContact={activeContact}
@@ -90,7 +90,12 @@ const ChatContent: FC = () => {
         />
 
         {activeContact ? (
-          <ChatMessageBoard name={contact?.data?.appName} chatLink={contact?.data?.chatRoomLink} />
+          <ChatMessageBoard
+            userToken={contact?.userToken}
+            name={userData?.group.id === 4 ? contact?.chatCreator : contact?.notary.name}
+            chatCreator={userData?.group.id === 4 ? contact?.chatCreator : contact?.notary.name}
+            chatLink={contact?.chatRoomLink}
+          />
         ) : (
           <Box
             sx={{
