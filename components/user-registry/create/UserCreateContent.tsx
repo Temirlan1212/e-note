@@ -12,7 +12,6 @@ import useFetch from "@/hooks/useFetch";
 import Select from "@/components/ui/Select";
 import { Search } from "@mui/icons-material";
 import { IUserRegistrySchema, userRegistrySchema } from "@/validator-schemas/user-registry";
-import UserData from "@/components/fields/UserData";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { useRouter } from "next/router";
 import PersonalData from "@/components/fields/PersonalData";
