@@ -12,28 +12,22 @@ export interface IRoute extends Omit<IChildRoute, "type"> {
   children?: IChildRoute[];
 }
 
-export interface IRouteState {
-  guestRoutes: IRoute[];
-  userRoutes: IRoute[];
-  getRoutes: (
-    routeList: IRoute[],
-    type?: IRoute["type"] | "rendered",
-    role?: IChildRoute["role"],
-    rootOnly?: boolean
-  ) => IRoute[] | IChildRoute[];
-}
+export const isRouteIncludes = (routeList: IRoute[], route: string): boolean => {
+  if (route.length <= 1) return false;
+  return routeList.filter((r) => r.link.includes(route) || (r.link.length > 1 && route.includes(r.link))).length > 0;
+};
 
 export const getRoutes = (
   routeList: IRoute[],
-  type: IRoute["type"] | "rendered",
+  type?: IRoute["type"] | "rendered",
   role?: IChildRoute["role"],
-  rootOnly = false
+  rootOnly: boolean = false
 ) => {
   if (type == null) {
     return routeList;
   }
 
-  return routeList.reduce((acc: IRoute[], val: IRoute) => {
+  return routeList?.reduce((acc: IRoute[], val: IRoute) => {
     if (role != null && val.role != null && role !== val.role) return acc;
 
     if (rootOnly && val.children != null) {
