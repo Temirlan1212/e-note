@@ -1,6 +1,6 @@
 import { IRoute } from "./data";
 
-export const userRoutes: IRoute[] = [
+export const routes: IRoute[] = [
   {
     title: "Notarial actions",
     link: "/applications",
