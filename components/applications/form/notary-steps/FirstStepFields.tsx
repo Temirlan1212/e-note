@@ -51,6 +51,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     trigger,
     getValues,
     setValue,
+    watch,
     formState: { errors },
   } = form;
 
@@ -65,19 +66,29 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const [items, setItems] = useState<ITabListItem[]>([
     {
       getElement(index: number) {
+        const partnerType = watch(`requester.${index}.partnerTypeSelect`);
+
         return (
           <Box display="flex" gap="20px" flexDirection="column">
             <Typography variant="h5">{t("Personal data")}</Typography>
             <PersonalData form={form} names={getPersonalDataNames(index)} onPinCheck={() => handlePinCheck(index)} />
 
-            <Typography variant="h5">{t("Identity document")}</Typography>
-            <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
+            {partnerType != 1 && (
+              <>
+                <Typography variant="h5">{t("Identity document")}</Typography>
+                <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
+              </>
+            )}
 
             <Typography variant="h5">{t("Place of residence")}</Typography>
             <Address form={form} names={getAddressNames(index)} />
 
-            <Typography variant="h5">{t("Actual place of residence")}</Typography>
-            <Address form={form} names={getActualAddressNames(index)} />
+            {partnerType != 1 && (
+              <>
+                <Typography variant="h5">{t("Actual place of residence")}</Typography>
+                <Address form={form} names={getActualAddressNames(index)} />
+              </>
+            )}
 
             <Typography variant="h5">{t("Contacts")}</Typography>
             <Contact form={form} names={getContactNames(index)} />
@@ -113,6 +124,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     notaryPhysicalParticipantsQty: `requester.${index}.notaryPhysicalParticipantsQty`,
     notaryLegalParticipantsQty: `requester.${index}.notaryLegalParticipantsQty`,
     notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
+    notaryDateOfOrder: `requester.${index}.notaryDateOfOrder`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
