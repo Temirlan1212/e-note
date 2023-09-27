@@ -28,6 +28,7 @@ export const personSchema = object()
     personalNumber: string()
       .trim()
       .min(14, "minNumbers")
+      .max(14, "maxNumbers")
       .required("required")
       .matches(/^[0-9]*$/, "onlyNumbers"),
     birthDate: date().nullable(),
