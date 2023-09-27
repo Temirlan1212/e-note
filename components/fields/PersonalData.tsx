@@ -32,6 +32,7 @@ export interface IPersonalDataProps {
     notaryPhysicalParticipantsQty: string;
     notaryLegalParticipantsQty: string;
     notaryTotalParticipantsQty: string;
+    notaryDateOfOrder: string;
   };
   defaultValues?: {
     type?: number | null;
@@ -50,6 +51,7 @@ export interface IPersonalDataProps {
     notaryPhysicalParticipantsQty?: number;
     notaryLegalParticipantsQty?: number;
     notaryTotalParticipantsQty?: number;
+    notaryDateOfOrder?: Date;
   };
   fields?: {
     type?: boolean;
@@ -68,6 +70,7 @@ export interface IPersonalDataProps {
     notaryPhysicalParticipantsQty?: boolean;
     notaryLegalParticipantsQty?: boolean;
     notaryTotalParticipantsQty?: boolean;
+    notaryDateOfOrder?: boolean;
   };
   onPinCheck?: MouseEventHandler<HTMLButtonElement>;
 }
@@ -143,7 +146,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <InputLabel>{t("PIN")}</InputLabel>
                   <Input
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                    helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 6 }) : ""}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 14, max: 14 }) : ""}
                     {...field}
                     value={field.value != null ? field.value : ""}
                   />
@@ -164,7 +167,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
         )}
       </Box>
 
-      {type == 2 && (
+      {(type == null || type == 2) && (
         <>
           <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
             {(fields?.lastName == null || !!fields?.lastName) && (
@@ -420,24 +423,48 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
             )}
           </Box>
 
-          {(fields?.notaryTotalParticipantsQty == null || !!fields?.notaryTotalParticipantsQty) && (
-            <Controller
-              control={control}
-              name={names.notaryTotalParticipantsQty}
-              defaultValue={defaultValues?.notaryTotalParticipantsQty ?? ""}
-              render={({ field, fieldState }) => (
-                <Box display="flex" flexDirection="column" width="100%">
-                  <InputLabel>{t("Total number (participants)")}</InputLabel>
-                  <Input
-                    type="number"
-                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                    {...field}
-                  />
-                </Box>
-              )}
-            />
-          )}
+          <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+            {(fields?.notaryTotalParticipantsQty == null || !!fields?.notaryTotalParticipantsQty) && (
+              <Controller
+                control={control}
+                name={names.notaryTotalParticipantsQty}
+                defaultValue={defaultValues?.notaryTotalParticipantsQty ?? ""}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Total number (participants)")}</InputLabel>
+                    <Input
+                      type="number"
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      {...field}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+
+            {(fields?.notaryDateOfOrder == null || !!fields?.notaryDateOfOrder) && (
+              <Controller
+                control={control}
+                name={names.notaryDateOfOrder}
+                defaultValue={defaultValues?.notaryDateOfOrder ?? null}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Order date")}</InputLabel>
+                    <DatePicker
+                      type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      value={field.value != null ? new Date(field.value) : null}
+                      onChange={(...event: any[]) => {
+                        field.onChange(...event);
+                        trigger(field.name);
+                      }}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+          </Box>
         </>
       )}
     </Box>

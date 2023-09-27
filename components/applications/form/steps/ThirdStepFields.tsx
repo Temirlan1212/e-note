@@ -36,13 +36,14 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
 
   const { trigger, watch, getValues, setValue } = form;
 
-  const requester = watch("requester");
+  const requesterId = watch("requester.0.id");
+  const partnerType = watch("requester.0.partnerTypeSelect");
 
   const [loading, setLoading] = useState(false);
   const [partnerId, setPartnerId] = useState<number>();
 
   const { data: requesterData } = useFetch(
-    partnerId != null && requester?.[0].id == null ? `/api/profile/partner/${partnerId}` : "",
+    partnerId != null && requesterId == null ? `/api/profile/partner/${partnerId}` : "",
     "POST"
   );
   const { update: applicationUpdate } = useFetch("", "PUT");
@@ -65,6 +66,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
     notaryPhysicalParticipantsQty: `requester.${index}.notaryPhysicalParticipantsQty`,
     notaryLegalParticipantsQty: `requester.${index}.notaryLegalParticipantsQty`,
     notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
+    notaryDateOfOrder: `requester.${index}.notaryDateOfOrder`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -198,7 +200,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
   }, [profile]);
 
   useEffectOnce(() => {
-    if (requesterData?.data?.[0]?.id == null || requester?.[0].id != null) return;
+    if (requesterData?.data?.[0]?.id == null || requesterId != null) return;
 
     const index = 0;
     setValue("requester", requesterData.data);
@@ -224,14 +226,22 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
       <Typography variant="h5">{t("Personal data")}</Typography>
       <PersonalData form={form} names={getPersonalDataNames(0)} />
 
-      <Typography variant="h5">{t("Identity document")}</Typography>
-      <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
+      {partnerType != 1 && (
+        <>
+          <Typography variant="h5">{t("Identity document")}</Typography>
+          <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
+        </>
+      )}
 
       <Typography variant="h5">{t("Place of residence")}</Typography>
       <Address form={form} names={getAddressNames(0)} />
 
-      <Typography variant="h5">{t("Actual place of residence")}</Typography>
-      <Address form={form} names={getActualAddressNames(0)} />
+      {partnerType != 1 && (
+        <>
+          <Typography variant="h5">{t("Actual place of residence")}</Typography>
+          <Address form={form} names={getActualAddressNames(0)} />
+        </>
+      )}
 
       <Typography variant="h5">{t("Contacts")}</Typography>
       <Contact form={form} names={getContactNames(0)} />

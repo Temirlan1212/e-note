@@ -16,18 +16,27 @@ export const personSchema = object()
     foreigner: boolean(),
     lastName: string()
       .trim()
-      .required("required")
+      .when("partnerTypeSelect", {
+        is: 2,
+        then: (schema) => schema.required("required"),
+        otherwise: (schema) => schema.nullable(),
+      })
       .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
     name: string()
       .trim()
-      .required("required")
+      .when("partnerTypeSelect", {
+        is: 2,
+        then: (schema) => schema.required("required"),
+        otherwise: (schema) => schema.nullable(),
+      })
       .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
     middleName: string()
       .trim()
       .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
     personalNumber: string()
       .trim()
-      .min(6, "minNumbers")
+      .min(14, "minNumbers")
+      .max(14, "maxNumbers")
       .required("required")
       .matches(/^[0-9]*$/, "onlyNumbers"),
     birthDate: date().nullable(),
@@ -119,5 +128,6 @@ export const personSchema = object()
         then: (schema) => schema.required("required"),
         otherwise: (schema) => schema.nullable(),
       }),
+    notaryDateOfOrder: date().nullable(),
   })
   .concat(filesSchema.pick(["files"]));

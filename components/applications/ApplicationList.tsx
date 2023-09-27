@@ -36,7 +36,7 @@ export default function ApplicationList() {
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,
     page: 1,
-    sortBy: ["creationDate"],
+    sortBy: ["-creationDate"],
     filterValues: {},
   });
 

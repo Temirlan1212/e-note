@@ -25,14 +25,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   }
 
-  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/search/axelor-erp/com.axelor.apps.base.db.City", {
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/search/com.axelor.apps.base.db.City", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      fields: ["id", "version", "name", "district.id", "region.id", "zip"],
+      fields: ["id", "version", "name", "district.id", "region.id", "zip", "isRegionalSignificance"],
       data: {
         operator: "and",
         criteria,

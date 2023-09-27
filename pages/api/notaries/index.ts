@@ -71,40 +71,37 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
   };
 
-  const response = await fetch(
-    process.env.BACKEND_OPEN_API_URL + "/search/axelor-erp/com.axelor.apps.base.db.Company",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        offset: page,
-        limit: pageSize,
-        sortBy: sortBy ?? [],
-        fields: [
-          "partner.simpleFullName",
-          "partner.rating",
-          "logo.fileName",
-          "address.region",
-          "address.district",
-          "address.city",
-          "name",
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/search/com.axelor.apps.base.db.Company", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      offset: page,
+      limit: pageSize,
+      sortBy: sortBy ?? [],
+      fields: [
+        "partner.simpleFullName",
+        "partner.rating",
+        "logo.fileName",
+        "address.region",
+        "address.district",
+        "address.city",
+        "name",
+      ],
+      data: {
+        operator: "and",
+        criteria: [
+          { criteria: buildFilterCriteria(filterData).concat(radioChecked()), operator: "and" },
+          {
+            fieldName: "name",
+            operator: "like",
+            value: searchValue ?? "",
+          },
         ],
-        data: {
-          operator: "and",
-          criteria: [
-            { criteria: buildFilterCriteria(filterData).concat(radioChecked()), operator: "and" },
-            {
-              fieldName: "name",
-              operator: "like",
-              value: searchValue ?? "",
-            },
-          ],
-        },
-      }),
-    }
-  );
+      },
+    }),
+  });
 
   if (!response.ok) {
     return res.status(response.status).json(null);
