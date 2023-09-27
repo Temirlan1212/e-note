@@ -1,7 +1,7 @@
 import { number, object, InferType, string, date, boolean } from "yup";
-import { addressSchema } from "./address";
 
 export type IUserRegistrySchema = InferType<typeof userRegistrySchema>;
+export type IUserRegistryFiltrationSchema = InferType<typeof userRegistryFiltrationSchema>;
 
 const userAddressSchema = object().shape({
   id: number().integer().positive().nullable(),
@@ -82,3 +82,15 @@ export const userRegistrySchema = object()
     }),
   })
   .concat(userAddressSchema.pick(["region", "district", "city"]));
+
+export const userRegistryFiltrationSchema = object().shape({
+  keyword: string(),
+  role: string(),
+  createdBy: string(),
+  createdOn: object()
+    .shape({
+      value: date(),
+      value2: date(),
+    })
+    .nullable(),
+});

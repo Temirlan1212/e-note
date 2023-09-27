@@ -21,10 +21,11 @@ interface IDatePickerProps<T = Date | null> extends Omit<DatePickerProps<T>, "on
   placeholder?: string;
   type?: keyof typeof types;
   helperText?: string;
+  boxSx?: any;
 }
 
 const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProps> = (props, ref) => {
-  const { onChange, value, placeholder, type = "secondary", helperText, ...restProps } = props;
+  const { onChange, value, placeholder, type = "secondary", helperText, boxSx, ...restProps } = props;
 
   const locale = useLocale();
   const theme = useTheme();
@@ -64,7 +65,7 @@ const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProp
   const mergedStyles = { ...inputStyles, ...props.sx };
 
   return (
-    <FormControl error={type === "error"} ref={ref}>
+    <FormControl error={type === "error"} sx={boxSx} ref={ref}>
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={adapterLocale} localeText={localeText}>
         <MUIDatePicker
           views={["day", "month", "year"]}

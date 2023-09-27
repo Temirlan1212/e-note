@@ -1,6 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Criteria, Data } from "@/components/notaries/NotariesContent";
-import { IUserRegistryCriteria, IUserRegistryFilterData } from "@/components/user-registry/UserRegistryContent";
+
+interface Criteria {
+  value: any;
+  fieldName: string;
+  operator: string;
+}
+
+export interface IUserRegistryFilterData {
+  createdOn: {
+    value: string;
+    value2: string;
+  };
+  role: string;
+  createdBy: string;
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
@@ -10,69 +23,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 8;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
 
-  const criteria: IUserRegistryCriteria[] = [];
-  let data: Data = {};
-
-  const requestType = req.body["requestType"];
   const searchValue = req.body["searchValue"];
-  const requestData = req.body["requestData"];
+  const filterData = req.body["filterData"];
   const sortBy = req.body["sortBy"];
 
   const buildFilterCriteria = (filterData: IUserRegistryFilterData) => {
-    if (filterData.createdOn !== null) {
-      criteria.push({
-        fieldName: "createdOn",
-        operator: "between",
-        value: filterData.createdOn.value,
-        value2: filterData.createdOn.value2,
-      });
-    }
+    const criteria: Criteria[] = [];
+    if (filterData !== null) {
+      const fieldsMap = {
+        createdOn: "createdOn",
+        role: "user.roles.name",
+        createdBy: "emailAddress.address",
+      };
 
-    if (filterData.role !== null) {
-      criteria.push({
-        fieldName: "user.roles.name",
-        operator: "=",
-        value: filterData.role,
-      });
-    }
-
-    if (filterData.createdBy !== null) {
-      criteria.push({
-        fieldName: "emailAddress.address",
-        operator: "=",
-        value: filterData.createdBy,
-      });
+      for (const field in fieldsMap) {
+        const key = field as keyof typeof fieldsMap;
+        if (filterData[key] !== null) {
+          criteria.push({
+            fieldName: fieldsMap[key],
+            operator: "=",
+            value: filterData[key],
+          });
+        }
+      }
     }
 
     return criteria;
   };
-
-  if (requestType === "keywordSearch") {
-    data = {
-      criteria: [
-        {
-          fieldName: "fullName",
-          operator: "like",
-          value: searchValue,
-        },
-      ],
-    };
-  }
-
-  if (requestType === "filterSearch") {
-    const newArr = buildFilterCriteria(requestData);
-    data = {
-      criteria: newArr,
-      operator: "and",
-    };
-  }
-
-  if (requestType === "sortBy") {
-    data = {
-      criteria: criteria ?? [],
-      sortBy: sortBy ?? [],
-    };
-  }
 
   const response = await fetch("https://not.petabyte.pro/axelor-erp/ws/rest/com.axelor.apps.base.db.Partner/search", {
     method: "POST",
@@ -97,11 +74,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "user.version",
       ],
       data: {
-        _domain: "self.user.blocked = :personalNumber", // Проверка ИНН гражданина в черном списке
+        _domain: "self.user.blocked = :personalNumber",
         _domainContext: {
           personalNumber: "false",
         },
-        ...data,
+        sortBy,
+        operator: "and",
+        criteria: [
+          {
+            operator: "and",
+            criteria: buildFilterCriteria(filterData),
+          },
+          {
+            fieldName: "fullName",
+            operator: "like",
+            value: searchValue ?? "",
+          },
+        ],
       },
       ...req.body,
     }),

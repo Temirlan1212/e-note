@@ -10,17 +10,17 @@ import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 
 import Pagination from "../../components/ui/Pagination";
 import { GridTable, IGridColDef } from "../../components/ui/GridTable";
-import { IUserRegistryData } from "@/components/user-registry/UserRegistryContent";
 import useFetch from "@/hooks/useFetch";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { GridRenderCellParams, GridSortModel } from "@mui/x-data-grid";
 import { format } from "date-fns";
+import { IUsersQueryParams } from "@/components/user-registry/UserRegistryContent";
 
 interface IUserRegistryTableListProps {
-  users: IUserRegistryData | null;
+  users: any | null;
   loading: boolean;
   handlePageChange: (page: number) => void;
-  appQueryParams: any;
+  usersQueryParams: IUsersQueryParams;
   onDelete: () => void;
   onSortChange: (model: GridSortModel) => void;
 }
@@ -28,7 +28,7 @@ interface IUserRegistryTableListProps {
 export default function UserRegistryTableList({
   users,
   loading,
-  appQueryParams,
+  usersQueryParams,
   handlePageChange,
   onDelete,
   onSortChange,
@@ -129,8 +129,8 @@ export default function UserRegistryTableList({
 
       <Box alignSelf="center">
         <Pagination
-          currentPage={appQueryParams.page}
-          totalPages={users?.total ? Math.ceil(users.total / appQueryParams.pageSize) : 1}
+          currentPage={usersQueryParams.page}
+          totalPages={users?.total ? Math.ceil(users.total / usersQueryParams.pageSize) : 1}
           onPageChange={handlePageChange}
         />
       </Box>

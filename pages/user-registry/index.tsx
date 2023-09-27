@@ -13,14 +13,7 @@ export default function UserRegistry() {
         <title>{t("User registry")}</title>
       </Head>
 
-      <Container
-        component="section"
-        maxWidth="xl"
-        sx={{
-          pt: "40px",
-          pb: "60px",
-        }}
-      >
+      <Container component="section" maxWidth="xl" sx={{ py: "30px" }}>
         <UserRegistryContent />
       </Container>
     </>

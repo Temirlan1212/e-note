@@ -1,139 +1,139 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 
-import { Box } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 
-import UserRegistryFiltration from "./UserRegistryFiltration";
+import UserRegistryFilterForm from "./UserRegistryFilterForm";
 import UserRegistryTableList from "./UserRegistryTableList";
 import Button from "../ui/Button";
-import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
+import useFetch from "@/hooks/useFetch";
 import { ValueOf } from "next/dist/shared/lib/constants";
 import { useForm } from "react-hook-form";
 import HeirNotFoundData from "@/components/search-for-heirs/HeirNotFoundData";
 import { GridSortModel } from "@mui/x-data-grid";
-import { IPartner } from "@/models/user";
+import SearchBar from "@/components/ui/SearchBar";
+import ExcelIcon from "@/public/icons/excel.svg";
+import ClearIcon from "@mui/icons-material/Clear";
+import { IUserRegistryFiltrationSchema } from "@/validator-schemas/user-registry";
 
 interface IUserRegistryContentProps {}
 
-interface IAppQueryParams {
+export interface IUsersQueryParams {
   pageSize: number;
   page: number;
   sortBy: string[] | null;
   searchValue?: string | null;
-  requestType?: string | null;
-  requestData?: any;
-}
-
-export interface IUserRegistryFilterData {
-  createdOn: {
-    value: string;
-    value2: string;
-  };
-  role: string | null;
-  createdBy: string | null;
-}
-
-export interface IUserRegistryCriteria {
-  value2?: string;
-  value: string;
-  fieldName: string;
-  operator: string;
-}
-
-export interface IUserRegistryData extends Partial<FetchResponseBody> {
-  data: IPartner[];
+  filterData?: any;
 }
 
 const UserRegistryContent: FC<IUserRegistryContentProps> = (props) => {
   const t = useTranslations();
 
-  const form = useForm();
+  const form = useForm<IUserRegistryFiltrationSchema>();
+  const { reset, register, watch } = form;
 
-  const { handleSubmit, control, reset } = form;
-
-  const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
+  const [fileName, setFileName] = useState<string | null>("");
+  const [excelReqBody, setExcelReqBody] = useState({
+    roleValue: "user registry",
+    filterValues: {},
+  });
+  const [usersQueryParams, setUsersQueryParams] = useState<IUsersQueryParams>({
     pageSize: 8,
     page: 1,
     sortBy: null,
     searchValue: null,
-    requestData: null,
-    requestType: null,
+    filterData: null,
   });
-  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const {
     data: users,
     loading,
     update,
-  } = useFetch<IUserRegistryData>("/api/user-registry", "POST", {
-    body: appQueryParams,
+  } = useFetch("/api/user-registry", "POST", {
+    body: usersQueryParams,
   });
 
-  const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
-    setAppQueryParams((prev) => {
+  const { update: downloadExcel } = useFetch("", "GET", {
+    returnResponse: true,
+  });
+  const { data: exportExcel } = useFetch("/api/officials/export", "POST", {
+    body: excelReqBody,
+  });
+
+  const updateUsersQueryParams = (key: keyof IUsersQueryParams, newValue: ValueOf<IUsersQueryParams>) => {
+    setUsersQueryParams((prev) => {
       return { ...prev, [key]: newValue };
     });
   };
 
   const handlePageChange = (page: number) => {
-    if (appQueryParams.page !== page) updateAppQueryParams("page", page);
+    if (usersQueryParams.page !== page) updateUsersQueryParams("page", page);
   };
 
   const handleSearchSubmit = () => {
-    if (!searchQuery) {
-      return;
+    const searchValue = form.getValues().keyword;
+    if (searchValue == null) return;
+    updateUsersQueryParams("searchValue", searchValue);
+  };
+
+  const handleSearchReset = () => {
+    form.resetField("keyword");
+    if (usersQueryParams.searchValue) {
+      updateUsersQueryParams("searchValue", "");
     }
-
-    setAppQueryParams((prevParams) => ({
-      ...prevParams,
-      page: 1,
-      requestType: "keywordSearch",
-      searchValue: searchQuery,
-    }));
   };
 
-  const onFilterClear = () => {
+  const handleFormReset = () => {
     reset();
-    setAppQueryParams((prevParams) => ({
-      ...prevParams,
-      requestType: null,
-      requestData: null,
-    }));
+    updateUsersQueryParams("filterData", null);
   };
 
-  const onFilterSubmit = (data: any) => {
+  const handleFormSubmit = (data: any) => {
     const filteredData: any = {};
-
     for (const key in data) {
       if (data.hasOwnProperty(key)) {
         filteredData[key] = data[key] === "" ? null : data[key];
       }
     }
-
-    setAppQueryParams((prevParams) => ({
-      ...prevParams,
-      requestType: "filterSearch",
-      requestData: filteredData,
-    }));
+    updateUsersQueryParams("filterData", filteredData);
   };
 
   const handleSortByDate = async (model: GridSortModel) => {
     const sortBy = model.map((s) => (s.sort === "asc" ? s.field : `-${s.field}`));
-    updateAppQueryParams("sortBy", sortBy);
+    updateUsersQueryParams("sortBy", sortBy);
   };
 
   const handleDelete = async () => {
     const res = await update();
     if (res?.total) {
-      const pageQuantity = Math.ceil(res.total / appQueryParams.pageSize);
-      const page = appQueryParams.page;
+      const pageQuantity = Math.ceil(res.total / usersQueryParams.pageSize);
+      const page = usersQueryParams.page;
       if (pageQuantity >= page) {
-        updateAppQueryParams("page", page);
+        updateUsersQueryParams("page", page);
       } else {
-        updateAppQueryParams("page", pageQuantity);
+        updateUsersQueryParams("page", pageQuantity);
       }
     }
   };
+
+  const download = async () => {
+    const response = await downloadExcel(`/api/officials/download/${fileName}`);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = fileName || "exported-data.csv";
+    document.body.appendChild(a);
+    a.click();
+  };
+
+  useEffect(() => {
+    if (exportExcel?.data) {
+      setFileName(exportExcel.data.fileName);
+    }
+  }, [exportExcel?.data]);
 
   return (
     <Box
@@ -143,6 +143,9 @@ const UserRegistryContent: FC<IUserRegistryContentProps> = (props) => {
         gap: "40px",
       }}
     >
+      <Typography variant="h4" color="success.main">
+        {t("User registry")}
+      </Typography>
       <Button
         href="/user-registry/create"
         color="success"
@@ -156,22 +159,63 @@ const UserRegistryContent: FC<IUserRegistryContentProps> = (props) => {
       >
         {t("Add a new user")}
       </Button>
-      <UserRegistryFiltration
-        loading={loading}
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        onSearchSubmit={handleSearchSubmit}
-        onFilterSubmit={onFilterSubmit}
-        handleSubmit={handleSubmit}
-        control={control}
-        onFilterClear={onFilterClear}
-      />
+      <Box
+        sx={{
+          display: "flex",
+          gap: "30px",
+          alignItems: "flex-start",
+          flexDirection: {
+            xs: "column",
+            md: "row",
+          },
+        }}
+      >
+        <SearchBar
+          boxSx={{ width: { xs: "100%", md: "80%" } }}
+          register={register}
+          onClick={handleSearchSubmit}
+          name="keyword"
+          InputProps={{
+            endAdornment: (
+              <IconButton
+                onClick={() => watch("keyword") && handleSearchReset()}
+                sx={{ visibility: watch("keyword") ? "visible" : "hidden" }}
+              >
+                <ClearIcon />
+              </IconButton>
+            ),
+          }}
+        />
+        <Button
+          sx={{
+            fontSize: "14px",
+            ":hover": {
+              color: "#fff",
+            },
+            display: {
+              md: "flex",
+            },
+            width: {
+              xs: "100%",
+              md: "30%",
+            },
+            padding: "13px 10px",
+          }}
+          color="success"
+          variant="outlined"
+          endIcon={<ExcelIcon />}
+          onClick={download}
+        >
+          {t("Export to Excel")}
+        </Button>
+      </Box>
+      <UserRegistryFilterForm form={form} onFormSubmit={handleFormSubmit} onFormReset={handleFormReset} />
       {users?.data?.length! > 0 ? (
         <UserRegistryTableList
           handlePageChange={handlePageChange}
           loading={loading}
           users={users}
-          appQueryParams={appQueryParams}
+          usersQueryParams={usersQueryParams}
           onDelete={handleDelete}
           onSortChange={handleSortByDate}
         />
