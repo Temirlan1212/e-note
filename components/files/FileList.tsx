@@ -97,7 +97,7 @@ export default function FileList() {
     formData.append("file", elem.files[0]);
 
     const res = await uploadUpdate("/api/files/upload", formData);
-    if (res?.id == null) return;
+    if (res?.id == null && profile.userData?.id == null) return;
     await attachmentsUpdate(
       `/api/files/attachments/update?model=com.axelor.apps.base.db.Partner&id=${profile.userData?.id}`,
       { filesId: [{ id: res.id }] }
