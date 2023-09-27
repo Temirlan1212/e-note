@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import Head from "next/head";
 import { useTranslations } from "next-intl";
 
-import { Container, Box, Typography } from "@mui/material";
+import { Container, Box, Typography, CircularProgress } from "@mui/material";
 import { useRouter } from "next/router";
 
 import NotariesInfoContent from "@/components/notaries/NotariesInfoContent";
@@ -39,6 +39,11 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
     );
   };
 
+  const markerCenter: [number, number] = [
+    parseFloat(data?.data[0]?.latitude as string),
+    parseFloat(data?.data[0]?.longitude as string),
+  ];
+
   return (
     <>
       <Head>
@@ -60,14 +65,19 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
           marginBottom="40px"
         >
           <NotariesInfoContent />
-          <LeafletMap
-            zoom={12}
-            marker={data?.data[0]}
-            popup={markerPopup}
-            style={{
-              height: "600px",
-            }}
-          />
+          {data ? (
+            <LeafletMap
+              zoom={12}
+              markers={data?.data}
+              center={markerCenter}
+              popup={markerPopup}
+              style={{
+                height: "600px",
+              }}
+            />
+          ) : (
+            <CircularProgress />
+          )}
         </Box>
       </Container>
     </>

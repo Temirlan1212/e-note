@@ -1,6 +1,6 @@
 import Head from "next/head";
 import dynamic from "next/dynamic";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import NotariesContent from "@/components/notaries/NotariesContent";
@@ -49,14 +49,18 @@ export default function Notaries() {
           >
             {t("Search for a notary on the map")}
           </Typography>
-          <LeafletMap
-            zoom={12}
-            marker={notaryData?.data}
-            popup={markerPopup}
-            style={{
-              height: "600px",
-            }}
-          />
+          {notaryData?.data ? (
+            <LeafletMap
+              zoom={12}
+              markers={notaryData?.data}
+              popup={markerPopup}
+              style={{
+                height: "600px",
+              }}
+            />
+          ) : (
+            <CircularProgress />
+          )}
         </Box>
       </Container>
     </>

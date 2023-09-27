@@ -7,15 +7,16 @@ import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 interface ILeafletMapProps extends MapOptions {
-  marker?: IMarkers;
+  markers?: any;
   children?: ReactNode;
-  popup?: (data: any) => ReactNode;
+  popup?: any;
   style?: any;
 }
 
 interface IMarkers {
   latitude: string;
   longitude: string;
+  popup?: any;
 }
 
 const customIcon = new Icon({
@@ -46,28 +47,23 @@ const createMarker = (data: IMarkers, index: number, popup: any) => {
 };
 
 const LeafletMap: FC<ILeafletMapProps> = ({ children, ...options }) => {
-  const { marker, popup } = options;
+  const { markers } = options;
 
-  const mapCenterRef = useRef<[number, number] | null>(null);
-
-  const markers: ReactNode[] | ReactNode = useMemo(() => {
-    if (Array.isArray(marker)) {
-      return marker.map((data, index) => createMarker(data, index, popup));
-    } else if (typeof marker === "object") {
-      mapCenterRef.current = [parseFloat(marker?.latitude), parseFloat(marker?.longitude)];
-      return [createMarker(marker, 0, popup)];
+  const marker: IMarkers = useMemo(() => {
+    if (markers != null) {
+      return markers.map((data: IMarkers, index: number) => createMarker(data, index, options?.popup));
     }
     return [];
-  }, [marker, popup]);
+  }, [markers, options?.popup]);
 
   return (
-    <MapContainer maxZoom={18} center={mapCenterRef.current || [42.8777895, 74.6066926]} {...options}>
+    <MapContainer maxZoom={18} center={options.center || [42.8777895, 74.6066926]} {...options}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
       />
       <MarkerClusterGroup maxClusterRadius={40} spiderfyDistanceMultiplier={1.5}>
-        {markers}
+        {marker}
       </MarkerClusterGroup>
       {children}
     </MapContainer>
