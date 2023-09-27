@@ -143,7 +143,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <InputLabel>{t("PIN")}</InputLabel>
                   <Input
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                    helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 6 }) : ""}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 14, max: 14 }) : ""}
                     {...field}
                     value={field.value != null ? field.value : ""}
                   />
