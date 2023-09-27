@@ -45,7 +45,7 @@ const UserRegistryFiltration: FC<IUserRegistryFiltrationProps> = ({
   });
 
   const { data: rolesData } = useFetch("/api/user-registry/dictionaries/roles", "POST");
-  const { data: createdByData } = useFetch("/api/user-registry/dictionaries/createdBy", "POST");
+  const { data: createdByData } = useFetch("/api/user-registry/dictionaries/created-by", "POST");
   const { update: downloadExcel } = useFetch("", "GET", {
     returnResponse: true,
   });
