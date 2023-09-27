@@ -1,6 +1,6 @@
 import { IRoute } from "./data";
 
-export const guestRoutes: IRoute[] = [
+export const routes: IRoute[] = [
   {
     title: "Home page",
     link: "/",

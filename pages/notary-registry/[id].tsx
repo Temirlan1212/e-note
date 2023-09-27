@@ -1,13 +1,18 @@
-import Head from "next/head";
-import dynamic from "next/dynamic";
-import { Box, Container, Typography } from "@mui/material";
-import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import NotariesContent from "@/components/notaries/NotariesContent";
+import dynamic from "next/dynamic";
+import Head from "next/head";
+import { useTranslations } from "next-intl";
+
+import { Container, Box } from "@mui/material";
+import { useRouter } from "next/router";
+
+import NotariesInfoContent from "@/components/notaries/NotariesInfoContent";
+
+interface NotariesDetailPageProps {}
 
 const center: [number, number] = [42.882004, 74.582748];
 
-export default function Notaries() {
+const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
   const t = useTranslations();
 
   const LeafletMap = dynamic(
@@ -24,17 +29,20 @@ export default function Notaries() {
       </Head>
 
       <Container>
-        <NotariesContent />
-        <Box paddingBottom="80px" display="flex" flexDirection="column" gap="50px">
-          <Typography
-            component="h1"
-            sx={{
-              fontSize: "36px",
-              fontWeight: 600,
-            }}
-          >
-            {t("Search for a notary on the map")}
-          </Typography>
+        <Box
+          component="section"
+          display="flex"
+          flexDirection="column"
+          sx={{
+            gap: "40px",
+            py: {
+              xs: 5,
+              md: 10,
+            },
+          }}
+          marginBottom="40px"
+        >
+          <NotariesInfoContent />
           <LeafletMap
             center={center}
             zoom={12}
@@ -46,7 +54,9 @@ export default function Notaries() {
       </Container>
     </>
   );
-}
+};
+
+export default NotariesDetailPage;
 
 export async function getStaticProps(context: GetStaticPropsContext) {
   return {
@@ -57,4 +67,8 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       },
     },
   };
+}
+
+export async function getStaticPaths() {
+  return { paths: [], fallback: "blocking" };
 }

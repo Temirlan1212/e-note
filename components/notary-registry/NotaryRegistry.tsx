@@ -2,7 +2,6 @@ import React, { FC, useState } from "react";
 import { ValueOf } from "next/dist/shared/lib/constants";
 import { useTranslations } from "next-intl";
 import { Box, IconButton, Typography } from "@mui/material";
-import NotariesList from "./NotariesList";
 import useFetch from "@/hooks/useFetch";
 import HeirNotFoundData from "../search-for-heirs/HeirNotFoundData";
 import { useForm } from "react-hook-form";
@@ -12,7 +11,8 @@ import Select from "@/components/ui/Select";
 import Button from "@/components/ui/Button";
 import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
 import ClearIcon from "@mui/icons-material/Clear";
-import NotariesFilterForm from "./NotariesFilterForm";
+import NotariesFilterForm from "@/components/notaries/NotariesFilterForm";
+import NotaryRegistryList from "@/components/notary-registry/NotaryRegistryList";
 
 export interface INotariesQueryParams {
   pageSize: number;
@@ -28,7 +28,7 @@ const isObject = (value: any) => {
   return typeof value === "object" && value !== null && !Array.isArray(value) && !(value instanceof Function);
 };
 
-const NotariesContent: FC<INotariesContentProps> = (props) => {
+const NotaryRegistry: FC<INotariesContentProps> = (props) => {
   const t = useTranslations();
 
   const form = useForm<INotariesSchema>();
@@ -102,14 +102,8 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   const handleToggleCollapse = () => setisCollapsed(!isCollapsed);
 
   return (
-    <Box component="section" py={10} display="flex" flexDirection="column" gap="60px" marginBottom="40px">
-      <Typography
-        component="h1"
-        sx={{
-          fontSize: "36px",
-          fontWeight: 600,
-        }}
-      >
+    <Box component="section" display="flex" flexDirection="column" gap="30px" marginBottom="20px">
+      <Typography variant="h4" color="success.main">
         {t("Register of Notaries of the Kyrgyz Republic")}
       </Typography>
 
@@ -172,7 +166,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
       </Box>
 
       {notaryData?.data && notaryData?.data?.length > 0 ? (
-        <NotariesList
+        <NotaryRegistryList
           handlePageChange={handlePageChange}
           loading={loading}
           data={notaryData}
@@ -185,4 +179,4 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   );
 };
 
-export default NotariesContent;
+export default NotaryRegistry;

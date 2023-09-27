@@ -5,16 +5,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json(null);
   }
 
-  const response = await fetch(
-    process.env.BACKEND_OPEN_API_URL + "/selection/axelor-erp/notary.request.sign.status.select",
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: req.headers["server-cookie"]?.toString() ?? "",
-      },
-    }
-  );
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/selection/notary.request.sign.status.select", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: req.headers["server-cookie"]?.toString() ?? "",
+    },
+  });
 
   if (!response.ok) {
     return res.status(response.status).json(null);

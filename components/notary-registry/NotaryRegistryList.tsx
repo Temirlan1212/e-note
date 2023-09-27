@@ -1,10 +1,10 @@
 import { FC } from "react";
 import { Box, CircularProgress, Grid } from "@mui/material";
-import NotariesCard from "./NotariesCard";
 import { INotary, INotaryData } from "@/models/notaries";
 import Link from "next/link";
 import Pagination from "../ui/Pagination";
-import { INotariesQueryParams } from "./NotariesContent";
+import { INotariesQueryParams } from "@/components/notary-registry/NotaryRegistry";
+import NotariesCard from "@/components/notaries/NotariesCard";
 
 interface INotaryListProps {
   handlePageChange: (val: any) => void;
@@ -13,7 +13,7 @@ interface INotaryListProps {
   notariesQueryParams: INotariesQueryParams;
 }
 
-const NotariesList: FC<INotaryListProps> = ({ loading, data, notariesQueryParams, handlePageChange }) => {
+const NotaryRegistryList: FC<INotaryListProps> = ({ loading, data, notariesQueryParams, handlePageChange }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "50px", alignItems: "center" }}>
       {loading ? (
@@ -39,7 +39,7 @@ const NotariesList: FC<INotaryListProps> = ({ loading, data, notariesQueryParams
           >
             {data?.data?.map((notary: INotary) => (
               <Box width={{ xs: "100%", md: "initial" }} key={notary?.id}>
-                <Link href={`/notaries/${encodeURIComponent(notary?.id)}`} style={{ textDecoration: "none" }}>
+                <Link href={`/notary-registry/${encodeURIComponent(notary?.id)}`} style={{ textDecoration: "none" }}>
                   <Grid item key={notary?.id} xs={12} sm={12} md={3}>
                     <NotariesCard
                       fullName={notary.name}
@@ -68,4 +68,4 @@ const NotariesList: FC<INotaryListProps> = ({ loading, data, notariesQueryParams
   );
 };
 
-export default NotariesList;
+export default NotaryRegistryList;

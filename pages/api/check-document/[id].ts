@@ -6,16 +6,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json(null);
   }
 
-  const response = await fetch(
-    process.env.BACKEND_OPEN_API_URL + `/read/axelor-erp/com.axelor.apps.sale.db.SaleOrder/${id}`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({}),
-    }
-  );
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + `/read/com.axelor.apps.sale.db.SaleOrder/${id}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({}),
+  });
 
   if (!response.ok) {
     return res.status(response.status).json(null);

@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { Box, Container, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import NotariesContent from "@/components/notaries/NotariesContent";
+import NotaryRegistry from "@/components/notary-registry/NotaryRegistry";
 
 const center: [number, number] = [42.882004, 74.582748];
 
@@ -23,18 +23,10 @@ export default function Notaries() {
         <title>{t("Notaries")}</title>
       </Head>
 
-      <Container>
-        <NotariesContent />
-        <Box paddingBottom="80px" display="flex" flexDirection="column" gap="50px">
-          <Typography
-            component="h1"
-            sx={{
-              fontSize: "36px",
-              fontWeight: 600,
-            }}
-          >
-            {t("Search for a notary on the map")}
-          </Typography>
+      <Container maxWidth="xl" sx={{ py: "30px" }}>
+        <NotaryRegistry />
+        <Box paddingBottom="80px" display="flex" flexDirection="column" gap="20px">
+          <Typography variant="h4">{t("Search for a notary on the map")}</Typography>
           <LeafletMap
             center={center}
             zoom={12}
