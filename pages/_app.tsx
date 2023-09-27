@@ -14,7 +14,7 @@ import { IUser } from "@/models/user";
 import NavigationLoading from "@/components/ui/NavigationLoading";
 import Notification from "@/components/ui/Notification";
 import { routes } from "@/routes/guest";
-import { getRoutes, isRouteIncludes } from "@/routes/data";
+import { getRoutes, isRoutesIncludesPath } from "@/routes/data";
 
 const guestRoutes = getRoutes(routes, "rendered");
 
@@ -28,7 +28,7 @@ function Layout({ children }: { children: JSX.Element }) {
     switch (router.asPath) {
       case "/login":
         if (profile.user != null)
-          if (previousPath != null && !isRouteIncludes(guestRoutes, previousPath)) {
+          if (previousPath != null && !isRoutesIncludesPath(guestRoutes, previousPath)) {
             router.push(previousPath);
           } else {
             router.push("/applications");
@@ -44,7 +44,7 @@ function Layout({ children }: { children: JSX.Element }) {
     setUser(profile.user);
   }, [profile.user, router.route]);
 
-  if (user != null && router.asPath.length > 1 && !isRouteIncludes(guestRoutes, router.asPath)) {
+  if (user != null && router.asPath.length > 1 && !isRoutesIncludesPath(guestRoutes, router.asPath)) {
     return <PrivateLayout>{children}</PrivateLayout>;
   }
 

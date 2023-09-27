@@ -12,9 +12,9 @@ export interface IRoute extends Omit<IChildRoute, "type"> {
   children?: IChildRoute[];
 }
 
-export const isRouteIncludes = (routeList: IRoute[], route: string): boolean => {
-  if (route.length <= 1) return false;
-  return routeList.filter((r) => r.link.includes(route) || (r.link.length > 1 && route.includes(r.link))).length > 0;
+export const isRoutesIncludesPath = (routeList: IRoute[], path: string): boolean => {
+  if (path.length <= 1) return false;
+  return routeList.filter((r) => r.link.includes(path) || (r.link.length > 1 && path.includes(r.link))).length > 0;
 };
 
 export const getRoutes = (
@@ -22,7 +22,7 @@ export const getRoutes = (
   type?: IRoute["type"] | "rendered",
   role?: IChildRoute["role"],
   rootOnly: boolean = false
-) => {
+): IRoute[] => {
   if (type == null) {
     return routeList;
   }
