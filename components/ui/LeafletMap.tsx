@@ -7,7 +7,7 @@ import { Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 interface ILeafletMapProps extends MapOptions {
-  marker?: any;
+  marker?: IMarkers;
   children?: ReactNode;
   popup?: (data: any) => ReactNode;
   style?: any;
@@ -16,7 +16,6 @@ interface ILeafletMapProps extends MapOptions {
 interface IMarkers {
   latitude: string;
   longitude: string;
-  // popup?: ReactNode;
 }
 
 const customIcon = new Icon({
@@ -29,7 +28,7 @@ const customIcon = new Icon({
 
 const isValidCoordinates = (latitude: number, longitude: number) => !isNaN(latitude) && !isNaN(longitude);
 
-const createMarker = (data: { latitude: string; longitude: string }, index: number, popup: any) => {
+const createMarker = (data: IMarkers, index: number, popup: any) => {
   const latitude = parseFloat(data.latitude);
   const longitude = parseFloat(data.longitude);
 
@@ -46,12 +45,12 @@ const createMarker = (data: { latitude: string; longitude: string }, index: numb
   );
 };
 
-const LeafletMap: FC<ILeafletMapProps> = ({ children, popup, ...options }) => {
-  const { marker } = options;
+const LeafletMap: FC<ILeafletMapProps> = ({ children, ...options }) => {
+  const { marker, popup } = options;
 
   const mapCenterRef = useRef<[number, number] | null>(null);
 
-  const markers: IMarkers[] | {} = useMemo(() => {
+  const markers: ReactNode[] | ReactNode = useMemo(() => {
     if (Array.isArray(marker)) {
       return marker.map((data, index) => createMarker(data, index, popup));
     } else if (typeof marker === "object") {
@@ -59,7 +58,7 @@ const LeafletMap: FC<ILeafletMapProps> = ({ children, popup, ...options }) => {
       return [createMarker(marker, 0, popup)];
     }
     return [];
-  }, [marker]);
+  }, [marker, popup]);
 
   return (
     <MapContainer maxZoom={18} center={mapCenterRef.current || [42.8777895, 74.6066926]} {...options}>
