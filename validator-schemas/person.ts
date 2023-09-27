@@ -27,7 +27,7 @@ export const personSchema = object()
       .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
     personalNumber: string()
       .trim()
-      .min(6, "minNumbers")
+      .min(14, "minNumbers")
       .required("required")
       .matches(/^[0-9]*$/, "onlyNumbers"),
     birthDate: date().nullable(),
