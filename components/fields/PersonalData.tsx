@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
-import { InputLabel, Box } from "@mui/material";
+import { InputLabel, Box, Typography } from "@mui/material";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";
@@ -143,7 +143,10 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
               defaultValue={defaultValues?.pin ?? ""}
               render={({ field, fieldState }) => (
                 <Box display="flex" flexDirection="column" width="100%" height="90px">
-                  <InputLabel>{t("PIN")}</InputLabel>
+                  <InputLabel sx={{ display: "flex", flexDirection: "row", gap: "3px" }}>
+                    {t("PIN")}
+                    <Typography color="error">*</Typography>
+                  </InputLabel>
                   <Input
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 14, max: 14 }) : ""}
@@ -177,7 +180,10 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 defaultValue={defaultValues?.lastName ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Last name")}</InputLabel>
+                    <InputLabel sx={{ display: "flex", flexDirection: "row", gap: "3px" }}>
+                      {t("Last name")}
+                      <Typography color="error">*</Typography>
+                    </InputLabel>
                     <Input
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -195,7 +201,10 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 defaultValue={defaultValues?.firstName ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("First name")}</InputLabel>
+                    <InputLabel sx={{ display: "flex", flexDirection: "row", gap: "3px" }}>
+                      {t("First name")}
+                      <Typography color="error">*</Typography>
+                    </InputLabel>
                     <Input
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}

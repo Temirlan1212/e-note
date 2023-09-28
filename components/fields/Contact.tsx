@@ -1,4 +1,4 @@
-import { InputLabel, Box } from "@mui/material";
+import { InputLabel, Box, Typography } from "@mui/material";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import Input from "@/components/ui/Input";
@@ -30,7 +30,10 @@ export default function Contact({ form, names, defaultValues }: IContactProps) {
           defaultValue={defaultValues?.email ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("E-mail")}</InputLabel>
+              <InputLabel sx={{ display: "flex", flexDirection: "row", gap: "3px" }}>
+                {t("E-mail")}
+                <Typography color="error">*</Typography>
+              </InputLabel>
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
