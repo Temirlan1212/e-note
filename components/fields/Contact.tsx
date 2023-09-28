@@ -49,6 +49,7 @@ export default function Contact({ form, names, defaultValues }: IContactProps) {
               <TelInput
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                preferredCountries={["KG", "KZ", "AZ", "AM", "BY", "MD", "RU", "TJ", "TM", "UZ", "UA"]}
                 {...field}
               />
             </Box>
