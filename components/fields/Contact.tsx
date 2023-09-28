@@ -26,12 +26,12 @@ export default function Contact({ form, names, defaultValues }: IContactProps) {
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller
           control={control}
-          name={names.email}
-          defaultValue={defaultValues?.email ?? ""}
+          name={names.phone}
+          defaultValue={defaultValues?.phone ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("E-mail")}</InputLabel>
-              <Input
+              <InputLabel>{t("Phone number")}</InputLabel>
+              <TelInput
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 {...field}
@@ -41,12 +41,12 @@ export default function Contact({ form, names, defaultValues }: IContactProps) {
         />
         <Controller
           control={control}
-          name={names.phone}
-          defaultValue={defaultValues?.phone ?? ""}
+          name={names.email}
+          defaultValue={defaultValues?.email ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Phone number")}</InputLabel>
-              <TelInput
+              <InputLabel>{t("E-mail")}</InputLabel>
+              <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 {...field}

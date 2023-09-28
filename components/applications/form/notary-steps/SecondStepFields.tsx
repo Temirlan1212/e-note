@@ -126,14 +126,14 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
           render={({ field, fieldState }) => {
             return (
               <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                <InputLabel>{t("Select document from my templates")}</InputLabel>
+                <InputLabel>{t("Select document from system templates")}</InputLabel>
                 <Select
                   labelField="name"
                   valueField="id"
                   selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  disabled={selectedInput !== "my" && selectedInput !== null}
-                  data={myDocuments?.status === 0 ? (myDocuments?.data as IProduct[]) ?? [] : []}
-                  loading={myDocumentsLoading}
+                  disabled={selectedInput !== "system" && selectedInput !== null}
+                  data={systemDocuments?.status === 0 ? (systemDocuments?.data as IProduct[]) ?? [] : []}
+                  loading={systemDocumentsLoading}
                   value={field.value == null ? "" : field.value}
                   onBlur={field.onBlur}
                   onChange={(...event: any[]) => {
@@ -152,14 +152,14 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
           render={({ field, fieldState }) => {
             return (
               <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                <InputLabel>{t("Select document from system templates")}</InputLabel>
+                <InputLabel>{t("Select document from my templates")}</InputLabel>
                 <Select
                   labelField="name"
                   valueField="id"
                   selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  disabled={selectedInput !== "system" && selectedInput !== null}
-                  data={systemDocuments?.status === 0 ? (systemDocuments?.data as IProduct[]) ?? [] : []}
-                  loading={systemDocumentsLoading}
+                  disabled={selectedInput !== "my" && selectedInput !== null}
+                  data={myDocuments?.status === 0 ? (myDocuments?.data as IProduct[]) ?? [] : []}
+                  loading={myDocumentsLoading}
                   value={field.value == null ? "" : field.value}
                   onBlur={field.onBlur}
                   onChange={(...event: any[]) => {
