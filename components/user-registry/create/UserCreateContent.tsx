@@ -11,7 +11,7 @@ import Contact from "@/components/fields/Contact";
 import useFetch from "@/hooks/useFetch";
 import Select from "@/components/ui/Select";
 import { Search } from "@mui/icons-material";
-import { IUserRegistrySchema, userRegistrySchema } from "@/validator-schemas/user-registry";
+import { IUserRegistrySchema, userRegistrySchema } from "@/validator-schemas/user";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import { useRouter } from "next/router";
 import PersonalData from "@/components/fields/PersonalData";
@@ -35,7 +35,7 @@ const UserCreateContent: FC = () => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { data: rolesData } = useFetch("/api/user-registry/dictionaries/roles", "POST");
+  const { data: rolesData } = useFetch("/api/user/roles", "POST");
 
   const { data: userData, update: userCreate } = useFetch("", "POST");
   const { update: tundukPersonalDataFetch } = useFetch("", "GET");
@@ -61,6 +61,7 @@ const UserCreateContent: FC = () => {
     notaryPhysicalParticipantsQty: "notaryPhysicalParticipantsQty",
     notaryLegalParticipantsQty: "notaryLegalParticipantsQty",
     notaryTotalParticipantsQty: "notaryTotalParticipantsQty",
+    notaryDateOfOrder: "notaryDateOfOrder",
   };
 
   const getIdentityDocumentNames = {
@@ -126,7 +127,7 @@ const UserCreateContent: FC = () => {
 
       const data: Partial<IUserRegistrySchema> = getValues();
 
-      await userCreate("/api/user-registry/create", data);
+      await userCreate("/api/user/create", data);
     }
 
     setLoading(false);
@@ -252,7 +253,7 @@ const UserCreateContent: FC = () => {
       <PersonalData
         form={form}
         names={getPersonalDataNames}
-        fields={{ birthDate: false, citizenship: false, type: false }}
+        fields={{ birthDate: false, citizenship: false, type: false, notaryDateOfOrder: false }}
         onPinCheck={handlePinCheck}
       />
 

@@ -63,9 +63,7 @@ export default function UserRegistryTableList({
       renderCell: (params: GridRenderCellParams) => {
         const handleDeleteClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
           if (params.row?.["user.id"] != null) {
-            await update(
-              "/api/user-registry/delete/" + params.row?.["user.id"] + "?version=" + params.row?.["user.version"]
-            );
+            await update("/api/user/delete/" + params.row?.["user.id"] + "?version=" + params.row?.["user.version"]);
             callback(false);
             onDelete();
           }

@@ -13,7 +13,9 @@ import DatePicker from "../ui/DatePicker";
 import EraserIcon from "@/public/icons/eraser.svg";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { Controller, UseFormReturn } from "react-hook-form";
-import { IUserRegistryFiltrationSchema } from "@/validator-schemas/user-registry";
+import { IUserRegistryFiltrationSchema } from "@/validator-schemas/user";
+import { IUsersQueryParams } from "@/components/user-registry/UserRegistryContent";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface IUserRegistryFiltrationProps {
   form: UseFormReturn<any>;
@@ -36,8 +38,18 @@ const UserRegistryFilterForm: FC<IUserRegistryFiltrationProps> = ({ form, onForm
 
   const { control } = form;
 
-  const { data: rolesData } = useFetch("/api/user-registry/dictionaries/roles", "POST");
-  const { data: createdByData } = useFetch("/api/user-registry/dictionaries/created-by", "POST");
+  const { data: rolesData } = useFetch("/api/user/roles", "POST");
+  const { data: createdByData, update } = useFetch("", "POST");
+
+  useEffectOnce(() => {
+    update("/api/user/partners", {
+      pageSize: 100,
+      page: 1,
+      sortBy: null,
+      searchValue: null,
+      filterData: null,
+    });
+  }, []);
 
   const fields = [
     {

@@ -14,7 +14,7 @@ import { GridSortModel } from "@mui/x-data-grid";
 import SearchBar from "@/components/ui/SearchBar";
 import ExcelIcon from "@/public/icons/excel.svg";
 import ClearIcon from "@mui/icons-material/Clear";
-import { IUserRegistryFiltrationSchema } from "@/validator-schemas/user-registry";
+import { IUserRegistryFiltrationSchema } from "@/validator-schemas/user";
 
 interface IUserRegistryContentProps {}
 
@@ -49,7 +49,7 @@ const UserRegistryContent: FC<IUserRegistryContentProps> = (props) => {
     data: users,
     loading,
     update,
-  } = useFetch("/api/user-registry", "POST", {
+  } = useFetch("/api/user/partners", "POST", {
     body: usersQueryParams,
   });
 

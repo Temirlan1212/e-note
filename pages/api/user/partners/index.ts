@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return criteria;
   };
 
-  const response = await fetch("https://not.petabyte.pro/axelor-erp/ws/rest/com.axelor.apps.base.db.Partner/search", {
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Partner/search", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

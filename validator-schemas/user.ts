@@ -53,9 +53,16 @@ export const userRegistrySchema = object()
       .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
     personalNumber: string()
       .trim()
-      .min(6, "minNumbers")
-      .required("required")
-      .matches(/^[0-9]*$/, "onlyNumbers"),
+      .when("foreigner", {
+        is: true,
+        then: (schema) => schema.required("required"),
+        otherwise: (schema) =>
+          schema
+            .min(14, "minNumbers")
+            .max(14, "maxNumbers")
+            .required("required")
+            .matches(/^[0-9]*$/, "onlyNumbers"),
+      }),
     identityDocument: string().required("required"),
     passportSeries: string().required("required"),
     passportNumber: string()
