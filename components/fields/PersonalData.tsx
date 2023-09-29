@@ -145,6 +145,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 <Box display="flex" flexDirection="column" width="100%" height="90px">
                   <InputLabel>{t("PIN")}</InputLabel>
                   <Input
+                    inputProps={{ maxLength: foreigner ? undefined : 14 }}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 14, max: 14 }) : ""}
                     {...field}
