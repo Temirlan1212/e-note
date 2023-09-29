@@ -11,6 +11,7 @@ import { IUserCredentials } from "@/models/user";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { login as loginSchema } from "@/validator-schemas/login";
+import ReCAPTCHA from "@/components/recaptcha/Recaptcha";
 
 const LoginAndPasswordForm: React.FC = () => {
   const t = useTranslations();
@@ -18,7 +19,11 @@ const LoginAndPasswordForm: React.FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [recaptchaSuccess, setRecaptchaSuccess] = useState(false);
 
+  const handleRecaptchaSuccess = (success: boolean) => {
+    setRecaptchaSuccess(success);
+  };
   const form = useForm<IUserCredentials>({
     resolver: yupResolver(loginSchema),
   });
@@ -29,6 +34,11 @@ const LoginAndPasswordForm: React.FC = () => {
   } = form;
 
   const onSubmit = async (data: IUserCredentials) => {
+    if (!recaptchaSuccess) {
+      setError("root.serverError", { type: "custom", message: "Please confirm that you are not a robot" });
+      return;
+    }
+
     setLoading(true);
     await profile.logIn(data);
     const user = profile.getUser();
@@ -99,6 +109,8 @@ const LoginAndPasswordForm: React.FC = () => {
             helperText={errors.password?.message && t(errors.password?.message)}
             register={form.register}
           />
+
+          <ReCAPTCHA onRecaptchaSuccess={handleRecaptchaSuccess} />
 
           <FormHelperText sx={{ color: "red" }}>
             {errors.root?.serverError?.message && t(errors.root?.serverError?.message)}

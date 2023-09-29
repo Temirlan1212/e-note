@@ -11,6 +11,7 @@ import Button from "@/components/ui/Button";
 import { IUser, IUserCredentials } from "@/models/user";
 import { useProfileStore } from "@/stores/profile";
 import { useEffect, useState } from "react";
+import ReCAPTCHA from "@/components/recaptcha/Recaptcha";
 
 const HeroSection: React.FC = () => {
   const t = useTranslations();
@@ -18,6 +19,11 @@ const HeroSection: React.FC = () => {
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [recaptchaSuccess, setRecaptchaSuccess] = useState(false);
+
+  const handleRecaptchaSuccess = (success: boolean) => {
+    setRecaptchaSuccess(success);
+  };
 
   const form = useForm<IUserCredentials>({
     resolver: yupResolver(loginSchema),
@@ -29,6 +35,11 @@ const HeroSection: React.FC = () => {
   } = form;
 
   const onSubmit = async (data: IUserCredentials) => {
+    if (!recaptchaSuccess) {
+      setError("root.serverError", { type: "custom", message: "Please confirm that you are not a robot" });
+      return;
+    }
+
     setLoading(true);
     await profile.logIn(data);
     const user = profile.getUser();
@@ -98,6 +109,8 @@ const HeroSection: React.FC = () => {
                 name="password"
                 type="password"
               />
+
+              <ReCAPTCHA onRecaptchaSuccess={handleRecaptchaSuccess} />
             </Box>
             <FormHelperText sx={{ color: "red" }}>
               {errors.root?.serverError?.message && t(errors.root?.serverError?.message)}

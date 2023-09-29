@@ -54,6 +54,7 @@
   "Number of founders (participants) of individuals": "Кол-во учредителей (участников) физических лиц",
   "Number of founders (participants) of legal entities": "Кол-во учредителей (участников) юридических лиц",
   "Total number (participants)": "Общее кол-во (участников)",
+  "Order date": "Дата приказа",
   "The notarial action is entered in the register": "Нотариальное действие внесено в реестр",
   "Add to my templates": "Добавить в мои шаблоны",
   "Make a new action": "Оформить новое действие",
@@ -64,5 +65,6 @@
   "Go to applications": "Перейти в заявки",
   "Participant": "Участник",
   "Additional information": "Дополнительные данные",
-  "Scan the QR code": "Отсканируйте QR-код"
+  "Scan the QR code": "Отсканируйте QR-код",
+  "Organ number": "Номер органа"
 }

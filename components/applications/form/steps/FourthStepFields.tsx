@@ -42,7 +42,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const {
     control,
     trigger,
-    resetField,
+    watch,
     getValues,
     setValue,
     formState: { errors },
@@ -58,19 +58,29 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const [items, setItems] = useState<ITabListItem[]>([
     {
       getElement(index: number) {
+        const partnerType = watch(`members.${index}.partnerTypeSelect`);
+
         return (
           <Box display="flex" gap="20px" flexDirection="column">
             <Typography variant="h5">{t("Personal data")}</Typography>
             <PersonalData form={form} names={getPersonalDataNames(index)} />
 
-            <Typography variant="h5">{t("Identity document")}</Typography>
-            <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
+            {partnerType != 1 && (
+              <>
+                <Typography variant="h5">{t("Identity document")}</Typography>
+                <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
+              </>
+            )}
 
             <Typography variant="h5">{t("Place of residence")}</Typography>
             <Address form={form} names={getAddressNames(index)} />
 
-            <Typography variant="h5">{t("Actual place of residence")}</Typography>
-            <Address form={form} names={getActualAddressNames(index)} />
+            {partnerType != 1 && (
+              <>
+                <Typography variant="h5">{t("Actual place of residence")}</Typography>
+                <Address form={form} names={getActualAddressNames(index)} />
+              </>
+            )}
 
             <Typography variant="h5">{t("Contacts")}</Typography>
             <Contact form={form} names={getContactNames(index)} />
@@ -96,14 +106,15 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     pin: `members.${index}.personalNumber`,
     birthDate: `members.${index}.birthDate`,
     citizenship: `members.${index}.citizenship`,
-    nameOfCompanyOfficial: `requester.${index}.nameOfCompanyOfficial`,
-    nameOfCompanyGov: `requester.${index}.nameOfCompanyGov`,
-    representativesName: `requester.${index}.representativesName`,
-    notaryRegistrationNumber: `requester.${index}.notaryRegistrationNumber`,
-    notaryOKPONumber: `requester.${index}.notaryOKPONumber`,
-    notaryPhysicalParticipantsQty: `requester.${index}.notaryPhysicalParticipantsQty`,
-    notaryLegalParticipantsQty: `requester.${index}.notaryLegalParticipantsQty`,
-    notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
+    nameOfCompanyOfficial: `members.${index}.nameOfCompanyOfficial`,
+    nameOfCompanyGov: `members.${index}.nameOfCompanyGov`,
+    representativesName: `members.${index}.representativesName`,
+    notaryRegistrationNumber: `members.${index}.notaryRegistrationNumber`,
+    notaryOKPONumber: `members.${index}.notaryOKPONumber`,
+    notaryPhysicalParticipantsQty: `members.${index}.notaryPhysicalParticipantsQty`,
+    notaryLegalParticipantsQty: `members.${index}.notaryLegalParticipantsQty`,
+    notaryTotalParticipantsQty: `members.${index}.notaryTotalParticipantsQty`,
+    notaryDateOfOrder: `members.${index}.notaryDateOfOrder`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({

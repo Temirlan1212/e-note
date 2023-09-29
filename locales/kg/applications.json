@@ -54,6 +54,7 @@
   "Number of founders (participants) of individuals": "Жеке жактардын уюштуруучуларынын (катышуучуларынын) саны",
   "Number of founders (participants) of legal entities": "Юридикалык жактардын уюштуруучуларынын (катышуучуларынын) саны",
   "Total number (participants)": "Жалпы саны (катышуучулар)",
+  "Order date": "Буйрук датасы",
   "The notarial action is entered in the register": "Нотариалдык иш-аракет реестрге киргизилди",
   "Add to my templates": "Менин шаблондорума кошуу",
   "Make a new action": "Жаны иш-аракет түзүү",
@@ -64,5 +65,6 @@
   "Go to applications": "Арыз баракчасына өтүү",
   "Participant": "Катышуучу",
   "Additional information": "Кошумча маалымат",
-  "Scan the QR code": "QR кодду сканерлөө"
+  "Scan the QR code": "QR кодду сканерлөө",
+  "Organ number": "Орган номери"
 }
