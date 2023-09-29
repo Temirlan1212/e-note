@@ -51,7 +51,13 @@ export default forwardRef<HTMLDivElement, ITelInputProps>(function TelInput(
 
   return (
     <FormControl error={inputType === "error"} ref={ref}>
-      <MuiTelInput sx={mergedStyles} value={value ?? phone} onChange={onChange ?? handleOnChange} {...rest} />
+      <MuiTelInput
+        sx={mergedStyles}
+        value={value ?? phone}
+        onChange={onChange ?? handleOnChange}
+        preferredCountries={["KG", "KZ", "AZ", "AM", "BY", "MD", "RU", "TJ", "TM", "UZ", "UA"]}
+        {...rest}
+      />
       {helperText && <FormHelperText error={inputType === "error"}>{helperText}</FormHelperText>}
     </FormControl>
   );
