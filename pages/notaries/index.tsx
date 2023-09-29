@@ -5,9 +5,14 @@ import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import NotariesContent from "@/components/notaries/NotariesContent";
 import useFetch from "@/hooks/useFetch";
+import { useState } from "react";
+import useEffectOnce from "@/hooks/useEffectOnce";
+import { IMarker } from "@/components/ui/LeafletMap";
 
 export default function Notaries() {
   const t = useTranslations();
+
+  const [markers, setMarkers] = useState<IMarker[]>();
 
   const LeafletMap = dynamic(
     () => {
@@ -18,18 +23,28 @@ export default function Notaries() {
 
   const { data: notaryData } = useFetch("/api/notaries", "POST");
 
-  const markerPopup = (data: any) => {
-    return (
-      <>
-        <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={600}>
-          {data?.name}
-        </Typography>
-        <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={500}>
-          {data?.["address.fullName"]}
-        </Typography>
-      </>
-    );
-  };
+  useEffectOnce(() => {
+    if (Array.isArray(notaryData?.data)) {
+      setMarkers(
+        notaryData?.data.map((item) => ({
+          coordinates: {
+            lat: item.latitude,
+            lng: item.longitude,
+          },
+          popup: (
+            <>
+              <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={600}>
+                {item?.name}
+              </Typography>
+              <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={500}>
+                {item?.["address.fullName"]}
+              </Typography>
+            </>
+          ),
+        }))
+      );
+    }
+  }, [notaryData]);
 
   return (
     <>
@@ -52,8 +67,7 @@ export default function Notaries() {
           {notaryData?.data ? (
             <LeafletMap
               zoom={12}
-              markers={notaryData?.data}
-              popup={markerPopup}
+              markers={markers}
               style={{
                 height: "600px",
               }}

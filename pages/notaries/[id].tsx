@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { GetStaticPropsContext } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
@@ -7,8 +8,10 @@ import { Container, Box, Typography, CircularProgress } from "@mui/material";
 import { useRouter } from "next/router";
 
 import NotariesInfoContent from "@/components/notaries/NotariesInfoContent";
+import { IMarker } from "@/components/ui/LeafletMap";
 import { ApiNotaryResponse } from "@/models/notaries";
 import useFetch from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface NotariesDetailPageProps {}
 
@@ -16,6 +19,8 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
   const t = useTranslations();
 
   const router = useRouter();
+
+  const [markers, setMarkers] = useState<IMarker[]>();
 
   const LeafletMap = dynamic(
     () => {
@@ -26,18 +31,28 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
 
   const { data } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
 
-  const markerPopup = (data: any) => {
-    return (
-      <>
-        <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={600}>
-          {data?.name}
-        </Typography>
-        <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={500}>
-          {data?.address?.fullName}
-        </Typography>
-      </>
-    );
-  };
+  useEffectOnce(() => {
+    if (Array.isArray(data?.data)) {
+      setMarkers(
+        data?.data.map((item) => ({
+          coordinates: {
+            lat: item.latitude,
+            lng: item.longitude,
+          },
+          popup: (
+            <>
+              <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={600}>
+                {item?.name}
+              </Typography>
+              <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={500}>
+                {item?.address?.fullName}
+              </Typography>
+            </>
+          ),
+        }))
+      );
+    }
+  }, [data]);
 
   const markerCenter: [number, number] = [
     parseFloat(data?.data[0]?.latitude as string),
@@ -68,9 +83,8 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
           {data ? (
             <LeafletMap
               zoom={12}
-              markers={data?.data}
+              markers={markers}
               center={markerCenter}
-              popup={markerPopup}
               style={{
                 height: "600px",
               }}
