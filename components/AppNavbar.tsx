@@ -30,18 +30,15 @@ import DynamicIcon from "./DynamicIcon";
 import ProfileDropdownButton from "./ProfileDropdownButton";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PopupNotifications from "./PopupNotifications";
-import { Theme } from "@mui/material";
 
 const DrawerListItems = ({
-  type,
   routes,
   open,
   closeDrawer,
 }: {
-  type?: "private" | "public";
   routes: IRoute[];
   open: boolean;
-  closeDrawer?: () => void;
+  closeDrawer?: (e?: any, v?: boolean) => void;
 }) => {
   const router = useRouter();
   const t = useTranslations();
@@ -274,7 +271,7 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
         <Divider sx={{ backgroundColor: (theme) => lighten(theme.palette.success.main, 0.5) }} />
 
         <List>
-          <DrawerListItems type={type} routes={routes} open={open} closeDrawer={handleDrawerToggle} />
+          <DrawerListItems routes={routes} open={open} closeDrawer={() => handleDrawerToggle(null, false)} />
         </List>
       </Drawer>
 
