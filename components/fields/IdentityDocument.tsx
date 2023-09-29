@@ -154,7 +154,7 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
           defaultValue={defaultValues?.organNumber ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Number")}</InputLabel>
+              <InputLabel>{t("Organ number")}</InputLabel>
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}

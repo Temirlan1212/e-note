@@ -148,6 +148,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                     <Typography color="error">*</Typography>
                   </InputLabel>
                   <Input
+                    inputProps={{ maxLength: foreigner ? undefined : 14 }}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 14, max: 14 }) : ""}
                     {...field}
