@@ -30,9 +30,8 @@ export default function Contact({ form, names, defaultValues }: IContactProps) {
           defaultValue={defaultValues?.phone ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel sx={{ display: "flex", flexDirection: "row", gap: "3px" }}>
+              <InputLabel required sx={{ ".MuiFormLabel-asterisk": { color: "error.main" } }}>
                 {t("Phone number")}
-                <Typography color="error">*</Typography>
               </InputLabel>
               <TelInput
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}

@@ -143,9 +143,8 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
               defaultValue={defaultValues?.pin ?? ""}
               render={({ field, fieldState }) => (
                 <Box display="flex" flexDirection="column" width="100%" height="90px">
-                  <InputLabel sx={{ display: "flex", flexDirection: "row", gap: "3px" }}>
+                  <InputLabel required sx={{ ".MuiFormLabel-asterisk": { color: "error.main" } }}>
                     {t("PIN")}
-                    <Typography color="error">*</Typography>
                   </InputLabel>
                   <Input
                     inputProps={{ maxLength: foreigner ? undefined : 14 }}
@@ -181,9 +180,8 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 defaultValue={defaultValues?.lastName ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel sx={{ display: "flex", flexDirection: "row", gap: "3px" }}>
+                    <InputLabel required sx={{ ".MuiFormLabel-asterisk": { color: "error.main" } }}>
                       {t("Last name")}
-                      <Typography color="error">*</Typography>
                     </InputLabel>
                     <Input
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -202,9 +200,8 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 defaultValue={defaultValues?.firstName ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel sx={{ display: "flex", flexDirection: "row", gap: "3px" }}>
+                    <InputLabel required sx={{ ".MuiFormLabel-asterisk": { color: "error.main" } }}>
                       {t("First name")}
-                      <Typography color="error">*</Typography>
                     </InputLabel>
                     <Input
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
