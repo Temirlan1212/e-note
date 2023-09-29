@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IRoute } from "@/routes/data";
+import { IRoute, isRoutesIncludesPath } from "@/routes/data";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { useTheme } from "@mui/material/styles";
@@ -62,25 +62,16 @@ const DrawerListItems = ({
     setOpenedGroup(group === openedGroup ? null : group);
   };
 
-  const path = routes.find((route) => route.link && router.route.includes(route.link));
-
   const handleClose = (route: IRoute) => {
     if (route.type === "menu" && typeof closeDrawer === "function") {
       closeDrawer();
     }
   };
 
-  const getBackgroundColor = (theme: Theme, route: IRoute) => {
-    if (type === "private") {
-      return path?.link === route.link ? darken(theme.palette.success.main, 0.15) : "success";
-    } else {
-      return router.route === route.link ? darken(theme.palette.success.main, 0.15) : "success";
-    }
-  };
-
   return (
     <>
       {routes.map((route) => {
+        const path = route.link.split("/")[1] === router.route.split("/")[1];
         return (
           <Box
             key={route.title}
@@ -98,7 +89,7 @@ const DrawerListItems = ({
                       sx={{
                         justifyContent: open ? "initial" : "center",
                         color: "#fff",
-                        backgroundColor: (theme) => getBackgroundColor(theme, route),
+                        backgroundColor: (theme) => (path ? darken(theme.palette.success.main, 0.15) : "success"),
                       }}
                     >
                       {route.icon && (
