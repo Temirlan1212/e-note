@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
-import { InputLabel, Box, Typography } from "@mui/material";
+import { InputLabel, Box } from "@mui/material";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";

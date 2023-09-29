@@ -1,4 +1,4 @@
-import { InputLabel, Box, Typography } from "@mui/material";
+import { InputLabel, Box } from "@mui/material";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import Input from "@/components/ui/Input";
