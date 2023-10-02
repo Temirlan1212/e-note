@@ -48,24 +48,6 @@ const DocumentView: FC<IDocumentViewProps> = (props) => {
         >
           {t("Viewing a document")}
         </Typography>
-        <Button
-          variant="outlined"
-          sx={{
-            backgroundColor: "none",
-            border: "1px dashed #CDCDCD",
-            color: "#1BAA75",
-            fontSize: "14px",
-            padding: "10px 20px",
-            width: "auto",
-            ":hover": {
-              backgroundColor: "transparent !important",
-              border: "1px dashed #CDCDCD",
-            },
-          }}
-          startIcon={<PictureAsPdfOutlinedIcon />}
-        >
-          {t("Download PDF")}
-        </Button>
       </Box>
 
       {!pdfLoading ? (
