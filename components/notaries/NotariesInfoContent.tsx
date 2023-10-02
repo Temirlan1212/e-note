@@ -54,7 +54,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const normalizePhoneNumber = (phoneNumber: string) => phoneNumber?.replace(/\D/g, "");
 
   const handleOpenChat = async () => {
-    const res = await contactUpdate("/api/chat/create/" + router.query.id);
+    const res = await contactUpdate("/api/chat/create/user/" + router.query.id);
     if (res?.data?.chatRoomLink) {
       const href = `${res.data.chatRoomLink}?AuthorizationBasic=${res.data.userToken.replace(/Basic /, "")}` as string;
       window.open(href, "_blank");
