@@ -21,7 +21,7 @@ export default function Notaries() {
     { loading: () => <p>Loading...</p>, ssr: false }
   );
 
-  const { data: notaryData } = useFetch("/api/notaries", "POST");
+  const { data: notaryData, loading: notaryDataLoading } = useFetch("/api/notaries", "POST");
 
   useEffectOnce(() => {
     if (Array.isArray(notaryData?.data)) {
@@ -64,7 +64,7 @@ export default function Notaries() {
           >
             {t("Search for a notary on the map")}
           </Typography>
-          {notaryData?.data ? (
+          {!notaryDataLoading ? (
             <LeafletMap
               zoom={12}
               markers={markers}
