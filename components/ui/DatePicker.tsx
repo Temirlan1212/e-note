@@ -3,7 +3,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { useLocale } from "next-intl";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { enUS as en, ru } from "date-fns/locale";
-import { FormControl, FormHelperText } from "@mui/material";
+import { FormControl, FormHelperText, SxProps, Theme } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { forwardRef } from "react";
 import { useTheme } from "@mui/material/styles";
@@ -21,10 +21,11 @@ interface IDatePickerProps<T = Date | null> extends Omit<DatePickerProps<T>, "on
   placeholder?: string;
   type?: keyof typeof types;
   helperText?: string;
+  boxSx?: SxProps<Theme>;
 }
 
 const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProps> = (props, ref) => {
-  const { onChange, value, placeholder, type = "secondary", helperText, ...restProps } = props;
+  const { onChange, value, placeholder, type = "secondary", helperText, boxSx, ...restProps } = props;
 
   const locale = useLocale();
   const theme = useTheme();
@@ -64,7 +65,7 @@ const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProp
   const mergedStyles = { ...inputStyles, ...props.sx };
 
   return (
-    <FormControl error={type === "error"} ref={ref}>
+    <FormControl error={type === "error"} sx={boxSx} ref={ref}>
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={adapterLocale} localeText={localeText}>
         <MUIDatePicker
           views={["day", "month", "year"]}

@@ -1,5 +1,13 @@
 import React, { forwardRef } from "react";
-import { FormControl, FormHelperText, LinearProgress, Select as MUISelect, SelectProps } from "@mui/material";
+import {
+  FormControl,
+  FormHelperText,
+  LinearProgress,
+  Select as MUISelect,
+  SelectProps,
+  SxProps,
+  Theme,
+} from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
@@ -19,6 +27,7 @@ interface ISelectProps extends SelectProps {
   register?: UseFormRegister<any>;
   helperText?: string;
   loading?: boolean;
+  boxSx?: SxProps<Theme>;
 }
 
 const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
@@ -33,6 +42,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
     labelField = "label",
     helperText,
     loading = false,
+    boxSx,
     ...props
   },
   ref
@@ -59,7 +69,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
 
   const combineStyles = { ...props.sx, ...inputStyles };
   return (
-    <FormControl error={selectType === "error"} ref={ref}>
+    <FormControl sx={boxSx} error={selectType === "error"} ref={ref}>
       <MUISelect
         sx={combineStyles}
         {...(register && name && register(name))}
