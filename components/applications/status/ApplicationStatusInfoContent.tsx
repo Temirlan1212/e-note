@@ -23,7 +23,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
 
   const [accessToView, setAccessToView] = useState(false);
 
-  const { data } = useFetch(id != null ? `/api/applications/${id}` : "", "POST");
+  const { data, loading } = useFetch(id != null ? `/api/applications/${id}` : "", "POST");
 
   const profile = useProfileStore((state) => state);
 
@@ -95,7 +95,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
           </Button>
         </Link>
       </Box>
-      <ApplicationStatusRead data={data?.data[0]} />
+      <ApplicationStatusRead data={data?.data[0]} loading={loading} />
       {accessToView && <ApplicationStatusView data={data?.data[0]} />}
     </Box>
   );
