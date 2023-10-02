@@ -1,5 +1,13 @@
 import React, { forwardRef } from "react";
-import { FormControl, FormHelperText, LinearProgress, Select as MUISelect, SelectProps } from "@mui/material";
+import {
+  FormControl,
+  FormHelperText,
+  LinearProgress,
+  Select as MUISelect,
+  SelectProps,
+  SxProps,
+  Theme,
+} from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { UseFormRegister } from "react-hook-form";
 
@@ -19,7 +27,7 @@ interface ISelectProps extends SelectProps {
   register?: UseFormRegister<any>;
   helperText?: string;
   loading?: boolean;
-  boxSx?: any;
+  boxSx?: SxProps<Theme>;
 }
 
 const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (

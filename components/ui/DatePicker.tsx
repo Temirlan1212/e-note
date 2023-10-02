@@ -3,7 +3,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { useLocale } from "next-intl";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { enUS as en, ru } from "date-fns/locale";
-import { FormControl, FormHelperText } from "@mui/material";
+import { FormControl, FormHelperText, SxProps, Theme } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { forwardRef } from "react";
 import { useTheme } from "@mui/material/styles";
@@ -21,7 +21,7 @@ interface IDatePickerProps<T = Date | null> extends Omit<DatePickerProps<T>, "on
   placeholder?: string;
   type?: keyof typeof types;
   helperText?: string;
-  boxSx?: any;
+  boxSx?: SxProps<Theme>;
 }
 
 const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProps> = (props, ref) => {
