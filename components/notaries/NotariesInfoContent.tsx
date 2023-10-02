@@ -266,7 +266,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
           display: "flex",
           flexDirection: "column",
           gap: "30px",
-          marginTop: { sm: "30px", md: "unset", lg: "unset" },
+          marginTop: { xs: "30px", sm: "30px", md: "unset", lg: "unset" },
         }}
       >
         <Button

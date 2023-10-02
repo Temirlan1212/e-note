@@ -11,7 +11,7 @@
   "Password Reset": "Сброс пароля",
   "Delete a user": "Удалить пользователя",
   "Action": "Действие",
-  "Create user": "Регистрация пользователей",
+  "Create user": "Регистрация пользователя",
   "Foreign person": "Иностранное лицо",
   "DataFromTundukPortal": "Данные для выгрузки с портала \"Түндүк\"",
   "Surname": "Фамилия",
@@ -46,5 +46,12 @@
   "PhoneNumber": "Номер телефона",
   "EnterPhoneNumber": "Введите ваш номер телефона",
   "Check": "Проверить",
-  "Register": "Зарегистрировать"
+  "Register": "Зарегистрировать",
+  "User's role": "Роль пользователя",
+  "Sorry, such pin not found": "Извините, такой инн не найден",
+  "Registration successfully completed": "Регистрация успешно выполнена",
+  "Login and password have been sent to the specified E-mail": "Логин и пароль были отправлены на указанный E-mail",
+  "Do you really want to delete a user?": "Вы действительно хотите удалить пользователя?",
+  "Deleting a user": "Удаление пользователя",
+  "Go to user registry": "Перейти в реестр пользователей"
 }

@@ -31,14 +31,15 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
   };
 
   const handleSign = (openModal: (open: boolean) => void) => {
-    if (jcRef == null) return;
+    // if (jcRef == null) return;
 
-    const sign = jcRef.current?.handleSign(onSign);
-    if (sign) {
-      setIsSigned(true);
-      setFingerScanner("signed");
-      openModal(false);
-    }
+    // const sign = jcRef.current?.handleSign(onSign);
+    // if (!sign) return;
+    onSign(base64Doc);
+
+    setIsSigned(true);
+    setFingerScanner("signed");
+    openModal(false);
   };
 
   const handleToggle = () => {
@@ -73,7 +74,7 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
         ),
         body: () => (
           <Box pb={5}>
-            {fingerScanner === "success" && (
+            {/* {fingerScanner === "success" && (
               <Box display="flex" flexDirection="column" my={2}>
                 <InputLabel>{t("Type")}</InputLabel>
                 <Select
@@ -87,16 +88,16 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
 
             {fingerScanner === "success" && signType === SignType.Jacarta && (
               <JacartaSign base64Doc={base64Doc} ref={jcRef} />
-            )}
+            )} */}
 
-            {fingerScanner !== "success" && (
-              <FingerprintScanner
-                width="100%"
-                loading={loading}
-                type={fingerScanner}
-                onClick={() => fingerScanner === "primary" && handleState()}
-              />
-            )}
+            {/* {fingerScanner !== "success" && ( */}
+            <FingerprintScanner
+              width="100%"
+              loading={loading}
+              type={fingerScanner}
+              onClick={() => fingerScanner === "primary" && handleState()}
+            />
+            {/* )} */}
           </Box>
         ),
       }}

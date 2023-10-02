@@ -90,6 +90,8 @@ export interface INotaryInfoData {
   $processInstanceId: any;
   id: number;
   typeOfNotary: string;
+  longitude: string;
+  latitude: string;
 }
 
 export interface ApiNotaryResponse {

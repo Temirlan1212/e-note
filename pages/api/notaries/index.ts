@@ -87,6 +87,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         "address.region",
         "address.district",
         "address.city",
+        "address.fullName",
+        "latitude",
+        "longitude",
         "name",
       ],
       data: {
