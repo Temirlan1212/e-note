@@ -113,16 +113,6 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     if (signedPdf?.data?.pdfLink != null && token != null) {
       await handlePdfDownload(signedPdf.data.pdfLink, token);
 
-      const result = await applicationUpdate(`/api/applications/update/${id}`, {
-        version,
-        statusSelect: 1,
-        notarySignatureStatus: 1,
-      });
-
-      if (result?.data?.[0]?.id != null) {
-        setValue("version", result.data[0].version);
-      }
-
       setIsSigned(true);
     }
   };
