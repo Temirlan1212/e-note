@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  transpilePackages: ["react-leaflet-cluster"],
   i18n: {
     locales: ["en", "ru", "kg"],
     defaultLocale: "ru",
