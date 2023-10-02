@@ -17,7 +17,7 @@ interface IDocumentInfoContentProps {
 const DocumentInfoContent: FC<IDocumentInfoContentProps> = ({ id }) => {
   const t = useTranslations();
 
-  const { data: document } = useFetch(id ? `/api/check-document/${id}` : "", "POST");
+  const { data: document, loading: documentLoading } = useFetch(id ? `/api/check-document/${id}` : "", "POST");
 
   return (
     <Box
@@ -59,7 +59,7 @@ const DocumentInfoContent: FC<IDocumentInfoContentProps> = ({ id }) => {
           </Button>
         </Link>
       </Box>
-      <DocumentRead data={document?.data[0]} />
+      <DocumentRead data={document?.data[0]} loading={documentLoading} />
       <DocumentView />
     </Box>
   );
