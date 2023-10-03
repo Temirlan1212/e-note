@@ -87,6 +87,11 @@ export const userRegistrySchema = object()
       version: number().integer().positive().nullable(),
       address: string().trim().email("email").required("required"),
     }),
+    tundukPassportSeries: string().required("required"),
+    tundukPassportNumber: string()
+      .trim()
+      .matches(/^[0-9]*$/, "onlyNumbers")
+      .required("required"),
   })
   .concat(userAddressSchema.pick(["region", "district", "city"]));
 

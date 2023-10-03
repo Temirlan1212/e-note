@@ -38,7 +38,7 @@ const UserCreateContent: FC = () => {
   const { data: rolesData } = useFetch("/api/user/roles", "POST");
 
   const { data: userData, update: userCreate } = useFetch("", "POST");
-  const { update: tundukPersonalDataFetch } = useFetch("", "GET");
+  const { update: tundukPersonalDataFetch, loading: tundukPersonalDataLoading } = useFetch("", "POST");
 
   const getRoleName = {
     role: "role.id",
@@ -142,39 +142,31 @@ const UserCreateContent: FC = () => {
   const handlePinCheck = async () => {
     const values = getValues();
 
-    setValue("mainAddress.id", null);
-    setValue("mainAddress.version", null);
-    setValue("actualResidenceAddress.id", null);
-    setValue("actualResidenceAddress.version", null);
-    setValue("emailAddress.id", null);
-    setValue("emailAddress.version", null);
+    const validated = await trigger([`personalNumber`, `tundukPassportSeries`, `tundukPassportNumber`]);
+    if (!validated) return;
 
     if (values != null && values?.personalNumber) {
       const pin = values?.personalNumber;
-      const personalData = await tundukPersonalDataFetch(`/api/tunduk/personal-data/${pin}`);
+      const series = values?.tundukPassportSeries;
+      const number = values?.tundukPassportNumber;
+      const personalData = await tundukPersonalDataFetch(
+        `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`
+      );
       if (personalData?.status !== 0 || personalData?.data == null) {
         setAlertOpen(true);
         return;
       }
 
-      const partner = personalData.data?.partner;
+      const partner = personalData.data;
       const mainAddress = personalData.data?.mainAddress;
-      const actualAddress = personalData.data?.actualAddress;
-      const emailAddress = personalData.data?.emailAddress;
 
-      if (partner == null || partner.id == null) {
+      if (partner == null) {
         setAlertOpen(true);
         return;
       }
 
       setAlertOpen(false);
-      setValue("mainAddress.id", mainAddress?.id);
-      setValue("mainAddress.version", mainAddress?.version);
-      setValue("actualResidenceAddress.id", actualAddress?.id);
-      setValue("actualResidenceAddress.version", actualAddress?.version);
-      setValue("emailAddress.id", emailAddress?.id);
-      setValue("emailAddress.version", emailAddress?.version);
-      setValue("emailAddress.address", emailAddress?.address);
+      setValue("emailAddress.address", partner?.address);
 
       const baseFields = [
         ...Object.values(getRoleName),
@@ -182,11 +174,16 @@ const UserCreateContent: FC = () => {
         ...Object.values(getIdentityDocumentNames),
         ...Object.values(getContactNames),
       ];
+
       baseFields.map((field: any) => {
         const fieldPath = field.split(".");
         const fieldLastItem = fieldPath[fieldPath.length - 1];
         const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
-        if (partner[tundukField ?? fieldLastItem] != null && fieldLastItem !== "personalNumber") {
+        if (
+          partner[tundukField ?? fieldLastItem] != null &&
+          fieldLastItem !== "personalNumber" &&
+          fieldLastItem !== "partnerTypeSelect"
+        ) {
           setValue(field, partner[tundukField ?? fieldLastItem]);
         }
       });
@@ -204,8 +201,8 @@ const UserCreateContent: FC = () => {
       actualAddressFields.map((field: any) => {
         const fieldPath = field.split(".");
         const fieldLastItem = fieldPath[fieldPath.length - 1];
-        if (actualAddress[fieldLastItem] != null) {
-          setValue(field, actualAddress[fieldLastItem]);
+        if (partner[field] != null) {
+          setValue(field, partner[fieldLastItem]);
         }
       });
     }
@@ -252,7 +249,12 @@ const UserCreateContent: FC = () => {
       <Typography variant="h5">{t("DataFromTundukPortal")}</Typography>
       <PersonalData
         form={form}
-        names={getPersonalDataNames}
+        loading={tundukPersonalDataLoading}
+        names={{
+          ...getPersonalDataNames,
+          tundukDocumentSeries: "tundukPassportSeries",
+          tundukDocumentNumber: "tundukPassportNumber",
+        }}
         fields={{ birthDate: false, citizenship: false, type: false, notaryDateOfOrder: false }}
         onPinCheck={handlePinCheck}
       />

@@ -33,6 +33,9 @@ export interface IPersonalDataProps {
     notaryLegalParticipantsQty: string;
     notaryTotalParticipantsQty: string;
     notaryDateOfOrder: string;
+    tundukDocumentSeries?: string;
+    tundukDocumentNumber?: string;
+    nationality?: string;
   };
   defaultValues?: {
     type?: number | null;
@@ -52,6 +55,9 @@ export interface IPersonalDataProps {
     notaryLegalParticipantsQty?: number;
     notaryTotalParticipantsQty?: number;
     notaryDateOfOrder?: Date;
+    tundukDocumentSeries?: number | null;
+    tundukDocumentNumber?: number | null;
+    nationality?: number | null;
   };
   fields?: {
     type?: boolean;
@@ -71,11 +77,13 @@ export interface IPersonalDataProps {
     notaryLegalParticipantsQty?: boolean;
     notaryTotalParticipantsQty?: boolean;
     notaryDateOfOrder?: boolean;
+    nationality?: boolean;
   };
   onPinCheck?: MouseEventHandler<HTMLButtonElement>;
+  loading?: boolean;
 }
 
-export default function PersonalData({ form, names, defaultValues, fields, onPinCheck }: IPersonalDataProps) {
+export default function PersonalData({ form, names, defaultValues, fields, onPinCheck, loading }: IPersonalDataProps) {
   const t = useTranslations();
 
   const { locale } = useRouter();
@@ -87,6 +95,11 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
 
   const { data: citizenshipDictionary, loading: citizenshipDictionaryLoading } = useFetch(
     `/api/dictionaries/citizenship`,
+    "GET"
+  );
+
+  const { data: identityDocumentSeriesDictionary, loading: identityDocumentSeriesDictionaryLoading } = useFetch(
+    `/api/dictionaries/identity-document/series`,
     "GET"
   );
 
@@ -134,7 +147,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
         )}
       </Box>
 
-      <Box display="flex" gap="20px" alignItems="center" flexDirection={{ xs: "column", md: "row" }}>
+      <Box display="flex" gap="20px" alignItems="self-start" flexDirection={{ xs: "column", md: "row" }}>
         {(fields?.pin == null || !!fields?.pin) && (
           <>
             <Controller
@@ -142,7 +155,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
               name={names.pin}
               defaultValue={defaultValues?.pin ?? ""}
               render={({ field, fieldState }) => (
-                <Box display="flex" flexDirection="column" width="100%" height="90px">
+                <Box display="flex" flexDirection="column" justifyContent="center" width="100%">
                   <InputLabel>{t("PIN")}</InputLabel>
                   <Input
                     inputProps={{ maxLength: foreigner ? undefined : 14 }}
@@ -155,14 +168,66 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
               )}
             />
 
+            {Boolean(names?.tundukDocumentSeries) && !foreigner && (
+              <Controller
+                control={control}
+                name={names?.tundukDocumentSeries ?? ""}
+                defaultValue={defaultValues?.tundukDocumentSeries ?? null}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Series")}</InputLabel>
+                    <Select
+                      labelField={
+                        identityDocumentSeriesDictionary?.data?.length > 0 &&
+                        identityDocumentSeriesDictionary?.data[0][`title_${locale}`]
+                          ? `title_${locale}`
+                          : "title"
+                      }
+                      valueField="value"
+                      selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      data={
+                        identityDocumentSeriesDictionary?.status === 0
+                          ? identityDocumentSeriesDictionary?.data ?? []
+                          : []
+                      }
+                      loading={identityDocumentSeriesDictionaryLoading}
+                      {...field}
+                      value={field.value != null ? field.value : ""}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+            {Boolean(names?.tundukDocumentNumber) && !foreigner && (
+              <Controller
+                control={control}
+                name={names?.tundukDocumentNumber ?? ""}
+                defaultValue={defaultValues?.tundukDocumentNumber ?? ""}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Number")}</InputLabel>
+                    <Input
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      {...field}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+
             {onPinCheck && !foreigner && (
-              <Button
-                endIcon={<ContentPasteSearchIcon />}
-                sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
-                onClick={onPinCheck}
-              >
-                {t("Check")}
-              </Button>
+              <Box height="66px" display="flex" alignItems="self-end">
+                <Button
+                  loading={loading}
+                  endIcon={<ContentPasteSearchIcon />}
+                  sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
+                  onClick={onPinCheck}
+                >
+                  {t("Check")}
+                </Button>
+              </Box>
             )}
           </>
         )}
@@ -279,6 +344,24 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                         field.onChange(value?.id != null ? { id: value.id } : null);
                         trigger(field.name);
                       }}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+
+            {Boolean(fields?.nationality) && Boolean(names?.nationality) && (
+              <Controller
+                control={control}
+                name={names.nationality ?? ""}
+                defaultValue={defaultValues?.nationality ?? ""}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Nationality")}</InputLabel>
+                    <Input
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      {...field}
                     />
                   </Box>
                 )}

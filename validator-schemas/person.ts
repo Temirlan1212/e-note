@@ -135,5 +135,11 @@ export const personSchema = object()
         otherwise: (schema) => schema.nullable(),
       }),
     notaryDateOfOrder: date().nullable(),
+    tundukPassportSeries: string().required("required"),
+    tundukPassportNumber: string()
+      .trim()
+      .matches(/^[0-9]*$/, "onlyNumbers")
+      .required("required"),
+    nationality: string(),
   })
   .concat(filesSchema.pick(["files"]));
