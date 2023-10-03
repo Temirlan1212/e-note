@@ -6,6 +6,7 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import Select from "@/components/ui/Select";
 import Input from "@/components/ui/Input";
 import DatePicker from "@/components/ui/DatePicker";
+import Checkbox from "@/components/ui/Checkbox";
 
 export interface IIdentityDocumentProps {
   form: UseFormReturn<any>;
@@ -16,6 +17,7 @@ export interface IIdentityDocumentProps {
     organType: string;
     organNumber: string;
     issueDate: string;
+    familyStatus?: string;
   };
   defaultValues?: {
     documentType?: number | null;
@@ -24,6 +26,7 @@ export interface IIdentityDocumentProps {
     organType?: string;
     organNumber?: number | null;
     issueDate?: Date;
+    familyStatus?: boolean | null;
   };
 }
 
@@ -184,6 +187,26 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
             </Box>
           )}
         />
+
+        {Boolean(names?.familyStatus) && (
+          <Controller
+            control={control}
+            name={names.familyStatus ?? ""}
+            defaultValue={defaultValues?.familyStatus ?? false}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" justifyContent="center">
+                <InputLabel>{t("Validity status")}</InputLabel>
+
+                <Checkbox
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  {...field}
+                  checked={!!field.value}
+                />
+              </Box>
+            )}
+          />
+        )}
       </Box>
     </Box>
   );

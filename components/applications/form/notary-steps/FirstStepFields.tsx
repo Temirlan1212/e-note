@@ -80,7 +80,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                 tundukDocumentSeries: `requester.${index}.tundukPassportSeries`,
                 tundukDocumentNumber: `requester.${index}.tundukPassportNumber`,
               }}
-              fields={{ nationality: true }}
+              fields={{ nationality: true, maritalStatus: true }}
               onPinCheck={() => handlePinCheck(index)}
             />
 
@@ -137,6 +137,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
     notaryDateOfOrder: `requester.${index}.notaryDateOfOrder`,
     nationality: `requester.${index}.nationality`,
+    maritalStatus: `requester.${index}.maritalStatus`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -146,6 +147,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     organType: `requester.${index}.authority`,
     organNumber: `requester.${index}.authorityNumber`,
     issueDate: `requester.${index}.dateOfIssue`,
+    familyStatus: `requester.${index}.familyStatus`,
   });
 
   const getAddressNames = (index: number) => ({
@@ -328,22 +330,30 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   };
 
   const handlePinCheck = async (index: number) => {
+    const typeName: any = getPersonalDataNames(index).type;
+    const isJuridicalPerson = watch(typeName) == 1;
+
     const values = getValues();
     const entity = "requester";
-    const validated = await trigger([
-      `requester.${index}.personalNumber`,
-      `requester.${index}.tundukPassportSeries`,
-      `requester.${index}.tundukPassportNumber`,
-    ]);
+
+    const triggerFields = [`requester.${index}.personalNumber`] as const;
+    const validated = await trigger(
+      isJuridicalPerson
+        ? triggerFields
+        : [...triggerFields, `requester.${index}.tundukPassportSeries`, `requester.${index}.tundukPassportNumber`]
+    );
+
     if (!validated) return;
 
     if (values[entity] != null && values[entity][index].personalNumber) {
       const pin = values[entity][index].personalNumber;
       const series = values[entity][index].tundukPassportSeries;
       const number = values[entity][index].tundukPassportNumber;
-      const personalData = await tundukPersonalDataFetch(
-        `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`
-      );
+      const url = isJuridicalPerson
+        ? `/api/tunduk/company-data/${pin}`
+        : `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`;
+
+      const personalData = await tundukPersonalDataFetch(url);
 
       if (personalData?.status !== 0 || personalData?.data == null) {
         setAlertOpen(true);
@@ -363,7 +373,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       Object.values(getContactNames(index)).map((field: any) => resetField(field));
 
       setAlertOpen(false);
-      setValue(`${entity}.${index}.emailAddress.address`, partner?.emailAddress ?? "");
+      const emailAddressName = isJuridicalPerson ? partner?.emailAddress?.name : partner?.emailAddress;
+      setValue(`${entity}.${index}.emailAddress.address`, emailAddressName ?? "");
 
       const baseFields = [
         ...Object.values(getPersonalDataNames(index)),

@@ -141,5 +141,7 @@ export const personSchema = object()
       .matches(/^[0-9]*$/, "onlyNumbers")
       .required("required"),
     nationality: string(),
+    familyStatus: boolean(),
+    maritalStatus: string(),
   })
   .concat(filesSchema.pick(["files"]));
