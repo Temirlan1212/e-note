@@ -29,7 +29,7 @@ const UserCreateContent: FC = () => {
 
   const t = useTranslations();
 
-  const { control, trigger, getValues, setValue } = form;
+  const { control, trigger, getValues, setValue, resetField } = form;
 
   const [loading, setLoading] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -156,6 +156,10 @@ const UserCreateContent: FC = () => {
         setAlertOpen(true);
         return;
       }
+
+      Object.values(getAddressNames).map((field: any) => resetField(field));
+      Object.values(getIdentityDocumentNames).map((field: any) => resetField(field));
+      Object.values(getContactNames).map((field: any) => resetField(field));
 
       const partner = personalData.data;
       const mainAddress = personalData.data?.mainAddress;
