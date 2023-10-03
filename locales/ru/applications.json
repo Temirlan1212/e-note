@@ -68,5 +68,6 @@
   "Scan the QR code": "Отсканируйте QR-код",
   "Organ number": "Номер органа",
   "Write a message": "Напиcать сообщение",
-  "Select the user you want to contact": "Выберите пользователя с которым хотите связаться"
+  "Select the user you want to contact": "Выберите пользователя с которым хотите связаться",
+  "User unavailable": "Пользователь недоступен"
 }

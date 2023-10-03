@@ -76,7 +76,7 @@ export const ApplicationListActions = ({
               <Box display="flex" flexDirection="column" gap="20px">
                 {userById?.data[0].requester.find((item) => !item.user) ? (
                   <Typography fontSize={14} color="text.primary">
-                    Пользователь недоступен
+                    {t("User unavailable")}
                   </Typography>
                 ) : (
                   userById?.data[0].requester.map((item) => {
