@@ -189,5 +189,7 @@
   "Organ number": "Орган номери",
   "Nationality": "Улуту",
   "Validity status": "Жарактуулук статусу",
-  "Marital status": "Үй-бүлөлүк абалы"
+  "Marital status": "Үй-бүлөлүк абалы",
+  "Valid": "Жарактуу",
+  "Invalid": "Жараксыз"
 }

@@ -18,9 +18,10 @@ export interface IAreaProps {
     district?: { id: number } | null;
     city?: { id: number } | null;
   };
+  disableFields?: boolean;
 }
 
-export default function Area({ form, names, defaultValues }: IAreaProps) {
+export default function Area({ form, names, defaultValues, disableFields }: IAreaProps) {
   const t = useTranslations();
   const locale = useLocale();
 
@@ -59,6 +60,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Region")}</InputLabel>
               <Autocomplete
+                disabled={disableFields}
                 labelField={getLabelField(regionDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -91,7 +93,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
                 labelField={getLabelField(districtDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!region}
+                disabled={!region || disableFields}
                 options={
                   districtDictionary?.status === 0 ? (districtDictionary?.data as Record<string, any>[]) ?? [] : []
                 }
@@ -128,7 +130,7 @@ export default function Area({ form, names, defaultValues }: IAreaProps) {
                   labelField={getLabelField(cityDictionary)}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!region}
+                  disabled={!region || disableFields}
                   options={options ?? []}
                   loading={cityDictionaryLoading}
                   value={field.value != null ? (options ?? []).find((item) => item.id == field.value.id) ?? null : null}

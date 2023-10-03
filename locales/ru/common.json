@@ -189,5 +189,7 @@
   "Organ number": "Номер органа",
   "Nationality": "Национальность",
   "Validity status": "Статус действительности",
-  "Marital status": "Семейное положение"
+  "Marital status": "Семейное положение",
+  "Valid": "Действителен",
+  "Invalid": "Недействителен"
 }

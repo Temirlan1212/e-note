@@ -22,9 +22,10 @@ export interface IAddressProps extends IAreaProps {
     house?: string;
     apartment?: string;
   };
+  disableFields?: boolean;
 }
 
-export default function Address({ form, names, defaultValues }: IAddressProps) {
+export default function Address({ form, names, defaultValues, disableFields }: IAddressProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
@@ -33,7 +34,7 @@ export default function Address({ form, names, defaultValues }: IAddressProps) {
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
-      <Area form={form} names={names} defaultValues={defaultValues} />
+      <Area form={form} names={names} defaultValues={defaultValues} disableFields={disableFields} />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller
@@ -46,7 +47,7 @@ export default function Address({ form, names, defaultValues }: IAddressProps) {
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!city}
+                disabled={!city || disableFields}
                 {...field}
               />
             </Box>
@@ -62,7 +63,7 @@ export default function Address({ form, names, defaultValues }: IAddressProps) {
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!city}
+                disabled={!city || disableFields}
                 {...field}
               />
             </Box>
@@ -78,7 +79,7 @@ export default function Address({ form, names, defaultValues }: IAddressProps) {
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!city}
+                disabled={!city || disableFields}
                 {...field}
               />
             </Box>

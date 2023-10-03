@@ -80,29 +80,47 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                 tundukDocumentSeries: `requester.${index}.tundukPassportSeries`,
                 tundukDocumentNumber: `requester.${index}.tundukPassportNumber`,
               }}
+              disableFields={watch(`requester.${index}.tundukIsSuccess`)}
               fields={{ nationality: true, maritalStatus: true }}
               onPinCheck={() => handlePinCheck(index)}
+              onPinReset={() => handlePinReset(index)}
             />
 
             {partnerType != 1 && (
               <>
                 <Typography variant="h5">{t("Identity document")}</Typography>
-                <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
+                <IdentityDocument
+                  disableFields={watch(`requester.${index}.tundukIsSuccess`)}
+                  form={form}
+                  names={getIdentityDocumentNames(index)}
+                />
               </>
             )}
 
             <Typography variant="h5">{t("Place of residence")}</Typography>
-            <Address form={form} names={getAddressNames(index)} />
+            <Address
+              disableFields={watch(`requester.${index}.tundukIsSuccess`)}
+              form={form}
+              names={getAddressNames(index)}
+            />
 
             {partnerType != 1 && (
               <>
                 <Typography variant="h5">{t("Actual place of residence")}</Typography>
-                <Address form={form} names={getActualAddressNames(index)} />
+                <Address
+                  disableFields={watch(`requester.${index}.tundukIsSuccess`)}
+                  form={form}
+                  names={getActualAddressNames(index)}
+                />
               </>
             )}
 
             <Typography variant="h5">{t("Contacts")}</Typography>
-            <Contact form={form} names={getContactNames(index)} />
+            <Contact
+              disableFields={watch(`requester.${index}.tundukIsSuccess`)}
+              form={form}
+              names={getContactNames(index)}
+            />
 
             <Typography variant="h5">{t("Files to upload")}</Typography>
 
@@ -329,6 +347,46 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     });
   };
 
+  const resetFields = (index: number) => {
+    const allFields = {
+      ...getPersonalDataNames(index),
+      ...getIdentityDocumentNames(index),
+      ...getAddressNames(index),
+      ...getActualAddressNames(index),
+      ...getContactNames(index),
+    };
+
+    for (const key in allFields) {
+      const name = (allFields as Record<string, any>)?.[key];
+      const value = getValues(name as any);
+      const isBoolean = typeof value === "boolean";
+      const isString = typeof value === "string";
+      const fieldPath = name.split(".");
+      const fieldLastItem = fieldPath[fieldPath.length - 1];
+
+      if (fieldLastItem === "personalNumber" || fieldLastItem === "partnerTypeSelect") continue;
+
+      if (isBoolean) {
+        resetField(name as any, { defaultValue: false });
+      } else if (
+        fieldLastItem === "notaryDateOfOrder" ||
+        fieldLastItem === "dateOfIssue" ||
+        fieldLastItem === "birthDate" ||
+        fieldLastItem === "notaryOKPONumber" ||
+        !isString
+      ) {
+        resetField(name as any, { defaultValue: null });
+      } else if (isString) {
+        resetField(name as any, { defaultValue: "" });
+      }
+    }
+  };
+
+  const handlePinReset = async (index: number) => {
+    setValue(`requester.${index}.tundukIsSuccess`, false);
+    resetFields(index);
+  };
+
   const handlePinCheck = async (index: number) => {
     const typeName: any = getPersonalDataNames(index).type;
     const isJuridicalPerson = watch(typeName) == 1;
@@ -336,11 +394,11 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     const values = getValues();
     const entity = "requester";
 
-    const triggerFields = [`requester.${index}.personalNumber`] as const;
+    const triggerFields = [`${entity}.${index}.personalNumber`] as const;
     const validated = await trigger(
       isJuridicalPerson
         ? triggerFields
-        : [...triggerFields, `requester.${index}.tundukPassportSeries`, `requester.${index}.tundukPassportNumber`]
+        : [...triggerFields, `${entity}.${index}.tundukPassportSeries`, `${entity}.${index}.tundukPassportNumber`]
     );
 
     if (!validated) return;
@@ -368,11 +426,11 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         return;
       }
 
-      Object.values(getAddressNames(index)).map((field: any) => resetField(field));
-      Object.values(getIdentityDocumentNames(index)).map((field: any) => resetField(field));
-      Object.values(getContactNames(index)).map((field: any) => resetField(field));
-
       setAlertOpen(false);
+
+      resetFields(index);
+      setValue(`requester.${index}.tundukIsSuccess`, true);
+
       const emailAddressName = isJuridicalPerson ? partner?.emailAddress?.name : partner?.emailAddress;
       setValue(`${entity}.${index}.emailAddress.address`, emailAddressName ?? "");
 

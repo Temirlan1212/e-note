@@ -189,5 +189,7 @@
   "Organ number": "Organ number",
   "Nationality": "Nationality",
   "Validity status": "Validity status",
-  "Marital status": "Marital status"
+  "Marital status": "Marital status",
+  "Valid": "Valid",
+  "Invalid": "Invalid"
 }
