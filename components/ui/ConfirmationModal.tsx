@@ -9,6 +9,7 @@ import { useTranslations } from "next-intl";
 export interface IConfirmationModal extends Omit<ModalProps, "slots"> {
   onConfirm: (callback: Dispatch<SetStateAction<boolean>>) => void;
   onToggle: (callback: Dispatch<SetStateAction<boolean>>) => void;
+  isHintShown?: boolean;
   hintTitle: string;
   hintText: string;
   type: "warning" | "error" | "hint";
@@ -23,6 +24,7 @@ export const ConfirmationModal = ({
   onConfirm,
   slots,
   children,
+  isHintShown = true,
   hintTitle = "Do you really want to delete this record?",
   hintText = "",
   type = "error",
@@ -60,19 +62,21 @@ export const ConfirmationModal = ({
           </Box>
 
           <Box>
-            <Hint type={type} sx={{ mb: "20px", display: "flex", gap: "10px" }}>
-              {hintTitle && (
-                <Typography fontSize={16} fontWeight={600} color="text.primary">
-                  {t(hintTitle)}
-                </Typography>
-              )}
+            {isHintShown && (
+              <Hint type={type} sx={{ mb: "20px", display: "flex", gap: "10px" }}>
+                {hintTitle && (
+                  <Typography fontSize={16} fontWeight={600} color="text.primary">
+                    {t(hintTitle)}
+                  </Typography>
+                )}
 
-              {hintText && (
-                <Typography fontSize={14} color="text.primary">
-                  {t(hintText)}
-                </Typography>
-              )}
-            </Hint>
+                {hintText && (
+                  <Typography fontSize={14} color="text.primary">
+                    {t(hintText)}
+                  </Typography>
+                )}
+              </Hint>
+            )}
 
             {slots?.body && <Box>{slots.body(setOpen)}</Box>}
 
