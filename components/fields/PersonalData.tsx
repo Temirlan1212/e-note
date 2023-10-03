@@ -143,7 +143,9 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
               defaultValue={defaultValues?.pin ?? ""}
               render={({ field, fieldState }) => (
                 <Box display="flex" flexDirection="column" width="100%" height="90px">
-                  <InputLabel>{t("PIN")}</InputLabel>
+                  <InputLabel required sx={{ ".MuiFormLabel-asterisk": { color: "error.main" } }}>
+                    {t("PIN")}
+                  </InputLabel>
                   <Input
                     inputProps={{ maxLength: foreigner ? undefined : 14 }}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -178,7 +180,9 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 defaultValue={defaultValues?.lastName ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Last name")}</InputLabel>
+                    <InputLabel required sx={{ ".MuiFormLabel-asterisk": { color: "error.main" } }}>
+                      {t("Last name")}
+                    </InputLabel>
                     <Input
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -196,7 +200,9 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 defaultValue={defaultValues?.firstName ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("First name")}</InputLabel>
+                    <InputLabel required sx={{ ".MuiFormLabel-asterisk": { color: "error.main" } }}>
+                      {t("First name")}
+                    </InputLabel>
                     <Input
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
