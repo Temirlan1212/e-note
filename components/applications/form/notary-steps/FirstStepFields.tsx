@@ -52,6 +52,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     getValues,
     setValue,
     watch,
+    resetField,
     formState: { errors },
   } = form;
 
@@ -357,6 +358,10 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         return;
       }
 
+      Object.values(getAddressNames(index)).map((field: any) => resetField(field));
+      Object.values(getIdentityDocumentNames(index)).map((field: any) => resetField(field));
+      Object.values(getContactNames(index)).map((field: any) => resetField(field));
+
       setAlertOpen(false);
       setValue(`${entity}.${index}.emailAddress.address`, partner?.emailAddress ?? "");
 
@@ -384,6 +389,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         const fieldLastItem = fieldPath[fieldPath.length - 1];
         if (mainAddress[fieldLastItem] != null) {
           setValue(field, mainAddress[fieldLastItem]);
+        } else {
+          resetField(field);
         }
       });
 

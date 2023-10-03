@@ -49,6 +49,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     watch,
     getValues,
     setValue,
+    resetField,
     formState: { errors },
   } = form;
 
@@ -339,6 +340,10 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         setAlertOpen(true);
         return;
       }
+
+      Object.values(getAddressNames(index)).map((field: any) => resetField(field));
+      Object.values(getIdentityDocumentNames(index)).map((field: any) => resetField(field));
+      Object.values(getContactNames(index)).map((field: any) => resetField(field));
 
       setAlertOpen(false);
       setValue(`${entity}.${index}.emailAddress.address`, partner?.emailAddress ?? "");
