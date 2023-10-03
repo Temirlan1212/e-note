@@ -1,4 +1,4 @@
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import { GridRenderCellParams, GridTreeNodeWithRender } from "@mui/x-data-grid";
 import Link from "@/components/ui/Link";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
@@ -13,6 +13,8 @@ import { useTranslations } from "next-intl";
 import { useProfileStore } from "@/stores/profile";
 import { IUserData } from "@/models/user";
 import useEffectOnce from "@/hooks/useEffectOnce";
+import Button from "@/components/ui/Button";
+import { IFetchByIdData, IFetchNotaryChat } from "@/models/chat";
 
 export const ApplicationListActions = ({
   params,
@@ -22,26 +24,27 @@ export const ApplicationListActions = ({
   onDelete: () => void;
 }) => {
   const t = useTranslations();
+  const [openModal, setOpenModal] = useState(false);
   const [userData, setUserData] = useState<IUserData | null>();
   const profile = useProfileStore((state) => state);
 
-  const { data, update: createChat } = useFetch("", "POST");
-  const { update: getUser } = useFetch("", "POST");
+  const { data, update: createChat } = useFetch<IFetchNotaryChat>("", "POST");
+  const { data: userById, update: getUser } = useFetch<IFetchByIdData>("", "POST");
   const { update } = useFetch<Response>("", "DELETE", {
     returnResponse: true,
   });
 
-  const handleCreateChat = () => {
-    const user = getUser("/api/chat/user/" + params.id);
-    user.then((res) => {
-      if (res?.data[0]?.requester[0]?.user) {
-        createChat("/api/chat/create/notary/" + res?.data[0]?.requester[0]?.user?.id);
-      }
-    });
+  const handleToggle = () => {
+    setOpenModal(!openModal);
+  };
+
+  const handleFetchId = () => {
+    handleToggle();
+    getUser("/api/chat/user/" + params.id);
   };
 
   useEffect(() => {
-    if (data?.data?.chatRoomLink) {
+    if (data?.data?.chatRoomLink && data?.data?.userToken) {
       const href = `${data.data.chatRoomLink}?AuthorizationBasic=${data.data.userToken.replace(
         /Basic /,
         ""
@@ -65,11 +68,47 @@ export const ApplicationListActions = ({
   return (
     <Box display="flex" alignItems="center">
       {userData?.group.id === 4 && (
-        <Tooltip title={t("More detailed")} arrow>
-          <IconButton onClick={handleCreateChat}>
-            <ChatIcon />
-          </IconButton>
-        </Tooltip>
+        <ConfirmationModal
+          title="Write a message"
+          isHintShown={false}
+          slots={{
+            body: () => (
+              <Box display="flex" flexDirection="column" gap="20px">
+                {userById?.data[0].requester.find((item) => !item.user) ? (
+                  <Typography fontSize={14} color="text.primary">
+                    Пользователь недоступен
+                  </Typography>
+                ) : (
+                  userById?.data[0].requester.map((item) => {
+                    const handleCreateChat = () => {
+                      if (item.user) {
+                        createChat("/api/chat/create/notary/" + item.user?.id);
+                      }
+                    };
+                    return (
+                      <Button
+                        key={item.id}
+                        variant="contained"
+                        buttonType="secondary"
+                        sx={{ fontSize: "14px" }}
+                        onClick={handleCreateChat}
+                      >
+                        {item.user?.fullName}
+                      </Button>
+                    );
+                  })
+                )}
+              </Box>
+            ),
+            button: () => <></>,
+          }}
+        >
+          <Tooltip title={t("Write a message")} arrow>
+            <IconButton onClick={handleFetchId}>
+              <ChatIcon />
+            </IconButton>
+          </Tooltip>
+        </ConfirmationModal>
       )}
 
       <Link href={`/applications/status/${params.row.id}`}>
