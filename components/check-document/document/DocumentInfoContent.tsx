@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import { useTranslations } from "next-intl";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import Button from "@/components/ui/Button";
 import useFetch from "@/hooks/useFetch";
 import DocumentRead from "@/components/check-document/document/DocumentRead";
 import DocumentView from "@/components/check-document/document/DocumentView";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface IDocumentInfoContentProps {
   id?: string;
@@ -17,7 +18,18 @@ interface IDocumentInfoContentProps {
 const DocumentInfoContent: FC<IDocumentInfoContentProps> = ({ id }) => {
   const t = useTranslations();
 
+  const [accessToView, setAccessToView] = useState(false);
+
   const { data: document, loading: documentLoading } = useFetch(id ? `/api/check-document/${id}` : "", "POST");
+
+  useEffectOnce(() => {
+    if (document?.data[0] != null) {
+      const generalAccess = document?.data[0]?.documentInfo?.generalAccess;
+      if (generalAccess === true) {
+        setAccessToView(true);
+      }
+    }
+  }, [document]);
 
   return (
     <Box
@@ -40,10 +52,9 @@ const DocumentInfoContent: FC<IDocumentInfoContentProps> = ({ id }) => {
         >
           {t("Document Validation")}
         </Typography>
-        <Link href="/check-document" style={{ textDecoration: "none" }}>
+        <Link href="/check-document">
           <Button
             variant="text"
-            href="/check-document"
             sx={{
               backgroundColor: "none",
               color: "#1BAA75",
@@ -60,7 +71,7 @@ const DocumentInfoContent: FC<IDocumentInfoContentProps> = ({ id }) => {
         </Link>
       </Box>
       <DocumentRead data={document?.data[0]} loading={documentLoading} />
-      <DocumentView />
+      {accessToView && <DocumentView data={document?.data[0]} />}
     </Box>
   );
 };
