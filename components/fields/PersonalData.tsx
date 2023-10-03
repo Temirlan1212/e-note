@@ -36,6 +36,7 @@ export interface IPersonalDataProps {
     tundukDocumentSeries?: string;
     tundukDocumentNumber?: string;
     nationality?: string;
+    maritalStatus?: string;
   };
   defaultValues?: {
     type?: number | null;
@@ -57,7 +58,8 @@ export interface IPersonalDataProps {
     notaryDateOfOrder?: Date;
     tundukDocumentSeries?: number | null;
     tundukDocumentNumber?: number | null;
-    nationality?: number | null;
+    nationality?: string | null;
+    maritalStatus?: string;
   };
   fields?: {
     type?: boolean;
@@ -78,6 +80,7 @@ export interface IPersonalDataProps {
     notaryTotalParticipantsQty?: boolean;
     notaryDateOfOrder?: boolean;
     nationality?: boolean;
+    maritalStatus?: boolean;
   };
   onPinCheck?: MouseEventHandler<HTMLButtonElement>;
   loading?: boolean;
@@ -168,7 +171,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
               )}
             />
 
-            {Boolean(names?.tundukDocumentSeries) && !foreigner && (
+            {Boolean(names?.tundukDocumentSeries) && !foreigner && type != 1 && (
               <Controller
                 control={control}
                 name={names?.tundukDocumentSeries ?? ""}
@@ -199,7 +202,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 )}
               />
             )}
-            {Boolean(names?.tundukDocumentNumber) && !foreigner && (
+            {Boolean(names?.tundukDocumentNumber) && !foreigner && type != 1 && (
               <Controller
                 control={control}
                 name={names?.tundukDocumentNumber ?? ""}
@@ -295,7 +298,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
             )}
           </Box>
 
-          <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          <Box display="flex" gap="20px" alignItems="center" flexDirection={{ xs: "column", md: "row" }}>
             {(fields?.birthDate == null || !!fields?.birthDate) && (
               <Controller
                 control={control}
@@ -362,6 +365,24 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Nationality")}</InputLabel>
+                    <Input
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      {...field}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+
+            {Boolean(fields?.maritalStatus) && Boolean(names?.maritalStatus) && (
+              <Controller
+                control={control}
+                name={names.maritalStatus ?? ""}
+                defaultValue={defaultValues?.maritalStatus ?? ""}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel>{t("Marital status")}</InputLabel>
                     <Input
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}

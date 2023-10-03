@@ -76,7 +76,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                 tundukDocumentSeries: `members.${index}.tundukPassportSeries`,
                 tundukDocumentNumber: `members.${index}.tundukPassportNumber`,
               }}
-              fields={{ nationality: true }}
+              fields={{ nationality: true, maritalStatus: true }}
               onPinCheck={() => handlePinCheck(index)}
             />
 
@@ -132,6 +132,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     notaryTotalParticipantsQty: `members.${index}.notaryTotalParticipantsQty`,
     notaryDateOfOrder: `members.${index}.notaryDateOfOrder`,
     nationality: `members.${index}.nationality`,
+    maritalStatus: `requester.${index}.maritalStatus`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -141,6 +142,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     organType: `members.${index}.authority`,
     organNumber: `members.${index}.authorityNumber`,
     issueDate: `members.${index}.dateOfIssue`,
+    familyStatus: `requester.${index}.familyStatus`,
   });
 
   const getAddressNames = (index: number) => ({
@@ -309,23 +311,30 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   };
 
   const handlePinCheck = async (index: number) => {
-    const values = getValues();
-    const entity = "members";
+    const typeName: any = getPersonalDataNames(index).type;
+    const isJuridicalPerson = watch(typeName) == 1;
 
-    const validated = await trigger([
-      `members.${index}.personalNumber`,
-      `members.${index}.tundukPassportSeries`,
-      `members.${index}.tundukPassportNumber`,
-    ]);
+    const values = getValues();
+    const entity = "requester";
+
+    const triggerFields = [`requester.${index}.personalNumber`] as const;
+    const validated = await trigger(
+      isJuridicalPerson
+        ? triggerFields
+        : [...triggerFields, `requester.${index}.tundukPassportSeries`, `requester.${index}.tundukPassportNumber`]
+    );
+
     if (!validated) return;
 
     if (values[entity] != null && values[entity][index].personalNumber) {
       const pin = values[entity][index].personalNumber;
       const series = values[entity][index].tundukPassportSeries;
       const number = values[entity][index].tundukPassportNumber;
-      const personalData = await tundukPersonalDataFetch(
-        `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`
-      );
+      const url = isJuridicalPerson
+        ? `/api/tunduk/company-data/${pin}`
+        : `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`;
+
+      const personalData = await tundukPersonalDataFetch(url);
 
       if (personalData?.status !== 0 || personalData?.data == null) {
         setAlertOpen(true);
