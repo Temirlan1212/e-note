@@ -29,7 +29,7 @@ interface IBaseEntityFields {
 }
 
 export interface ITabListItem {
-  getElement: (index: number) => JSX.Element;
+  getElement: (index: number, loading?: boolean) => JSX.Element;
 }
 
 export interface IStepFieldsProps {
@@ -62,13 +62,23 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
-      getElement(index: number) {
+      getElement(index: number, loading?: boolean) {
         const partnerType = watch(`members.${index}.partnerTypeSelect`);
 
         return (
           <Box display="flex" gap="20px" flexDirection="column">
             <Typography variant="h5">{t("Personal data")}</Typography>
-            <PersonalData form={form} names={getPersonalDataNames(index)} onPinCheck={() => handlePinCheck(index)} />
+            <PersonalData
+              form={form}
+              loading={loading}
+              names={{
+                ...getPersonalDataNames(index),
+                tundukDocumentSeries: `members.${index}.tundukPassportSeries`,
+                tundukDocumentNumber: `members.${index}.tundukPassportNumber`,
+              }}
+              fields={{ nationality: true }}
+              onPinCheck={() => handlePinCheck(index)}
+            />
 
             {partnerType != 1 && (
               <>
@@ -101,7 +111,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
 
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
-  const { update: tundukPersonalDataFetch } = useFetch("", "GET");
+  const { update: tundukPersonalDataFetch, loading: tundukPersonalDataLoading } = useFetch("", "POST");
 
   const getPersonalDataNames = (index: number) => ({
     type: `members.${index}.partnerTypeSelect`,
@@ -121,6 +131,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     notaryLegalParticipantsQty: `members.${index}.notaryLegalParticipantsQty`,
     notaryTotalParticipantsQty: `members.${index}.notaryTotalParticipantsQty`,
     notaryDateOfOrder: `members.${index}.notaryDateOfOrder`,
+    nationality: `members.${index}.nationality`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -301,44 +312,36 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     const values = getValues();
     const entity = "members";
 
-    setValue(`${entity}.${index}.id`, null);
-    setValue(`${entity}.${index}.version`, null);
-    setValue(`${entity}.${index}.mainAddress.id`, null);
-    setValue(`${entity}.${index}.mainAddress.version`, null);
-    setValue(`${entity}.${index}.actualResidenceAddress.id`, null);
-    setValue(`${entity}.${index}.actualResidenceAddress.version`, null);
-    setValue(`${entity}.${index}.emailAddress.id`, null);
-    setValue(`${entity}.${index}.emailAddress.version`, null);
+    const validated = await trigger([
+      `members.${index}.personalNumber`,
+      `members.${index}.tundukPassportSeries`,
+      `members.${index}.tundukPassportNumber`,
+    ]);
+    if (!validated) return;
 
     if (values[entity] != null && values[entity][index].personalNumber) {
       const pin = values[entity][index].personalNumber;
-      const personalData = await tundukPersonalDataFetch(`/api/tunduk/personal-data/${pin}`);
+      const series = values[entity][index].tundukPassportSeries;
+      const number = values[entity][index].tundukPassportNumber;
+      const personalData = await tundukPersonalDataFetch(
+        `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`
+      );
 
       if (personalData?.status !== 0 || personalData?.data == null) {
         setAlertOpen(true);
         return;
       }
 
-      const partner = personalData.data.partner;
-      const mainAddress = personalData.data.mainAddress;
-      const actualAddress = personalData.data.actualAddress;
-      const emailAddress = personalData.data?.emailAddress;
+      const partner = personalData.data;
+      const mainAddress = personalData.data?.mainAddress;
 
-      if (partner == null || partner.id == null) {
+      if (partner == null) {
         setAlertOpen(true);
         return;
       }
 
       setAlertOpen(false);
-      setValue(`${entity}.${index}.id`, partner?.id);
-      setValue(`${entity}.${index}.version`, partner?.version);
-      setValue(`${entity}.${index}.mainAddress.id`, mainAddress?.id);
-      setValue(`${entity}.${index}.mainAddress.version`, mainAddress?.version);
-      setValue(`${entity}.${index}.actualResidenceAddress.id`, actualAddress?.id);
-      setValue(`${entity}.${index}.actualResidenceAddress.version`, actualAddress?.version);
-      setValue(`${entity}.${index}.emailAddress.id`, emailAddress?.id);
-      setValue(`${entity}.${index}.emailAddress.version`, emailAddress?.version);
-      setValue(`${entity}.${index}.emailAddress.address`, emailAddress?.address);
+      setValue(`${entity}.${index}.emailAddress.address`, partner?.emailAddress ?? "");
 
       const baseFields = [
         ...Object.values(getPersonalDataNames(index)),
@@ -349,7 +352,11 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         const fieldPath = field.split(".");
         const fieldLastItem = fieldPath[fieldPath.length - 1];
         const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
-        if (partner[tundukField ?? fieldLastItem] != null && fieldLastItem !== "personalNumber") {
+        if (
+          partner[tundukField ?? fieldLastItem] != null &&
+          fieldLastItem !== "personalNumber" &&
+          fieldLastItem !== "partnerTypeSelect"
+        ) {
           setValue(field, partner[tundukField ?? fieldLastItem]);
         }
       });
@@ -367,8 +374,8 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
       actualAddressFields.map((field: any) => {
         const fieldPath = field.split(".");
         const fieldLastItem = fieldPath[fieldPath.length - 1];
-        if (actualAddress[fieldLastItem] != null) {
-          setValue(field, actualAddress[fieldLastItem]);
+        if (partner[fieldLastItem] != null) {
+          setValue(field, partner[fieldLastItem]);
         }
       });
     }
@@ -393,7 +400,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
           return {
             tabErrorsCount: tabsErrorsCounts[index] ?? 0,
             tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: getElement(index) ?? <></>,
+            tabPanelContent: getElement(index, tundukPersonalDataLoading) ?? <></>,
           };
         })}
         actionsContent={
