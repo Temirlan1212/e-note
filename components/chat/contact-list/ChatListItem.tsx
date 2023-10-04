@@ -1,17 +1,20 @@
 import { Avatar, Box, Typography } from "@mui/material";
+import Link from "@/components/ui/Link";
 
 interface IChatListItemProps {
   activeContact?: number;
   onContactClick: (contactId: number) => void;
   contactId: number;
   contactName: string;
+  chatLink: string;
+  userToken: string;
 }
 
 const ChatListItem = (props: IChatListItemProps) => {
-  const { activeContact, onContactClick, contactId, contactName } = props;
+  const { activeContact, onContactClick, contactId, contactName, chatLink, userToken } = props;
 
   return (
-    <Box
+    <Link
       sx={{
         py: "12px",
         px: "16px",
@@ -21,7 +24,6 @@ const ChatListItem = (props: IChatListItemProps) => {
         height: "64px",
         background: activeContact === contactId ? "#24334B" : "#fff",
         boxShadow: activeContact === contactId ? "0 8px 10px 0 #ACBBD2" : "none",
-        cursor: "pointer",
         ":hover": {
           background: "#24334B",
           boxShadow: "0 8px 10px 0 #ACBBD2",
@@ -30,6 +32,9 @@ const ChatListItem = (props: IChatListItemProps) => {
           },
         },
       }}
+      href={`${chatLink}?AuthorizationBasic=${userToken.replace(/Basic /, "")}`}
+      rel="noopener noreferrer"
+      target="_blank"
       onClick={() => onContactClick(contactId)}
     >
       <Box
@@ -66,7 +71,7 @@ const ChatListItem = (props: IChatListItemProps) => {
           </Typography>
         </Box>
       </Box>
-    </Box>
+    </Link>
   );
 };
 
