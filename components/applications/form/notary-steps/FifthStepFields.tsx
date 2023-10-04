@@ -22,6 +22,8 @@ import TimePicker from "@/components/ui/TimePicker";
 import DateTimePicker from "@/components/ui/DateTimePicker";
 import { useState } from "react";
 import StepperContentStep from "@/components/ui/StepperContentStep";
+import Vehicle from "@/components/fields/Vehicle";
+import { IVehicleSchema } from "@/validator-schemas/vehicle";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -191,6 +193,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
 
   const { loading: selectionLoading, update: selectionUpdate } = useFetch("", "POST");
+  const { update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
 
   const getSelectData = async (data: any) => {
     if (Array.isArray(data) && data.length > 0) {
@@ -252,6 +255,27 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     if (onPrev != null) onPrev();
   };
 
+  const handlePinCheck = async (names: any) => {
+    const pin = form.getValues(names?.pin);
+    const vehicleData = await tundukVehicleDataFetch(`/api/tunduk/vehicle-data/${pin}`);
+    if (vehicleData?.status !== 0 || vehicleData?.data == null) {
+      return;
+    }
+
+    form.setValue("tundukVehicleIsSuccess", true);
+
+    const notaryPartner = vehicleData?.data?.[0]?.notaryPartner?.[0];
+
+    for (let key in names) {
+      const name = names?.[key];
+      const value = vehicleData?.data?.[0]?.[name] ?? notaryPartner?.[name];
+      if (value != null && value !== names?.notaryLicensePlate) {
+        form.setValue(name, value);
+        dynamicForm.setValue(name, value);
+      }
+    }
+  };
+
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
@@ -265,6 +289,12 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
       />
 
       <Box display="flex" flexDirection="column" gap="30px">
+        <Vehicle
+          disableFields={form.watch("tundukVehicleIsSuccess")}
+          form={form}
+          onPinCheck={(names: any) => handlePinCheck(names)}
+          loading={tundukVehicleDataLoading}
+        />
         {documentTemplateData?.data &&
           documentTemplateData?.data.map((group: Record<string, any>, index: number) => (
             <Box display="flex" flexDirection="column" gap="20px" key={index}>

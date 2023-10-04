@@ -28,9 +28,10 @@ export interface IIdentityDocumentProps {
     issueDate?: Date;
     familyStatus?: boolean | null;
   };
+  disableFields?: boolean;
 }
 
-export default function IdentityDocument({ form, names, defaultValues }: IIdentityDocumentProps) {
+export default function IdentityDocument({ form, names, defaultValues, disableFields }: IIdentityDocumentProps) {
   const t = useTranslations();
   const locale = useLocale();
 
@@ -59,6 +60,7 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("Document")}</InputLabel>
                 <Select
+                  disabled={disableFields}
                   labelField={
                     identityDocumentDictionary?.data?.length > 0 &&
                     identityDocumentDictionary?.data[0][`title_${locale}`]
@@ -105,7 +107,7 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
                 valueField="value"
                 selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!documentType}
+                disabled={!documentType || disableFields}
                 data={
                   identityDocumentSeriesDictionary?.status === 0 ? identityDocumentSeriesDictionary?.data ?? [] : []
                 }
@@ -126,7 +128,7 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!documentType}
+                disabled={!documentType || disableFields}
                 {...field}
               />
             </Box>
@@ -145,7 +147,7 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!documentType}
+                disabled={!documentType || disableFields}
                 {...field}
               />
             </Box>
@@ -161,7 +163,7 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!documentType}
+                disabled={!documentType || disableFields}
                 {...field}
               />
             </Box>
@@ -177,7 +179,7 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
               <DatePicker
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!documentType}
+                disabled={!documentType || disableFields}
                 value={field.value != null ? new Date(field.value) : null}
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
@@ -198,6 +200,8 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
                 <InputLabel>{t("Validity status")}</InputLabel>
 
                 <Checkbox
+                  label={field.value ? t("Valid") : t("Invalid")}
+                  disabled={disableFields}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   {...field}

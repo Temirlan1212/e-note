@@ -10,7 +10,7 @@ import Radio from "@/components/ui/Radio";
 import Autocomplete from "@/components/ui/Autocomplete";
 import Button from "@/components/ui/Button";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
-import { MouseEventHandler } from "react";
+import { MouseEventHandler, useEffect } from "react";
 import { useRouter } from "next/router";
 
 export interface IPersonalDataProps {
@@ -83,10 +83,21 @@ export interface IPersonalDataProps {
     maritalStatus?: boolean;
   };
   onPinCheck?: MouseEventHandler<HTMLButtonElement>;
+  onPinReset?: MouseEventHandler<HTMLButtonElement>;
   loading?: boolean;
+  disableFields?: boolean;
 }
 
-export default function PersonalData({ form, names, defaultValues, fields, onPinCheck, loading }: IPersonalDataProps) {
+export default function PersonalData({
+  form,
+  names,
+  defaultValues,
+  fields,
+  onPinCheck,
+  onPinReset,
+  loading,
+  disableFields,
+}: IPersonalDataProps) {
   const t = useTranslations();
 
   const { locale } = useRouter();
@@ -220,16 +231,28 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
               />
             )}
 
-            {onPinCheck && !foreigner && (
-              <Box height="66px" display="flex" alignItems="self-end">
-                <Button
-                  loading={loading}
-                  endIcon={<ContentPasteSearchIcon />}
-                  sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
-                  onClick={onPinCheck}
-                >
-                  {t("Check")}
-                </Button>
+            {!foreigner && (
+              <Box height="66px" display="flex" alignItems="self-end" gap="10px">
+                {onPinCheck && (
+                  <Button
+                    loading={loading}
+                    endIcon={<ContentPasteSearchIcon />}
+                    sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
+                    onClick={onPinCheck}
+                  >
+                    {t("Check")}
+                  </Button>
+                )}
+
+                {disableFields && onPinReset && (
+                  <Button
+                    buttonType="danger"
+                    sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
+                    onClick={onPinReset}
+                  >
+                    {t("Reset")}
+                  </Button>
+                )}
               </Box>
             )}
           </>
@@ -250,6 +273,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                       {t("Last name")}
                     </InputLabel>
                     <Input
+                      disabled={disableFields}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       {...field}
@@ -270,6 +294,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                       {t("First name")}
                     </InputLabel>
                     <Input
+                      disabled={disableFields}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       {...field}
@@ -288,6 +313,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Middle name")}</InputLabel>
                     <Input
+                      disabled={disableFields}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       {...field}
@@ -308,6 +334,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Birth date")}</InputLabel>
                     <DatePicker
+                      disabled={disableFields}
                       type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       value={field.value != null ? new Date(field.value) : null}
@@ -330,6 +357,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Citizenship")}</InputLabel>
                     <Autocomplete
+                      disabled={disableFields}
                       labelField={locale === "ru" || locale === "kg" ? "$t:name" : "name"}
                       type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -366,6 +394,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Nationality")}</InputLabel>
                     <Input
+                      disabled={disableFields}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       {...field}
@@ -384,6 +413,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Marital status")}</InputLabel>
                     <Input
+                      disabled={disableFields}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       {...field}
@@ -407,6 +437,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 <Box display="flex" flexDirection="column" width="100%">
                   <InputLabel>{t("Full name in the official language")}</InputLabel>
                   <Input
+                    disabled={disableFields}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                     {...field}
@@ -425,6 +456,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 <Box display="flex" flexDirection="column" width="100%">
                   <InputLabel>{t("Full name in the state language")}</InputLabel>
                   <Input
+                    disabled={disableFields}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                     {...field}
@@ -443,6 +475,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                 <Box display="flex" flexDirection="column" width="100%">
                   <InputLabel>{t("Full name of the representative")}</InputLabel>
                   <Input
+                    disabled={disableFields}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                     {...field}
@@ -462,6 +495,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Registration number")}</InputLabel>
                     <Input
+                      disabled={disableFields}
                       type="number"
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -481,6 +515,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("OKPO code")}</InputLabel>
                     <Input
+                      disabled={disableFields}
                       type="number"
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -502,6 +537,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Number of founders (participants) of individuals")}</InputLabel>
                     <Input
+                      disabled={disableFields}
                       type="number"
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -521,6 +557,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Number of founders (participants) of legal entities")}</InputLabel>
                     <Input
+                      disabled={disableFields}
                       type="number"
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -542,6 +579,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Total number (participants)")}</InputLabel>
                     <Input
+                      disabled={disableFields}
                       type="number"
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -561,6 +599,7 @@ export default function PersonalData({ form, names, defaultValues, fields, onPin
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Order date")}</InputLabel>
                     <DatePicker
+                      disabled={disableFields}
                       type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       value={field.value != null ? new Date(field.value) : null}

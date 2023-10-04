@@ -143,5 +143,6 @@ export const personSchema = object()
     nationality: string(),
     familyStatus: boolean(),
     maritalStatus: string(),
+    tundukIsSuccess: boolean(),
   })
   .concat(filesSchema.pick(["files"]));

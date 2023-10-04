@@ -189,5 +189,17 @@
   "Organ number": "Organ number",
   "Nationality": "Nationality",
   "Validity status": "Validity status",
-  "Marital status": "Marital status"
+  "Marital status": "Marital status",
+  "Valid": "Valid",
+  "Invalid": "Invalid",
+  "State license plate": "State license plate",
+  "Vehicle registration certificate": "Vehicle registration certificate",
+  "Vehicle type": "Vehicle type",
+  "Steering wheel type": "Steering wheel type",
+  "Volume": "Volume",
+  "Firstname": "Firstname",
+  "Lastname": "Lastname",
+  "Middlename": "Middlename",
+  "Personal number": "Personal number",
+  "Color": "Color"
 }

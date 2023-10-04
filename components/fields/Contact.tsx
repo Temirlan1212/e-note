@@ -14,9 +14,10 @@ export interface IContactProps {
     email?: string;
     phone?: string;
   };
+  disableFields?: boolean;
 }
 
-export default function Contact({ form, names, defaultValues }: IContactProps) {
+export default function Contact({ form, names, defaultValues, disableFields }: IContactProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
@@ -34,6 +35,7 @@ export default function Contact({ form, names, defaultValues }: IContactProps) {
                 {t("Phone number")}
               </InputLabel>
               <TelInput
+                disabled={disableFields}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 {...field}
@@ -49,6 +51,7 @@ export default function Contact({ form, names, defaultValues }: IContactProps) {
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("E-mail")}</InputLabel>
               <Input
+                disabled={disableFields}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 {...field}
