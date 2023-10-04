@@ -42,6 +42,8 @@ export default function ProfileDropdownButton() {
     });
   };
 
+  console.log(profile);
+
   if (userData) {
     return (
       <>
@@ -54,7 +56,7 @@ export default function ProfileDropdownButton() {
           startIcon={<PersonOutlineIcon />}
           onClick={handleMenuToggle}
         >
-          {userData.partner?.fullName}
+          {userData.partner?.fullName || userData.activeCompany.name}
         </Button>
         <Menu anchorEl={menu} open={open} onClose={handleMenuToggle}>
           <MenuItem onClick={handleProfileClick}>{t("Profile")}</MenuItem>
