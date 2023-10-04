@@ -42,8 +42,6 @@ export default function ProfileDropdownButton() {
     });
   };
 
-  console.log(profile);
-
   if (userData) {
     return (
       <>
