@@ -86,17 +86,17 @@ const ChatListBoard: FC<IChatListBoardProps> = (props) => {
           overflowY: "auto",
         }}
       >
-        {users?.map((user) => (
-          <ChatListItem
-            key={user.chatId}
-            activeContact={activeContact?.chatId}
-            contactName={isNotary ? user.chatCreator : user.notary.name}
-            contactId={user.chatId}
-            onContactClick={() => handleContactClick(user.chatId)}
-            chatLink={user.chatRoomLink}
-            userToken={user.userToken}
-          />
-        ))}
+        {users?.map((user) => {
+          return (
+            <ChatListItem
+              key={user.chatId}
+              activeContact={activeContact?.chatId}
+              contactName={isNotary ? user.chatCreator : user.notary.name}
+              contactId={user.chatId}
+              onContactClick={() => handleContactClick(user.chatId)}
+            />
+          );
+        })}
       </Box>
     </Box>
   );

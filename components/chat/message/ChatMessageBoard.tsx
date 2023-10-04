@@ -71,7 +71,7 @@ const ChatMessageBoard: FC<IChatRightPartProps> = ({ name, chatCreator, chatLink
             rel="noopener noreferrer"
             target="_blank"
           >
-            {t("Continue chatting")}
+            {t("Start chatting")}
           </Link>
         ) : (
           <Typography sx={{ fontSize: "16px" }}>{t("Select a chat from the list on the left")}</Typography>

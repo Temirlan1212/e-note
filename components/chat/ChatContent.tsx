@@ -33,10 +33,8 @@ const ChatContent: FC = () => {
     setActiveContactId(contactId);
   };
 
-  const filteredUsers = (data?.data ?? []).filter((user) =>
-    userData?.group.id === 4
-      ? user?.chatCreator?.toLowerCase().includes(searchQuery.toLowerCase())
-      : user?.notary?.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredUsers = (data?.data ?? []).filter(
+    (user) => user?.chatCreator?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const activeContact = filteredUsers?.find((user) => user.chatId === activeContactId);
