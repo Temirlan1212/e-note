@@ -1,6 +1,7 @@
 import { number, object, InferType, string, mixed, date, array, boolean } from "yup";
 import { personSchema } from "./person";
 import { addressSchema } from "./address";
+import { vehicleSchema } from "./vehicle";
 
 export type IApplicationSchema = InferType<typeof applicationSchema>;
 
@@ -56,4 +57,5 @@ export const applicationSchema = object()
     requester: array().of(personSchema),
     members: array().of(personSchema),
   })
-  .concat(addressSchema.pick(["region", "district", "city"]));
+  .concat(addressSchema.pick(["region", "district", "city"]))
+  .concat(vehicleSchema);

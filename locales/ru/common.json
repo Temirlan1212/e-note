@@ -191,5 +191,15 @@
   "Validity status": "Статус действительности",
   "Marital status": "Семейное положение",
   "Valid": "Действителен",
-  "Invalid": "Недействителен"
+  "Invalid": "Недействителен",
+  "State license plate": "Государственный номерной знак",
+  "Vehicle registration certificate": "Свидетельство регистрации транспортного средства",
+  "Vehicle type": "Тип ТС",
+  "Steering wheel type": "Тип руля",
+  "Volume": "Объем",
+  "Firstname": "Имя",
+  "Lastname": "Фамилия",
+  "Middlename": "Отчество",
+  "Personal number": "Персональный номер",
+  "Color": "Цвет"
 }

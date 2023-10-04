@@ -191,5 +191,15 @@
   "Validity status": "Жарактуулук статусу",
   "Marital status": "Үй-бүлөлүк абалы",
   "Valid": "Жарактуу",
-  "Invalid": "Жараксыз"
+  "Invalid": "Жараксыз",
+  "State license plate": "Мамлекеттик номер белгиси",
+  "Vehicle registration certificate": "Транспорт каражатын каттоо күбөлүгү",
+  "Vehicle type": "Транспорттун түрү",
+  "Steering wheel type": "Рулдун түрү",
+  "Volume": "Көлөм",
+  "Firstname": "Аты-жөнү",
+  "Lastname": "Фамилиясы",
+  "Middlename": "Атасынын аты",
+  "Personal number": "Жеке номери",
+  "Color": "Түс"
 }
