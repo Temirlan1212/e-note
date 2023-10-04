@@ -252,9 +252,9 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                         {array?.map((el, idx) => {
                           const matchingTitle = workDaysAreaData.find((item: any) => item.order_seq === el.id);
                           const title = matchingTitle
-                            ? locale === "ru"
-                              ? matchingTitle.title_ru
-                              : matchingTitle.title
+                            ? locale === "en"
+                              ? matchingTitle.title
+                              : matchingTitle.title_ru
                             : "";
                           return (
                             <Box key={idx}>
