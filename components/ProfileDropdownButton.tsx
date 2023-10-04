@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useProfileStore } from "@/stores/profile";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
-import { IUser } from "@/models/user";
+import { IUserData } from "@/models/user";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
@@ -14,13 +14,13 @@ export default function ProfileDropdownButton() {
   const router = useRouter();
   const t = useTranslations();
   const profile = useProfileStore((state) => state);
-  const [user, setUser]: [IUser | null, Function] = useState<IUser | null>(null);
+  const [userData, setUserData]: [IUserData | null, Function] = useState<IUserData | null>(null);
   const [menu, setMenu] = useState<HTMLElement | null>(null);
   const open = !!menu;
 
   useEffect(() => {
-    setUser(profile.user);
-  }, [profile.user]);
+    setUserData(profile.userData);
+  }, [profile.userData]);
 
   const handleMenuToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMenu(menu == null ? event.currentTarget : null);
@@ -38,11 +38,11 @@ export default function ProfileDropdownButton() {
   const handleLogoutClick = () => {
     router.push("/").then(() => {
       profile.logOut();
-      setUser(profile.getUser());
+      setUserData(profile.getUser());
     });
   };
 
-  if (user) {
+  if (userData) {
     return (
       <>
         <IconButton color="inherit" sx={{ display: { lg: "none" } }} onClick={handleMenuToggle}>
@@ -54,7 +54,7 @@ export default function ProfileDropdownButton() {
           startIcon={<PersonOutlineIcon />}
           onClick={handleMenuToggle}
         >
-          {user.username}
+          {userData.partner?.fullName}
         </Button>
         <Menu anchorEl={menu} open={open} onClose={handleMenuToggle}>
           <MenuItem onClick={handleProfileClick}>{t("Profile")}</MenuItem>
