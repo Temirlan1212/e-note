@@ -14,7 +14,7 @@ import ControlledDynamicComponent, {
   getControlledDynamicName,
   getControlledDynamicValue,
 } from "@/components/ui/ControlledDynamicComponent";
-import Vehicle from "@/components/fields/Vehicle";
+import Vehicle, { IVehicleNames } from "@/components/fields/Vehicle";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -74,29 +74,28 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     if (onPrev != null) onPrev();
   };
 
-  const handlePinCheck = async (names: any, index: number) => {
+  const handlePinCheck = async (names: IVehicleNames, index: number) => {
     const entity = "movable";
     const pin = `${entity}.${index}.${names?.pin}` as any;
-    const notaryLicensePlate = `${entity}.${index}.${names?.notaryLicensePlate}` as any;
-    const validated = await form.trigger([pin, notaryLicensePlate]);
+    const number = `${entity}.${index}.${names?.number}` as any;
+    const validated = await dynamicForm.trigger([pin, number]);
     if (!validated) return;
 
     const vehicleData = await tundukVehicleDataFetch(
-      `/api/tunduk/vehicle-data?pin=${form.getValues(pin)}&number=${form.getValues(notaryLicensePlate)}`
+      `/api/tunduk/vehicle-data?pin=${dynamicForm.getValues(pin)}&number=${dynamicForm.getValues(number)}`
     );
     if (vehicleData?.status !== 0 || vehicleData?.data == null) {
       return;
     }
 
-    form.setValue(`movable.${index}.tundukVehicleIsSuccess`, true);
+    dynamicForm.setValue(`movable.${index}.tundukVehicleIsSuccess`, true);
 
     const notaryPartner = vehicleData?.data?.[0]?.notaryPartner?.[0];
 
     for (let key in names) {
-      const name = names?.[key];
+      const name = names?.[key as keyof typeof names];
       const value = vehicleData?.data?.[0]?.[name] ?? notaryPartner?.[name];
       if (value != null && name !== "notaryLicensePlate" && name !== "pin") {
-        form.setValue(`${entity}.${index}.${name}` as any, value);
         dynamicForm.setValue(`${entity}.${index}.${name}` as any, value);
       }
     }
@@ -113,10 +112,24 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
       <Box display="flex" flexDirection="column" gap="30px">
         {form.watch("object") === 1 && (
           <Vehicle
-            disableFields={form.watch(`movable.${0}.tundukVehicleIsSuccess`)}
-            form={form}
+            disableFields={dynamicForm.watch(`movable.${0}.tundukVehicleIsSuccess`)}
+            form={dynamicForm}
             onPinCheck={(names) => handlePinCheck(names, 0)}
             loading={tundukVehicleDataLoading}
+            names={{
+              pin: "pin",
+              number: "number",
+              notaryLicensePlate: "notaryLicensePlate",
+              notaryVehicleRegistrationCertificateNumber: "notaryVehicleRegistrationCertificateNumber",
+              notaryTypeOfSteeringWheel: "notaryTypeOfSteeringWheel",
+              notaryEngineCapacity: "notaryEngineCapacity",
+              notaryVehicleType: "notaryVehicleType",
+              firstName: "firstName",
+              middleName: "middleName",
+              lastName: "lastName",
+              personalNumber: "personalNumber",
+              notaryVehicleColor: "notaryVehicleColor",
+            }}
           />
         )}
 
