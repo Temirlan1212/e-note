@@ -251,11 +251,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                         <Typography>{text}</Typography>
                         {array?.map((el, idx) => {
                           const matchingTitle = workDaysAreaData.find((item: any) => item.order_seq === el.id);
-                          const title = matchingTitle
-                            ? locale === "en"
-                              ? matchingTitle.title
-                              : matchingTitle.title_ru
-                            : "";
+                          const title = matchingTitle["title_" + locale] ?? matchingTitle.title;
                           return (
                             <Box key={idx}>
                               <Typography>{title}</Typography>
