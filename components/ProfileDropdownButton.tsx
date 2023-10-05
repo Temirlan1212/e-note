@@ -38,7 +38,7 @@ export default function ProfileDropdownButton() {
   const handleLogoutClick = () => {
     router.push("/").then(() => {
       profile.logOut();
-      setUserData(profile.getUser());
+      setUserData(profile.getUserData());
     });
   };
 
