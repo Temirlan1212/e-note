@@ -1,3 +1,5 @@
+import { IPartner } from "@/models/user";
+
 export interface ICompany {
   id: number;
   version: number;
@@ -5,4 +7,5 @@ export interface ICompany {
   name: string;
   code: string;
   "notaryDistrict.id": number;
+  partner: Partial<IPartner>;
 }
