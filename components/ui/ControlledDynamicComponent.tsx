@@ -60,9 +60,12 @@ export const getControlledDynamicGroupName = (group: Record<string, any>, locale
   return groupNameLocale ? groupNameLocale : groupName;
 };
 
-export const getControlledDynamicName = (path: string | null, name: string | null) => {
+export const getControlledDynamicName = (
+  path: string | null,
+  name: string | null,
+  regex: RegExp = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)(?:\.|$)/
+) => {
   if (path != null && name != null) {
-    const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)(?:\.|$)/;
     if (regex.test(path)) {
       const index = 0;
       return `${path}.${index}.${name}`;
