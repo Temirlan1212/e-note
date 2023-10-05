@@ -56,6 +56,6 @@ export const applicationSchema = object()
     }),
     requester: array().of(personSchema),
     members: array().of(personSchema),
+    movable: array().of(vehicleSchema),
   })
-  .concat(addressSchema.pick(["region", "district", "city"]))
-  .concat(vehicleSchema);
+  .concat(addressSchema.pick(["region", "district", "city"]));
