@@ -67,7 +67,10 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const infoArray = [
     {
-      text: notaryData[0]?.typeOfNotary,
+      text:
+        notaryData[0]?.typeOfNotary === "state"
+          ? t("State notary")
+          : notaryData[0]?.typeOfNotary === "private" && t("Private notary"),
       icon: <AccountCircleOutlinedIcon />,
       type: "text",
       array: [],
