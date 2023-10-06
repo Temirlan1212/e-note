@@ -133,7 +133,7 @@ export default forwardRef(function JacartaSign({ base64Doc }: IJacartaSignProps,
       {container && (
         <Box display="flex" flexDirection="column" my={2}>
           <InputLabel>{t("PIN code")}</InputLabel>
-          <Input onChange={(event) => setPin(event.target.value)} />
+          <Input type="password" onChange={(event) => setPin(event.target.value)} />
         </Box>
       )}
     </>
