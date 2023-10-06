@@ -73,7 +73,7 @@ export default function useFetch<T = FetchResponseBody>(
           throw new Error(JSON.stringify(error));
         }
 
-        return options?.returnResponse != null ? res : res.json();
+        return options?.returnResponse === true ? res : res.json();
       })
       .then((res) => {
         setData(res);
@@ -81,15 +81,22 @@ export default function useFetch<T = FetchResponseBody>(
         return res;
       })
       .catch((e: Error) => {
-        const error: FetchError = JSON.parse(e.message);
+        let error: FetchError | null = null;
+
+        try {
+          error = JSON.parse(e?.message);
+        } catch (e: any) {
+          return;
+        }
+
         setError(error);
 
-        if (error.status === 401) {
+        if (error?.status === 401) {
           profile.logOut();
           return router.push("/login");
         }
 
-        setNotification(error.message);
+        setNotification(error?.message ?? null);
       })
       .finally(() => setLoading(false));
   };
