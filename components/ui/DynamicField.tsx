@@ -54,7 +54,7 @@ const getValue = (field: Variant, value: any) => {
   return types[field];
 };
 
-const getComponent = (
+const getField = (
   type: Variant,
   props: {
     form: UseFormReturn<any>;
@@ -205,7 +205,7 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
         return (
           <Box display="flex" flexDirection="column" gap="10px">
             <Typography>{label}</Typography>
-            {getComponent(type, {
+            {getField(type, {
               field,
               errorMessage: fieldState.error?.type !== "disabled" ? errorMessage ?? "" : "",
               selectionData,
