@@ -153,7 +153,7 @@ const NotaryRegistry: FC<INotariesContentProps> = (props) => {
             name="notariesSort"
             data={[
               { value: "partner.rating", label: t("By ratings") },
-              { value: "partner.name", label: t("Alphabetically") },
+              { value: "partner.fullName", label: t("Alphabetically") },
             ]}
             onChange={handleNotariesSortChange}
             selectType="success"
