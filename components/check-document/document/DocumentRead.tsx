@@ -20,7 +20,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
   const t = useTranslations();
 
   const { data: statusData, loading: statusDataLoading } = useFetch(
-    "/api/check-document/dictionaries/application-status",
+    "/api/check-document/dictionaries/reliability-status",
     "GET"
   );
   const { data: actionTypeData, loading: actionTypeDataLoading } = useFetch(
@@ -47,7 +47,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
       title: "Date of action",
       value: data?.creationDate ? format(new Date(data?.creationDate!), "dd.MM.yyyy HH:mm:ss") : "",
     },
-    { title: "Full name of the notary", value: data?.company.name },
+    { title: "Full name of the notary", value: data?.company?.partner?.fullName },
     { title: "Unique registry number", value: data?.notaryUniqNumber },
   ];
 

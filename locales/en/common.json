@@ -201,5 +201,7 @@
   "Lastname": "Lastname",
   "Middlename": "Middlename",
   "Personal number": "Personal number",
-  "Color": "Color"
+  "Color": "Color",
+  "PIN code": "PIN code",
+  "This action failed": "This action failed"
 }

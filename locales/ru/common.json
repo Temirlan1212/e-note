@@ -201,5 +201,7 @@
   "Lastname": "Фамилия",
   "Middlename": "Отчество",
   "Personal number": "Персональный номер",
-  "Color": "Цвет"
+  "Color": "Цвет",
+  "PIN code": "ПИН код",
+  "This action failed": "Это действие не удалось выполнить"
 }

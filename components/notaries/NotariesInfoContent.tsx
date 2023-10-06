@@ -47,9 +47,13 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const setNotaryData = useNotariesStore((state) => state.setNotaryData);
   const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
 
+  const { data: workDaysArea } = useFetch("/api/notaries/dictionaries/work-days", "GET");
+
   const { update: contactUpdate } = useFetch<IContact>("", "POST");
 
   const notaryData = data?.data || [];
+
+  const workDaysAreaData = workDaysArea?.data || [];
 
   const normalizePhoneNumber = (phoneNumber: string) => phoneNumber?.replace(/\D/g, "");
 
@@ -103,7 +107,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: [],
     },
     {
-      text: "Рабочие дни, с перерывом на обед",
+      text: t("Working days, with a lunch break"),
       icon: <AccessTimeOutlinedIcon />,
       type: "list",
       array: notaryData[0]?.workingDay,
@@ -246,9 +250,12 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                       <Box display="flex" flexDirection="column" gap="5px">
                         <Typography>{text}</Typography>
                         {array?.map((el, idx) => {
+                          const matchingTitle = workDaysAreaData.find((item: any) => item.order_seq === el.id);
+                          const translatedTitle = matchingTitle?.["title_" + locale];
+                          const title = Boolean(translatedTitle) ? translatedTitle : matchingTitle?.title ?? "";
                           return (
                             <Box key={idx}>
-                              <Typography>{el}</Typography>
+                              <Typography>{title}</Typography>
                             </Box>
                           );
                         })}

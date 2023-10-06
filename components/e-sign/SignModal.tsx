@@ -1,15 +1,17 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Box, InputLabel, SelectChangeEvent } from "@mui/material";
+import { Alert, Box, Collapse, InputLabel, SelectChangeEvent } from "@mui/material";
 import KeyIcon from "@mui/icons-material/Key";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import FingerprintScanner from "@/components/ui/FingerprintScanner";
 import JacartaSign, { IJacartaSignRef } from "./JacartaSign";
+import RutokenSign, { IRutokenSignRef } from "./RutokenSign";
 
 enum SignType {
   Jacarta = "jacarta",
+  Rutoken = "rutoken",
 }
 
 const signTypes = Object.entries(SignType).map(([label, value]) => ({ label, value }));
@@ -19,9 +21,11 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
   const [fingerScanner, setFingerScanner] = useState<"error" | "success" | "primary" | "signed">("primary");
   const [isSigned, setIsSigned] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
   const [signType, setSignType] = useState<SignType>();
 
   const jcRef = useRef<IJacartaSignRef>(null);
+  const rtRef = useRef<IRutokenSignRef>(null);
 
   const handleState = () => {
     setLoading(true);
@@ -30,22 +34,31 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
       .finally(() => setLoading(false));
   };
 
-  const handleSign = (openModal: (open: boolean) => void) => {
-    // if (jcRef == null) return;
+  const handleSign = async (openModal: (open: boolean) => void) => {
+    const signRefCurrent = jcRef.current ?? rtRef.current;
+    if (signRefCurrent == null) return;
 
-    // const sign = jcRef.current?.handleSign(onSign);
-    // if (!sign) return;
-    onSign(base64Doc);
+    try {
+      const sign = await signRefCurrent?.handleSign(onSign);
+      if (sign == null) {
+        setAlertOpen(true);
+        return;
+      }
 
-    setIsSigned(true);
-    setFingerScanner("signed");
-    openModal(false);
+      setAlertOpen(false);
+      setIsSigned(true);
+      setFingerScanner("signed");
+      openModal(false);
+    } catch (e: any) {
+      setAlertOpen(true);
+    }
   };
 
   const handleToggle = () => {
     setFingerScanner("primary");
     setIsSigned(false);
     setSignType(undefined);
+    setAlertOpen(false);
   };
 
   return (
@@ -74,13 +87,20 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
         ),
         body: () => (
           <Box pb={5}>
-            {/* {fingerScanner === "success" && (
+            <Collapse in={alertOpen}>
+              <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+                {t("This action failed")}
+              </Alert>
+            </Collapse>
+
+            {fingerScanner === "success" && (
               <Box display="flex" flexDirection="column" my={2}>
                 <InputLabel>{t("Type")}</InputLabel>
                 <Select
                   data={signTypes}
                   onChange={(event: SelectChangeEvent<SignType>) => {
                     setSignType(event.target.value as SignType);
+                    setAlertOpen(false);
                   }}
                 />
               </Box>
@@ -88,16 +108,20 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
 
             {fingerScanner === "success" && signType === SignType.Jacarta && (
               <JacartaSign base64Doc={base64Doc} ref={jcRef} />
-            )} */}
+            )}
 
-            {/* {fingerScanner !== "success" && ( */}
-            <FingerprintScanner
-              width="100%"
-              loading={loading}
-              type={fingerScanner}
-              onClick={() => fingerScanner === "primary" && handleState()}
-            />
-            {/* )} */}
+            {fingerScanner === "success" && signType === SignType.Rutoken && (
+              <RutokenSign base64Doc={base64Doc} ref={rtRef} />
+            )}
+
+            {fingerScanner !== "success" && (
+              <FingerprintScanner
+                width="100%"
+                loading={loading}
+                type={fingerScanner}
+                onClick={() => fingerScanner === "primary" && handleState()}
+              />
+            )}
           </Box>
         ),
       }}

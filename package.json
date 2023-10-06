@@ -14,6 +14,7 @@
     "**/*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
+    "@aktivco/rutoken-plugin": "^1.0.9",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
