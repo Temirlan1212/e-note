@@ -130,6 +130,20 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     return () => setIsMounted(false);
   }, []);
 
+  useEffectOnce(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        setIsBackdropOpen(true);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  });
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Backdrop open={isBackdropOpen} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
