@@ -4,8 +4,7 @@ import { Box, Grid, Paper } from "@mui/material";
 import Button from "@/components/ui/Button";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import { useRouter } from "next/router";
-import ControlledDynamicComponent from "@/components/ui/DynamicField";
-import { IProductTemplateFieldSchema } from "@/models/product-template-field";
+import ControlledDynamicComponent, { IDynamicFieldSchemaSchema } from "@/components/ui/DynamicField";
 
 const getTemplateDocName = (
   path: string | null,
@@ -26,8 +25,8 @@ const getTemplateDocName = (
 
 export interface ITundukDynamicFieldsProps {
   form: UseFormReturn<any>;
-  fields?: IProductTemplateFieldSchema[];
-  responseFields?: IProductTemplateFieldSchema[];
+  fields?: IDynamicFieldSchemaSchema[];
+  responseFields?: IDynamicFieldSchemaSchema[];
   loading?: boolean;
   onPinCheck?: () => void;
   onPinReset?: () => void;
