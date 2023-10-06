@@ -37,9 +37,11 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
   useEffectOnce(async () => {
     const applicationData = application?.data?.[0];
+    let initialLoad = true;
 
     if (applicationData?.documentInfo?.pdfLink != null && applicationData?.documentInfo?.token != null) {
       handlePdfDownload(applicationData.documentInfo.pdfLink, applicationData.documentInfo.token);
+      initialLoad = false;
     }
 
     switch (applicationData?.statusSelect) {
@@ -47,6 +49,8 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
         setIsSigned(true);
         break;
       case 2:
+        if (!initialLoad) break;
+
         const prepareData = await getPrepare(`/api/files/prepare/${id}`);
         if (prepareData?.data?.saleOrderVersion != null) {
           setValue("version", prepareData.data.saleOrderVersion);

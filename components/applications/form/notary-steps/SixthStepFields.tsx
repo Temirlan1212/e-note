@@ -50,10 +50,12 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
   useEffectOnce(async () => {
     const applicationData = application?.data?.[0];
+    let initialLoad = true;
 
     if (applicationData?.documentInfo?.pdfLink != null && applicationData?.documentInfo?.token != null) {
       setToken(applicationData.documentInfo.token);
       handlePdfDownload(applicationData.documentInfo.pdfLink, applicationData.documentInfo.token);
+      initialLoad = false;
     }
 
     switch (applicationData?.statusSelect) {
@@ -61,6 +63,8 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
         setIsSigned(true);
         break;
       case 2:
+        if (!initialLoad) break;
+
         const prepareData = await getPrepare(`/api/files/prepare/${id}`);
         if (prepareData?.data?.saleOrderVersion != null) {
           setValue("version", prepareData.data.saleOrderVersion);
@@ -148,17 +152,21 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
         {!applicationLoading && !prepareLoading && !pdfLoading && !signLoading && !syncLoading && (
           <Box display="flex" gap="10px" flexDirection={{ xs: "column", md: "row" }}>
-            {!isSigned && token && prepare?.data?.editUrl != null && (
-              <Link
-                href={`${prepare.data.editUrl}?AuthorizationBasic=${token.replace(/Basic /, "")}`}
-                target="_blank"
-                onClick={() => setIsBackdropOpen(true)}
-              >
-                <Button startIcon={<EditIcon />} sx={{ width: "auto" }}>
-                  {t("Edit")}
-                </Button>
-              </Link>
-            )}
+            {!isSigned &&
+              token &&
+              (application?.data?.[0]?.documentInfo?.editUrl || prepare?.data?.editUrl != null) && (
+                <Link
+                  href={`${
+                    application?.data[0].documentInfo.editUrl ?? prepare?.data.editUrl
+                  }?AuthorizationBasic=${token.replace(/Basic /, "")}`}
+                  target="_blank"
+                  onClick={() => setIsBackdropOpen(true)}
+                >
+                  <Button startIcon={<EditIcon />} sx={{ width: "auto" }}>
+                    {t("Edit")}
+                  </Button>
+                </Link>
+              )}
 
             {!isSigned && base64Doc != null && <SignModal base64Doc={base64Doc} onSign={handleSign} />}
           </Box>
