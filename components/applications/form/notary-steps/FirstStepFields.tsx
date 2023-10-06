@@ -97,7 +97,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
               </>
             )}
 
-            <Typography variant="h5">{t("Place of residence")}</Typography>
+            <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
             <Address
               disableFields={watch(`requester.${index}.tundukIsSuccess`)}
               form={form}

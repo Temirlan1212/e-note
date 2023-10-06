@@ -94,7 +94,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
               </>
             )}
 
-            <Typography variant="h5">{t("Place of residence")}</Typography>
+            <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
             <Address
               disableFields={watch(`members.${index}.tundukIsSuccess`)}
               form={form}

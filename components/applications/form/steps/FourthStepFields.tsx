@@ -72,7 +72,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
               </>
             )}
 
-            <Typography variant="h5">{t("Place of residence")}</Typography>
+            <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
             <Address form={form} names={getAddressNames(index)} />
 
             {partnerType != 1 && (

@@ -233,7 +233,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
         </>
       )}
 
-      <Typography variant="h5">{t("Place of residence")}</Typography>
+      <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
       <Address form={form} names={getAddressNames(0)} />
 
       {partnerType != 1 && (
