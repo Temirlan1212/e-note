@@ -97,8 +97,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
   const getLabelField = (data: FetchResponseBody | null) => {
     if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
-      const item = data.data.find((item) => item.hasOwnProperty("$t:name"));
-      return item != null ? "$t:name" : "name";
+      const item = data.data.find((item) => item.hasOwnProperty("$t:name") || item.hasOwnProperty("partner.fullName"));
+      return item != null ? (item.hasOwnProperty("partner.fullName") ? "partner.fullName" : "$t:name") : "name";
     }
     return "name";
   };
