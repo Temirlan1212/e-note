@@ -1,13 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { pin, number } = req.query;
+  const { model } = req.body;
 
-  if (req.method !== "POST" || pin == null) {
+  if (req.method !== "POST" || model == null) {
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + `/ws/tunduk/vehicle/pin/${pin}/${number}`, {
+  const response = await fetch(process.env.BACKEND_API_URL + String(model), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -9,11 +9,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useRouter } from "next/router";
 import StepperContentStep from "@/components/ui/StepperContentStep";
-import ControlledDynamicComponent, {
-  getControlledDynamicGroupName,
-  getControlledDynamicName,
-  getControlledDynamicValue,
-} from "@/components/ui/ControlledDynamicComponent";
+import ControlledDynamicComponent from "@/components/ui/DynamicField";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -22,6 +18,30 @@ export interface IStepFieldsProps {
   onNext?: (arg: { step: number | undefined }) => void;
   handleStepNextClick?: Function;
 }
+
+const getTemplateDocGroupName = (group: Record<string, any>, locale: string | undefined) => {
+  const groupName = group?.groupName === "null" ? "" : group?.groupName ?? "";
+  const groupNameLocale = group?.["groupName_" + locale];
+
+  return groupNameLocale ? groupNameLocale : groupName;
+};
+
+const getTemplateDocName = (
+  path: string | null,
+  name: string | null,
+  regex: RegExp = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)(?:\.|$)/
+) => {
+  if (path != null && name != null) {
+    if (regex.test(path)) {
+      const index = 0;
+      return `${path}.${index}.${name}`;
+    }
+
+    return `${path}.${name}`;
+  }
+
+  return name ?? "";
+};
 
 export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
@@ -84,7 +104,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
         {documentTemplateData?.data &&
           documentTemplateData?.data.map((group: Record<string, any>, index: number) => (
             <Box display="flex" flexDirection="column" gap="20px" key={index}>
-              <Typography variant="h4">{getControlledDynamicGroupName(group, locale)}</Typography>
+              <Typography variant="h4">{getTemplateDocGroupName(group, locale)}</Typography>
 
               <Grid key={index} container spacing={2}>
                 {group?.fields
@@ -103,9 +123,9 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                         type={item.fieldType}
                         form={dynamicForm}
                         label={item?.fieldTitles?.[locale ?? ""] ?? ""}
-                        defaultValue={getControlledDynamicValue(item?.fieldType, item?.defaultValue)}
+                        defaultValue={item?.defaultValue}
                         required={!!item?.required}
-                        name={getControlledDynamicName(item?.path, item?.fieldName)}
+                        name={getTemplateDocName(item?.path, item?.fieldName)}
                         selectionName={item?.selection ?? ""}
                       />
                     </Grid>

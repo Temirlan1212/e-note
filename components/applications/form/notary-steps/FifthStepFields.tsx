@@ -9,12 +9,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useRouter } from "next/router";
 import StepperContentStep from "@/components/ui/StepperContentStep";
-import ControlledDynamicComponent, {
-  getControlledDynamicGroupName,
-  getControlledDynamicName,
-  getControlledDynamicValue,
-} from "@/components/ui/ControlledDynamicComponent";
-import Vehicle, { IVehicleNames } from "@/components/fields/Vehicle";
+import TundukDynamicFields from "@/components/fields/TundukDynamicFields";
+import DynamicField from "@/components/ui/DynamicField";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -24,13 +20,41 @@ export interface IStepFieldsProps {
   handleStepNextClick?: Function;
 }
 
+const getTemplateDocGroupName = (group: Record<string, any>, locale: string | undefined) => {
+  const groupName = group?.groupName === "null" ? "" : group?.groupName ?? "";
+  const groupNameLocale = group?.["groupName_" + locale];
+
+  return groupNameLocale ? groupNameLocale : groupName;
+};
+
+const getTemplateDocName = (
+  path: string | null,
+  name: string | null,
+  regex: RegExp = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)(?:\.|$)/
+) => {
+  if (path != null && name != null) {
+    if (regex.test(path)) {
+      const index = 0;
+      return `${path}.${index}.${name}`;
+    }
+
+    return `${path}.${name}`;
+  }
+
+  return name ?? "";
+};
+
 export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
 
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
-  const { update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
+  const {
+    data: tundukVehicleData,
+    update: tundukVehicleDataFetch,
+    loading: tundukVehicleDataLoading,
+  } = useFetch("", "POST");
 
   const {
     update: getDocumentTemplateData,
@@ -74,35 +98,67 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     if (onPrev != null) onPrev();
   };
 
-  const handlePinCheck = async (names: IVehicleNames, index: number) => {
-    const entity = "movable";
-    const pin = `${entity}.${index}.${names?.pin}` as any;
-    const number = `${entity}.${index}.${names?.number}` as any;
-    const validated = await dynamicForm.trigger([pin, number]);
+  const handlePinCheck = async (
+    url: string | null,
+    fields: Record<string, any>[],
+    responsefields: Record<string, any>[]
+  ) => {
+    if (!url) return;
+
+    const names = fields?.map((item) => {
+      return getTemplateDocName(item?.path, item?.fieldName);
+    });
+
+    let values: Record<string, any> = {};
+    names.map((item) => {
+      const fieldPath = item?.split(".");
+      values = { ...values, [fieldPath[fieldPath.length - 1]]: dynamicForm.getValues(item) };
+    });
+
+    const tundukUrl = url.replace(/\${(.*?)}/g, (match, placeholder) => {
+      return values[placeholder] || match;
+    });
+
+    const validated = await dynamicForm.trigger(names);
     if (!validated) return;
 
-    const vehicleData = await tundukVehicleDataFetch(
-      `/api/tunduk/vehicle-data?pin=${dynamicForm.getValues(pin)}&number=${dynamicForm.getValues(number)}`
-    );
+    const vehicleData = await tundukVehicleDataFetch(`/api/tunduk`, { model: tundukUrl });
     if (vehicleData?.status !== 0 || vehicleData?.data == null) {
       return;
     }
 
-    dynamicForm.setValue(`movable.${index}.tundukVehicleIsSuccess`, true);
+    responsefields?.map((field) => {
+      const formName = getTemplateDocName(field?.path, field?.fieldName);
+      const fieldName = field?.fieldName;
+      const value = vehicleData?.data?.[0]?.[fieldName] ?? vehicleData?.data?.[0]?.notaryPartner?.[0]?.[fieldName];
 
-    const notaryPartner = vehicleData?.data?.[0]?.notaryPartner?.[0];
-
-    for (let key in names) {
-      const name = names?.[key as keyof typeof names];
-      const value = vehicleData?.data?.[0]?.[name] ?? notaryPartner?.[name];
-      if (value != null && name !== "notaryLicensePlate" && name !== "pin") {
-        dynamicForm.setValue(`${entity}.${index}.${name}` as any, value);
+      if (value != null && value !== "") {
+        dynamicForm.setValue(formName, value);
+        if (names.includes(formName)) return;
+        dynamicForm.setError(formName, { type: "disabled" });
       }
-    }
+    });
   };
 
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+    let data = { ...documentTemplateData };
+    if (data?.data == null) {
+      data = await getDocumentTemplateData("/api/dictionaries/document-type/template/" + productId);
+    }
+
+    data?.data.map((group: Record<string, any>) => {
+      group?.fields.map(async (item: Record<string, any>) => {
+        if (String(item?.fieldType).toLocaleLowerCase() === "tunduk") {
+          const fields = item?.fields as Record<string, any>[];
+          const names = fields?.map((item) => getTemplateDocName(item?.path, item?.fieldName));
+          const validated = await dynamicForm.trigger(names);
+          if (!validated) return;
+
+          handlePinCheck(item?.url, fields, item?.responseFields);
+        }
+      });
+    });
   });
 
   return (
@@ -110,54 +166,42 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
       <StepperContentStep step={5} title={t("Additional information")} loading={documentTemplateLoading} />
 
       <Box display="flex" flexDirection="column" gap="30px">
-        {form.watch("object") === 1 && (
-          <Vehicle
-            disableFields={dynamicForm.watch(`movable.${0}.tundukVehicleIsSuccess`)}
-            form={dynamicForm}
-            onPinCheck={(names) => handlePinCheck(names, 0)}
-            loading={tundukVehicleDataLoading}
-            names={{
-              pin: "pin",
-              number: "number",
-              notaryLicensePlate: "notaryLicensePlate",
-              notaryVehicleRegistrationCertificateNumber: "notaryVehicleRegistrationCertificateNumber",
-              notaryTypeOfSteeringWheel: "notaryTypeOfSteeringWheel",
-              notaryEngineCapacity: "notaryEngineCapacity",
-              notaryVehicleType: "notaryVehicleType",
-              firstName: "firstName",
-              middleName: "middleName",
-              lastName: "lastName",
-              personalNumber: "personalNumber",
-              notaryVehicleColor: "notaryVehicleColor",
-            }}
-          />
-        )}
-
         {documentTemplateData?.data &&
           documentTemplateData?.data.map((group: Record<string, any>, index: number) => (
             <Box display="flex" flexDirection="column" gap="20px" key={index}>
-              <Typography variant="h4">{getControlledDynamicGroupName(group, locale)}</Typography>
+              <Typography variant="h4">{getTemplateDocGroupName(group, locale)}</Typography>
 
               <Grid key={index} container spacing={2}>
                 {group?.fields
                   ?.sort((a: any, b: any) => Number(a?.sequence ?? 0) - Number(b?.sequence ?? 0))
                   .map((item: Record<string, any>, index: number) => (
                     <Grid
+                      key={index}
                       item
                       md={item?.elementWidth ?? 12}
-                      key={index}
                       width="100%"
                       display="flex"
                       flexDirection="column"
                       justifyContent="end"
+                      gap="50px"
                     >
-                      <ControlledDynamicComponent
-                        type={item.fieldType}
+                      {String(item?.fieldType).toLocaleLowerCase() === "tunduk" && form.watch("object") === 1 ? (
+                        <TundukDynamicFields
+                          loading={tundukVehicleDataLoading}
+                          form={dynamicForm}
+                          fields={item?.fields}
+                          responseFields={tundukVehicleData?.data != null ? item?.responseFields : null}
+                          onPinCheck={() => handlePinCheck(item?.url, item?.fields, item?.responseFields)}
+                        />
+                      ) : null}
+
+                      <DynamicField
+                        type={item?.fieldType}
                         form={dynamicForm}
                         label={item?.fieldTitles?.[locale ?? ""] ?? ""}
-                        defaultValue={getControlledDynamicValue(item?.fieldType, item?.defaultValue)}
+                        defaultValue={item?.defaultValue}
                         required={!!item?.required}
-                        name={getControlledDynamicName(item?.path, item?.fieldName)}
+                        name={getTemplateDocName(item?.path, item?.fieldName)}
                         selectionName={item?.selection ?? ""}
                       />
                     </Grid>
