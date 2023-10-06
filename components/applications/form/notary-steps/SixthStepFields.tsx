@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
@@ -37,6 +37,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const [token, setToken] = useState<string>();
   const [isSigned, setIsSigned] = useState(false);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(true);
 
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
   const { data: prepare, loading: prepareLoading, update: getPrepare } = useFetch("", "GET");
@@ -120,6 +121,14 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
+
+  useEffect(() => {
+    if (!isMounted) {
+      setIsBackdropOpen(true);
+    }
+
+    return () => setIsMounted(false);
+  }, []);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
