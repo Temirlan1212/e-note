@@ -23,7 +23,7 @@ export type Variant =
   | "DateTime"
   | "Date";
 
-export interface IDynamicFieldSchema {
+export interface IDynamicFieldProps {
   type: Variant;
   form: UseFormReturn<any>;
   name: string;
@@ -33,29 +33,6 @@ export interface IDynamicFieldSchema {
   disabled?: boolean;
   selectionName?: string;
   path?: string;
-}
-
-export interface IDynamicFieldSchemaTunduk {
-  type: "tunduk";
-  url: string;
-  fields: IDynamicFieldSchema[];
-  responseFields: IDynamicFieldSchema[];
-}
-
-export interface IDynamicFieldSchemaSchema {
-  type: IDynamicFieldSchema | IDynamicFieldSchemaTunduk;
-  url: string;
-  fields: IDynamicFieldSchema[];
-  responseFields: IDynamicFieldSchema[];
-}
-
-interface IComponentProps {
-  form: UseFormReturn<any>;
-  field: ControllerRenderProps<any, string>;
-  locale: string | undefined;
-  errorMessage?: string;
-  selectionData?: Record<string, any>[];
-  disabled?: boolean;
 }
 
 const getValue = (field: Variant, value: any) => {
@@ -77,7 +54,17 @@ const getValue = (field: Variant, value: any) => {
   return types[field];
 };
 
-const getComponent = (type: Variant, props: IComponentProps) => {
+const getComponent = (
+  type: Variant,
+  props: {
+    form: UseFormReturn<any>;
+    field: ControllerRenderProps<any, string>;
+    locale: string | undefined;
+    errorMessage?: string;
+    selectionData?: Record<string, any>[];
+    disabled?: boolean;
+  }
+) => {
   const { field, selectionData, errorMessage, disabled, form, locale } = props;
   const { trigger } = form;
 
@@ -186,7 +173,7 @@ const getComponent = (type: Variant, props: IComponentProps) => {
 
 const isEmptyOrNull = (value: string | null) => value === "" || value == null;
 
-const DynamicField: React.FC<IDynamicFieldSchema> = (props) => {
+const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
   const { form, type, selectionName, disabled, name, label, defaultValue, required, path } = props;
   const { locale } = useRouter();
   const t = useTranslations();

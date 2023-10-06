@@ -151,9 +151,11 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
       group?.fields.map(async (item: Record<string, any>) => {
         if (String(item?.fieldType).toLocaleLowerCase() === "tunduk") {
           const fields = item?.fields as Record<string, any>[];
-          const names = fields?.map((item) => getTemplateDocName(item?.path, item?.fieldName));
-          const validated = await dynamicForm.trigger(names);
-          if (!validated) return;
+          const names = fields
+            ?.filter((item) => item?.required)
+            .map((item) => getTemplateDocName(item?.path, item?.fieldName));
+          const values = dynamicForm.getValues(names);
+          if (values.some((item) => !item)) return;
 
           handlePinCheck(item?.url, fields, item?.responseFields);
         }
