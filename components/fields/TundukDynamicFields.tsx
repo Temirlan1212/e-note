@@ -4,7 +4,7 @@ import { Box, Grid, Paper } from "@mui/material";
 import Button from "@/components/ui/Button";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import { useRouter } from "next/router";
-import ControlledDynamicComponent, { IDynamicFieldSchemaSchema } from "@/components/ui/DynamicField";
+import DynamicField, { IDynamicFieldSchemaSchema } from "@/components/ui/DynamicField";
 
 const getTemplateDocName = (
   path: string | null,
@@ -58,7 +58,7 @@ export default function TundukDynamicFields({
               flexDirection="column"
               justifyContent="end"
             >
-              <ControlledDynamicComponent
+              <DynamicField
                 type={item?.fieldType}
                 form={form}
                 label={item?.fieldTitles?.[locale ?? ""] ?? ""}
@@ -107,7 +107,7 @@ export default function TundukDynamicFields({
                 flexDirection="column"
                 justifyContent="end"
               >
-                <ControlledDynamicComponent
+                <DynamicField
                   type={item?.fieldType}
                   form={form}
                   label={item?.fieldTitles?.[locale ?? ""] ?? ""}
