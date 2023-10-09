@@ -12,6 +12,7 @@ export interface INotary {
   "address.region": INotaryGeo;
   id: number;
   "partner.simpleFullName": string;
+  "partner.fullName": string;
   name: string;
 }
 

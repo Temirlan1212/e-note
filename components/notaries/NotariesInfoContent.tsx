@@ -224,7 +224,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
               fontWeight: 600,
             }}
           >
-            {notaryData[0]?.name}
+            {notaryData[0]?.partner?.fullName}
           </Typography>
           <Box>
             <Box display="flex" gap="20px" flexDirection="column">

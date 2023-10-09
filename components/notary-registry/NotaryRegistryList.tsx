@@ -42,7 +42,7 @@ const NotaryRegistryList: FC<INotaryListProps> = ({ loading, data, notariesQuery
                 <Link href={`/notary-registry/${encodeURIComponent(notary?.id)}`} style={{ textDecoration: "none" }}>
                   <Grid item key={notary?.id} xs={12} sm={12} md={3}>
                     <NotariesCard
-                      fullName={notary.name}
+                      fullName={notary["partner.fullName"]}
                       image={notary["logo.fileName"]}
                       rating={notary["partner.rating"]}
                       region={notary["address.region"]}
