@@ -108,13 +108,13 @@ export default function FifthStepFields({
 
   const handlePinCheck = async (
     url: string | null,
-    params: Record<string, any>,
+    paramsValue: Record<string, any>,
     responsefields: Record<string, any>[]
   ) => {
     if (!url) return;
 
     const tundukUrl = url.replace(/\${(.*?)}/g, (match, placeholder) => {
-      return params[placeholder] || match;
+      return paramsValue[placeholder] || match;
     });
 
     const vehicleData = await tundukVehicleDataFetch(`/api/tunduk`, { model: tundukUrl });
