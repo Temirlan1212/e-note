@@ -30,6 +30,11 @@ import useNotariesStore from "@/stores/notaries";
 
 interface INotariesInfoContentProps {}
 
+enum TypeOfNotary {
+  State = "state",
+  Private = "private",
+}
+
 const formatDate = (inputDate: string | number | Date) => {
   if (inputDate) {
     const date = new Date(inputDate);
@@ -67,7 +72,12 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const infoArray = [
     {
-      text: notaryData[0]?.typeOfNotary,
+      text:
+        notaryData[0]?.typeOfNotary === TypeOfNotary.State
+          ? t("State notary")
+          : notaryData[0]?.typeOfNotary === TypeOfNotary.Private
+          ? t("Private notary")
+          : "",
       icon: <AccountCircleOutlinedIcon />,
       type: "text",
       array: [],
