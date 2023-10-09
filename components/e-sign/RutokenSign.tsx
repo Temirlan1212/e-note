@@ -16,9 +16,9 @@ export interface IRutokenSignRef {
 export default forwardRef(function RutokenSign({ base64Doc }: IRutokenSignProps, ref: Ref<IRutokenSignRef>) {
   const t = useTranslations();
   const [devices, setDevices] = useState<Record<string, any>[]>();
-  const [device, setDevice] = useState<string | number>();
-  const [certificate, setCertificate] = useState<string>();
-  const [pin, setPin] = useState<string>();
+  const [device, setDevice] = useState<number>(-1);
+  const [certificate, setCertificate] = useState<string>("");
+  const [pin, setPin] = useState<string>("");
   const [lib, setLib] = useState<Record<string, any>>();
 
   useEffectOnce(() => {
@@ -32,7 +32,7 @@ export default forwardRef(function RutokenSign({ base64Doc }: IRutokenSignProps,
 
     const tmpDevices = await Promise.all(
       devices.map(async (item: number) => {
-        const certificates = await lib.enumerateCertificates(item, lib.CERT_CATEGORY_UNSPEC);
+        const certificates = await lib.enumerateCertificates(item, lib.CERT_CATEGORY_USER);
 
         return {
           label:
@@ -83,34 +83,34 @@ export default forwardRef(function RutokenSign({ base64Doc }: IRutokenSignProps,
       <Box display="flex" flexDirection="column" my={2}>
         <InputLabel>{t("Device")}</InputLabel>
         <Select
-          selectType={device === "" ? "error" : "secondary"}
-          data={devices ?? []}
           value={device}
-          onChange={(event: SelectChangeEvent<string | number>) => {
+          data={devices ?? []}
+          onChange={(event: SelectChangeEvent<number>) => {
             setDevice(event.target.value as number);
-            setCertificate(undefined);
-            setPin(undefined);
+            setCertificate("");
+            setPin("");
           }}
         />
       </Box>
 
-      {device && (
+      {device !== -1 && (
         <Box display="flex" flexDirection="column" my={2}>
-          <InputLabel>{t("Container")}</InputLabel>
+          <InputLabel>{t("Certificate")}</InputLabel>
           <Select
+            value={certificate}
             data={devices?.find((item) => item.value === device)?.certificates ?? []}
             onChange={(event: SelectChangeEvent<string>) => {
               setCertificate(event.target.value);
-              setPin(undefined);
+              setPin("");
             }}
           />
         </Box>
       )}
 
-      {certificate && (
+      {certificate !== "" && (
         <Box display="flex" flexDirection="column" my={2}>
           <InputLabel>{t("PIN code")}</InputLabel>
-          <Input type="password" onChange={(event) => setPin(event.target.value)} />
+          <Input type="password" value={pin} onChange={(event) => setPin(event.target.value)} />
         </Box>
       )}
     </>
