@@ -15,6 +15,7 @@ import DynamicField from "@/components/ui/DynamicField";
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   dynamicForm: UseFormReturn<any>;
+  tundukParamsFieldsForm: UseFormReturn<any>;
   onPrev?: Function;
   onNext?: (arg: { step: number | undefined }) => void;
   handleStepNextClick?: Function;
@@ -44,7 +45,14 @@ const getTemplateDocName = (
   return name ?? "";
 };
 
-export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+export default function FifthStepFields({
+  form,
+  dynamicForm,
+  onPrev,
+  onNext,
+  tundukParamsFieldsForm,
+  handleStepNextClick,
+}: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
@@ -100,27 +108,14 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
 
   const handlePinCheck = async (
     url: string | null,
-    fields: Record<string, any>[],
+    params: Record<string, any>,
     responsefields: Record<string, any>[]
   ) => {
     if (!url) return;
 
-    const names = fields?.map((item) => {
-      return getTemplateDocName(item?.path, item?.fieldName);
-    });
-
-    let values: Record<string, any> = {};
-    names.map((item) => {
-      const fieldPath = item?.split(".");
-      values = { ...values, [fieldPath[fieldPath.length - 1]]: dynamicForm.getValues(item) };
-    });
-
     const tundukUrl = url.replace(/\${(.*?)}/g, (match, placeholder) => {
-      return values[placeholder] || match;
+      return params[placeholder] || match;
     });
-
-    const validated = await dynamicForm.trigger(names);
-    if (!validated) return;
 
     const vehicleData = await tundukVehicleDataFetch(`/api/tunduk`, { model: tundukUrl });
     if (vehicleData?.status !== 0 || vehicleData?.data == null) {
@@ -134,7 +129,6 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
 
       if (value != null && value !== "") {
         dynamicForm.setValue(formName, value);
-        if (names.includes(formName)) return;
         dynamicForm.setError(formName, { type: "disabled" });
       }
     });
@@ -150,14 +144,10 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     data?.data.map((group: Record<string, any>) => {
       group?.fields.map(async (item: Record<string, any>) => {
         if (String(item?.fieldType).toLocaleLowerCase() === "tunduk") {
-          const fields = item?.fields as Record<string, any>[];
-          const names = fields
-            ?.filter((item) => item?.required)
-            .map((item) => getTemplateDocName(item?.path, item?.fieldName));
-          const values = dynamicForm.getValues(names);
-          if (values.some((item) => !item)) return;
+          const values: Record<string, any> = tundukParamsFieldsForm.getValues();
+          if (Object.values(values).some((item) => !item)) return;
 
-          handlePinCheck(item?.url, fields, item?.responseFields);
+          handlePinCheck(item?.url, tundukParamsFieldsForm.getValues(), item?.responseFields);
         }
       });
     });
@@ -191,9 +181,13 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                         <TundukDynamicFields
                           loading={tundukVehicleDataLoading}
                           form={dynamicForm}
+                          paramsForm={tundukParamsFieldsForm}
                           fields={item?.fields}
                           responseFields={tundukVehicleData?.data != null ? item?.responseFields : null}
-                          onPinCheck={() => handlePinCheck(item?.url, item?.fields, item?.responseFields)}
+                          onPinCheck={async (paramsForm) => {
+                            const validated = await paramsForm.trigger();
+                            if (validated) handlePinCheck(item?.url, paramsForm.getValues(), item?.responseFields);
+                          }}
                         />
                       ) : null}
 

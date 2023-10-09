@@ -63,6 +63,8 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
       dynamicFormAppData?.status === 0 && dynamicFormAppData?.data[0] != null ? dynamicFormAppData.data[0] : undefined,
   });
 
+  const tundukParamsFieldsForm = useForm();
+
   useNavigationConfirmation(form.formState.isDirty);
 
   useEffectOnce(async () => {
@@ -179,6 +181,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           <NotaryFifthStepFields
             key={4}
             dynamicForm={dynamicForm}
+            tundukParamsFieldsForm={tundukParamsFieldsForm}
             form={form}
             onPrev={() => setStep(step - 1)}
             onNext={({ step }) =>

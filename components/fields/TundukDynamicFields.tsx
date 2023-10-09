@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useForm } from "react-hook-form";
 import { Box, Grid, Paper } from "@mui/material";
 import Button from "@/components/ui/Button";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
@@ -25,15 +25,17 @@ const getTemplateDocName = (
 
 export interface ITundukDynamicFieldsProps {
   form: UseFormReturn<any>;
+  paramsForm: UseFormReturn<any>;
   fields?: IDynamicFieldProps[];
   responseFields?: IDynamicFieldProps[];
   loading?: boolean;
-  onPinCheck?: () => void;
+  onPinCheck?: (arg: UseFormReturn<any>) => void;
   onPinReset?: () => void;
 }
 
 export default function TundukDynamicFields({
   form,
+  paramsForm,
   fields,
   responseFields,
   loading,
@@ -60,7 +62,7 @@ export default function TundukDynamicFields({
             >
               <DynamicField
                 type={item?.fieldType}
-                form={form}
+                form={paramsForm}
                 label={item?.fieldTitles?.[locale ?? ""] ?? ""}
                 defaultValue={item?.defaultValue}
                 required={!!item?.required}
@@ -76,7 +78,7 @@ export default function TundukDynamicFields({
             loading={loading}
             endIcon={<ContentPasteSearchIcon />}
             sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
-            onClick={() => onPinCheck()}
+            onClick={() => onPinCheck(paramsForm)}
           >
             {t("Check")}
           </Button>
