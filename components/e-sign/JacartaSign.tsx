@@ -22,9 +22,9 @@ export interface IJacartaSignRef {
 export default forwardRef(function JacartaSign({ base64Doc }: IJacartaSignProps, ref: Ref<IJacartaSignRef>) {
   const t = useTranslations();
   const [devices, setDevices] = useState<Record<string, any>[]>();
-  const [device, setDevice] = useState<number>();
-  const [container, setContainer] = useState<number>();
-  const [pin, setPin] = useState<string>();
+  const [device, setDevice] = useState<number>(-1);
+  const [container, setContainer] = useState<number>(-1);
+  const [pin, setPin] = useState<string>("");
   const [lib, setLib] = useState<Record<string, any>>();
 
   useEffectOnce(() => {
@@ -108,32 +108,34 @@ export default forwardRef(function JacartaSign({ base64Doc }: IJacartaSignProps,
       <Box display="flex" flexDirection="column" my={2}>
         <InputLabel>{t("Device")}</InputLabel>
         <Select
+          value={device}
           data={devices ?? []}
           onChange={(event: SelectChangeEvent<number>) => {
             setDevice(event.target.value as number);
-            setContainer(undefined);
-            setPin(undefined);
+            setContainer(-1);
+            setPin("");
           }}
         />
       </Box>
 
-      {device && (
+      {device !== -1 && (
         <Box display="flex" flexDirection="column" my={2}>
           <InputLabel>{t("Container")}</InputLabel>
           <Select
+            value={container}
             data={devices?.find((item) => item.value === device)?.containers ?? []}
             onChange={(event: SelectChangeEvent<number>) => {
               setContainer(event.target.value as number);
-              setPin(undefined);
+              setPin("");
             }}
           />
         </Box>
       )}
 
-      {container && (
+      {container !== -1 && (
         <Box display="flex" flexDirection="column" my={2}>
           <InputLabel>{t("PIN code")}</InputLabel>
-          <Input type="password" onChange={(event) => setPin(event.target.value)} />
+          <Input type="password" value={pin} onChange={(event) => setPin(event.target.value)} />
         </Box>
       )}
     </>
