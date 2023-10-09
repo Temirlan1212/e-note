@@ -94,6 +94,8 @@ const ChatListBoard: FC<IChatListBoardProps> = (props) => {
               contactName={isNotary ? user.chatCreator : user.notary.name}
               contactId={user.chatId}
               onContactClick={() => handleContactClick(user.chatId)}
+              chatLink={user.chatRoomLink}
+              userToken={user.userToken}
             />
           );
         })}
