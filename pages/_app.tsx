@@ -28,7 +28,7 @@ function Layout({ children }: { children: JSX.Element }) {
     switch (router.asPath) {
       case "/login":
         if (profile.user != null)
-          if (previousPath != null && !isRoutesIncludesPath(guestRoutes, previousPath)) {
+          if (previousPath != null && isRoutesIncludesPath(guestRoutes, previousPath)) {
             router.push(previousPath);
           } else {
             router.push("/applications");
