@@ -98,29 +98,17 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
             )}
 
             <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
-            <Address
-              disableFields={watch(`requester.${index}.tundukIsSuccess`)}
-              form={form}
-              names={getAddressNames(index)}
-            />
+            <Address form={form} names={getAddressNames(index)} />
 
             {partnerType != 1 && (
               <>
                 <Typography variant="h5">{t("Actual place of residence")}</Typography>
-                <Address
-                  disableFields={watch(`requester.${index}.tundukIsSuccess`)}
-                  form={form}
-                  names={getActualAddressNames(index)}
-                />
+                <Address form={form} names={getActualAddressNames(index)} />
               </>
             )}
 
             <Typography variant="h5">{t("Contacts")}</Typography>
-            <Contact
-              disableFields={watch(`requester.${index}.tundukIsSuccess`)}
-              form={form}
-              names={getContactNames(index)}
-            />
+            <Contact form={form} names={getContactNames(index)} />
 
             <Typography variant="h5">{t("Files to upload")}</Typography>
 
@@ -351,9 +339,6 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     const allFields = {
       ...getPersonalDataNames(index),
       ...getIdentityDocumentNames(index),
-      ...getAddressNames(index),
-      ...getActualAddressNames(index),
-      ...getContactNames(index),
     };
 
     for (const key in allFields) {
@@ -419,7 +404,6 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       }
 
       const partner = personalData.data;
-      const mainAddress = personalData.data?.mainAddress;
 
       if (partner == null) {
         setAlertOpen(true);
@@ -437,8 +421,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       const baseFields = [
         ...Object.values(getPersonalDataNames(index)),
         ...Object.values(getIdentityDocumentNames(index)),
-        ...Object.values(getContactNames(index)),
       ];
+
       baseFields.map((field: any) => {
         const fieldPath = field.split(".");
         const fieldLastItem = fieldPath[fieldPath.length - 1];
@@ -449,26 +433,6 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
           fieldLastItem !== "partnerTypeSelect"
         ) {
           setValue(field, partner[tundukField ?? fieldLastItem]);
-        }
-      });
-
-      const mainAddressFields = [...Object.values(getAddressNames(index))];
-      mainAddressFields.map((field: any) => {
-        const fieldPath = field.split(".");
-        const fieldLastItem = fieldPath[fieldPath.length - 1];
-        if (mainAddress[fieldLastItem] != null) {
-          setValue(field, mainAddress[fieldLastItem]);
-        } else {
-          resetField(field);
-        }
-      });
-
-      const actualAddressFields = [...Object.values(getActualAddressNames(index))];
-      actualAddressFields.map((field: any) => {
-        const fieldPath = field.split(".");
-        const fieldLastItem = fieldPath[fieldPath.length - 1];
-        if (partner[fieldLastItem] != null) {
-          setValue(field, partner[fieldLastItem]);
         }
       });
     }
