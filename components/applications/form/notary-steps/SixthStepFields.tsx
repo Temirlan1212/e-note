@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
@@ -123,6 +123,20 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
+  });
+
+  useEffectOnce(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        setIsBackdropOpen(true);
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   });
 
   return (
