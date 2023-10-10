@@ -76,7 +76,6 @@ export const personSchema = object()
     }),
     mobilePhone: string()
       .trim()
-      .required("required")
       .matches(/^[0-9\+\-\s]*$/, "onlyNumbers"),
     nameOfCompanyOfficial: string()
       .trim()

@@ -81,6 +81,8 @@ export interface IPersonalDataProps {
     notaryDateOfOrder?: boolean;
     nationality?: boolean;
     maritalStatus?: boolean;
+    tundukDocumentSeries?: boolean;
+    tundukDocumentNumber?: boolean;
   };
   onPinCheck?: MouseEventHandler<HTMLButtonElement>;
   onPinReset?: MouseEventHandler<HTMLButtonElement>;
@@ -182,54 +184,60 @@ export default function PersonalData({
               )}
             />
 
-            {Boolean(names?.tundukDocumentSeries) && !foreigner && type != 1 && (
-              <Controller
-                control={control}
-                name={names?.tundukDocumentSeries ?? ""}
-                defaultValue={defaultValues?.tundukDocumentSeries ?? null}
-                render={({ field, fieldState }) => (
-                  <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Series")}</InputLabel>
-                    <Select
-                      labelField={
-                        identityDocumentSeriesDictionary?.data?.length > 0 &&
-                        identityDocumentSeriesDictionary?.data[0][`title_${locale}`]
-                          ? `title_${locale}`
-                          : "title"
-                      }
-                      valueField="value"
-                      selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                      data={
-                        identityDocumentSeriesDictionary?.status === 0
-                          ? identityDocumentSeriesDictionary?.data ?? []
-                          : []
-                      }
-                      loading={identityDocumentSeriesDictionaryLoading}
-                      {...field}
-                      value={field.value != null ? field.value : ""}
-                    />
-                  </Box>
-                )}
-              />
-            )}
-            {Boolean(names?.tundukDocumentNumber) && !foreigner && type != 1 && (
-              <Controller
-                control={control}
-                name={names?.tundukDocumentNumber ?? ""}
-                defaultValue={defaultValues?.tundukDocumentNumber ?? ""}
-                render={({ field, fieldState }) => (
-                  <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Number")}</InputLabel>
-                    <Input
-                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                      {...field}
-                    />
-                  </Box>
-                )}
-              />
-            )}
+            {!!names?.tundukDocumentSeries &&
+              (!!fields?.tundukDocumentSeries || fields?.tundukDocumentSeries == null) &&
+              !foreigner &&
+              type != 1 && (
+                <Controller
+                  control={control}
+                  name={names?.tundukDocumentSeries ?? ""}
+                  defaultValue={defaultValues?.tundukDocumentSeries ?? null}
+                  render={({ field, fieldState }) => (
+                    <Box display="flex" flexDirection="column" width="100%">
+                      <InputLabel>{t("Series")}</InputLabel>
+                      <Select
+                        labelField={
+                          identityDocumentSeriesDictionary?.data?.length > 0 &&
+                          identityDocumentSeriesDictionary?.data[0][`title_${locale}`]
+                            ? `title_${locale}`
+                            : "title"
+                        }
+                        valueField="value"
+                        selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                        helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                        data={
+                          identityDocumentSeriesDictionary?.status === 0
+                            ? identityDocumentSeriesDictionary?.data ?? []
+                            : []
+                        }
+                        loading={identityDocumentSeriesDictionaryLoading}
+                        {...field}
+                        value={field.value != null ? field.value : ""}
+                      />
+                    </Box>
+                  )}
+                />
+              )}
+            {!!names?.tundukDocumentNumber &&
+              (!!fields?.tundukDocumentNumber || fields?.tundukDocumentNumber == null) &&
+              !foreigner &&
+              type != 1 && (
+                <Controller
+                  control={control}
+                  name={names?.tundukDocumentNumber ?? ""}
+                  defaultValue={defaultValues?.tundukDocumentNumber ?? ""}
+                  render={({ field, fieldState }) => (
+                    <Box display="flex" flexDirection="column" width="100%">
+                      <InputLabel>{t("Number")}</InputLabel>
+                      <Input
+                        inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                        helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                        {...field}
+                      />
+                    </Box>
+                  )}
+                />
+              )}
 
             {!foreigner && (
               <Box height="66px" display="flex" alignItems="self-end" gap="10px">

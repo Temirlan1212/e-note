@@ -63,7 +63,14 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         return (
           <Box display="flex" gap="20px" flexDirection="column">
             <Typography variant="h5">{t("Personal data")}</Typography>
-            <PersonalData form={form} names={getPersonalDataNames(index)} />
+            <PersonalData
+              form={form}
+              names={getPersonalDataNames(index)}
+              fields={{
+                tundukDocumentSeries: index === 0,
+                tundukDocumentNumber: index === 0,
+              }}
+            />
 
             {partnerType != 1 && (
               <>

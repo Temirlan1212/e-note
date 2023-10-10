@@ -81,7 +81,12 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                 tundukDocumentNumber: `requester.${index}.tundukPassportNumber`,
               }}
               disableFields={watch(`requester.${index}.tundukIsSuccess`)}
-              fields={{ nationality: true, maritalStatus: true }}
+              fields={{
+                nationality: true,
+                maritalStatus: true,
+                tundukDocumentSeries: index === 0,
+                tundukDocumentNumber: index === 0,
+              }}
               onPinCheck={() => handlePinCheck(index)}
               onPinReset={() => handlePinReset(index)}
             />
@@ -381,7 +386,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
     const triggerFields = [`${entity}.${index}.personalNumber`] as const;
     const validated = await trigger(
-      isJuridicalPerson
+      isJuridicalPerson || index > 0
         ? triggerFields
         : [...triggerFields, `${entity}.${index}.tundukPassportSeries`, `${entity}.${index}.tundukPassportNumber`]
     );
@@ -392,11 +397,17 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       const pin = values[entity][index].personalNumber;
       const series = values[entity][index].tundukPassportSeries;
       const number = values[entity][index].tundukPassportNumber;
-      const url = isJuridicalPerson
-        ? `/api/tunduk/company-data/${pin}`
-        : `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`;
 
-      const personalData = await tundukPersonalDataFetch(url);
+      let personalData: Record<string, any> | null = null;
+
+      if (index === 0) {
+        let url = isJuridicalPerson
+          ? `/api/tunduk/company-data/${pin}`
+          : `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`;
+        personalData = await tundukPersonalDataFetch(url);
+      } else {
+        personalData = await tundukPersonalDataFetch(`/api/tunduk`, { model: `/ws/tunduk/person/${pin}` });
+      }
 
       if (personalData?.status !== 0 || personalData?.data == null) {
         setAlertOpen(true);
