@@ -261,13 +261,13 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                         <Typography>{text}</Typography>
                         {array?.map((el, idx) => {
                           const matchingTitle = workDaysAreaData.find(
-                            (item: any) => item.order_seq === el.weekDayNumber - 1
+                            (item: any) => item?.order_seq === el?.weekDayNumber - 1
                           );
                           const translatedTitle = matchingTitle?.["title_" + locale];
                           const title = Boolean(translatedTitle) ? translatedTitle : matchingTitle?.title ?? "";
 
-                          const startDate = el.startDate ? el.startDate.slice(0, 5) : "";
-                          const endDate = el.endDate ? el.endDate.slice(0, 5) : "";
+                          const startDate = el?.startDate ? el.startDate.slice(0, 5) : "";
+                          const endDate = el?.endDate ? el.endDate.slice(0, 5) : "";
                           const timeRange = startDate && endDate ? `${startDate} - ${endDate}` : "";
                           return (
                             <Box key={idx}>
