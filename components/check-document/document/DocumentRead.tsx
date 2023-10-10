@@ -161,7 +161,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
                         color: "#687C9B",
                       }}
                     >
-                      {member.fullName}
+                      {member.lastName} {member.name} {member.middleName}
                     </Typography>
                     <Typography
                       sx={{
