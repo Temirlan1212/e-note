@@ -9,6 +9,7 @@ import { IUserData } from "@/models/user";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import CircleIcon from "@mui/icons-material/Circle";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { INotification } from "@/models/notification";
 
 interface INotificationData extends FetchResponseBody {
@@ -24,7 +25,8 @@ export default function PopupNotifications() {
   const t = useTranslations();
   const profile = useProfileStore((state) => state);
 
-  const { data: message, update: messageUpdate } = useFetch("", "POST");
+  const { data: message, update: readMessage } = useFetch("", "POST");
+  const { data: deletedMessage, update: deleteMessage } = useFetch("", "POST");
 
   const {
     data: messages,
@@ -36,8 +38,18 @@ export default function PopupNotifications() {
     setAnchorEl(anchorEl == null ? event.currentTarget : null);
   };
 
-  const handleRead = (id: number) => {
-    messageUpdate(`/api/notifications/isRead/${id}`);
+  const handleRead = (notification: INotification) => {
+    readMessage("/api/notifications/isRead", {
+      id: notification.id,
+      version: notification.version,
+    });
+  };
+
+  const handleDelete = (notification: INotification) => {
+    deleteMessage("/api/notifications/isArchived", {
+      id: notification.id,
+      version: notification.version,
+    });
   };
 
   const getTimeAgo = (isoDate: string): string => {
@@ -78,7 +90,7 @@ export default function PopupNotifications() {
     update(userData?.id ? `/api/notifications?userId=${userData?.id}` : "", {
       pageSize: limit,
     });
-  }, [limit, message]);
+  }, [limit, message, deletedMessage]);
 
   useEffectOnce(() => {
     if (messages?.total! > limit) {
@@ -137,44 +149,54 @@ export default function PopupNotifications() {
           {messages?.data?.length ? (
             messages?.data.map((notification) => (
               <Box
-                key={notification.id}
                 sx={{
-                  wordBreak: "break-word",
-                  padding: "15px",
                   display: "flex",
-                  flexDirection: "row",
-                  gap: "5px",
-                  alignItems: "flex-start",
-                  borderBottom: "1px solid #F6F6F6",
                   width: "100%",
+                  justifyContent: "space-between",
                   cursor: "pointer",
+                  borderBottom: "1px solid #F6F6F6",
+                  padding: "15px",
                   "&:hover": {
                     backgroundColor: "#F6F6F6",
                   },
                 }}
-                onClick={() => !notification.isRead && handleRead(notification.id)}
+                key={notification.id}
               >
-                {!notification.isRead && <CircleIcon color="success" sx={{ width: "12px", height: "12px" }} />}
                 <Box
                   sx={{
+                    wordBreak: "break-word",
                     display: "flex",
-                    flexDirection: "column",
+                    flexDirection: "row",
                     gap: "5px",
+                    alignItems: "flex-start",
                   }}
+                  onClick={() => handleRead(notification)}
                 >
-                  <Typography
-                    fontSize={14}
-                    color="textPrimary"
+                  {!notification.isRead && <CircleIcon color="success" sx={{ width: "12px", height: "12px" }} />}
+                  <Box
                     sx={{
-                      maxHeight: "39px",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
                     }}
                   >
-                    {t(`${notification.message.subject}`)}
-                  </Typography>
-                  <Typography fontSize={12} color="textSecondary">
-                    {getTimeAgo(notification.createdOn)}
-                  </Typography>
+                    <Typography
+                      fontSize={14}
+                      color="textPrimary"
+                      sx={{
+                        maxHeight: "39px",
+                      }}
+                    >
+                      {t(`${notification.message.subject}`)}
+                    </Typography>
+                    <Typography fontSize={12} color="textSecondary">
+                      {getTimeAgo(notification.createdOn)}
+                    </Typography>
+                  </Box>
                 </Box>
+                <IconButton onClick={() => handleDelete(notification)}>
+                  <DeleteIcon />
+                </IconButton>
               </Box>
             ))
           ) : (

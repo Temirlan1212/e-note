@@ -7,14 +7,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   }
 
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
-  const criteria: Record<string, string | number>[] = [];
+  const criteria: Record<string, string | boolean | number>[] = [];
 
   if (typeof userId === "string") {
-    criteria.push({
-      fieldName: "user.id",
-      operator: "=",
-      value: !Number.isNaN(parseInt(userId)) ? parseInt(userId) : 0,
-    });
+    criteria.push(
+      {
+        fieldName: "user.id",
+        operator: "=",
+        value: !Number.isNaN(parseInt(userId)) ? parseInt(userId) : 0,
+      },
+      {
+        fieldName: "message.subject",
+        operator: "!=",
+        value: "Quotation/sale order created",
+      },
+      {
+        fieldName: "isArchived",
+        operator: "=",
+        value: false,
+      }
+    );
   }
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.mail.db.MailFlags/search", {
@@ -27,7 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       offset: 0,
       limit: pageSize,
       fields: ["version", "isArchived", "isRead", "isStarred", "message", "message.body", "userId", "createdOn"],
-      sortBy: ["-id"],
+      sortBy: ["-createdOn"],
       data: {
         operator: "and",
         criteria: criteria,

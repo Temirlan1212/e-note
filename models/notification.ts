@@ -9,4 +9,5 @@ export interface INotification {
   };
   id: number;
   subject: string;
+  version: number;
 }

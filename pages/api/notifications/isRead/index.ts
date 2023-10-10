@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
-  const { id } = req.query;
+  const { id, version } = req.body;
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }
@@ -14,9 +14,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     },
     body: JSON.stringify({
       data: {
-        version: 0,
+        id: id,
+        version: version,
         isRead: true,
-        isArchived: true,
       },
     }),
   });
