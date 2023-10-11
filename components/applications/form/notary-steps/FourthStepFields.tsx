@@ -81,8 +81,8 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
               fields={{
                 nationality: true,
                 maritalStatus: true,
-                tundukDocumentSeries: index === 0,
-                tundukDocumentNumber: index === 0,
+                tundukDocumentSeries: false,
+                tundukDocumentNumber: false,
               }}
               onPinCheck={() => handlePinCheck(index)}
               onPinReset={() => handlePinReset(index)}
@@ -367,29 +367,17 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     const entity = "members";
 
     const triggerFields = [`${entity}.${index}.personalNumber`] as const;
-    const validated = await trigger(
-      isJuridicalPerson || index > 0
-        ? triggerFields
-        : [...triggerFields, `${entity}.${index}.tundukPassportSeries`, `${entity}.${index}.tundukPassportNumber`]
-    );
+    const validated = await trigger(triggerFields);
 
     if (!validated) return;
 
     if (values[entity] != null && values[entity][index].personalNumber) {
       const pin = values[entity][index].personalNumber;
-      const series = values[entity][index].tundukPassportSeries;
-      const number = values[entity][index].tundukPassportNumber;
 
-      let personalData: Record<string, any> | null = null;
-
-      if (index === 0) {
-        let url = isJuridicalPerson
-          ? `/api/tunduk/company-data/${pin}`
-          : `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`;
-        personalData = await tundukPersonalDataFetch(url);
-      } else {
-        personalData = await tundukPersonalDataFetch(`/api/tunduk`, { model: `/ws/tunduk/person/${pin}` });
-      }
+      let url = isJuridicalPerson ? `company/${pin}` : `person/${pin}`;
+      const personalData: Record<string, any> = await tundukPersonalDataFetch(`/api/tunduk`, {
+        model: `/ws/tunduk/${url}`,
+      });
 
       if (personalData?.status !== 0 || personalData?.data == null) {
         setAlertOpen(true);
