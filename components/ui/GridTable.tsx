@@ -538,27 +538,25 @@ export const GridTableActionsCell: React.FC<IGridTableActionsCellProps> = ({ par
 
   return (
     <Box display="flex" width="100%">
-      {rest.pinnable ? (
-        <Box width="100%" display="flex" justifyContent="flex-end">
-          <IconButton
-            onClick={(e: any) => handleMenuOpen(e)}
-            sx={{
-              bgcolor: !!menu ? "rgb(246,246,246)" : "rgb(227 227 227)",
-              "&:hover": { bgcolor: "rgb(246,246,246)" },
-            }}
-            color={!!menu ? "success" : "inherit"}
-          >
-            <MoreVertIcon />
-          </IconButton>
-          <Menu anchorEl={menu} open={!!menu} onClose={handleMenuClose}>
-            <MenuItem>{column?.renderCell && column.renderCell(params)}</MenuItem>
-          </Menu>
-        </Box>
-      ) : (
-        <Box bgcolor="rgb(246,246,246)" borderRadius="10px">
-          {column?.renderCell && column.renderCell(params)}
-        </Box>
-      )}
+      <Box width="100%" display={rest.pinnable ? "flex" : "none"} justifyContent="flex-end">
+        <IconButton
+          onClick={(e: any) => handleMenuOpen(e)}
+          sx={{
+            bgcolor: !!menu ? "rgb(246,246,246)" : "rgb(227 227 227)",
+            "&:hover": { bgcolor: "rgb(246,246,246)" },
+          }}
+          color={!!menu ? "success" : "inherit"}
+        >
+          <MoreVertIcon />
+        </IconButton>
+        <Menu anchorEl={menu} open={!!menu} onClose={handleMenuClose}>
+          <MenuItem>{column?.renderCell && column.renderCell(params)}</MenuItem>
+        </Menu>
+      </Box>
+
+      <Box display={!rest.pinnable ? "flex" : "none"} bgcolor="rgb(246,246,246)" borderRadius="10px">
+        {column?.renderCell && column.renderCell(params)}
+      </Box>
     </Box>
   );
 };
