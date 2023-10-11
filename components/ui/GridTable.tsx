@@ -1,6 +1,15 @@
 import * as React from "react";
-import { DataGrid, GridRowsProp, GridColDef, DataGridProps, GridValidRowModel } from "@mui/x-data-grid";
-import { Box, LinearProgress, MenuItem, Typography, lighten } from "@mui/material";
+import {
+  DataGrid,
+  GridRowsProp,
+  GridColDef,
+  DataGridProps,
+  GridValidRowModel,
+  GridRenderCellParams,
+  GridTreeNodeWithRender,
+  GridCellClassNamePropType,
+} from "@mui/x-data-grid";
+import { Box, IconButton, LinearProgress, MenuItem, Typography, lighten } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import Checkbox from "./Checkbox";
 import { useForm } from "react-hook-form";
@@ -14,6 +23,8 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Input from "./Input";
 import { GridStateColDef } from "@mui/x-data-grid/internals";
+import { debounce } from "@mui/material/utils";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 export type IGridColDefSimple = {
   filter?: {
@@ -54,6 +65,12 @@ export interface IGridTableProps extends DataGridProps {
 export interface IGridTableHeaderProps {
   rowParams: IGridRowParamsHeaderProps;
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
+}
+
+export interface IGridTableActionsCellProps {
+  params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>;
+  column: IGridColDef;
+  pinnable?: boolean;
 }
 
 export const GridTable: React.FC<IGridTableProps> = ({
@@ -126,11 +143,16 @@ export const GridTable: React.FC<IGridTableProps> = ({
     ".MuiDataGrid-virtualScrollerContent": {
       margin: "5px 0px",
     },
+    ".actions-pinnable": {
+      position: "sticky",
+      right: 0,
+    },
     border: "none",
     background: "#F6F6F6",
   };
 
   const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const [isScrolledRight, setIsScrolledRight] = React.useState(false);
 
   const handleScrollLeft = () => {
     if (containerRef.current) {
@@ -147,6 +169,37 @@ export const GridTable: React.FC<IGridTableProps> = ({
       if (virtualScroller) virtualScroller.scrollLeft += 200;
     }
   };
+
+  const handleScroll = (event: any) => {
+    const { scrollWidth, scrollLeft, clientWidth } = event.target;
+    const isRightEnd = scrollWidth - clientWidth <= scrollLeft + 100;
+
+    const debaunceFunction = debounce(() => {
+      setIsScrolledRight(isRightEnd);
+    }, 200);
+    debaunceFunction();
+    return debaunceFunction;
+  };
+
+  React.useEffect(() => {
+    let debaunceFunction: { clear(): void } | null = null;
+    const container = containerRef.current;
+    const virtualScroller = containerRef.current?.querySelector(".MuiDataGrid-virtualScroller");
+
+    if (!container || !virtualScroller) return;
+
+    const { scrollWidth, clientWidth } = virtualScroller;
+    const isRightEnd = scrollWidth - clientWidth <= 100;
+
+    setIsScrolledRight(isRightEnd);
+
+    virtualScroller.addEventListener("scroll", (e) => (debaunceFunction = handleScroll(e)));
+
+    return () => {
+      if (debaunceFunction != null) debaunceFunction.clear();
+      virtualScroller.removeEventListener("scroll", handleScroll);
+    };
+  }, [containerRef.current]);
 
   const mergedStyles = { ...rootStyles, ...sx };
 
@@ -181,12 +234,22 @@ export const GridTable: React.FC<IGridTableProps> = ({
       <DataGrid
         ref={containerRef}
         rows={rows}
-        columns={columns?.map((col) => ({
-          ...col,
-          renderHeader: (rowParams: IGridRowParamsHeaderProps) => {
-            return <GridTableHeader rowParams={rowParams} onFilterSubmit={onFilterSubmit} />;
-          },
-        }))}
+        columns={columns?.map((col) => {
+          if (col.type === "actions") {
+            return {
+              ...col,
+              renderCell: (params) => {
+                return <GridTableActionsCell params={params} column={col} pinnable={!isScrolledRight} />;
+              },
+            };
+          }
+          return {
+            ...col,
+            renderHeader: (rowParams: IGridRowParamsHeaderProps) => {
+              return <GridTableHeader rowParams={rowParams} onFilterSubmit={onFilterSubmit} />;
+            },
+          };
+        })}
         localeText={{
           toolbarExport: t("Export"),
           toolbarExportCSV: t("Download as CSV"),
@@ -456,6 +519,45 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
             </Box>
           </Menu>
         </>
+      )}
+    </Box>
+  );
+};
+
+export const GridTableActionsCell: React.FC<IGridTableActionsCellProps> = ({ params, column, ...rest }) => {
+  const [menu, setMenu] = React.useState<HTMLElement | null>(null);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setMenu(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setMenu(null);
+  };
+
+  return (
+    <Box display="flex" width="100%">
+      {rest.pinnable ? (
+        <Box width="100%" display="flex" justifyContent="flex-end">
+          <IconButton
+            onClick={(e: any) => handleMenuOpen(e)}
+            sx={{
+              bgcolor: !!menu ? "rgb(246,246,246)" : "rgb(227 227 227)",
+              "&:hover": { bgcolor: "rgb(246,246,246)" },
+            }}
+            color={!!menu ? "success" : "inherit"}
+          >
+            <MoreVertIcon />
+          </IconButton>
+          <Menu anchorEl={menu} open={!!menu} onClose={handleMenuClose}>
+            <MenuItem>{column?.renderCell && column.renderCell(params)}</MenuItem>
+          </Menu>
+        </Box>
+      ) : (
+        <Box bgcolor="rgb(246,246,246)" borderRadius="10px">
+          {column?.renderCell && column.renderCell(params)}
+        </Box>
       )}
     </Box>
   );

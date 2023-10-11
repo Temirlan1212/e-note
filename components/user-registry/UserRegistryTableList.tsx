@@ -57,9 +57,10 @@ export default function UserRegistryTableList({
     {
       field: "actions",
       headerName: "Action",
-      type: "acitons",
+      type: "actions",
       sortable: false,
       width: 120,
+      cellClassName: "actions-pinnable",
       renderCell: (params: GridRenderCellParams) => {
         const handleDeleteClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
           if (params.row?.["user.id"] != null) {

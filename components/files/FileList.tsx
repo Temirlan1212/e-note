@@ -171,6 +171,7 @@ export default function FileList() {
             width: 100,
             sortable: false,
             renderCell: ({ row }) => <GridTableActionsCell row={row} onDelete={update} />,
+            cellClassName: "actions-pinnable",
           },
         ]}
         rows={data?.data ?? []}

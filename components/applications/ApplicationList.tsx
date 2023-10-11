@@ -211,6 +211,7 @@ export default function ApplicationList() {
             width: 200,
             sortable: false,
             type: "actions",
+            cellClassName: "actions-pinnable",
             renderCell: (params) => <ApplicationListActions params={params} onDelete={handleDelete} />,
           },
         ]}

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
-
 import Pagination from "@/components/ui/Pagination";
 import SearchBar from "@/components/ui/SearchBar";
 import Button from "@/components/ui/Button";
@@ -106,16 +105,16 @@ export default function TemplateList() {
     {
       field: "actions",
       headerName: "Actions",
-      type: "acitons",
+      type: "actions",
       sortable: false,
       width: 320,
+      cellClassName: "actions-pinnable",
       renderCell: ({ row }) => <GridTableActionsCell row={row} />,
     },
   ];
 
   const dataGridStyles = {
     ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": { padding: "10px 16px" },
-    ".MuiBox-root": { backgroundColor: "#FFF" },
     ".MuiDataGrid-columnHeader": { padding: "16px" },
   };
 
