@@ -49,6 +49,7 @@
     "react-hook-form": "^7.45.1",
     "react-leaflet": "^4.2.1",
     "react-leaflet-cluster": "^2.1.0",
+    "react-webcam": "^7.1.1",
     "typescript": "5.1.6",
     "yup": "^1.2.0",
     "zustand": "^4.3.9"

@@ -69,5 +69,9 @@
   "Organ number": "Номер органа",
   "Write a message": "Напиcать сообщение",
   "Select the user you want to contact": "Выберите пользователя с которым хотите связаться",
-  "User unavailable": "Пользователь недоступен"
+  "User unavailable": "Пользователь недоступен",
+  "Verify": "Пройти верификацию",
+  "Confirmation of identity": "Подтверждение личности",
+  "By fingerprint": "По отпечатку пальца",
+  "By face id": "По face id"
 }

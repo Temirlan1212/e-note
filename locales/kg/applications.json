@@ -69,5 +69,9 @@
   "Organ number": "Орган номери",
   "Write a message": "Билдирүүнү жазуу",
   "Select the user you want to contact": "Сиз байланышкыңыз келген колдонуучуну тандаңыз",
-  "User unavailable": "Колдонуучу жеткиликсиз"
+  "User unavailable": "Колдонуучу жеткиликсиз",
+  "Verify": "Текшерүү аркылуу өтүңүз",
+  "Confirmation of identity": "Жеке көзөмөлдөө",
+  "By fingerprint": "Манжа изи боюнча",
+  "By face id": "Face id боюнча"
 }

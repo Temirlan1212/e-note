@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Alert, Box, Collapse, InputLabel, SelectChangeEvent } from "@mui/material";
+import { Alert, Box, Collapse, InputLabel, SelectChangeEvent, Typography } from "@mui/material";
 import KeyIcon from "@mui/icons-material/Key";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
@@ -8,6 +8,7 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import FingerprintScanner from "@/components/ui/FingerprintScanner";
 import JacartaSign, { IJacartaSignRef } from "./JacartaSign";
 import RutokenSign, { IRutokenSignRef } from "./RutokenSign";
+import FaceIdScanner from "@/components/face-id/faceId";
 
 enum SignType {
   Jacarta = "jacarta",
@@ -19,6 +20,8 @@ const signTypes = Object.entries(SignType).map(([label, value]) => ({ label, val
 export default function SignModal({ base64Doc, onSign }: { base64Doc: string; onSign: (sign: string) => void }) {
   const t = useTranslations();
   const [fingerScanner, setFingerScanner] = useState<"error" | "success" | "primary" | "signed">("primary");
+  const [faceIdScanner, setFaceIdScanner] = useState(false);
+  const [openTab, setOpenTab] = useState(false);
   const [isSigned, setIsSigned] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -61,6 +64,13 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
     setAlertOpen(false);
   };
 
+  const handleToggleTab = () => {
+    if (fingerScanner === "success" || faceIdScanner) {
+      return;
+    }
+    setOpenTab((prevState) => !prevState);
+  };
+
   return (
     <ConfirmationModal
       title="Entry into the register"
@@ -87,13 +97,48 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
         ),
         body: () => (
           <Box pb={5}>
+            <Typography marginBottom="20px" align="center" fontSize={{ xs: "16px", sm: "20px" }} fontWeight={600}>
+              {t("Confirmation of identity")}
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                gap: "15px",
+                marginBottom: "20px",
+              }}
+            >
+              <Button
+                sx={{
+                  fontSize: { xs: "14px", sm: "16px" },
+                  "&:hover": {
+                    color: "white",
+                  },
+                }}
+                variant={!openTab ? "contained" : "outlined"}
+                onClick={handleToggleTab}
+              >
+                {t("By fingerprint")}
+              </Button>
+              <Button
+                sx={{
+                  fontSize: { xs: "14px", sm: "16px" },
+                  "&:hover": {
+                    color: "white",
+                  },
+                }}
+                variant={openTab ? "contained" : "outlined"}
+                onClick={handleToggleTab}
+              >
+                {t("By face id")}
+              </Button>
+            </Box>
             <Collapse in={alertOpen}>
               <Alert severity="warning" onClose={() => setAlertOpen(false)}>
                 {t("This action failed")}
               </Alert>
             </Collapse>
 
-            {fingerScanner === "success" && (
+            {(fingerScanner === "success" || faceIdScanner) && (
               <Box display="flex" flexDirection="column" my={2}>
                 <InputLabel>{t("Type")}</InputLabel>
                 <Select
@@ -106,15 +151,15 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
               </Box>
             )}
 
-            {fingerScanner === "success" && signType === SignType.Jacarta && (
+            {(fingerScanner === "success" || faceIdScanner) && signType === SignType.Jacarta && (
               <JacartaSign base64Doc={base64Doc} ref={jcRef} />
             )}
 
-            {fingerScanner === "success" && signType === SignType.Rutoken && (
+            {(fingerScanner === "success" || faceIdScanner) && signType === SignType.Rutoken && (
               <RutokenSign base64Doc={base64Doc} ref={rtRef} />
             )}
 
-            {fingerScanner !== "success" && (
+            {!openTab && fingerScanner !== "success" && (
               <FingerprintScanner
                 width="100%"
                 loading={loading}
@@ -122,6 +167,8 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
                 onClick={() => fingerScanner === "primary" && handleState()}
               />
             )}
+
+            {openTab && !faceIdScanner && <FaceIdScanner getStatus={(status) => setFaceIdScanner(status)} />}
           </Box>
         ),
       }}
