@@ -69,5 +69,9 @@
   "Organ number": "Organ number",
   "Write a message": "Write a message",
   "Select the user you want to contact": "Select the user you want to contact",
-  "User unavailable": "User unavailable"
+  "User unavailable": "User unavailable",
+  "Verify": "Verify",
+  "Confirmation of identity": "Confirmation of identity",
+  "By fingerprint": "By fingerprint",
+  "By face id": "By face id"
 }
