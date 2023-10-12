@@ -77,7 +77,7 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
       type="hint"
       hintTitle=""
       hintText={
-        "To enter a document into the registry and assign a unique document number, you need confirmation of your fingerprints and your EDS"
+        "To enter a document into the registry and assign a unique document number, you need confirmation of your fingerprints or Face ID and your EDS"
       }
       slots={{
         button: (callback) => (
