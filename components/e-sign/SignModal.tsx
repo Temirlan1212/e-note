@@ -8,7 +8,7 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import FingerprintScanner from "@/components/ui/FingerprintScanner";
 import JacartaSign, { IJacartaSignRef } from "./JacartaSign";
 import RutokenSign, { IRutokenSignRef } from "./RutokenSign";
-import FaceIdScanner from "@/components/face-id/faceId";
+import FaceIdScanner from "@/components/face-id/FaceId";
 
 enum SignType {
   Jacarta = "jacarta",
@@ -77,7 +77,7 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
       type="hint"
       hintTitle=""
       hintText={
-        "To enter a document into the registry and assign a unique document number, you need confirmation of your fingerprints and your EDS"
+        "To enter a document into the registry and assign a unique document number, you need confirmation of your fingerprints or Face ID and your EDS"
       }
       slots={{
         button: (callback) => (
@@ -96,7 +96,7 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
           </Box>
         ),
         body: () => (
-          <Box pb={5}>
+          <Box pb={5} sx={{ maxHeight: { xs: "300px", md: "unset" }, overflowY: { xs: "scroll", md: "unset" } }}>
             <Typography marginBottom="20px" align="center" fontSize={{ xs: "16px", sm: "20px" }} fontWeight={600}>
               {t("Confirmation of identity")}
             </Typography>
