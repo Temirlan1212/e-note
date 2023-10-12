@@ -96,7 +96,7 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
           </Box>
         ),
         body: () => (
-          <Box pb={5}>
+          <Box pb={5} sx={{ maxHeight: { xs: "300px", md: "unset" }, overflowY: { xs: "scroll", md: "unset" } }}>
             <Typography marginBottom="20px" align="center" fontSize={{ xs: "16px", sm: "20px" }} fontWeight={600}>
               {t("Confirmation of identity")}
             </Typography>

@@ -22,7 +22,6 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
   const { update } = useFetch("", "POST");
 
   const videoConstraints = {
-    aspectRatio: 1.8,
     facingMode: "user",
   };
 
@@ -63,7 +62,7 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
           {t("This action failed")}
         </Alert>
       </Collapse>
-      <Webcam width="100%" videoConstraints={videoConstraints} audio={false} ref={webcamRef} />
+      <Webcam width="100%" height="200px" videoConstraints={videoConstraints} audio={false} ref={webcamRef} />
 
       <Button
         sx={{
