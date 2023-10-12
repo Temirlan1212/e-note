@@ -8,7 +8,7 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import FingerprintScanner from "@/components/ui/FingerprintScanner";
 import JacartaSign, { IJacartaSignRef } from "./JacartaSign";
 import RutokenSign, { IRutokenSignRef } from "./RutokenSign";
-import FaceIdScanner from "@/components/face-id/faceId";
+import FaceIdScanner from "@/components/face-id/FaceId";
 
 enum SignType {
   Jacarta = "jacarta",
