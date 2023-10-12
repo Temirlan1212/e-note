@@ -176,7 +176,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
 
     const debaunceFunction = debounce(() => {
       setIsScrolledRight(isRightEnd);
-    }, 200);
+    }, 100);
     debaunceFunction();
     return debaunceFunction;
   };
