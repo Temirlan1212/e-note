@@ -54,6 +54,15 @@ export const applicationSchema = object()
         .test("nullable-required", "required", (v) => v != null),
     }),
     requester: array().of(personSchema),
-    members: array().of(personSchema),
+    members: array().of(
+      personSchema.concat(
+        object({
+          tundukPassportSeries: string().transform((value) => (value == null ? "" : value)),
+          tundukPassportNumber: string()
+            .trim()
+            .matches(/^[0-9]*$/, "onlyNumbers"),
+        })
+      )
+    ),
   })
   .concat(addressSchema.pick(["region", "district", "city"]));

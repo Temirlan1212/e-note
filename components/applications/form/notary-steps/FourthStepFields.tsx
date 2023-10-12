@@ -81,8 +81,6 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
               fields={{
                 nationality: true,
                 maritalStatus: true,
-                tundukDocumentSeries: false,
-                tundukDocumentNumber: false,
               }}
               onPinCheck={() => handlePinCheck(index)}
               onPinReset={() => handlePinReset(index)}
@@ -373,8 +371,12 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
 
     if (values[entity] != null && values[entity][index].personalNumber) {
       const pin = values[entity][index].personalNumber;
+      const series = values[entity][index].tundukPassportSeries;
+      const number = values[entity][index].tundukPassportNumber;
 
       let url = isJuridicalPerson ? `company/${pin}` : `person/${pin}`;
+      if (!!series && !!number) url = `individual?pin=${pin}&series=${series}&number=${number}`;
+
       const personalData: Record<string, any> = await tundukPersonalDataFetch(`/api/tunduk`, {
         model: `/ws/tunduk/${url}`,
       });

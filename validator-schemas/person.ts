@@ -134,7 +134,9 @@ export const personSchema = object()
         otherwise: (schema) => schema.nullable(),
       }),
     notaryDateOfOrder: date().nullable(),
-    tundukPassportSeries: string().required("required"),
+    tundukPassportSeries: string()
+      .transform((value) => (value == null ? "" : value))
+      .required("required"),
     tundukPassportNumber: string()
       .trim()
       .matches(/^[0-9]*$/, "onlyNumbers")
