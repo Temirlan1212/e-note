@@ -22,6 +22,7 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
   const [fingerScanner, setFingerScanner] = useState<"error" | "success" | "primary" | "signed">("primary");
   const [isSigned, setIsSigned] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [faceIdScanner, setFaceIdScanner] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [signType, setSignType] = useState<SignType>();
 
@@ -115,7 +116,7 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
               <RutokenSign base64Doc={base64Doc} ref={rtRef} />
             )}
 
-            {fingerScanner !== "success" && <FaceId onClick={() => fingerScanner === "primary" && handleState()} />}
+            {fingerScanner !== "success" && <FaceId getStatus={(status) => setFaceIdScanner(status)} />}
           </Box>
         ),
       }}
