@@ -73,5 +73,6 @@
   "Verify": "Текшерүү аркылуу өтүңүз",
   "Confirmation of identity": "Жеке көзөмөлдөө",
   "By fingerprint": "Манжа изи боюнча",
-  "By face id": "Face id боюнча"
+  "By face id": "Face id боюнча",
+  "Camera unavailable": "Камера жеткиликтүү эмес"
 }

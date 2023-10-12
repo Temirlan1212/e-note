@@ -1,8 +1,8 @@
-import { FC, RefObject, useRef, useState } from "react";
+import { FC, RefObject, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { useProfileStore } from "@/stores/profile";
 import useFetch from "@/hooks/useFetch";
-import { Alert, Box, Collapse } from "@mui/material";
+import { Alert, Box, Collapse, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import Button from "@/components/ui/Button";
 
@@ -15,6 +15,7 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
   const webcamRef = useRef<Webcam | null>(null);
   const [alertOpen, setAlertOpen] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [isCameraAvailable, setIsCameraAvailable] = useState(true);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
 
   const userData = useProfileStore((state) => state.userData);
@@ -23,6 +24,12 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
 
   const videoConstraints = {
     facingMode: "user",
+  };
+
+  const checkCameraAvailability = async () => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const cameras = devices.filter((device) => device.kind === "videoinput");
+    setIsCameraAvailable(cameras.length > 0);
   };
 
   const startRecording = () => {
@@ -55,6 +62,10 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
     }, 2000);
   };
 
+  useEffect(() => {
+    checkCameraAvailability();
+  }, []);
+
   return (
     <Box display="flex" flexDirection="column" gap="15px">
       <Collapse in={alertOpen}>
@@ -62,18 +73,25 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
           {t("This action failed")}
         </Alert>
       </Collapse>
-      <Webcam width="100%" height="200px" videoConstraints={videoConstraints} audio={false} ref={webcamRef} />
-
-      <Button
-        sx={{
-          fontSize: { xs: "14px", sm: "16px" },
-        }}
-        buttonType="secondary"
-        onClick={startRecording}
-        disabled={recording}
-      >
-        {t("Verify")}
-      </Button>
+      {isCameraAvailable ? (
+        <>
+          <Webcam width="100%" height="200px" videoConstraints={videoConstraints} audio={false} ref={webcamRef} />
+          <Button
+            sx={{
+              fontSize: { xs: "14px", sm: "16px" },
+            }}
+            buttonType="secondary"
+            onClick={startRecording}
+            disabled={recording}
+          >
+            {t("Verify")}
+          </Button>
+        </>
+      ) : (
+        <Typography align="center" fontSize={{ xs: "14px", sm: "16px" }} fontWeight={600}>
+          {t("Camera unavailable")}
+        </Typography>
+      )}
     </Box>
   );
 };

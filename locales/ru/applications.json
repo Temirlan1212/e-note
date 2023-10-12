@@ -73,5 +73,6 @@
   "Verify": "Пройти верификацию",
   "Confirmation of identity": "Подтверждение личности",
   "By fingerprint": "По отпечатку пальца",
-  "By face id": "По face id"
+  "By face id": "По face id",
+  "Camera unavailable": "Камера недоступна"
 }

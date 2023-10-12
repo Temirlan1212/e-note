@@ -73,5 +73,6 @@
   "Verify": "Verify",
   "Confirmation of identity": "Confirmation of identity",
   "By fingerprint": "By fingerprint",
-  "By face id": "By face id"
+  "By face id": "By face id",
+  "Camera unavailable": "Camera unavailable"
 }
