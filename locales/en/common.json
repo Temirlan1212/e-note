@@ -204,5 +204,6 @@
   "Color": "Color",
   "Certificate": "Certificate",
   "PIN code": "PIN code",
-  "This action failed": "This action failed"
+  "This action failed": "This action failed",
+  "Sorry, nothing found": "Sorry, nothing found"
 }

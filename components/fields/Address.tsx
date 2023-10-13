@@ -30,11 +30,9 @@ export default function Address({ form, names, defaultValues, disableFields }: I
 
   const { trigger, control, watch, resetField } = form;
 
-  const city = watch(names.city);
-
   return (
     <Box display="flex" gap="20px" flexDirection="column">
-      <Area form={form} names={names} defaultValues={defaultValues} disableFields={disableFields} />
+      <Area form={form} names={names} defaultValues={defaultValues} />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller
@@ -47,7 +45,7 @@ export default function Address({ form, names, defaultValues, disableFields }: I
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!city || disableFields}
+                disabled={disableFields}
                 {...field}
               />
             </Box>
@@ -63,7 +61,7 @@ export default function Address({ form, names, defaultValues, disableFields }: I
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!city || disableFields}
+                disabled={disableFields}
                 {...field}
               />
             </Box>
@@ -79,7 +77,7 @@ export default function Address({ form, names, defaultValues, disableFields }: I
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!city || disableFields}
+                disabled={disableFields}
                 {...field}
               />
             </Box>

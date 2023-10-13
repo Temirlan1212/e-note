@@ -98,7 +98,15 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
             )}
 
             <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
-            <Address form={form} names={getAddressNames(index)} />
+            <Address
+              form={form}
+              names={getAddressNames(index)}
+              disableFields={
+                watch(`members.${index}.tundukIsSuccess`) &&
+                !!watch(`members.${index}.tundukPassportSeries`) &&
+                !!watch(`members.${index}.tundukPassportNumber`)
+              }
+            />
 
             {partnerType != 1 && (
               <>
@@ -324,6 +332,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     const allFields = {
       ...getPersonalDataNames(index),
       ...getIdentityDocumentNames(index),
+      ...getAddressNames(index),
     };
 
     for (const key in allFields) {
@@ -403,18 +412,16 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
       const baseFields = [
         ...Object.values(getPersonalDataNames(index)),
         ...Object.values(getIdentityDocumentNames(index)),
+        ...Object.values(getAddressNames(index)),
       ];
 
       baseFields.map((field: any) => {
         const fieldPath = field.split(".");
         const fieldLastItem = fieldPath[fieldPath.length - 1];
         const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
-        if (
-          partner[tundukField ?? fieldLastItem] != null &&
-          fieldLastItem !== "personalNumber" &&
-          fieldLastItem !== "partnerTypeSelect"
-        ) {
-          setValue(field, partner[tundukField ?? fieldLastItem]);
+        const value = partner[tundukField ?? fieldLastItem] ?? partner?.mainAddress?.[tundukField ?? fieldLastItem];
+        if (value != null && fieldLastItem !== "personalNumber" && fieldLastItem !== "partnerTypeSelect") {
+          setValue(field, value);
         }
       });
     }
