@@ -3,7 +3,7 @@ import { UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Grid, Typography } from "@mui/material";
+import { Alert, Box, Collapse, Grid, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import TundukDynamicFields from "@/components/fields/TundukDynamicFields";
 import DynamicField from "@/components/ui/DynamicField";
+import { useState } from "react";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -56,6 +57,7 @@ export default function FifthStepFields({
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
   const {
@@ -119,8 +121,10 @@ export default function FifthStepFields({
 
     const vehicleData = await tundukVehicleDataFetch(`/api/tunduk`, { model: tundukUrl });
     if (vehicleData?.status !== 0 || vehicleData?.data == null) {
+      setAlertOpen(true);
       return;
     }
+    setAlertOpen(false);
 
     responsefields?.map((field) => {
       const formName = getTemplateDocName(field?.path, field?.fieldName);
@@ -156,6 +160,12 @@ export default function FifthStepFields({
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <StepperContentStep step={5} title={t("Additional information")} loading={documentTemplateLoading} />
+
+      <Collapse in={alertOpen}>
+        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+          {t("Sorry, nothing found")}
+        </Alert>
+      </Collapse>
 
       <Box display="flex" flexDirection="column" gap="30px">
         {documentTemplateData?.data &&

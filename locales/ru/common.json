@@ -204,5 +204,6 @@
   "Color": "Цвет",
   "Certificate": "Сертификат",
   "PIN code": "ПИН код",
-  "This action failed": "Это действие не удалось выполнить"
+  "This action failed": "Это действие не удалось выполнить",
+  "Sorry, nothing found": "Простите, ничего не найдено"
 }
