@@ -84,8 +84,6 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
               fields={{
                 nationality: true,
                 maritalStatus: true,
-                tundukDocumentSeries: index === 0,
-                tundukDocumentNumber: index === 0,
               }}
               onPinCheck={() => handlePinCheck(index)}
               onPinReset={() => handlePinReset(index)}
@@ -386,7 +384,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
     const triggerFields = [`${entity}.${index}.personalNumber`] as const;
     const validated = await trigger(
-      isJuridicalPerson || index > 0
+      isJuridicalPerson
         ? triggerFields
         : [...triggerFields, `${entity}.${index}.tundukPassportSeries`, `${entity}.${index}.tundukPassportNumber`]
     );
@@ -398,16 +396,11 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       const series = values[entity][index].tundukPassportSeries;
       const number = values[entity][index].tundukPassportNumber;
 
-      let personalData: Record<string, any> | null = null;
+      const url = isJuridicalPerson
+        ? `/api/tunduk/company-data/${pin}`
+        : `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`;
 
-      if (index === 0) {
-        let url = isJuridicalPerson
-          ? `/api/tunduk/company-data/${pin}`
-          : `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`;
-        personalData = await tundukPersonalDataFetch(url);
-      } else {
-        personalData = await tundukPersonalDataFetch(`/api/tunduk`, { model: `/ws/tunduk/person/${pin}` });
-      }
+      const personalData = await tundukPersonalDataFetch(url);
 
       if (personalData?.status !== 0 || personalData?.data == null) {
         setAlertOpen(true);
