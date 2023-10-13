@@ -171,7 +171,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
               (application?.data?.[0]?.documentInfo?.editUrl || prepare?.data?.editUrl != null) && (
                 <Link
                   href={`${
-                    application?.data[0].documentInfo.editUrl ?? prepare?.data.editUrl
+                    application?.data[0]?.documentInfo?.editUrl ?? prepare?.data?.editUrl
                   }?AuthorizationBasic=${token.replace(/Basic /, "")}`}
                   target="_blank"
                   onClick={() => setIsBackdropOpen(true)}
