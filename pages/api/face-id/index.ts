@@ -1,12 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
-  const { username } = req.query;
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + `/ws/face-id?userCode=${username}`, {
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/face-id", {
     method: "POST",
     headers: {
       "Content-Type": "application/octet-stream",

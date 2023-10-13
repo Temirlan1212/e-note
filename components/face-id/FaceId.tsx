@@ -18,8 +18,6 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
   const [isCameraAvailable, setIsCameraAvailable] = useState(true);
   const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
 
-  const userData = useProfileStore((state) => state.userData);
-
   const { update } = useFetch("", "POST");
 
   const videoConstraints = {
@@ -51,7 +49,7 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
       setRecording(false);
       const blob = new Blob(recordedChunks, { type: "video/webm" });
       const url = URL.createObjectURL(blob);
-      update("/api/face-id/" + userData?.code, {
+      update("/api/face-id", {
         file: url,
       }).then((res) => {
         if (!res?.data?.success) {
