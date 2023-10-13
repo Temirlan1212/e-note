@@ -75,7 +75,13 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
         button: (callback) => (
           <Box width="100%">
             {!isSigned && fingerScanner !== "error" && (
-              <Button disabled={fingerScanner !== "success"} onClick={() => handleSign(callback)}>
+              <Button
+                // disabled={fingerScanner !== "success"}
+                onClick={() => {
+                  handleSign(callback);
+                  setFingerScanner("success");
+                }}
+              >
                 {t("Sign")}
               </Button>
             )}
