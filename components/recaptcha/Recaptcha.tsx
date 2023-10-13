@@ -15,9 +15,9 @@ const Recaptcha: React.FC<IRecaptchaProps> = ({ onRecaptchaSuccess }) => {
 
   const { update: checkRecaptcha } = useFetch("", "POST");
 
-  const handleRecaptchaChange = async (token: string | null) => {
+  const handleRecaptchaChange = (token: string | null) => {
     setLoading(true);
-    await checkRecaptcha("/api/recaptcha", { token: token })
+    checkRecaptcha("/api/recaptcha", { token: token })
       .then((data) => onRecaptchaSuccess(data.success))
       .finally(() => setLoading(false));
   };
