@@ -124,7 +124,7 @@
   "First name": "Аты",
   "Middle name": "Атасынын аты",
   "Birth date": "Туулган күнү",
-  "PIN": "ИНН",
+  "TIN": "ИНН",
   "Street": "Көчө",
   "House": "Үй",
   "Apartment": "Баатир",
@@ -205,5 +205,6 @@
   "Certificate": "Сертификат",
   "PIN code": "ПИН код",
   "This action failed": "Бул аракет ишке ашкан жок",
-  "Sorry, nothing found": "Кечиресиз, эч нерсе табылган жок"
+  "Sorry, nothing found": "Кечиресиз, эч нерсе табылган жок",
+  "PIN": "ПИН"
 }

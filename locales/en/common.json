@@ -124,7 +124,7 @@
   "First name": "First name",
   "Middle name": "Middle name",
   "Birth date": "Birth date",
-  "PIN": "PIN",
+  "TIN": "TIN",
   "Street": "Street",
   "House": "House",
   "Apartment": "Apartment",
@@ -205,5 +205,6 @@
   "Certificate": "Certificate",
   "PIN code": "PIN code",
   "This action failed": "This action failed",
-  "Sorry, nothing found": "Sorry, nothing found"
+  "Sorry, nothing found": "Sorry, nothing found",
+  "PIN": "PIN"
 }

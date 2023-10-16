@@ -124,7 +124,7 @@
   "First name": "Имя",
   "Middle name": "Отчество",
   "Birth date": "Дата рождения",
-  "PIN": "ИНН",
+  "TIN": "ИНН",
   "Street": "Улица",
   "House": "Дом",
   "Apartment": "Квартира",
@@ -205,5 +205,6 @@
   "Certificate": "Сертификат",
   "PIN code": "ПИН код",
   "This action failed": "Это действие не удалось выполнить",
-  "Sorry, nothing found": "Простите, ничего не найдено"
+  "Sorry, nothing found": "Простите, ничего не найдено",
+  "PIN": "ПИН"
 }
