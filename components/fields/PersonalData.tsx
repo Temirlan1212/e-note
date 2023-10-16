@@ -172,7 +172,7 @@ export default function PersonalData({
               defaultValue={defaultValues?.pin ?? ""}
               render={({ field, fieldState }) => (
                 <Box display="flex" flexDirection="column" justifyContent="center" width="100%">
-                  <InputLabel>{t("PIN")}</InputLabel>
+                  <InputLabel>{type != 1 ? t("PIN") : t("TIN")}</InputLabel>
                   <Input
                     inputProps={{ maxLength: foreigner ? undefined : 14 }}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
