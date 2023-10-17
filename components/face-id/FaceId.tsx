@@ -1,4 +1,4 @@
-import React, { FC, MutableRefObject, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import useFetch from "@/hooks/useFetch";
 import { Alert, Box, Collapse, Typography } from "@mui/material";
@@ -11,16 +11,16 @@ interface IFaceIdScannerProps {
 
 const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
   const t = useTranslations();
-  const webcamRef = React.useRef<Webcam | null>(null);
-  const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
-  const [capturing, setCapturing] = React.useState(false);
-  const [recordedChunks, setRecordedChunks] = React.useState<BlobPart[]>([]);
+  const webcamRef = useRef<Webcam | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const [capturing, setCapturing] = useState(false);
+  const [recordedChunks, setRecordedChunks] = useState<BlobPart[]>([]);
   const [isCameraAvailable, setIsCameraAvailable] = useState(true);
   const [alertOpen, setAlertOpen] = useState(false);
 
   const { update } = useFetch("", "POST");
 
-  const handleStartCaptureClick = React.useCallback(() => {
+  const handleStartCaptureClick = useCallback(() => {
     setCapturing(true);
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current?.stream as MediaStream, {
       mimeType: "video/webm",
@@ -35,7 +35,7 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
     }, 2000);
   }, [recordedChunks, webcamRef, setCapturing, mediaRecorderRef]);
 
-  const handleDownload = React.useCallback(() => {
+  const handleDownload = useCallback(() => {
     if (recordedChunks.length) {
       const blob = new Blob(recordedChunks, { type: "video/webm" });
       const formData = new FormData();
@@ -54,7 +54,7 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
     handleDownload();
   }
 
-  const handleDataAvailable = React.useCallback(
+  const handleDataAvailable = useCallback(
     ({ data }: BlobEvent) => {
       if (data.size > 0) {
         setRecordedChunks((prev) => prev.concat(data));
