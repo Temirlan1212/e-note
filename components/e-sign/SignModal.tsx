@@ -5,10 +5,9 @@ import KeyIcon from "@mui/icons-material/Key";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
-import FingerprintScanner from "@/components/ui/FingerprintScanner";
 import JacartaSign, { IJacartaSignRef } from "./JacartaSign";
 import RutokenSign, { IRutokenSignRef } from "./RutokenSign";
-import FaceId from "@/components/face-id/FaceId";
+import FaceIdScanner from "@/components/face-id/FaceId";
 
 enum SignType {
   Jacarta = "jacarta",
@@ -122,7 +121,7 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
               <RutokenSign base64Doc={base64Doc} ref={rtRef} />
             )}
 
-            {fingerScanner !== "success" && <FaceId getStatus={(status) => setFaceIdScanner(status)} />}
+            <FaceIdScanner getStatus={(status) => setFaceIdScanner(status)} />
           </Box>
         ),
       }}

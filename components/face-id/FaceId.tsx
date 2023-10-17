@@ -1,6 +1,5 @@
-import { FC, RefObject, useEffect, useRef, useState } from "react";
+import React, { FC, MutableRefObject, useEffect, useState } from "react";
 import Webcam from "react-webcam";
-import { useProfileStore } from "@/stores/profile";
 import useFetch from "@/hooks/useFetch";
 import { Alert, Box, Collapse, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
@@ -12,85 +11,106 @@ interface IFaceIdScannerProps {
 
 const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
   const t = useTranslations();
-  const webcamRef = useRef<Webcam | null>(null);
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [recording, setRecording] = useState(false);
+  const webcamRef = React.useRef<Webcam | null>(null);
+  const mediaRecorderRef = React.useRef<MediaRecorder | null>(null);
+  const [capturing, setCapturing] = React.useState(false);
+  const [recordedChunks, setRecordedChunks] = React.useState<BlobPart[]>([]);
   const [isCameraAvailable, setIsCameraAvailable] = useState(true);
-  const [recordedChunks, setRecordedChunks] = useState<Blob[]>([]);
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const { update } = useFetch("", "POST");
 
-  const videoConstraints = {
-    facingMode: "user",
-  };
-
-  const checkCameraAvailability = async () => {
-    const devices = await navigator.mediaDevices.enumerateDevices();
-    const cameras = devices.filter((device) => device.kind === "videoinput");
-    setIsCameraAvailable(cameras.length > 0);
-  };
-
-  const startRecording = () => {
-    setRecording(true);
-    setRecordedChunks([]);
-
-    const mediaRecorder = new MediaRecorder(webcamRef.current?.stream as MediaStream);
-
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        setRecordedChunks((prevChunks) => [...prevChunks, event.data]);
-      }
-    };
-
-    mediaRecorder.start();
+  const handleStartCaptureClick = React.useCallback(() => {
+    setCapturing(true);
+    mediaRecorderRef.current = new MediaRecorder(webcamRef.current?.stream as MediaStream, {
+      mimeType: "video/webm",
+      videoBitsPerSecond: 200000,
+    });
+    mediaRecorderRef.current?.addEventListener("dataavailable", handleDataAvailable);
+    mediaRecorderRef.current?.start();
 
     setTimeout(() => {
-      mediaRecorder.stop();
-      setRecording(false);
+      mediaRecorderRef.current?.stop();
+      setCapturing(false);
+    }, 2000);
+  }, [recordedChunks, webcamRef, setCapturing, mediaRecorderRef]);
+
+  const handleDownload = React.useCallback(() => {
+    if (recordedChunks.length) {
       const blob = new Blob(recordedChunks, { type: "video/webm" });
-      const url = URL.createObjectURL(blob);
-      update("/api/face-id", {
-        file: url,
-      }).then((res) => {
+      const formData = new FormData();
+      formData.append("file", blob);
+      update("/api/face-id", formData).then((res) => {
         if (!res?.data?.success) {
           setAlertOpen(true);
         }
         getStatus(res?.data?.success);
       });
-    }, 2000);
-  };
+      setRecordedChunks([]);
+    }
+  }, [recordedChunks]);
+
+  if (recordedChunks.length > 0) {
+    handleDownload();
+  }
+
+  const handleDataAvailable = React.useCallback(
+    ({ data }: BlobEvent) => {
+      if (data.size > 0) {
+        setRecordedChunks((prev) => prev.concat(data));
+      }
+    },
+    [setRecordedChunks]
+  );
 
   useEffect(() => {
-    checkCameraAvailability();
+    navigator.mediaDevices
+      .getUserMedia({ video: true })
+      .then((stream) => {
+        setIsCameraAvailable(true);
+        stream.getTracks().forEach((track) => track.stop());
+      })
+      .catch((e) => {
+        setIsCameraAvailable(false);
+        console.log(e);
+      });
   }, []);
 
   return (
-    <Box display="flex" flexDirection="column" gap="15px">
-      <Collapse in={alertOpen}>
-        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-          {t("This action failed")}
-        </Alert>
-      </Collapse>
-      {isCameraAvailable ? (
-        <>
-          <Webcam width="100%" height="200px" videoConstraints={videoConstraints} audio={false} ref={webcamRef} />
-          <Button
-            sx={{
-              fontSize: { xs: "14px", sm: "16px" },
-            }}
-            buttonType="secondary"
-            onClick={startRecording}
-            disabled={recording}
-          >
-            {t("Verify")}
-          </Button>
-        </>
-      ) : (
-        <Typography align="center" fontSize={{ xs: "14px", sm: "16px" }} fontWeight={600}>
-          {t("Camera unavailable")}
-        </Typography>
-      )}
-    </Box>
+    <>
+      <Box display="flex" flexDirection="column" gap="15px">
+        <Collapse in={alertOpen}>
+          <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+            {t("This action failed")}
+          </Alert>
+        </Collapse>
+        {isCameraAvailable ? (
+          <>
+            <Webcam
+              width="100%"
+              height="200px"
+              videoConstraints={{ facingMode: "user" }}
+              audio={false}
+              ref={webcamRef}
+            />
+            <Button
+              sx={{
+                fontSize: { xs: "14px", sm: "16px" },
+              }}
+              buttonType="secondary"
+              onClick={handleStartCaptureClick}
+              disabled={capturing}
+            >
+              {t("Verify")}
+            </Button>
+          </>
+        ) : (
+          <Typography align="center" fontSize={{ xs: "14px", sm: "16px" }} fontWeight={600}>
+            {t("Camera unavailable")}
+          </Typography>
+        )}
+      </Box>
+    </>
   );
 };
 
