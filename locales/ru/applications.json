@@ -74,5 +74,8 @@
   "Confirmation of identity": "Подтверждение личности",
   "By fingerprint": "По отпечатку пальца",
   "By face id": "По face id",
-  "Camera unavailable": "Камера недоступна"
+  "Camera unavailable": "Камера недоступна",
+  "Rate the work of a notary": "Оцените работу нотариуса",
+  "Your rating will help us in compiling the rating and is not binding": "Ваша оценка поможет нам в составлении рейтинга и не является обязательной",
+  "RatingGradeText": "Ваша оценка: {rating}. Вы также можете изменить его в любое время"
 }

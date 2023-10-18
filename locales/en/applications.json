@@ -74,5 +74,8 @@
   "Confirmation of identity": "Confirmation of identity",
   "By fingerprint": "By fingerprint",
   "By face id": "By face id",
-  "Camera unavailable": "Camera unavailable"
+  "Camera unavailable": "Camera unavailable",
+  "Rate the work of a notary": "Rate the work of a notary",
+  "Your rating will help us in compiling the rating and is not binding": "Your rating will help us in compiling the rating and is not binding",
+  "RatingGradeText": "Your rating: {rating}. You can also change it at any time"
 }
