@@ -3,12 +3,12 @@ import { FC, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Box, CircularProgress, Typography } from "@mui/material";
 
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import Hint from "@/components/ui/Hint";
 import Rating from "@/components/ui/Rating";
 import { IApplication } from "@/models/application";
-import { IRating, IRatingItem } from "@/models/rating";
+import { IRating } from "@/models/rating";
 
 interface IApplicationStatusRatingProps {
   data: IApplication;
@@ -22,12 +22,16 @@ interface IRequestBody {
   ratingVersion?: number;
 }
 
+interface IRatingData extends FetchResponseBody {
+  data: IRating[];
+}
+
 const ApplicationStatusRating: FC<IApplicationStatusRatingProps> = (props) => {
   const { data } = props;
 
   const t = useTranslations();
 
-  const [ratingData, setRatingData] = useState<IRating | null>(null);
+  const [ratingData, setRatingData] = useState<IRatingData | null>(null);
 
   const { update: ratingCreate, loading: ratingCreateLoading } = useFetch("", "PUT");
   const { update: ratingCheck, loading: ratingCheckLoading } = useFetch("", "POST");

@@ -1,12 +1,5 @@
-export interface IRatingItem {
+export interface IRating {
   grade: string;
   id: number;
   version: number;
-}
-
-export interface IRating {
-  status: number;
-  offset: number;
-  total: number;
-  data: IRatingItem[];
 }
