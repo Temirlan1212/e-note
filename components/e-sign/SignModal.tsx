@@ -21,12 +21,12 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
   const [fingerScanner, setFingerScanner] = useState<"error" | "success" | "primary" | "signed">("primary");
   const [isSigned, setIsSigned] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [faceIdScanner, setFaceIdScanner] = useState(false);
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [signType, setSignType] = useState<SignType>();
+  // const [faceIdScanner, setFaceIdScanner] = useState(false);
+  // const [alertOpen, setAlertOpen] = useState(false);
+  // const [signType, setSignType] = useState<SignType>();
 
-  const jcRef = useRef<IJacartaSignRef>(null);
-  const rtRef = useRef<IRutokenSignRef>(null);
+  // const jcRef = useRef<IJacartaSignRef>(null);
+  // const rtRef = useRef<IRutokenSignRef>(null);
 
   const handleState = () => {
     setLoading(true);
@@ -35,31 +35,31 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
       .finally(() => setLoading(false));
   };
 
-  const handleSign = async (openModal: (open: boolean) => void) => {
-    const signRefCurrent = jcRef.current ?? rtRef.current;
-    if (signRefCurrent == null) return;
-
-    try {
-      const sign = await signRefCurrent?.handleSign(onSign);
-      if (sign == null) {
-        setAlertOpen(true);
-        return;
-      }
-
-      setAlertOpen(false);
-      setIsSigned(true);
-      setFingerScanner("signed");
-      openModal(false);
-    } catch (e: any) {
-      setAlertOpen(true);
-    }
-  };
+  // const handleSign = async (openModal: (open: boolean) => void) => {
+  //   const signRefCurrent = jcRef.current ?? rtRef.current;
+  //   if (signRefCurrent == null) return;
+  //
+  //   try {
+  //     const sign = await signRefCurrent?.handleSign(onSign);
+  //     if (sign == null) {
+  //       setAlertOpen(true);
+  //       return;
+  //     }
+  //
+  //     setAlertOpen(false);
+  //     setIsSigned(true);
+  //     setFingerScanner("signed");
+  //     openModal(false);
+  //   } catch (e: any) {
+  //     setAlertOpen(true);
+  //   }
+  // };
 
   const handleToggle = () => {
     setFingerScanner("primary");
     setIsSigned(false);
-    setSignType(undefined);
-    setAlertOpen(false);
+    // setSignType(undefined);
+    // setAlertOpen(false);
   };
 
   return (
@@ -76,10 +76,8 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
             {!isSigned && fingerScanner !== "error" && (
               <Button
                 // disabled={fingerScanner !== "success"}
-                onClick={() => {
-                  handleSign(callback);
-                  setFingerScanner("success");
-                }}
+                onClick={() => onSign("sign")}
+                // setFingerScanner("success");
               >
                 {t("Sign")}
               </Button>
@@ -92,38 +90,38 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
             )}
           </Box>
         ),
-        body: () => (
-          <Box pb={5}>
-            <Collapse in={alertOpen}>
-              <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-                {t("This action failed")}
-              </Alert>
-            </Collapse>
-
-            {fingerScanner === "success" && (
-              <Box display="flex" flexDirection="column" my={2}>
-                <InputLabel>{t("Type")}</InputLabel>
-                <Select
-                  data={signTypes}
-                  onChange={(event: SelectChangeEvent<SignType>) => {
-                    setSignType(event.target.value as SignType);
-                    setAlertOpen(false);
-                  }}
-                />
-              </Box>
-            )}
-
-            {fingerScanner === "success" && signType === SignType.Jacarta && (
-              <JacartaSign base64Doc={base64Doc} ref={jcRef} />
-            )}
-
-            {fingerScanner === "success" && signType === SignType.Rutoken && (
-              <RutokenSign base64Doc={base64Doc} ref={rtRef} />
-            )}
-
-            <FaceIdScanner getStatus={(status) => setFaceIdScanner(status)} />
-          </Box>
-        ),
+        // body: () => (
+        //   <Box pb={5}>
+        //     <Collapse in={alertOpen}>
+        //       <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+        //         {t("This action failed")}
+        //       </Alert>
+        //     </Collapse>
+        //
+        //     {fingerScanner === "success" && (
+        //       <Box display="flex" flexDirection="column" my={2}>
+        //         <InputLabel>{t("Type")}</InputLabel>
+        //         <Select
+        //           data={signTypes}
+        //           onChange={(event: SelectChangeEvent<SignType>) => {
+        //             setSignType(event.target.value as SignType);
+        //             setAlertOpen(false);
+        //           }}
+        //         />
+        //       </Box>
+        //     )}
+        //
+        //     {fingerScanner === "success" && signType === SignType.Jacarta && (
+        //       <JacartaSign base64Doc={base64Doc} ref={jcRef} />
+        //     )}
+        //
+        //     {fingerScanner === "success" && signType === SignType.Rutoken && (
+        //       <RutokenSign base64Doc={base64Doc} ref={rtRef} />
+        //     )}
+        //
+        //     <FaceIdScanner getStatus={(status) => setFaceIdScanner(status)} />
+        //   </Box>
+        // ),
       }}
       onToggle={handleToggle}
     >
