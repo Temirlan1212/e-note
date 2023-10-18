@@ -134,6 +134,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const getPersonalDataNames = (index: number) => ({
     type: `members.${index}.partnerTypeSelect`,
     foreigner: `members.${index}.foreigner`,
+    image: `members.${index}.image`,
     lastName: `members.${index}.lastName`,
     firstName: `members.${index}.name`,
     middleName: `members.${index}.middleName`,

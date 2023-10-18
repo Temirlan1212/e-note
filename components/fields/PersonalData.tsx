@@ -33,6 +33,7 @@ export interface IPersonalDataProps {
     notaryLegalParticipantsQty: string;
     notaryTotalParticipantsQty: string;
     notaryDateOfOrder: string;
+    image?: string;
     tundukDocumentSeries?: string;
     tundukDocumentNumber?: string;
     nationality?: string;
@@ -41,6 +42,7 @@ export interface IPersonalDataProps {
   defaultValues?: {
     type?: number | null;
     foreigner?: boolean;
+    image?: string;
     lastName?: string;
     firstName?: string;
     middleName?: string;
@@ -64,6 +66,7 @@ export interface IPersonalDataProps {
   fields?: {
     type?: boolean;
     foreigner?: boolean;
+    image?: boolean;
     lastName?: boolean;
     firstName?: boolean;
     middleName?: boolean;
@@ -108,6 +111,8 @@ export default function PersonalData({
 
   const foreigner = watch(names.foreigner);
   const type = watch(names.type);
+  const image = watch(names?.image!);
+  const imageUrl = `data:image/jpeg;base64,${image}`;
 
   const { data: citizenshipDictionary, loading: citizenshipDictionaryLoading } = useFetch(
     `/api/dictionaries/citizenship`,
@@ -162,6 +167,19 @@ export default function PersonalData({
           />
         )}
       </Box>
+
+      {image && (
+        <Box
+          component="img"
+          sx={{
+            objectFit: "contain",
+            height: "200px",
+            width: { xs: "100%", sm: "170px" },
+          }}
+          alt="passport avatar"
+          src={imageUrl}
+        />
+      )}
 
       <Box display="flex" gap="20px" alignItems="self-start" flexDirection={{ xs: "column", md: "row" }}>
         {(fields?.pin == null || !!fields?.pin) && (
