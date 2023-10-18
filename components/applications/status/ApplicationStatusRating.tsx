@@ -67,7 +67,7 @@ const ApplicationStatusRating: FC<IApplicationStatusRatingProps> = (props) => {
   };
 
   const createRating = (body: IRequestBody) => {
-    ratingCreate("/api/create/", body).then(() => {
+    ratingCreate("/api/rating/create/", body).then(() => {
       checkRating(body).then((ratingData) => {
         setRatingData(ratingData);
       });
@@ -92,7 +92,10 @@ const ApplicationStatusRating: FC<IApplicationStatusRatingProps> = (props) => {
         {ratingCreateLoading || ratingCheckLoading || ratingEditLoading ? (
           <CircularProgress />
         ) : (
-          <Rating value={parseFloat(ratingData?.data[0]?.grade as string) || 0} onChange={handleRatingChange} />
+          <Rating
+            value={ratingData?.data && ratingData.data[0]?.grade ? parseFloat(ratingData.data[0].grade) : 0}
+            onChange={handleRatingChange}
+          />
         )}
         <Typography
           sx={{
@@ -101,8 +104,8 @@ const ApplicationStatusRating: FC<IApplicationStatusRatingProps> = (props) => {
             color: "#687C9B",
           }}
         >
-          {ratingData?.data[0]?.grade
-            ? t("RatingGradeText", { rating: parseFloat(ratingData?.data[0]?.grade).toFixed(0) })
+          {ratingData?.data && ratingData.data[0]?.grade
+            ? t("RatingGradeText", { rating: parseFloat(ratingData.data[0].grade).toFixed(0) })
             : t("Your rating will help us in compiling the rating and is not binding")}
         </Typography>
       </Hint>
