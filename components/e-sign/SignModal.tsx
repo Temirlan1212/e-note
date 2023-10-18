@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Alert, Box, Collapse, InputLabel, SelectChangeEvent } from "@mui/material";
+import { Alert, Box, Collapse, InputLabel, SelectChangeEvent, Typography } from "@mui/material";
 import KeyIcon from "@mui/icons-material/Key";
 import Button from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
@@ -18,48 +18,38 @@ const signTypes = Object.entries(SignType).map(([label, value]) => ({ label, val
 
 export default function SignModal({ base64Doc, onSign }: { base64Doc: string; onSign: (sign: string) => void }) {
   const t = useTranslations();
-  const [fingerScanner, setFingerScanner] = useState<"error" | "success" | "primary" | "signed">("primary");
   const [isSigned, setIsSigned] = useState(false);
-  const [loading, setLoading] = useState(false);
-  // const [faceIdScanner, setFaceIdScanner] = useState(false);
-  // const [alertOpen, setAlertOpen] = useState(false);
-  // const [signType, setSignType] = useState<SignType>();
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [signType, setSignType] = useState<SignType>();
+  const [faceIdScanner, setFaceIdScanner] = useState(false);
 
-  // const jcRef = useRef<IJacartaSignRef>(null);
-  // const rtRef = useRef<IRutokenSignRef>(null);
+  const jcRef = useRef<IJacartaSignRef>(null);
+  const rtRef = useRef<IRutokenSignRef>(null);
 
-  const handleState = () => {
-    setLoading(true);
-    new Promise((resolve) => setTimeout(resolve, 1000, "success"))
-      .then((value) => setFingerScanner(value as typeof fingerScanner))
-      .finally(() => setLoading(false));
+  const handleSign = async (openModal: (open: boolean) => void) => {
+    const signRefCurrent = jcRef.current ?? rtRef.current;
+    if (signRefCurrent == null) return;
+
+    try {
+      const sign = await signRefCurrent?.handleSign(onSign);
+      if (sign == null) {
+        setAlertOpen(true);
+        return;
+      }
+
+      setAlertOpen(false);
+      setIsSigned(true);
+      openModal(false);
+    } catch (e: any) {
+      setAlertOpen(true);
+    }
   };
 
-  // const handleSign = async (openModal: (open: boolean) => void) => {
-  //   const signRefCurrent = jcRef.current ?? rtRef.current;
-  //   if (signRefCurrent == null) return;
-  //
-  //   try {
-  //     const sign = await signRefCurrent?.handleSign(onSign);
-  //     if (sign == null) {
-  //       setAlertOpen(true);
-  //       return;
-  //     }
-  //
-  //     setAlertOpen(false);
-  //     setIsSigned(true);
-  //     setFingerScanner("signed");
-  //     openModal(false);
-  //   } catch (e: any) {
-  //     setAlertOpen(true);
-  //   }
-  // };
-
   const handleToggle = () => {
-    setFingerScanner("primary");
     setIsSigned(false);
-    // setSignType(undefined);
-    // setAlertOpen(false);
+    setSignType(undefined);
+    setAlertOpen(false);
+    setFaceIdScanner(false);
   };
 
   return (
@@ -68,60 +58,56 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
       type="hint"
       hintTitle=""
       hintText={
-        "To enter a document into the registry and assign a unique document number, you need confirmation of your fingerprints and your EDS"
+        "To enter a document into the registry and assign a unique document number, you need confirmation of your Face ID and your EDS"
       }
       slots={{
         button: (callback) => (
           <Box width="100%">
-            {!isSigned && fingerScanner !== "error" && (
-              <Button
-                // disabled={fingerScanner !== "success"}
-                onClick={() => onSign("sign")}
-                // setFingerScanner("success");
-              >
-                {t("Sign")}
-              </Button>
-            )}
-
-            {fingerScanner === "error" && (
-              <Button disabled={fingerScanner !== "error"} onClick={handleState}>
-                {t("Try again")}
-              </Button>
-            )}
+            <Button disabled={!faceIdScanner} onClick={() => handleSign(callback)}>
+              {t("Sign")}
+            </Button>
           </Box>
         ),
-        // body: () => (
-        //   <Box pb={5}>
-        //     <Collapse in={alertOpen}>
-        //       <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-        //         {t("This action failed")}
-        //       </Alert>
-        //     </Collapse>
-        //
-        //     {fingerScanner === "success" && (
-        //       <Box display="flex" flexDirection="column" my={2}>
-        //         <InputLabel>{t("Type")}</InputLabel>
-        //         <Select
-        //           data={signTypes}
-        //           onChange={(event: SelectChangeEvent<SignType>) => {
-        //             setSignType(event.target.value as SignType);
-        //             setAlertOpen(false);
-        //           }}
-        //         />
-        //       </Box>
-        //     )}
-        //
-        //     {fingerScanner === "success" && signType === SignType.Jacarta && (
-        //       <JacartaSign base64Doc={base64Doc} ref={jcRef} />
-        //     )}
-        //
-        //     {fingerScanner === "success" && signType === SignType.Rutoken && (
-        //       <RutokenSign base64Doc={base64Doc} ref={rtRef} />
-        //     )}
-        //
-        //     <FaceIdScanner getStatus={(status) => setFaceIdScanner(status)} />
-        //   </Box>
-        // ),
+        body: () => (
+          <Box pb={5} sx={{ maxHeight: { xs: "300px", md: "unset" }, overflowY: { xs: "scroll", md: "unset" } }}>
+            {!faceIdScanner && (
+              <Typography align="center" fontSize={{ xs: "16px", sm: "20px" }} fontWeight={600}>
+                {t("Confirmation of identity")}
+              </Typography>
+            )}
+            <Collapse in={alertOpen}>
+              <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+                {t("This action failed")}
+              </Alert>
+            </Collapse>
+
+            {faceIdScanner && (
+              <Box display="flex" flexDirection="column" my={2}>
+                <InputLabel>{t("Type")}</InputLabel>
+                <Select
+                  data={signTypes}
+                  onChange={(event: SelectChangeEvent<SignType>) => {
+                    setSignType(event.target.value as SignType);
+                    setAlertOpen(false);
+                  }}
+                />
+              </Box>
+            )}
+
+            {faceIdScanner && signType === SignType.Jacarta && <JacartaSign base64Doc={base64Doc} ref={jcRef} />}
+
+            {faceIdScanner && signType === SignType.Rutoken && <RutokenSign base64Doc={base64Doc} ref={rtRef} />}
+
+            {!faceIdScanner && <FaceIdScanner getStatus={(status) => setFaceIdScanner(status)} />}
+
+            <Button
+              sx={{ marginTop: "15px" }}
+              onClick={() => (faceIdScanner ? onSign("sign") : setFaceIdScanner(true))}
+            >
+              {t(faceIdScanner ? "Without EDS" : "Without Face ID")}
+            </Button>
+          </Box>
+        ),
       }}
       onToggle={handleToggle}
     >
