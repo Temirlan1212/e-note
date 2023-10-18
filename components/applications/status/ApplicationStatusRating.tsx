@@ -29,9 +29,9 @@ const ApplicationStatusRating: FC<IApplicationStatusRatingProps> = (props) => {
 
   const [ratingData, setRatingData] = useState<IRating | null>(null);
 
-  const { update: notaryRatingCreate, loading: notaryRatingCreateLoading } = useFetch("", "PUT");
-  const { update: notaryRatingCheck, loading: notaryRatingCheckLoading } = useFetch("", "POST");
-  const { update: notaryRatingEdit, loading: notaryRatingEditLoading } = useFetch("", "POST");
+  const { update: ratingCreate, loading: ratingCreateLoading } = useFetch("", "PUT");
+  const { update: ratingCheck, loading: ratingCheckLoading } = useFetch("", "POST");
+  const { update: ratingEdit, loading: ratingEditLoading } = useFetch("", "POST");
 
   const applicationId = data?.id;
   const companyId = data?.company?.id;
@@ -59,7 +59,7 @@ const ApplicationStatusRating: FC<IApplicationStatusRatingProps> = (props) => {
   };
 
   const editRating = (body: IRequestBody, ratingId: number) => {
-    notaryRatingEdit(`/api/rating/edit/${ratingId}`, body).then(() => {
+    ratingEdit(`/api/rating/edit/${ratingId}`, body).then(() => {
       checkRating(body).then((ratingData) => {
         setRatingData(ratingData);
       });
@@ -67,7 +67,7 @@ const ApplicationStatusRating: FC<IApplicationStatusRatingProps> = (props) => {
   };
 
   const createRating = (body: IRequestBody) => {
-    notaryRatingCreate("/api/create/", body).then(() => {
+    ratingCreate("/api/create/", body).then(() => {
       checkRating(body).then((ratingData) => {
         setRatingData(ratingData);
       });
@@ -75,7 +75,7 @@ const ApplicationStatusRating: FC<IApplicationStatusRatingProps> = (props) => {
   };
 
   const checkRating = async (body: IRequestBody) => {
-    const data = await notaryRatingCheck("/api/rating/check/", body);
+    const data = await ratingCheck("/api/rating/check/", body);
     return data;
   };
 
@@ -89,7 +89,7 @@ const ApplicationStatusRating: FC<IApplicationStatusRatingProps> = (props) => {
   return (
     <Box display="flex" justifyContent="space-between" alignItems="center">
       <Hint type="hint" title={t("Rate the work of a notary")} sx={{ width: "100vw" }}>
-        {notaryRatingCreateLoading || notaryRatingCheckLoading || notaryRatingEditLoading ? (
+        {ratingCreateLoading || ratingCheckLoading || ratingEditLoading ? (
           <CircularProgress />
         ) : (
           <Rating value={parseFloat(ratingData?.data[0]?.grade as string) || 0} onChange={handleRatingChange} />
