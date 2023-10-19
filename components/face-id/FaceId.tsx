@@ -20,17 +20,29 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
 
   const { update } = useFetch("", "POST");
 
+  // const constraints = { video: true };
+
   const handleStartCaptureClick = useCallback(() => {
+    // navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+    //   const options = {
+    //     videoBitsPerSecond: 200000,
+    //     mimeType: "video/webm;codecs=H264",
+    //   };
+    //   const mediaRecord = new MediaRecorder(stream, options);
+    //   console.log(mediaRecord);
+    // });
     setCapturing(true);
-    mediaRecorderRef.current = new MediaRecorder(webcamRef.current?.stream as MediaStream, {
-      mimeType: "video/webm",
+    const mediaRecorder = new MediaRecorder(webcamRef.current?.stream as MediaStream, {
+      mimeType: "video/webm;codecs=H264",
       videoBitsPerSecond: 200000,
     });
-    mediaRecorderRef.current?.addEventListener("dataavailable", handleDataAvailable);
-    mediaRecorderRef.current?.start();
+    mediaRecorder.addEventListener("dataavailable", handleDataAvailable);
+    mediaRecorder.start();
+
+    // console.log(MediaRecorder.isTypeSupported("video/webm;codecs=H264"));
 
     setTimeout(() => {
-      mediaRecorderRef.current?.stop();
+      mediaRecorder.stop();
       setCapturing(false);
     }, 2000);
   }, [recordedChunks, webcamRef, setCapturing, mediaRecorderRef]);
