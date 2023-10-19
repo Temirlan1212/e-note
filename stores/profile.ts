@@ -10,6 +10,7 @@ export interface IProfileState {
   getUser: () => IUser | null;
   getUserData: () => IUserData | null;
   logIn: (credentials: IUserCredentials) => Promise<void>;
+  logInEsi: (code: string) => Promise<void>;
   logOut: () => void;
   loadUserData: (user: IUser) => Promise<void>;
 }
@@ -37,6 +38,27 @@ export const useProfileStore = create<IProfileState>()(
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(credentials),
+        });
+
+        if (!response.ok) return;
+
+        const setCookie = response.headers.get("cookie");
+        if (setCookie == null) return;
+
+        cookie = setCookie;
+        user = await response.json();
+        if (user == null) return;
+
+        set(() => ({ cookie, user }));
+        get().loadUserData(user);
+      },
+      logInEsi: async (code) => {
+        let cookie: string | null = null;
+        let user: IUser | null = null;
+
+        const response = await fetch(`/api/profile/esi-login?code=${code}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
         });
 
         if (!response.ok) return;
