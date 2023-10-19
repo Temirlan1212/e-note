@@ -17,7 +17,7 @@ export interface INotary {
 }
 
 export interface INotaryData {
-  data: INotary[];
+  data?: INotary[];
   total: number;
 }
 

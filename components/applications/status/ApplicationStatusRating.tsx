@@ -8,7 +8,6 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import Hint from "@/components/ui/Hint";
 import Rating from "@/components/ui/Rating";
 import { IApplication } from "@/models/application";
-import { IRating } from "@/models/rating";
 
 interface IApplicationStatusRatingProps {
   data: IApplication;
@@ -22,16 +21,12 @@ interface IRequestBody {
   ratingVersion?: number;
 }
 
-interface IRatingData extends FetchResponseBody {
-  data: IRating[];
-}
-
 const ApplicationStatusRating: FC<IApplicationStatusRatingProps> = (props) => {
   const { data } = props;
 
   const t = useTranslations();
 
-  const [ratingData, setRatingData] = useState<IRatingData | null>(null);
+  const [ratingData, setRatingData] = useState<FetchResponseBody | null>(null);
 
   const { update: ratingCreate, loading: ratingCreateLoading } = useFetch("", "PUT");
   const { update: ratingCheck, loading: ratingCheckLoading } = useFetch("", "POST");
@@ -92,7 +87,7 @@ const ApplicationStatusRating: FC<IApplicationStatusRatingProps> = (props) => {
 
   return (
     <Box display="flex" justifyContent="space-between" alignItems="center">
-      <Hint type="hint" title={t("Rate the work of a notary")} sx={{ width: "100vw" }}>
+      <Hint type="hint" title="Rate the work of a notary" sx={{ width: "100vw" }}>
         {ratingCreateLoading || ratingCheckLoading || ratingEditLoading ? (
           <CircularProgress />
         ) : (

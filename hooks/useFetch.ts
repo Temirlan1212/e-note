@@ -11,11 +11,11 @@ export interface FetchError {
   message: string;
 }
 
-export interface FetchResponseBody {
+export interface FetchResponseBody<D = any> {
   status: number;
   offset: number;
   total: number;
-  data: any;
+  data?: D;
 }
 
 export default function useFetch<T = FetchResponseBody>(

@@ -5,23 +5,15 @@ import Link from "@/components/ui/Link";
 import Image from "next/image";
 import Head from "next/head";
 import { GetStaticPropsContext } from "next";
-import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
+import useFetch from "@/hooks/useFetch";
 import { useRouter } from "next/router";
-
-interface IRegulatoryActs extends FetchResponseBody {
-  data: {
-    title: string;
-    url: string;
-    id: number;
-    "$t:title": string;
-  }[];
-}
+import { IRegulatoryActsData } from "@/models/regulatory-acts";
 
 const RegulatoryActs: React.FC = () => {
   const t = useTranslations();
   const { locale } = useRouter();
 
-  const { data: regulatoryActsData } = useFetch<IRegulatoryActs>("/api/regulatory-acts", "POST");
+  const { data: regulatoryActsData } = useFetch<IRegulatoryActsData>("/api/regulatory-acts", "POST");
 
   return (
     <>
