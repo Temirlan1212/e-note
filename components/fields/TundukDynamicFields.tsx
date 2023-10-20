@@ -1,20 +1,16 @@
 import { useTranslations } from "next-intl";
-import { UseFormReturn, useForm } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { Box, Grid, Paper } from "@mui/material";
 import Button from "@/components/ui/Button";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import { useRouter } from "next/router";
 import DynamicField, { IDynamicFieldProps } from "@/components/ui/DynamicField";
 
-const getTemplateDocName = (
-  path: string | null,
-  name: string | null,
-  regex: RegExp = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)(?:\.|$)/
-) => {
+const getTemplateDocName = (path: string | null, name: string | null, regex: RegExp = /\[([^\]]*)\]/g) => {
   if (path != null && name != null) {
     if (regex.test(path)) {
       const index = 0;
-      return `${path}.${index}.${name}`;
+      return path.replace(regex, (_, capture) => `${capture}.${index}.${name}`);
     }
 
     return `${path}.${name}`;
@@ -110,6 +106,7 @@ export default function TundukDynamicFields({
                 justifyContent="end"
               >
                 <DynamicField
+                  disabled={item?.readonly}
                   type={item?.fieldType}
                   form={form}
                   label={item?.fieldTitles?.[locale ?? ""] ?? ""}

@@ -29,15 +29,11 @@ const getTemplateDocGroupName = (group: Record<string, any>, locale: string | un
   return groupNameLocale ? groupNameLocale : groupName;
 };
 
-const getTemplateDocName = (
-  path: string | null,
-  name: string | null,
-  regex: RegExp = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)(?:\.|$)/
-) => {
+const getTemplateDocName = (path: string | null, name: string | null, regex: RegExp = /\[([^\]]*)\]/g) => {
   if (path != null && name != null) {
     if (regex.test(path)) {
       const index = 0;
-      return `${path}.${index}.${name}`;
+      return path.replace(regex, (_, capture) => `${capture}.${index}.${name}`);
     }
 
     return `${path}.${name}`;
@@ -60,11 +56,7 @@ export default function FifthStepFields({
   const [alertOpen, setAlertOpen] = useState(false);
 
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
-  const {
-    data: tundukVehicleData,
-    update: tundukVehicleDataFetch,
-    loading: tundukVehicleDataLoading,
-  } = useFetch("", "POST");
+  const { update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
 
   const {
     update: getDocumentTemplateData,
@@ -124,37 +116,20 @@ export default function FifthStepFields({
       setAlertOpen(true);
       return;
     }
-    setAlertOpen(false);
 
     responsefields?.map((field) => {
       const formName = getTemplateDocName(field?.path, field?.fieldName);
       const fieldName = field?.fieldName;
       const value = vehicleData?.data?.[0]?.[fieldName] ?? vehicleData?.data?.[0]?.notaryPartner?.[0]?.[fieldName];
-
-      if (value != null && value !== "") {
-        dynamicForm.setValue(formName, value);
-        dynamicForm.setError(formName, { type: "disabled" });
-      }
+      if (value != null && value !== "") dynamicForm.setValue(formName, value);
     });
+
+    setAlertOpen(false);
+    dynamicForm.setValue(`movable.${0}.disabled`, true);
   };
 
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
-    let data = { ...documentTemplateData };
-    if (data?.data == null) {
-      data = await getDocumentTemplateData("/api/dictionaries/document-type/template/" + productId);
-    }
-
-    data?.data.map((group: Record<string, any>) => {
-      group?.fields.map(async (item: Record<string, any>) => {
-        if (String(item?.fieldType).toLocaleLowerCase() === "tunduk") {
-          const values: Record<string, any> = tundukParamsFieldsForm.getValues();
-          if (Object.values(values).some((item) => !item)) return;
-
-          handlePinCheck(item?.url, tundukParamsFieldsForm.getValues(), item?.responseFields);
-        }
-      });
-    });
   });
 
   return (
@@ -187,13 +162,13 @@ export default function FifthStepFields({
                       justifyContent="end"
                       gap="50px"
                     >
-                      {String(item?.fieldType).toLocaleLowerCase() === "tunduk" && form.watch("object") === 1 ? (
+                      {String(item?.fieldType).toLocaleLowerCase() === "tunduk" ? (
                         <TundukDynamicFields
                           loading={tundukVehicleDataLoading}
                           form={dynamicForm}
                           paramsForm={tundukParamsFieldsForm}
                           fields={item?.fields}
-                          responseFields={tundukVehicleData?.data != null ? item?.responseFields : null}
+                          responseFields={dynamicForm?.getValues(`movable.${0}.disabled`) ? item?.responseFields : null}
                           onPinCheck={async (paramsForm) => {
                             const validated = await paramsForm.trigger();
                             if (validated) handlePinCheck(item?.url, paramsForm.getValues(), item?.responseFields);
