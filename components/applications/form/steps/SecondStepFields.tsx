@@ -270,7 +270,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  resetField("product.id", { defaultValue: null });
+                  resetField("product", { defaultValue: null });
                 }}
               />
             </Box>
@@ -280,7 +280,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
 
       <Controller
         control={control}
-        name="product.id"
+        name="product"
         defaultValue={null}
         render={({ field, fieldState }) => {
           const errorMessage = fieldState.error?.message;
