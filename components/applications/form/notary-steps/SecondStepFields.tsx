@@ -29,7 +29,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
 
   const locale = useLocale();
 
-  const { trigger, control, getValues, setValue, watch, resetField } = form;
+  const { trigger, control, getValues, setValue, watch } = form;
 
   const productId = watch("product.id");
 
@@ -67,7 +67,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   }, [productId, profile]);
 
   const triggerFields = async () => {
-    return await trigger(["product.id"]);
+    return await trigger(["product"]);
   };
 
   const handlePrevClick = () => {

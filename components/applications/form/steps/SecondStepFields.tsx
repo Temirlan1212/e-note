@@ -54,7 +54,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   }, [actionVal]);
 
   const triggerFields = async () => {
-    return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action", "product.id"]);
+    return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action", "product"]);
   };
 
   const handlePrevClick = () => {
@@ -126,7 +126,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  ["objectType", "notarialAction", "typeNotarialAction", "action", "product.id"].map((item: any) =>
+                  ["objectType", "notarialAction", "typeNotarialAction", "action", "product"].map((item: any) =>
                     resetField(item, { defaultValue: null })
                   );
                 }}
@@ -162,7 +162,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  ["notarialAction", "typeNotarialAction", "action", "product.id"].map((item: any) =>
+                  ["notarialAction", "typeNotarialAction", "action", "product"].map((item: any) =>
                     resetField(item, { defaultValue: null })
                   );
                 }}
@@ -200,7 +200,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  ["typeNotarialAction", "action", "product.id"].map((item: any) =>
+                  ["typeNotarialAction", "action", "product"].map((item: any) =>
                     resetField(item, { defaultValue: null })
                   );
                 }}
@@ -236,7 +236,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  ["action", "product.id"].map((item: any) => resetField(item, { defaultValue: null }));
+                  ["action", "product"].map((item: any) => resetField(item, { defaultValue: null }));
                 }}
               />
             </Box>
