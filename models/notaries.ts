@@ -16,11 +16,6 @@ export interface INotary {
   name: string;
 }
 
-export interface INotaryData {
-  data?: INotary[];
-  total: number;
-}
-
 export interface INotarySelections {
   status: number;
   offset: number;
