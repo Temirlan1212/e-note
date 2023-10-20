@@ -89,17 +89,21 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
     if (Array.isArray(data) && data.length > 0 && id) {
       const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
-      let related: Record<string, string[]> = {};
-      let fields: string[] = [];
-      const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)\b/;
+      const responseFieldsProps = fieldsProps
+        .filter((item: Record<string, any>) => item?.responseFields?.length > 0)
+        .map((item) => item?.responseFields);
 
-      fieldsProps.map((fieldProps: Record<string, any>) => {
+      let related: Record<string, string[]> = { movable: ["disabled"] };
+      let fields: string[] = [];
+      const regex = /\[(.*?)\]/;
+
+      fieldsProps.concat(...responseFieldsProps).map((fieldProps: Record<string, any>) => {
         const fieldName = fieldProps?.fieldName ?? "";
-        const match = fieldProps?.path?.match(regex);
+        const match = regex.exec(fieldProps?.path)?.[1];
 
         if (match) {
-          const relatedFields = related?.[match?.[0]] ?? [];
-          related[match?.[0] ?? ""] = [...relatedFields, fieldName];
+          const relatedFields = related?.[match] ?? [];
+          related[match ?? ""] = [...relatedFields, fieldName];
         } else {
           const field = !!fieldProps?.path ? fieldProps?.path + "." + fieldName : fieldName;
           fields.push(String(field));

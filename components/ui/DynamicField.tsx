@@ -193,7 +193,7 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
       defaultValue={getValue(type, defaultValue)}
       rules={{ required: required ? "required" : false }}
       render={({ field, fieldState }) => {
-        let isDisabled = disabled ?? fieldState.error?.type === "disabled";
+        let isDisabled = disabled || fieldState.error?.type === "disabled";
         let errorMessage = fieldState.error?.message ? t(fieldState.error.message) : fieldState.error?.message ?? "";
 
         if (["Date", "DateTime", "Time"].includes(type)) {

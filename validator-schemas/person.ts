@@ -141,9 +141,21 @@ export const personSchema = object()
       .trim()
       .matches(/^[0-9]*$/, "onlyNumbers")
       .required("required"),
+    tundukPersonalNumber: string()
+      .trim()
+      .when("foreigner", {
+        is: true,
+        then: (schema) => schema.required("required"),
+        otherwise: (schema) =>
+          schema
+            .min(14, "minNumbers")
+            .max(14, "maxNumbers")
+            .required("required")
+            .matches(/^[0-9]*$/, "onlyNumbers"),
+      }),
     nationality: string(),
     familyStatus: boolean(),
     maritalStatus: string(),
-    tundukIsSuccess: boolean(),
+    disabled: boolean(),
   })
   .concat(filesSchema.pick(["files"]));

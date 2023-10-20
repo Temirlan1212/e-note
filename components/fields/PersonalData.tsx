@@ -35,6 +35,7 @@ export interface IPersonalDataProps {
     notaryDateOfOrder: string;
     tundukDocumentSeries?: string;
     tundukDocumentNumber?: string;
+    tundukPersonalNumber?: string;
     nationality?: string;
     maritalStatus?: string;
   };
@@ -58,6 +59,7 @@ export interface IPersonalDataProps {
     notaryDateOfOrder?: Date;
     tundukDocumentSeries?: number | null;
     tundukDocumentNumber?: number | null;
+    tundukPersonalNumber?: number | null;
     nationality?: string | null;
     maritalStatus?: string;
   };
@@ -83,6 +85,7 @@ export interface IPersonalDataProps {
     maritalStatus?: boolean;
     tundukDocumentSeries?: boolean;
     tundukDocumentNumber?: boolean;
+    tundukPersonalNumber?: boolean;
   };
   onPinCheck?: MouseEventHandler<HTMLButtonElement>;
   onPinReset?: MouseEventHandler<HTMLButtonElement>;
@@ -164,12 +167,12 @@ export default function PersonalData({
       </Box>
 
       <Box display="flex" gap="20px" alignItems="self-start" flexDirection={{ xs: "column", md: "row" }}>
-        {(fields?.pin == null || !!fields?.pin) && (
+        {(fields?.tundukPersonalNumber == null || !!fields?.tundukPersonalNumber) && (
           <>
             <Controller
               control={control}
-              name={names.pin}
-              defaultValue={defaultValues?.pin ?? ""}
+              name={names?.tundukPersonalNumber ?? ""}
+              defaultValue={defaultValues?.tundukPersonalNumber ?? ""}
               render={({ field, fieldState }) => (
                 <Box display="flex" flexDirection="column" justifyContent="center" width="100%">
                   <InputLabel>{type != 1 ? t("PIN") : t("TIN")}</InputLabel>
@@ -387,6 +390,27 @@ export default function PersonalData({
                         field.onChange(value?.id != null ? { id: value.id } : null);
                         trigger(field.name);
                       }}
+                    />
+                  </Box>
+                )}
+              />
+            )}
+
+            {(fields?.pin == null || !!fields?.pin) && (
+              <Controller
+                control={control}
+                name={names?.pin ?? ""}
+                defaultValue={defaultValues?.pin ?? ""}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" justifyContent="center" width="100%">
+                    <InputLabel>{type != 1 ? t("PIN") : t("TIN")}</InputLabel>
+                    <Input
+                      inputProps={{ maxLength: foreigner ? undefined : 14 }}
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 14, max: 14 }) : ""}
+                      disabled={disableFields}
+                      {...field}
+                      value={field.value != null ? field.value : ""}
                     />
                   </Box>
                 )}
