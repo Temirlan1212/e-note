@@ -10,7 +10,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useRouter } from "next/router";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import TundukDynamicFields from "@/components/fields/TundukDynamicFields";
-import DynamicFormField, { getName as getTemplateDocName } from "@/components/ui/DynamicField";
+import DynamicField, { getName as getTemplateDocName } from "@/components/ui/DynamicField";
 import { useState } from "react";
 
 export interface IStepFieldsProps {
@@ -162,7 +162,7 @@ export default function FifthStepFields({
                           }}
                         />
                       ) : null}
-                      <DynamicFormField
+                      <DynamicField
                         disabled={item?.readonly}
                         hidden={item?.hidden}
                         required={!!item?.required}
