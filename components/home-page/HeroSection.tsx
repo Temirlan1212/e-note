@@ -50,7 +50,6 @@ const HeroSection: React.FC = () => {
       setError("root.serverError", { type: "custom", message: "Incorrect password or username" });
     } else {
       form.reset();
-      router.push("/applications");
     }
   };
 

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
-import useEffectOnce from "@/hooks/useEffectOnce";
 import { Box } from "@mui/material";
 import Hint from "../ui/Hint";
 import Link from "../ui/Link";

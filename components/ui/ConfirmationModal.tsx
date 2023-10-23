@@ -9,7 +9,7 @@ import { useTranslations } from "next-intl";
 export interface IConfirmationModal extends Omit<ModalProps, "slots"> {
   onConfirm: (callback: Dispatch<SetStateAction<boolean>>) => void;
   onToggle: (callback: Dispatch<SetStateAction<boolean>>) => void;
-  isOpen?: boolean;
+  isPermanentOpen?: boolean;
   isHintShown?: boolean;
   hintTitle: string;
   hintText: string;
@@ -25,7 +25,7 @@ export const ConfirmationModal = ({
   onConfirm,
   slots,
   children,
-  isOpen,
+  isPermanentOpen,
   isHintShown = true,
   hintTitle = "Do you really want to delete this record?",
   hintText = "",
@@ -52,15 +52,17 @@ export const ConfirmationModal = ({
     <Box>
       <Box onClick={handleToggle}>{children}</Box>
 
-      <Modal open={isOpen ?? open} onClose={handleToggle} {...rest}>
+      <Modal open={isPermanentOpen ?? open} onClose={handleToggle} {...rest}>
         <Box display="flex" flexDirection="column" gap="20px">
           <Box component="header" display="flex" alignItems="center" justifyContent="space-between">
             <Typography variant="h6" fontWeight={600}>
               {t(title)}
             </Typography>
-            <IconButton onClick={handleToggle}>
-              <CloseIcon />
-            </IconButton>
+            {isPermanentOpen !== true && (
+              <IconButton onClick={handleToggle}>
+                <CloseIcon />
+              </IconButton>
+            )}
           </Box>
 
           <Box>

@@ -32,6 +32,7 @@
   "Login to your personal account": "Жеке Каттоо эсебиңизге кирүү",
   "Other ways to log in": "Кирүүнүн башка жолдору",
   "Enter": "Кирүү",
+  "Enter as": "Катары кирүү",
   "Username": "Логин",
   "Password": "Сырсөз",
   "Forgot your password?": "Сырсөздү унутуп калдыңызбы?",
@@ -204,5 +205,11 @@
   "Color": "Түс",
   "Certificate": "Сертификат",
   "PIN code": "ПИН код",
-  "This action failed": "Бул аракет ишке ашкан жок"
+  "This action failed": "Бул аракет ишке ашкан жок",
+  "Status": "Статус",
+  "Notary": "Нотариус",
+  "Executor": "Аткаруучу",
+  "Declarant": "Декларант",
+  "Applicant": "Арыз ээси",
+  "Enter as description": "Сизде бир нече ролдор бар. Системада иштөө үчүн бирин тандашыңыз керек"
 }
