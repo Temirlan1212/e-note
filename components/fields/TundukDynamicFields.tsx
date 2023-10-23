@@ -6,19 +6,6 @@ import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import { useRouter } from "next/router";
 import DynamicField, { IDynamicFieldProps } from "@/components/ui/DynamicField";
 
-const getTemplateDocName = (path: string | null, name: string | null, regex: RegExp = /\[([^\]]*)\]/g) => {
-  if (path != null && name != null) {
-    if (regex.test(path)) {
-      const index = 0;
-      return path.replace(regex, (_, capture) => `${capture}.${index}.${name}`);
-    }
-
-    return `${path}.${name}`;
-  }
-
-  return name ?? "";
-};
-
 export interface ITundukDynamicFieldsProps {
   form: UseFormReturn<any>;
   paramsForm: UseFormReturn<any>;
@@ -57,12 +44,16 @@ export default function TundukDynamicFields({
               justifyContent="end"
             >
               <DynamicField
+                disabled={item?.readonly}
+                hidden={item?.hidden}
+                required={!!item?.required}
                 type={item?.fieldType}
+                conditions={item?.conditions}
                 form={paramsForm}
                 label={item?.fieldTitles?.[locale ?? ""] ?? ""}
                 defaultValue={item?.defaultValue}
-                required={!!item?.required}
-                name={getTemplateDocName(item?.path, item?.fieldName)}
+                fieldName={item?.fieldName}
+                path={item?.path}
                 selectionName={item?.selection ?? ""}
               />
             </Grid>
@@ -107,12 +98,15 @@ export default function TundukDynamicFields({
               >
                 <DynamicField
                   disabled={item?.readonly}
+                  hidden={item?.hidden}
+                  required={!!item?.required}
+                  conditions={item?.conditions}
                   type={item?.fieldType}
                   form={form}
                   label={item?.fieldTitles?.[locale ?? ""] ?? ""}
                   defaultValue={item?.defaultValue}
-                  required={!!item?.required}
-                  name={getTemplateDocName(item?.path, item?.fieldName)}
+                  fieldName={item?.fieldName}
+                  path={item?.path}
                   selectionName={item?.selection ?? ""}
                 />
               </Grid>
