@@ -10,7 +10,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useRouter } from "next/router";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import TundukDynamicFields from "@/components/fields/TundukDynamicFields";
-import DynamicField from "@/components/ui/DynamicField";
+import DynamicField, { getName as getTemplateDocName } from "@/components/ui/DynamicField";
 import { useState } from "react";
 
 export interface IStepFieldsProps {
@@ -27,19 +27,6 @@ const getTemplateDocGroupName = (group: Record<string, any>, locale: string | un
   const groupNameLocale = group?.["groupName_" + locale];
 
   return groupNameLocale ? groupNameLocale : groupName;
-};
-
-const getTemplateDocName = (path: string | null, name: string | null, regex: RegExp = /\[([^\]]*)\]/g) => {
-  if (path != null && name != null) {
-    if (regex.test(path)) {
-      const index = 0;
-      return path.replace(regex, (_, capture) => `${capture}.${index}.${name}`);
-    }
-
-    return `${path}.${name}`;
-  }
-
-  return name ?? "";
 };
 
 export default function FifthStepFields({
@@ -175,14 +162,17 @@ export default function FifthStepFields({
                           }}
                         />
                       ) : null}
-
                       <DynamicField
+                        disabled={item?.readonly}
+                        hidden={item?.hidden}
+                        required={!!item?.required}
+                        conditions={item?.conditions}
                         type={item?.fieldType}
                         form={dynamicForm}
                         label={item?.fieldTitles?.[locale ?? ""] ?? ""}
                         defaultValue={item?.defaultValue}
-                        required={!!item?.required}
-                        name={getTemplateDocName(item?.path, item?.fieldName)}
+                        fieldName={item?.fieldName}
+                        path={item?.path}
                         selectionName={item?.selection ?? ""}
                       />
                     </Grid>
