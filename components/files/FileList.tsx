@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -16,7 +16,10 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
   const { data: downloadData, update: downloadUpdate } = useFetch<Response>("", "GET", {
     returnResponse: true,
   });
-  const { update: deleteUpdate } = useFetch<Response>("", "DELETE");
+  const { data: deletedData, update: deleteUpdate } = useFetch<Response>("", "DELETE", {
+    returnResponse: true,
+  });
+  const { update: getId } = useFetch<Response>("", "POST");
 
   useEffectOnce(async () => {
     if (downloadData == null || downloadData.body == null || downloadData.blob == null) return;
@@ -41,13 +44,21 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
   };
 
   const handleDownloadClick = () => {
-    downloadUpdate(`/api/files/download/${row.id}`);
+    getId("/api/files/dms-from-meta/" + row.id).then((res) => {
+      downloadUpdate(`/api/files/download/${res.data[0]?.id}`);
+    });
   };
 
-  const handleDeleteClick = async () => {
-    await deleteUpdate(`/api/files/delete/${row.id}`);
-    onDelete();
+  const handleDeleteClick = () => {
+    getId("/api/files/dms-from-meta/" + row.id).then((res) => {
+      deleteUpdate(`/api/files/delete/${res.data[0]?.id}`);
+    });
   };
+
+  useEffectOnce(() => {
+    if (deletedData == null || deletedData.body == null) return;
+    onDelete();
+  }, [deletedData]);
 
   return (
     <Box>
@@ -147,19 +158,19 @@ export default function FileList() {
             width: 500,
           },
           {
-            field: "metaFile.createdOn",
+            field: "createdOn",
             headerName: "Upload date",
             width: 200,
             renderCell: ({ value }) => new Date(value).toLocaleDateString(locale),
           },
           {
-            field: "metaFile.sizeText",
+            field: "sizeText",
             headerName: "Size",
             width: 100,
             sortable: false,
           },
           {
-            field: "metaFile.fileType",
+            field: "fileType",
             headerName: "Format",
             width: 200,
             sortable: false,
