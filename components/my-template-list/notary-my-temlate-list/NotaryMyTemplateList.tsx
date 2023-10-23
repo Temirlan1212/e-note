@@ -129,9 +129,10 @@ export default function NotaryMyTemplateList() {
     {
       field: "actions",
       headerName: "Select action",
-      type: "acitons",
+      type: "actions",
       sortable: false,
       width: 160,
+      cellClassName: "actions-pinnable",
       renderCell: ({ row }) => <GridTableActionsCell row={row} />,
     },
   ];

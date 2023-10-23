@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { ValueOf } from "next/dist/shared/lib/constants";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { IActionType } from "@/models/action-type";
 import { IStatus } from "@/models/application-status";
 import useFetch from "@/hooks/useFetch";
-import { Box, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import Button from "@/components/ui/Button";
@@ -14,17 +14,21 @@ import Pagination from "@/components/ui/Pagination";
 import Link from "@/components/ui/Link";
 import { ApplicationListActions } from "./ApplicationListActions";
 import { ApplicationListQRMenu } from "./ApplicationListQRMenu";
+import SearchBar from "@/components/ui/SearchBar";
+import ClearIcon from "@mui/icons-material/Clear";
 
 interface IAppQueryParams {
   pageSize: number;
   page: number;
   sortBy: string[];
   filterValues: Record<string, (string | number)[]>;
+  searchValue: string;
 }
 
 export default function ApplicationList() {
   const t = useTranslations();
   const { locale } = useRouter();
+  const [searchValue, setSearchValue] = useState("");
   const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
   const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
   const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
@@ -38,6 +42,7 @@ export default function ApplicationList() {
     page: 1,
     sortBy: ["-creationDate"],
     filterValues: {},
+    searchValue: "",
   });
 
   const { data, loading, update } = useFetch("/api/applications", "POST", {
@@ -80,6 +85,27 @@ export default function ApplicationList() {
     }
   };
 
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setSearchValue(value);
+  };
+
+  const handleSearchSubmit = () => {
+    if (searchValue == null) return;
+    setAppQueryParams((prevParams) => ({
+      ...prevParams,
+      searchValue: searchValue,
+    }));
+  };
+
+  const handleReset = () => {
+    setSearchValue("");
+    setAppQueryParams((prevParams) => ({
+      ...prevParams,
+      searchValue: "",
+    }));
+  };
+
   const handleSortByDate = async (model: GridSortModel) => {
     const sortBy = model.map((s) => (s.sort === "asc" ? s.field : `-${s.field}`));
     updateAppQueryParams("sortBy", sortBy);
@@ -111,6 +137,26 @@ export default function ApplicationList() {
         </Link>
       </Box>
 
+      <Box
+        sx={{
+          marginBottom: "20px",
+          width: { xs: "100%", md: "70%" },
+        }}
+      >
+        <SearchBar
+          value={searchValue}
+          onChange={handleSearchChange}
+          onClick={handleSearchSubmit}
+          InputProps={{
+            endAdornment: (
+              <IconButton onClick={handleReset} sx={{ visibility: searchValue === "" ? "hidden" : "visible" }}>
+                <ClearIcon />
+              </IconButton>
+            ),
+          }}
+        />
+      </Box>
+
       <GridTable
         columns={[
           {
@@ -123,6 +169,18 @@ export default function ApplicationList() {
           {
             field: "notaryUniqNumber",
             headerName: "Unique number",
+            width: 200,
+            sortable: true,
+          },
+          {
+            field: "requester.fullName",
+            headerName: "Member-1",
+            width: 200,
+            sortable: true,
+          },
+          {
+            field: "members.fullName",
+            headerName: "Member-2",
             width: 200,
             sortable: true,
           },
@@ -211,6 +269,7 @@ export default function ApplicationList() {
             width: 200,
             sortable: false,
             type: "actions",
+            cellClassName: "actions-pinnable",
             renderCell: (params) => <ApplicationListActions params={params} onDelete={handleDelete} />,
           },
         ]}

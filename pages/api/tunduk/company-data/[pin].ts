@@ -10,6 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Cookie: req.headers["server-cookie"]?.toString() ?? "",
       Authorization: "Basic YWRtaW46YWRtaW4=",
     },
   });

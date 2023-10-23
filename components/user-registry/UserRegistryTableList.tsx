@@ -43,7 +43,7 @@ export default function UserRegistryTableList({
     { field: "fullName", headerName: "User's full name", width: 280, sortable: true },
     { field: "user.roles.name", headerName: "User role", width: 160, sortable: false },
     { field: "user.code", headerName: "Login", width: 140, sortable: true },
-    { field: "personalNumber", headerName: "PIN", width: 160, sortable: true },
+    { field: "personalNumber", headerName: "TIN", width: 160, sortable: true },
     { field: "mobilePhone", headerName: "Phone Number", width: 180, sortable: true },
     { field: "user.email", headerName: "E-mail", width: 220, sortable: true },
     {
@@ -57,9 +57,10 @@ export default function UserRegistryTableList({
     {
       field: "actions",
       headerName: "Action",
-      type: "acitons",
+      type: "actions",
       sortable: false,
       width: 120,
+      cellClassName: "actions-pinnable",
       renderCell: (params: GridRenderCellParams) => {
         const handleDeleteClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
           if (params.row?.["user.id"] != null) {

@@ -125,7 +125,7 @@
   "First name": "First name",
   "Middle name": "Middle name",
   "Birth date": "Birth date",
-  "PIN": "PIN",
+  "TIN": "TIN",
   "Street": "Street",
   "House": "House",
   "Apartment": "Apartment",
@@ -211,5 +211,7 @@
   "Executor": "Executor",
   "Declarant": "Declarant",
   "Applicant": "Applicant",
-  "Enter as description": "You have several roles. You need to select one to work in the system"
+  "Enter as description": "You have several roles. You need to select one to work in the system",
+  "Sorry, nothing found": "Sorry, nothing found",
+  "PIN": "PIN"
 }

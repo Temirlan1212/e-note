@@ -19,6 +19,7 @@ import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
+import { IPersonSchema } from "@/validator-schemas/person";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -77,15 +78,12 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
               loading={loading}
               names={{
                 ...getPersonalDataNames(index),
-                tundukDocumentSeries: `requester.${index}.tundukPassportSeries`,
-                tundukDocumentNumber: `requester.${index}.tundukPassportNumber`,
+                ...getTundukParamsFields(index),
               }}
-              disableFields={watch(`requester.${index}.tundukIsSuccess`)}
+              disableFields={watch(`requester.${index}.disabled`)}
               fields={{
                 nationality: true,
                 maritalStatus: true,
-                tundukDocumentSeries: index === 0,
-                tundukDocumentNumber: index === 0,
               }}
               onPinCheck={() => handlePinCheck(index)}
               onPinReset={() => handlePinReset(index)}
@@ -95,7 +93,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
               <>
                 <Typography variant="h5">{t("Identity document")}</Typography>
                 <IdentityDocument
-                  disableFields={watch(`requester.${index}.tundukIsSuccess`)}
+                  disableFields={watch(`requester.${index}.disabled`)}
                   form={form}
                   names={getIdentityDocumentNames(index)}
                 />
@@ -103,7 +101,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
             )}
 
             <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
-            <Address form={form} names={getAddressNames(index)} />
+            <Address form={form} names={getAddressNames(index)} disableFields={watch(`requester.${index}.disabled`)} />
 
             {partnerType != 1 && (
               <>
@@ -129,9 +127,17 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const { update: applicationFetch } = useFetch("", "POST");
   const { update: tundukPersonalDataFetch, loading: tundukPersonalDataLoading } = useFetch("", "POST");
 
+  const getTundukParamsFields = (index: number) =>
+    ({
+      tundukDocumentSeries: `requester.${index}.tundukPassportSeries`,
+      tundukDocumentNumber: `requester.${index}.tundukPassportNumber`,
+      tundukPersonalNumber: `requester.${index}.tundukPersonalNumber`,
+    }) as const;
+
   const getPersonalDataNames = (index: number) => ({
     type: `requester.${index}.partnerTypeSelect`,
     foreigner: `requester.${index}.foreigner`,
+    image: `requester.${index}.image`,
     lastName: `requester.${index}.lastName`,
     firstName: `requester.${index}.name`,
     middleName: `requester.${index}.middleName`,
@@ -340,10 +346,12 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     });
   };
 
-  const resetFields = (index: number) => {
+  const resetFields = (index: number, options?: { skip?: (keyof IPersonSchema)[] }) => {
     const allFields = {
       ...getPersonalDataNames(index),
       ...getIdentityDocumentNames(index),
+      ...getAddressNames(index),
+      ...getTundukParamsFields(index),
     };
 
     for (const key in allFields) {
@@ -354,7 +362,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       const fieldPath = name.split(".");
       const fieldLastItem = fieldPath[fieldPath.length - 1];
 
-      if (fieldLastItem === "personalNumber" || fieldLastItem === "partnerTypeSelect") continue;
+      if (options?.skip?.includes(fieldLastItem)) continue;
 
       if (isBoolean) {
         resetField(name as any, { defaultValue: false });
@@ -373,8 +381,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   };
 
   const handlePinReset = async (index: number) => {
-    setValue(`requester.${index}.tundukIsSuccess`, false);
-    resetFields(index);
+    setValue(`requester.${index}.disabled`, false);
+    resetFields(index, { skip: ["partnerTypeSelect"] });
   };
 
   const handlePinCheck = async (index: number) => {
@@ -384,30 +392,29 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     const values = getValues();
     const entity = "requester";
 
-    const triggerFields = [`${entity}.${index}.personalNumber`] as const;
+    const triggerFields = [getTundukParamsFields(index).tundukDocumentNumber] as const;
     const validated = await trigger(
-      isJuridicalPerson || index > 0
+      isJuridicalPerson
         ? triggerFields
-        : [...triggerFields, `${entity}.${index}.tundukPassportSeries`, `${entity}.${index}.tundukPassportNumber`]
+        : [
+            ...triggerFields,
+            getTundukParamsFields(index).tundukDocumentSeries,
+            getTundukParamsFields(index).tundukPersonalNumber,
+          ]
     );
 
     if (!validated) return;
 
-    if (values[entity] != null && values[entity][index].personalNumber) {
-      const pin = values[entity][index].personalNumber;
+    if (values[entity] != null) {
+      const pin = values[entity][index].tundukPersonalNumber;
       const series = values[entity][index].tundukPassportSeries;
       const number = values[entity][index].tundukPassportNumber;
 
-      let personalData: Record<string, any> | null = null;
+      const url = isJuridicalPerson
+        ? `/api/tunduk/company-data/${pin}`
+        : `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`;
 
-      if (index === 0) {
-        let url = isJuridicalPerson
-          ? `/api/tunduk/company-data/${pin}`
-          : `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`;
-        personalData = await tundukPersonalDataFetch(url);
-      } else {
-        personalData = await tundukPersonalDataFetch(`/api/tunduk`, { model: `/ws/tunduk/person/${pin}` });
-      }
+      const personalData = await tundukPersonalDataFetch(url);
 
       if (personalData?.status !== 0 || personalData?.data == null) {
         setAlertOpen(true);
@@ -423,8 +430,10 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
       setAlertOpen(false);
 
-      resetFields(index);
-      setValue(`requester.${index}.tundukIsSuccess`, true);
+      resetFields(index, {
+        skip: ["partnerTypeSelect", "tundukPassportNumber", "tundukPassportSeries", "tundukPersonalNumber"],
+      });
+      setValue(`requester.${index}.disabled`, true);
 
       const emailAddressName = isJuridicalPerson ? partner?.emailAddress?.name : partner?.emailAddress;
       setValue(`${entity}.${index}.emailAddress.address`, emailAddressName ?? "");
@@ -432,18 +441,16 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       const baseFields = [
         ...Object.values(getPersonalDataNames(index)),
         ...Object.values(getIdentityDocumentNames(index)),
+        ...Object.values(getAddressNames(index)),
       ];
 
       baseFields.map((field: any) => {
         const fieldPath = field.split(".");
         const fieldLastItem = fieldPath[fieldPath.length - 1];
         const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
-        if (
-          partner[tundukField ?? fieldLastItem] != null &&
-          fieldLastItem !== "personalNumber" &&
-          fieldLastItem !== "partnerTypeSelect"
-        ) {
-          setValue(field, partner[tundukField ?? fieldLastItem]);
+        const value = partner[tundukField ?? fieldLastItem] ?? partner?.mainAddress?.[tundukField ?? fieldLastItem];
+        if (value != null && fieldLastItem !== "partnerTypeSelect") {
+          setValue(field, value);
         }
       });
     }

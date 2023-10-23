@@ -38,7 +38,7 @@
   "Choose step by step": "Кийинки кадам аркылуу тандаңыз",
   "Select document from my templates": "Документти «Менин үлгүлөрүм» тандаңыз",
   "Select document from system templates": "Документти «Системдик үлгүлөр» тандаңыз",
-  "To enter a document into the registry and assign a unique document number, you need confirmation of your fingerprints and your EDS": "Документти реестрге киргизүү жана документтин уникалдуу номерин ыйгаруу үчүн сиздин манжа изиңизди жана ЭСКны тастыктоо керек",
+  "To enter a document into the registry and assign a unique document number, you need confirmation of your Face ID and your EDS": "Документти реестрге киргизүү жана документтин уникалдуу номерин ыйгаруу үчүн сиздин Face ID жана ЭСКны тастыктоо керек",
   "Entry into the register": "Реестрге киргизүү",
   "Assign a unique number and enter it in the registry": "Уникалдуу номер ыйгаруу жана реестрге киргизүү",
   "Knowledge of russian/kyrgyz": "Орус/кыргыз тилдерин билүү",
@@ -65,5 +65,14 @@
   "Organ number": "Орган номери",
   "Write a message": "Билдирүүнү жазуу",
   "Select the user you want to contact": "Сиз байланышкыңыз келген колдонуучуну тандаңыз",
-  "User unavailable": "Колдонуучу жеткиликсиз"
+  "User unavailable": "Колдонуучу жеткиликсиз",
+  "Verify": "Текшерүү аркылуу өтүңүз",
+  "Confirmation of identity": "Жеке көзөмөлдөө",
+  "Without EDS": "Менде ЭСК жок",
+  "Without Face ID": "Менде Face ID жок",
+  "By fingerprint": "Манжа изи боюнча",
+  "By face id": "Face id боюнча",
+  "Camera unavailable": "Камера жеткиликтүү эмес",
+  "Member-1": "Катышуучу-1",
+  "Member-2": "Катышуучу-2"
 }

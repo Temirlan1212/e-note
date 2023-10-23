@@ -42,7 +42,7 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
           popup: (
             <>
               <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={600}>
-                {item?.name}
+                {item?.partner?.fullName}
               </Typography>
               <Typography fontSize={{ xs: 9, sm: 10, md: 12, lg: 14 }} fontWeight={500}>
                 {item?.address?.fullName}

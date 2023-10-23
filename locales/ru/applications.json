@@ -38,7 +38,7 @@
   "Choose step by step": "Выберите пошагово",
   "Select document from my templates": "Выбрать документ из «Мои шаблоны»",
   "Select document from system templates": "Выбрать документ из «Системные шаблоны»",
-  "To enter a document into the registry and assign a unique document number, you need confirmation of your fingerprints and your EDS": "Для внесения документа в реестр и присвоения уникального номера документу, нужно подтверждение отпечатка ваших пальцев и ваша ЭЦП",
+  "To enter a document into the registry and assign a unique document number, you need confirmation of your Face ID and your EDS": "Для внесения документа в реестр и присвоения уникального номера документу, нужно подтверждение Face ID и ваша ЭЦП",
   "Entry into the register": "Внесение в реестр",
   "Assign a unique number and enter it in the registry": "Присвоить уникальный номер и внести в реестр",
   "Knowledge of russian/kyrgyz": "Знание русского/кыргызского",
@@ -65,5 +65,14 @@
   "Organ number": "Номер органа",
   "Write a message": "Напиcать сообщение",
   "Select the user you want to contact": "Выберите пользователя с которым хотите связаться",
-  "User unavailable": "Пользователь недоступен"
+  "User unavailable": "Пользователь недоступен",
+  "Verify": "Пройти верификацию",
+  "Confirmation of identity": "Подтверждение личности",
+  "Without EDS": "У меня нет ЭЦП",
+  "Without Face ID": "У меня нет Face ID",
+  "By fingerprint": "По отпечатку пальца",
+  "By face id": "По face id",
+  "Camera unavailable": "Камера недоступна",
+  "Member-1": "Участник-1",
+  "Member-2": "Участник-2"
 }

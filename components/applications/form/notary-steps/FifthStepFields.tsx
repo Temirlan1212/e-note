@@ -3,7 +3,7 @@ import { UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Grid, Typography } from "@mui/material";
+import { Alert, Box, Collapse, Grid, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import TundukDynamicFields from "@/components/fields/TundukDynamicFields";
 import DynamicField from "@/components/ui/DynamicField";
+import { useState } from "react";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -28,15 +29,11 @@ const getTemplateDocGroupName = (group: Record<string, any>, locale: string | un
   return groupNameLocale ? groupNameLocale : groupName;
 };
 
-const getTemplateDocName = (
-  path: string | null,
-  name: string | null,
-  regex: RegExp = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)(?:\.|$)/
-) => {
+const getTemplateDocName = (path: string | null, name: string | null, regex: RegExp = /\[([^\]]*)\]/g) => {
   if (path != null && name != null) {
     if (regex.test(path)) {
       const index = 0;
-      return `${path}.${index}.${name}`;
+      return path.replace(regex, (_, capture) => `${capture}.${index}.${name}`);
     }
 
     return `${path}.${name}`;
@@ -56,13 +53,10 @@ export default function FifthStepFields({
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
-  const {
-    data: tundukVehicleData,
-    update: tundukVehicleDataFetch,
-    loading: tundukVehicleDataLoading,
-  } = useFetch("", "POST");
+  const { update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
 
   const {
     update: getDocumentTemplateData,
@@ -119,6 +113,7 @@ export default function FifthStepFields({
 
     const vehicleData = await tundukVehicleDataFetch(`/api/tunduk`, { model: tundukUrl });
     if (vehicleData?.status !== 0 || vehicleData?.data == null) {
+      setAlertOpen(true);
       return;
     }
 
@@ -126,36 +121,26 @@ export default function FifthStepFields({
       const formName = getTemplateDocName(field?.path, field?.fieldName);
       const fieldName = field?.fieldName;
       const value = vehicleData?.data?.[0]?.[fieldName] ?? vehicleData?.data?.[0]?.notaryPartner?.[0]?.[fieldName];
-
-      if (value != null && value !== "") {
-        dynamicForm.setValue(formName, value);
-        dynamicForm.setError(formName, { type: "disabled" });
-      }
+      if (value != null && value !== "") dynamicForm.setValue(formName, value);
     });
+
+    setAlertOpen(false);
+    dynamicForm.setValue(`movable.${0}.disabled`, true);
   };
 
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
-    let data = { ...documentTemplateData };
-    if (data?.data == null) {
-      data = await getDocumentTemplateData("/api/dictionaries/document-type/template/" + productId);
-    }
-
-    data?.data.map((group: Record<string, any>) => {
-      group?.fields.map(async (item: Record<string, any>) => {
-        if (String(item?.fieldType).toLocaleLowerCase() === "tunduk") {
-          const values: Record<string, any> = tundukParamsFieldsForm.getValues();
-          if (Object.values(values).some((item) => !item)) return;
-
-          handlePinCheck(item?.url, tundukParamsFieldsForm.getValues(), item?.responseFields);
-        }
-      });
-    });
   });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <StepperContentStep step={5} title={t("Additional information")} loading={documentTemplateLoading} />
+
+      <Collapse in={alertOpen}>
+        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+          {t("Sorry, nothing found")}
+        </Alert>
+      </Collapse>
 
       <Box display="flex" flexDirection="column" gap="30px">
         {documentTemplateData?.data &&
@@ -177,13 +162,13 @@ export default function FifthStepFields({
                       justifyContent="end"
                       gap="50px"
                     >
-                      {String(item?.fieldType).toLocaleLowerCase() === "tunduk" && form.watch("object") === 1 ? (
+                      {String(item?.fieldType).toLocaleLowerCase() === "tunduk" ? (
                         <TundukDynamicFields
                           loading={tundukVehicleDataLoading}
                           form={dynamicForm}
                           paramsForm={tundukParamsFieldsForm}
                           fields={item?.fields}
-                          responseFields={tundukVehicleData?.data != null ? item?.responseFields : null}
+                          responseFields={dynamicForm?.getValues(`movable.${0}.disabled`) ? item?.responseFields : null}
                           onPinCheck={async (paramsForm) => {
                             const validated = await paramsForm.trigger();
                             if (validated) handlePinCheck(item?.url, paramsForm.getValues(), item?.responseFields);

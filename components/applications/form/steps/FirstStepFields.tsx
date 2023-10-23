@@ -35,6 +35,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
   const city = watch("city");
   const notaryDistrict = watch("notaryDistrict");
+  const region = watch("region");
+  const district = watch("district");
 
   const [loading, setLoading] = useState(false);
 
@@ -43,8 +45,10 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     "GET"
   );
   const { data: companyDictionary, loading: companyDictionaryLoading } = useFetch(
-    `/api/companies${notaryDistrict != null ? "?notaryDistrictId=" + notaryDistrict.id : ""}`,
-    "GET"
+    `/api/companies?notaryDistrictId=${notaryDistrict?.id ?? ""}&regionId=${region?.id ?? ""}&districtId=${
+      district?.id ?? ""
+    }&cityId=${city?.id ?? ""}`,
+    "POST"
   );
 
   const { update: applicationCreate } = useFetch("", "POST");

@@ -56,12 +56,12 @@ export const routes: IRoute[] = [
         type: "menu",
         icon: "ReceiptLong",
       },
-      {
-        title: "Black list",
-        link: "/black-list",
-        type: "menu",
-        icon: "Block",
-      },
+      // {
+      //   title: "Black list",
+      //   link: "/black-list",
+      //   type: "menu",
+      //   icon: "Block",
+      // },
     ],
   },
   {
@@ -84,11 +84,11 @@ export const routes: IRoute[] = [
       },
     ],
   },
-  {
-    title: "User registry",
-    link: "/user-registry",
-    role: "notary",
-    type: "menu",
-    icon: "PersonAddAlt1",
-  },
+  // {
+  //   title: "User registry",
+  //   link: "/user-registry",
+  //   role: "notary",
+  //   type: "menu",
+  //   icon: "PersonAddAlt1",
+  // },
 ];

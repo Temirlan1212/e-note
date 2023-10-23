@@ -15,6 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
   const filterValues = req.body["filterValues"];
+  const searchValue = req.body["searchValue"];
   const isFilterValueEmty = () => Object.keys(filterValues).length < 1;
 
   const requestBody: {
@@ -31,6 +32,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     ) as IApplicationsQueryParamsData["_domainContext"];
 
     requestBody.data = { _domain, _domainContext };
+  }
+
+  const criteria = [];
+
+  if (searchValue) {
+    criteria.push({
+      fieldName: "requester.fullName",
+      operator: "like",
+      value: searchValue,
+    });
+    criteria.push({
+      fieldName: "members.fullName",
+      operator: "like",
+      value: searchValue,
+    });
+    criteria.push({
+      fieldName: "notaryUniqNumber",
+      operator: "=",
+      value: searchValue,
+    });
   }
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.sale.db.SaleOrder/search", {
@@ -56,8 +77,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "company.name",
         "uniqueQrCode",
         "notaryUniqNumber",
+        "members.fullName",
+        "requester.fullName",
       ],
       sortBy: req.body["sortBy"] ?? [],
+      data: {
+        criteria: [
+          {
+            operator: "or",
+            criteria,
+          },
+        ],
+      },
       ...requestBody,
       ...req.body,
     }),
