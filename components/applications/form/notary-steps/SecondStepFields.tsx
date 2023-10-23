@@ -110,14 +110,6 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
     }
   };
 
-  const getLabelField = (data: FetchResponseBody | null) => {
-    if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
-      const item = data.data.find((item) => item.hasOwnProperty("$t:name"));
-      return item != null ? "$t:name" : "name";
-    }
-    return "name";
-  };
-
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
@@ -138,7 +130,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
               <InputLabel>{t("Select document from system templates")}</InputLabel>
               <Autocomplete
-                labelField={getLabelField(systemDocuments)}
+                labelField={locale !== "en" ? "$t:name" : "name"}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={selectedInput !== "system" && selectedInput !== null}
@@ -168,7 +160,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
               <Box width="100%" display="flex" flexDirection="column" gap="10px">
                 <InputLabel>{t("Select document from my templates")}</InputLabel>
                 <Select
-                  labelField={getLabelField(myDocuments)}
+                  labelField={locale !== "en" ? "$t:name" : "name"}
                   valueField="id"
                   selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   disabled={selectedInput !== "my" && selectedInput !== null}

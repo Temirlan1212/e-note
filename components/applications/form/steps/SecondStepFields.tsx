@@ -90,16 +90,6 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
     }
   };
 
-  const getLabelField = (data: FetchResponseBody | null) => {
-    if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
-      const item = data.data.find((item) => item.hasOwnProperty("$t:name"));
-      return item != null ? "$t:name" : "name";
-    }
-    return "name";
-  };
-
-  console.log(searchedDocData);
-
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
@@ -298,7 +288,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
             <InputLabel>{t("Document")}</InputLabel>
             <Autocomplete
               disabled={!actionVal}
-              labelField={getLabelField(searchedDocData)}
+              labelField={locale !== "en" ? "$t:name" : "name"}
               type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
               helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
               options={searchedDocData?.status === 0 ? (searchedDocData?.data as Record<string, any>[]) ?? [] : []}
