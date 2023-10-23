@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return acc;
   }, []);
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.dms.db.DMSFile/search", {
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.meta.db.MetaFile/search", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -25,18 +25,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     body: JSON.stringify({
       offset: page,
       limit: pageSize,
-      fields: ["fileName", "relatedModel", "metaFile.createdOn", "metaFile.fileSizeText", "metaFile.fileType"],
+      sortBy: req.body["sortBy"] ?? [],
+      fields: ["fileName", "filePath", "fileType", "sizeText", "createdOn"],
       data: {
         operator: "and",
         criteria: [
           {
-            fieldName: "isDirectory",
-            operator: "=",
-            value: "false",
+            fieldName: "fileName",
+            operator: "notLike",
+            value: "SaleOrderQRCode_",
           },
           ...criteria,
         ],
-        sortBy: req.body["sortBy"] ?? [],
       },
     }),
   });
