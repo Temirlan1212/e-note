@@ -28,6 +28,7 @@ function Layout({ children }: { children: JSX.Element }) {
   const router = useRouter();
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
+  const [previousPath, setPreviousPath] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
   const { loading, update: setRole } = useFetch("", "GET");
@@ -42,17 +43,16 @@ function Layout({ children }: { children: JSX.Element }) {
     }
   });
 
-  useEffectOnce(() => {
+  useEffectOnce(async () => {
     setUser(profile.user);
 
     if (!profile.userRoleSelected && profile.userData?.activeCompany != null) setIsOpen(true);
 
-    const queryParams = new URLSearchParams(window.location.search);
-    const back = queryParams.get("back");
+    if (profile.user == null && router.route.length > 1) setPreviousPath(router.route);
+    if (profile.user != null && previousPath != null) (await router.push(previousPath)) && setPreviousPath(null);
 
     if (profile.user == null && isRoutesIncludesPath(userRoutesRendered, router.route)) router.push("/");
     if (profile.user != null && isRoutesIncludesPath(guestRoutesRendered, router.route)) router.push("/applications");
-    if (back) router.push(back);
   }, [profile.user, router.route]);
 
   const handleChooseRole = async (role: 1 | 2) => {
