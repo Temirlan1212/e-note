@@ -174,6 +174,7 @@ export default function FifthStepFields({
                         fieldName={item?.fieldName}
                         path={item?.path}
                         selectionName={item?.selection ?? ""}
+                        options={item?.options}
                       />
                     </Grid>
                   ))}

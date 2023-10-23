@@ -55,6 +55,7 @@ export default function TundukDynamicFields({
                 fieldName={item?.fieldName}
                 path={item?.path}
                 selectionName={item?.selection ?? ""}
+                options={item?.options}
               />
             </Grid>
           ))}
