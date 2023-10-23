@@ -337,6 +337,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
       <Box
         component="form"
         display="flex"
+        position="relative"
         flexDirection="column"
         gap="30px"
         mb={3}
