@@ -174,13 +174,13 @@ export default function ApplicationList() {
           },
           {
             field: "requester.fullName",
-            headerName: "Member",
+            headerName: "Member-1",
             width: 200,
             sortable: true,
           },
           {
             field: "members.fullName",
-            headerName: "Member",
+            headerName: "Member-2",
             width: 200,
             sortable: true,
           },
