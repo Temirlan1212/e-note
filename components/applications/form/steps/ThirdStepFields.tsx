@@ -238,7 +238,20 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
 
       {partnerType != 1 && (
         <>
-          <Typography variant="h5">{t("Actual place of residence")}</Typography>
+          <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap="10px">
+            <Typography variant="h5">{t("Actual place of residence")}</Typography>
+            <Button
+              sx={{ width: "fit-content" }}
+              onClick={() => {
+                Object.entries(getAddressNames(0) ?? {})?.map(([key, name]) => {
+                  setValue((getActualAddressNames(0) as any)[key], getValues(name as any));
+                });
+              }}
+            >
+              {t("Copy the place of residence")}
+            </Button>
+          </Box>
+
           <Address form={form} names={getActualAddressNames(0)} />
         </>
       )}
