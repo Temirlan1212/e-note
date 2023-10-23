@@ -5,7 +5,7 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import ChatIcon from "@mui/icons-material/Chat";
@@ -33,6 +33,35 @@ export const ApplicationListActions = ({
   const { update } = useFetch<Response>("", "DELETE", {
     returnResponse: true,
   });
+  const { update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
+  const { update: downloadUpdate } = useFetch<FetchResponseBody | null>("", "POST");
+
+  const handleDownloadClick = async () => {
+    const pdfResponse = await downloadUpdate(`/api/applications/download/${params.row.id}`);
+    handlePdfDownload(
+      pdfResponse?.data[0]?.documentInfo?.pdfLink,
+      pdfResponse?.data[0]?.documentInfo?.token,
+      pdfResponse?.data[0]?.documentInfo?.name
+    );
+  };
+
+  const handlePdfDownload = async (pdfLink: string, token: string, fileName: string) => {
+    if (!pdfLink || !token) return;
+
+    const response = await getPdf(`/api/adapter?url=${pdfLink}&token=${token}`);
+    const blob = await response?.blob();
+    if (blob == null) return;
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = fileName || "document.pdf";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  };
 
   const handleToggle = () => {
     setOpenModal(!openModal);
@@ -119,9 +148,9 @@ export const ApplicationListActions = ({
         </Tooltip>
       </Link>
 
-      <Link href="applications/">
+      <Link href="">
         <Tooltip title={t("Download")} arrow>
-          <IconButton>
+          <IconButton onClick={handleDownloadClick}>
             <DownloadIcon />
           </IconButton>
         </Tooltip>
