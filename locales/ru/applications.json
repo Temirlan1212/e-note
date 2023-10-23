@@ -76,5 +76,7 @@
   "Without Face ID": "У меня нет Face ID",
   "By fingerprint": "По отпечатку пальца",
   "By face id": "По face id",
-  "Camera unavailable": "Камера недоступна"
+  "Camera unavailable": "Камера недоступна",
+  "Member-1": "Участник-1",
+  "Member-2": "Участник-2"
 }
