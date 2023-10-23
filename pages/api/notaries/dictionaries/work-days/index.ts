@@ -1,8 +1,7 @@
+import { FetchResponseBody } from "@/hooks/useFetch";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { INotaryTypeSelections } from "@/models/notaries";
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse<INotaryTypeSelections | null>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<FetchResponseBody | null>) {
   if (req.method !== "GET" && req.body == null) {
     return res.status(400).json(null);
   }
