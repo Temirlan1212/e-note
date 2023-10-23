@@ -11,6 +11,7 @@ import { useRouter } from "next/router";
 import useFetch from "@/hooks/useFetch";
 import { Dispatch, SetStateAction, useState } from "react";
 import useEffectOnce from "@/hooks/useEffectOnce";
+import Radio from "./Radio";
 
 export type Variant =
   | "Boolean"
@@ -21,7 +22,8 @@ export type Variant =
   | "String"
   | "Time"
   | "DateTime"
-  | "Date";
+  | "Date"
+  | "Radio";
 
 export type TCondition = Record<string, any>[] | Record<string, any>;
 
@@ -44,6 +46,7 @@ export interface IDynamicFieldProps {
   path?: string;
   hidden?: boolean;
   conditions?: Partial<TConditions>;
+  options?: Record<string, any>[];
 }
 
 export const getName = (path: string | undefined, name: string | null, regex: RegExp = /\[([^\]]*)\]/g) => {
@@ -70,6 +73,7 @@ const getValue = (field: Variant, value: any) => {
     Decimal: isEmptyOrNull(value) ? "" : parseInt(value),
     Integer: isEmptyOrNull(value) ? "" : parseInt(value),
     String: isEmptyOrNull(value) ? "" : value,
+    Radio: isEmptyOrNull(value) ? "" : value,
     Date: isDate ? value : isInvalidDate ? null : new Date(String(value)),
     Time: isDate ? value : isInvalidDate ? null : new Date(Date.parse(value)),
     DateTime: isDate ? value : isInvalidDate ? null : new Date(String(value)),
@@ -87,9 +91,10 @@ const getField = (
     errorMessage?: string;
     selectionData?: Record<string, any>[];
     disabled?: boolean;
+    options?: Record<string, any>[];
   }
 ) => {
-  const { field, selectionData, errorMessage, disabled, form, locale } = props;
+  const { field, selectionData, errorMessage, disabled, form, locale, options } = props;
   const { trigger } = form;
 
   const types = {
@@ -140,7 +145,7 @@ const getField = (
       <Select
         fullWidth
         selectType={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        data={selectionData ?? []}
+        data={selectionData && selectionData?.length > 0 ? selectionData : options ?? []}
         labelField={"title_" + locale}
         valueField="value"
         helperText={errorMessage}
@@ -190,6 +195,18 @@ const getField = (
         disabled={disabled}
       />
     ),
+    Radio: (
+      <Radio
+        labelField={"title_" + locale}
+        valueField="value"
+        row
+        type={errorMessage ? "error" : field.value ? "success" : "secondary"}
+        helperText={errorMessage}
+        data={selectionData && selectionData?.length > 0 ? selectionData : options ?? []}
+        {...field}
+        value={getValue("Radio", field.value)}
+      />
+    ),
   };
 
   return types[type];
@@ -222,8 +239,20 @@ const getConditionRuleValue = (condition: TCondition, form: UseFormReturn<any>, 
 };
 
 const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
-  const { form, type, selectionName, disabled, fieldName, label, defaultValue, required, path, hidden, conditions } =
-    props;
+  const {
+    form,
+    type,
+    selectionName,
+    disabled,
+    fieldName,
+    label,
+    defaultValue,
+    required,
+    path,
+    hidden,
+    conditions,
+    ...rest
+  } = props;
 
   const { update: selectionUpdate } = useFetch("", "POST");
 
@@ -291,6 +320,7 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
               disabled: rules?.disabled || fieldState.error?.type === "disabled",
               form,
               locale,
+              ...rest,
             })}
           </Box>
         );
