@@ -24,6 +24,16 @@ function Layout({ children }: { children: JSX.Element }) {
   const [user, setUser]: [IUser | null, Function] = useState(null);
   const [previousPath, setPreviousPath] = useState<string | null>(null);
 
+  useEffectOnce(async () => {
+    const params = new URL(document.location.toString()).searchParams;
+    const code = params.get("code");
+
+    if (code != null) {
+      profile.logInEsi(code);
+      console.log(code);
+    }
+  });
+
   useEffectOnce(() => {
     switch (router.asPath) {
       case "/login":

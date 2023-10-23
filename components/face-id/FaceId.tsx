@@ -18,19 +18,20 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
   const [isCameraAvailable, setIsCameraAvailable] = useState(true);
   const [alertOpen, setAlertOpen] = useState(false);
 
-  const { update } = useFetch("", "POST");
+  const { update, loading } = useFetch("", "POST");
 
   const handleStartCaptureClick = useCallback(() => {
+    setAlertOpen(false);
     setCapturing(true);
-    mediaRecorderRef.current = new MediaRecorder(webcamRef.current?.stream as MediaStream, {
-      mimeType: "video/webm",
+    const mediaRecorder = new MediaRecorder(webcamRef.current?.stream as MediaStream, {
+      mimeType: "video/webm;codecs=H264",
       videoBitsPerSecond: 200000,
     });
-    mediaRecorderRef.current?.addEventListener("dataavailable", handleDataAvailable);
-    mediaRecorderRef.current?.start();
+    mediaRecorder.addEventListener("dataavailable", handleDataAvailable);
+    mediaRecorder.start();
 
     setTimeout(() => {
-      mediaRecorderRef.current?.stop();
+      mediaRecorder.stop();
       setCapturing(false);
     }, 2000);
   }, [recordedChunks, webcamRef, setCapturing, mediaRecorderRef]);
@@ -99,6 +100,7 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
               }}
               buttonType="secondary"
               onClick={handleStartCaptureClick}
+              loading={loading}
               disabled={capturing}
             >
               {t("Verify")}

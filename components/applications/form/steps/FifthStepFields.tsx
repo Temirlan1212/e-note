@@ -26,15 +26,11 @@ const getTemplateDocGroupName = (group: Record<string, any>, locale: string | un
   return groupNameLocale ? groupNameLocale : groupName;
 };
 
-const getTemplateDocName = (
-  path: string | null,
-  name: string | null,
-  regex: RegExp = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)(?:\.|$)/
-) => {
+const getTemplateDocName = (path: string | null, name: string | null, regex: RegExp = /\[([^\]]*)\]/g) => {
   if (path != null && name != null) {
     if (regex.test(path)) {
       const index = 0;
-      return `${path}.${index}.${name}`;
+      return path.replace(regex, (_, capture) => `${capture}.${index}.${name}`);
     }
 
     return `${path}.${name}`;
