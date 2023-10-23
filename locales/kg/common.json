@@ -186,7 +186,7 @@
   "dayGenitive": "күн",
   "dayAccusative": "күн",
   "Show more": "Көбүрөөк жүктөө",
-  "status change": "Статусу өзгөрдү",
+  "status changed": "Статусу өзгөрдү",
   "Organ number": "Орган номери",
   "Nationality": "Улуту",
   "Validity status": "Жарактуулук статусу",
@@ -213,5 +213,6 @@
   "Applicant": "Арыз ээси",
   "Enter as description": "Сизде бир нече ролдор бар. Системада иштөө үчүн бирин тандашыңыз керек",
   "Sorry, nothing found": "Кечиресиз, эч нерсе табылган жок",
-  "PIN": "ПИН"
+  "PIN": "ПИН",
+  "Copy the place of residence": "Жашаган жерден көчүрүү"
 }
