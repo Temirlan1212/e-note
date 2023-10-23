@@ -16,37 +16,6 @@ export interface INotary {
   name: string;
 }
 
-export interface INotaryData {
-  data: INotary[];
-  total: number;
-}
-
-export interface INotarySelections {
-  status: number;
-  offset: number;
-  total: number;
-  data: INotarySelectionsData[];
-}
-
-export interface INotarySelectionsData {
-  name: string;
-  id: number;
-  version: number;
-}
-
-export interface INotaryTypeSelections {
-  status: number;
-  data: INotaryTypeSelectionsData[];
-}
-
-export interface INotaryTypeSelectionsData {
-  order_seq: number;
-  title_fr: string;
-  title_en: string;
-  title: string;
-  value: string;
-}
-
 export interface INotaryInfoData {
   notaryDistrict: {
     name: string;

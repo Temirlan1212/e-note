@@ -23,7 +23,7 @@ interface IRowData {
   status: number;
   offset: number;
   total: number;
-  data: Array<Record<string, any>>;
+  data?: Array<Record<string, any>>;
 }
 
 export default function ForeignInstitutionsOfficialsContent() {

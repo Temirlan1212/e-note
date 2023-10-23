@@ -9,6 +9,7 @@ import { Box, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import ApplicationStatusRead from "./ApplicationStatusRead";
 import ApplicationStatusView from "./ApplicationStatusView";
+import ApplicationStatusRating from "./ApplicationStatusRating";
 import useFetch from "@/hooks/useFetch";
 import { useProfileStore } from "@/stores/profile";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -26,6 +27,9 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
   const { data, loading } = useFetch(id != null ? `/api/applications/${id}` : "", "POST");
 
   const profile = useProfileStore((state) => state);
+
+  const userIsNotary = profile?.userData?.group?.id === 4;
+  const applicationStatusIsCompleted = data?.data[0]?.statusSelect === 1;
 
   const extractIDs = (...data: any) => {
     const allIDs: number[] = [];
@@ -68,6 +72,9 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
       flexDirection="column"
       gap="40px"
     >
+      {accessToView && !userIsNotary && applicationStatusIsCompleted && (
+        <ApplicationStatusRating data={data?.data[0]} />
+      )}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Typography
           sx={{

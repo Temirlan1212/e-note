@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { INotaryData, INotaryFilterData } from "@/models/notaries";
+import { INotaryFilterData } from "@/models/notaries";
+import { FetchResponseBody } from "@/hooks/useFetch";
 
 interface Criteria {
   value: any;
@@ -8,7 +9,7 @@ interface Criteria {
   operator: string;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<INotaryData | null>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<FetchResponseBody | null>) {
   if (req.method !== "POST" && req.body == null) {
     return res.status(400).json(null);
   }

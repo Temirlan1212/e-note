@@ -1,15 +1,16 @@
 import { FC } from "react";
 import { Box, CircularProgress, Grid } from "@mui/material";
 import NotariesCard from "./NotariesCard";
-import { INotary, INotaryData } from "@/models/notaries";
+import { INotary } from "@/models/notaries";
 import Link from "next/link";
 import Pagination from "../ui/Pagination";
 import { INotariesQueryParams } from "./NotariesContent";
+import { FetchResponseBody } from "@/hooks/useFetch";
 
 interface INotaryListProps {
   handlePageChange: (val: any) => void;
   loading: boolean;
-  data: INotaryData | null;
+  data: FetchResponseBody | null;
   notariesQueryParams: INotariesQueryParams;
 }
 

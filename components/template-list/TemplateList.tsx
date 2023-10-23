@@ -20,7 +20,7 @@ interface IRowData {
   status: number;
   offset: number;
   total: number;
-  data: Array<Record<string, any>>;
+  data?: Array<Record<string, any>>;
 }
 
 function GridTableActionsCell({ row }: { row: Record<string, any> }) {
