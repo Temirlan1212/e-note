@@ -37,7 +37,7 @@ export const personSchema = object()
       .trim()
       .when("foreigner", {
         is: true,
-        then: (schema) => schema.required("required"),
+        then: (schema) => schema.nullable(),
         otherwise: (schema) =>
           schema
             .min(14, "minNumbers")
@@ -145,7 +145,7 @@ export const personSchema = object()
       .trim()
       .when("foreigner", {
         is: true,
-        then: (schema) => schema.required("required"),
+        then: (schema) => schema.nullable(),
         otherwise: (schema) =>
           schema
             .min(14, "minNumbers")
