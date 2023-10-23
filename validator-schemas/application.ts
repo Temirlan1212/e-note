@@ -47,12 +47,11 @@ export const applicationSchema = object()
       .nullable()
       .test("nullable-required", "required", (v) => v != null),
     product: object({
-      id: number()
-        .integer()
-        .transform((value) => (isNaN(value) ? null : value))
-        .nullable()
-        .test("nullable-required", "required", (v) => v != null),
-    }),
+      id: number().integer().positive(),
+    })
+      .nullable()
+      .default(null)
+      .test("nullable-required", "required", (v) => v != null),
     requester: array().of(personSchema),
     members: array().of(
       personSchema.concat(

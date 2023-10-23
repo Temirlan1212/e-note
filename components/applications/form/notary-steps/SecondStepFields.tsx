@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { useProfileStore } from "@/stores/profile";
@@ -14,6 +14,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import { criteriaFieldNames } from "@/pages/api/dictionaries/document-type";
+import Autocomplete from "@/components/ui/Autocomplete";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -25,6 +26,8 @@ export interface IStepFieldsProps {
 export default function SecondStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const profile = useProfileStore.getState();
   const t = useTranslations();
+
+  const locale = useLocale();
 
   const { trigger, control, getValues, setValue, watch } = form;
 
@@ -64,7 +67,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   }, [productId, profile]);
 
   const triggerFields = async () => {
-    return await trigger(["product.id"]);
+    return await trigger(["product"]);
   };
 
   const handlePrevClick = () => {
@@ -121,40 +124,43 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller
           control={control}
-          name="product.id"
+          name="product"
           defaultValue={null}
-          render={({ field, fieldState }) => {
-            return (
-              <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                <InputLabel>{t("Select document from system templates")}</InputLabel>
-                <Select
-                  labelField="name"
-                  valueField="id"
-                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  disabled={selectedInput !== "system" && selectedInput !== null}
-                  data={systemDocuments?.status === 0 ? (systemDocuments?.data as IProduct[]) ?? [] : []}
-                  loading={systemDocumentsLoading}
-                  value={field.value == null ? "" : field.value}
-                  onBlur={field.onBlur}
-                  onChange={(...event: any[]) => {
-                    field.onChange(...event);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            );
-          }}
+          render={({ field, fieldState }) => (
+            <Box width="100%" display="flex" flexDirection="column" gap="10px">
+              <InputLabel>{t("Select document from system templates")}</InputLabel>
+              <Autocomplete
+                labelField={locale !== "en" ? "$t:name" : "name"}
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={selectedInput !== "system" && selectedInput !== null}
+                options={systemDocuments?.status === 0 ? (systemDocuments?.data as Record<string, any>[]) ?? [] : []}
+                loading={systemDocumentsLoading}
+                value={
+                  field.value != null
+                    ? (systemDocuments?.data ?? []).find((item: Record<string, any>) => item.id == field.value?.id) ??
+                      null
+                    : null
+                }
+                onBlur={field.onBlur}
+                onChange={(event, value) => {
+                  field.onChange(value?.id != null ? { id: value.id } : null);
+                  trigger(field.name);
+                }}
+              />
+            </Box>
+          )}
         />
         <Controller
           control={control}
-          name="product.id"
+          name="product"
           defaultValue={null}
           render={({ field, fieldState }) => {
             return (
               <Box width="100%" display="flex" flexDirection="column" gap="10px">
                 <InputLabel>{t("Select document from my templates")}</InputLabel>
                 <Select
-                  labelField="name"
+                  labelField={locale !== "en" ? "$t:name" : "name"}
                   valueField="id"
                   selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   disabled={selectedInput !== "my" && selectedInput !== null}

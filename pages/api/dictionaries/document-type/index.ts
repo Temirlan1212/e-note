@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     body: JSON.stringify({
       offset: 0,
       limit: 100,
-      fields: ["name", "fullName", ...Object.values(criteriaFieldNames)],
+      fields: ["name", "fullName", "$t:name", "$t:fullName", ...Object.values(criteriaFieldNames)],
       translate: true,
       data: {
         operator: "and",

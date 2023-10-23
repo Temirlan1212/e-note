@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box, InputLabel, Typography } from "@mui/material";
@@ -13,6 +13,7 @@ import Hint from "@/components/ui/Hint";
 import { useRouter } from "next/router";
 import { INotarialActionData } from "@/models/notarial-action";
 import StepperContentStep from "@/components/ui/StepperContentStep";
+import Autocomplete from "@/components/ui/Autocomplete";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -40,7 +41,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
     "/api/dictionaries/notarial-action",
     "GET"
   );
-  const { data: searchedDocData } = useFetch("/api/dictionaries/document-type", "POST", {
+  const { data: searchedDocData, loading: searchedDocLoading } = useFetch("/api/dictionaries/document-type", "POST", {
     body: formValues,
   });
 
@@ -54,7 +55,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
   }, [actionVal]);
 
   const triggerFields = async () => {
-    return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action", "product.id"]);
+    return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action", "product"]);
   };
 
   const handlePrevClick = () => {
@@ -126,7 +127,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  ["objectType", "notarialAction", "typeNotarialAction", "action", "product.id"].map((item: any) =>
+                  ["objectType", "notarialAction", "typeNotarialAction", "action", "product"].map((item: any) =>
                     resetField(item, { defaultValue: null })
                   );
                 }}
@@ -162,7 +163,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  ["notarialAction", "typeNotarialAction", "action", "product.id"].map((item: any) =>
+                  ["notarialAction", "typeNotarialAction", "action", "product"].map((item: any) =>
                     resetField(item, { defaultValue: null })
                   );
                 }}
@@ -200,7 +201,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  ["typeNotarialAction", "action", "product.id"].map((item: any) =>
+                  ["typeNotarialAction", "action", "product"].map((item: any) =>
                     resetField(item, { defaultValue: null })
                   );
                 }}
@@ -236,7 +237,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  ["action", "product.id"].map((item: any) => resetField(item, { defaultValue: null }));
+                  ["action", "product"].map((item: any) => resetField(item, { defaultValue: null }));
                 }}
               />
             </Box>
@@ -270,7 +271,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
-                  resetField("product.id", { defaultValue: null });
+                  resetField("product", { defaultValue: null });
                 }}
               />
             </Box>
@@ -280,32 +281,32 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
 
       <Controller
         control={control}
-        name="product.id"
+        name="product"
         defaultValue={null}
-        render={({ field, fieldState }) => {
-          const errorMessage = fieldState.error?.message;
-
-          return (
-            <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Document")}</InputLabel>
-              <Select
-                disabled={!actionVal}
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                data={searchedDocData?.data ?? []}
-                labelField="name"
-                valueField="id"
-                helperText={!!actionVal && errorMessage ? t(errorMessage) : ""}
-                value={field.value == null ? "" : field.value}
-                onBlur={field.onBlur}
-                loading={loading}
-                onChange={(...event: any[]) => {
-                  field.onChange(...event);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
-          );
-        }}
+        render={({ field, fieldState }) => (
+          <Box width="100%" display="flex" flexDirection="column" gap="10px">
+            <InputLabel>{t("Document")}</InputLabel>
+            <Autocomplete
+              disabled={!actionVal}
+              labelField={locale !== "en" ? "$t:name" : "name"}
+              type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+              helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+              options={searchedDocData?.status === 0 ? (searchedDocData?.data as Record<string, any>[]) ?? [] : []}
+              loading={searchedDocLoading}
+              value={
+                field.value != null
+                  ? (searchedDocData?.data ?? []).find((item: Record<string, any>) => item.id == field.value?.id) ??
+                    null
+                  : null
+              }
+              onBlur={field.onBlur}
+              onChange={(event, value) => {
+                field.onChange(value?.id != null ? { id: value.id } : null);
+                trigger(field.name);
+              }}
+            />
+          </Box>
+        )}
       />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
