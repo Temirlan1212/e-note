@@ -148,13 +148,11 @@ export const ApplicationListActions = ({
         </Tooltip>
       </Link>
 
-      <Link href="">
-        <Tooltip title={t("Download")} arrow>
-          <IconButton onClick={handleDownloadClick}>
-            <DownloadIcon />
-          </IconButton>
-        </Tooltip>
-      </Link>
+      <Tooltip title={t("Download")} arrow>
+        <IconButton onClick={handleDownloadClick}>
+          <DownloadIcon />
+        </IconButton>
+      </Tooltip>
 
       {params.row.statusSelect != 1 && (
         <>
