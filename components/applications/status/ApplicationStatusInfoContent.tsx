@@ -96,7 +96,9 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
         </Link>
       </Box>
       <ApplicationStatusRead data={data?.data[0]} loading={loading} />
-      {accessToView && <ApplicationStatusView data={data?.data[0]} />}
+      {accessToView && data?.data[0]?.documentInfo?.pdfLink && data?.data[0]?.documentInfo?.token && (
+        <ApplicationStatusView data={data?.data[0]} />
+      )}
     </Box>
   );
 };
