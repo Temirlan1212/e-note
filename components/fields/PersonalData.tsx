@@ -171,7 +171,7 @@ export default function PersonalData({
         )}
       </Box>
 
-      {image && (
+      {image && names.image && (
         <Box
           component="img"
           sx={{
