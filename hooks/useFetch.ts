@@ -93,7 +93,6 @@ export default function useFetch<T = FetchResponseBody>(
 
         if (error?.status === 401) {
           profile.logOut();
-          return router.push("/login");
         }
 
         setNotification(error?.message ?? null);

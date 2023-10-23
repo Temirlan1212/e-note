@@ -32,6 +32,7 @@
   "Login to your personal account": "Вход в личный кабинет",
   "Other ways to log in": "Другие способы входа",
   "Enter": "Войти",
+  "Enter as": "Войти как",
   "Username": "Логин",
   "Password": "Пароль",
   "Forgot your password?": "Забыли пароль?",
@@ -205,6 +206,12 @@
   "Certificate": "Сертификат",
   "PIN code": "ПИН код",
   "This action failed": "Это действие не удалось выполнить",
+  "Status": "Статус",
+  "Notary": "Нотариус",
+  "Executor": "Исполнитель",
+  "Declarant": "Декларант",
+  "Applicant": "Заявитель",
+  "Enter as description": "У вас есть несколько ролей. Вам необходимо выбрать один для работы в системе",
   "Sorry, nothing found": "Простите, ничего не найдено",
   "PIN": "ПИН"
 }

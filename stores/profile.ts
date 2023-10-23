@@ -6,9 +6,11 @@ export interface IProfileState {
   cookie: string | null;
   user: IUser | null;
   userData: IUserData | null;
+  userRoleSelected: boolean;
   getCookie: () => string | null;
   getUser: () => IUser | null;
   getUserData: () => IUserData | null;
+  setUserRoleSelected: (value: boolean) => void;
   logIn: (credentials: IUserCredentials) => Promise<void>;
   logInEsi: (code: string) => Promise<void>;
   logOut: () => void;
@@ -21,6 +23,7 @@ export const useProfileStore = create<IProfileState>()(
       cookie: null,
       user: null,
       userData: null,
+      userRoleSelected: false,
       getCookie: () => {
         return get().cookie;
       },
@@ -29,6 +32,9 @@ export const useProfileStore = create<IProfileState>()(
       },
       getUserData: () => {
         return get().userData;
+      },
+      setUserRoleSelected: (value) => {
+        set(() => ({ userRoleSelected: value }));
       },
       logIn: async (credentials) => {
         let cookie: string | null = null;
@@ -74,7 +80,7 @@ export const useProfileStore = create<IProfileState>()(
         get().loadUserData(user);
       },
       logOut: () => {
-        set(() => ({ cookie: null, user: null, userData: null }));
+        set(() => ({ cookie: null, user: null, userData: null, userRoleSelected: false }));
       },
       loadUserData: async (user) => {
         const cookie = get().cookie;

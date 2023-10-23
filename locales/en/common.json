@@ -32,6 +32,7 @@
   "Login to your personal account": "Login to your personal account",
   "Other ways to log in": "Other ways to log in",
   "Enter": "Enter",
+  "Enter as": "Enter as",
   "Username": "Username",
   "Password": "Password",
   "Forgot your password?": "Forgot your password?",
@@ -205,6 +206,12 @@
   "Certificate": "Certificate",
   "PIN code": "PIN code",
   "This action failed": "This action failed",
+  "Status": "Status",
+  "Notary": "Notary",
+  "Executor": "Executor",
+  "Declarant": "Declarant",
+  "Applicant": "Applicant",
+  "Enter as description": "You have several roles. You need to select one to work in the system",
   "Sorry, nothing found": "Sorry, nothing found",
   "PIN": "PIN"
 }

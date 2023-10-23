@@ -178,12 +178,10 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
           }}
         >
           <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
-            <Link href="/" sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
-              <Typography variant="h6" color="text.primary" fontWeight={600} whiteSpace="nowrap">
-                E-NOTARIAT
-              </Typography>
-            </Link>
+            <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
+            <Typography variant="h6" color="text.primary" fontWeight={600} whiteSpace="nowrap">
+              E-NOTARIAT
+            </Typography>
           </Box>
 
           {type === "public" && (
