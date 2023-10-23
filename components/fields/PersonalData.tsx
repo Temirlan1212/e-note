@@ -10,8 +10,9 @@ import Radio from "@/components/ui/Radio";
 import Autocomplete from "@/components/ui/Autocomplete";
 import Button from "@/components/ui/Button";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
-import { MouseEventHandler, useEffect } from "react";
+import { MouseEventHandler, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 export interface IPersonalDataProps {
   form: UseFormReturn<any>;
@@ -33,7 +34,7 @@ export interface IPersonalDataProps {
     notaryLegalParticipantsQty: string;
     notaryTotalParticipantsQty: string;
     notaryDateOfOrder: string;
-    image?: string;
+    picture?: string;
     tundukDocumentSeries?: string;
     tundukDocumentNumber?: string;
     tundukPersonalNumber?: string;
@@ -43,7 +44,7 @@ export interface IPersonalDataProps {
   defaultValues?: {
     type?: number | null;
     foreigner?: boolean;
-    image?: string;
+    picture?: string;
     lastName?: string;
     firstName?: string;
     middleName?: string;
@@ -68,7 +69,7 @@ export interface IPersonalDataProps {
   fields?: {
     type?: boolean;
     foreigner?: boolean;
-    image?: boolean;
+    picture?: boolean;
     lastName?: boolean;
     firstName?: boolean;
     middleName?: boolean;
@@ -108,14 +109,30 @@ export default function PersonalData({
 }: IPersonalDataProps) {
   const t = useTranslations();
 
+  const [imageURL, setImageURL] = useState<string | null>(null);
   const { locale } = useRouter();
 
   const { trigger, control, watch, resetField } = form;
 
   const foreigner = watch(names.foreigner);
   const type = watch(names.type);
-  const image = watch(names?.image!);
-  const imageUrl = `data:image/jpeg;base64,${image}`;
+  const picture = watch(names?.picture!);
+
+  const { data: imageData, update } = useFetch<Response>("", "GET", {
+    returnResponse: true,
+  });
+
+  useEffectOnce(async () => {
+    if (imageData == null || imageData.body == null || imageData.blob == null) return;
+
+    const blob = await imageData.blob();
+
+    const imageLink = URL.createObjectURL(blob);
+    setImageURL(imageLink);
+    return () => {
+      URL.revokeObjectURL(imageLink);
+    };
+  }, [imageData]);
 
   const { data: citizenshipDictionary, loading: citizenshipDictionaryLoading } = useFetch(
     `/api/dictionaries/citizenship`,
@@ -126,6 +143,12 @@ export default function PersonalData({
     `/api/dictionaries/identity-document/series`,
     "GET"
   );
+
+  useEffect(() => {
+    if (names?.picture! && picture?.id) {
+      update(`/api/user/image/` + picture?.id);
+    }
+  }, [picture?.id]);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -171,16 +194,19 @@ export default function PersonalData({
         )}
       </Box>
 
-      {image && names.image && (
+      {imageURL && (
         <Box
           component="img"
           sx={{
+            position: "absolute",
+            top: { xs: "55px", sm: "16px" },
+            right: "16px",
             objectFit: "contain",
-            height: "200px",
-            width: { xs: "100%", sm: "170px" },
+            height: { xs: "100px", sm: "200px" },
+            width: { xs: "70px", sm: "170px" },
           }}
+          src={imageURL}
           alt="passport avatar"
-          src={imageUrl}
         />
       )}
 
