@@ -279,6 +279,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         requester: values.requester,
         statusSelect: 2,
         notarySignatureStatus: 2,
+        unilateralAction: values.unilateralAction,
       };
 
       let result = null;
