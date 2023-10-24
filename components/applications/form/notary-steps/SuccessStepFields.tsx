@@ -48,7 +48,7 @@ export default function SuccessStepFields({ form, onPrev, onNext }: IStepFieldsP
           loading={loading}
           rows={[
             {
-              name: dataItem?.product?.fullName || "",
+              name: locale !== "en" ? dataItem?.product?.["$t:fullName"] || "" : dataItem?.product?.fullName || "",
               date: dataItem?.creationDate || "",
               requester: getFullName(dataItem?.requester?.[0]?.name, dataItem?.requester?.[0]?.lastName),
               status: dataItem?.statusSelect || 0,
