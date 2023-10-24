@@ -5,13 +5,15 @@ import DatePicker from "@/components/ui/DatePicker";
 import TimePicker from "@/components/ui/TimePicker";
 import Checkbox from "@/components/ui/Checkbox";
 import DateTimePicker from "@/components/ui/DateTimePicker";
-import { Box, Typography } from "@mui/material";
+import { Box, BoxProps, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 import useFetch from "@/hooks/useFetch";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, HTMLAttributes, SetStateAction, useState } from "react";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import Radio from "./Radio";
+import { Subscription } from "react-hook-form/dist/utils/createSubject";
+import Button from "./Button";
 
 export type Variant =
   | "Boolean"
@@ -23,7 +25,8 @@ export type Variant =
   | "Time"
   | "DateTime"
   | "Date"
-  | "Radio";
+  | "Radio"
+  | "Button";
 
 export type TCondition = Record<string, any>[] | Record<string, any>;
 
@@ -34,7 +37,7 @@ export type TConditions = {
   show: TCondition;
 };
 
-export interface IDynamicFieldProps {
+export interface IDynamicFieldProps extends HTMLAttributes<HTMLElement> {
   type: Variant;
   form: UseFormReturn<any>;
   fieldName: string;
@@ -47,10 +50,15 @@ export interface IDynamicFieldProps {
   hidden?: boolean;
   conditions?: Partial<TConditions>;
   options?: Record<string, any>[];
+  observableForms?: UseFormReturn<any>[];
+  props?: {
+    box?: BoxProps;
+  };
+  loading?: boolean;
 }
 
 export const getName = (path: string | undefined, name: string | null, regex: RegExp = /\[([^\]]*)\]/g) => {
-  if (path != null && name != null) {
+  if (!!path && name != null) {
     if (regex.test(path)) {
       const index = 0;
       return path.replace(regex, (_, capture) => `${capture}.${index}.${name}`);
@@ -77,6 +85,7 @@ const getValue = (field: Variant, value: any) => {
     Date: isDate ? value : isInvalidDate ? null : new Date(String(value)),
     Time: isDate ? value : isInvalidDate ? null : new Date(Date.parse(value)),
     DateTime: isDate ? value : isInvalidDate ? null : new Date(String(value)),
+    Button: null,
   };
 
   return types[field];
@@ -92,9 +101,11 @@ const getField = (
     selectionData?: Record<string, any>[];
     disabled?: boolean;
     options?: Record<string, any>[];
+    loading?: boolean;
+    label?: string;
   }
 ) => {
-  const { field, selectionData, errorMessage, disabled, form, locale, options } = props;
+  const { field, selectionData, errorMessage, disabled, form, locale, options, loading, label } = props;
   const { trigger } = form;
 
   const types = {
@@ -207,6 +218,11 @@ const getField = (
         value={getValue("Radio", field.value)}
       />
     ),
+    Button: (
+      <Button loading={loading} sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}>
+        {label}
+      </Button>
+    ),
   };
 
   return types[type];
@@ -229,13 +245,26 @@ const compare = (a: any, b: any, operator: keyof typeof operators) => {
   return operators?.[operator] ? operators[operator] : false;
 };
 
-const getConditionRuleValue = (condition: TCondition, form: UseFormReturn<any>, path?: string) => {
+export const getConditionRuleValue = (condition: TCondition, form: UseFormReturn<any>, path?: string) => {
   if (!condition) return false;
-  return !!condition?.some((item: Record<string, any>[] | Record<string, any>) =>
-    Array.isArray(item)
-      ? item.every((subItem) => form.getValues(getName(subItem?.path ?? path, subItem?.fieldName)))
-      : compare(form.getValues(getName(item?.path ?? path, item?.fieldName)), item?.value, item?.operator)
-  );
+  let isNull = false;
+  const value = !!condition?.some((item: Record<string, any>[] | Record<string, any>) => {
+    if (Array.isArray(item)) {
+      return item.every((subItem) => {
+        const conditionValue = form.getValues(
+          getName(subItem?.path != null ? subItem?.path : path, subItem?.fieldName)
+        );
+        if (conditionValue != null) return compare(conditionValue, subItem?.value, subItem?.operator);
+        isNull = true;
+      });
+    } else {
+      const conditionValue = form.getValues(getName(item?.path != null ? item?.path : path, item?.fieldName));
+      if (conditionValue != null) return compare(conditionValue, item?.value, item?.operator);
+      isNull = true;
+    }
+  });
+  if (isNull) return null;
+  return value;
 };
 
 const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
@@ -251,6 +280,8 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
     path,
     hidden,
     conditions,
+    observableForms,
+    loading,
     ...rest
   } = props;
 
@@ -267,26 +298,41 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
     show: Boolean(false),
   });
 
-  const handleConditions = (conditions: Partial<TConditions>, callback: Dispatch<SetStateAction<typeof rules>>) => {
+  const handleConditions = (
+    form: UseFormReturn<any>,
+    conditions: Partial<TConditions>,
+    callback: Dispatch<SetStateAction<typeof rules>>
+  ) => {
     for (let i in conditions) {
       const key = i as keyof typeof conditions;
       const condition = conditions?.[key];
       if (condition == null) continue;
+      const value = getConditionRuleValue(condition, form, path);
+      if (value == null) continue;
 
       callback((prev) => {
-        return { ...prev, [key]: getConditionRuleValue(condition, form, path) };
+        return { ...prev, [key]: value };
       });
     }
   };
 
   useEffectOnce(() => {
-    if (conditions == null) return;
-    handleConditions(conditions, setRules);
+    let subs: Subscription[] = [];
 
-    const subscription = form.watch(() => {
-      handleConditions(conditions, setRules);
+    if (conditions == null) return;
+
+    const observeForm = observableForms == null ? [form] : observableForms;
+    observeForm?.map((form) => {
+      handleConditions(form, conditions, setRules);
+
+      const subscription = form.watch(() => {
+        handleConditions(form, conditions, setRules);
+      });
+
+      subs.push(subscription);
     });
-    return () => subscription.unsubscribe();
+
+    return () => subs.map((form) => form.unsubscribe());
   }, [form.watch]);
 
   useEffectOnce(async () => {
@@ -311,8 +357,14 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
         }
 
         return (
-          <Box display={rules.show ? "flex" : rules.hidden ? "none" : "flex"} flexDirection="column" gap="10px">
-            <Typography>{label}</Typography>
+          <Box
+            display={rules.show ? "flex" : rules.hidden ? "none" : "flex"}
+            flexDirection="column"
+            gap="10px"
+            {...rest?.props?.box}
+            {...rest}
+          >
+            {type !== "Button" ? <Typography>{label}</Typography> : null}
             {getField(type, {
               field,
               errorMessage: fieldState.error?.type !== "disabled" ? errorMessage ?? "" : "",
@@ -320,6 +372,8 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
               disabled: rules?.disabled || fieldState.error?.type === "disabled",
               form,
               locale,
+              loading,
+              label,
               ...rest,
             })}
           </Box>

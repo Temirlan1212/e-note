@@ -1,16 +1,19 @@
 import { useTranslations } from "next-intl";
 import { UseFormReturn } from "react-hook-form";
 import { Box, Grid, Paper } from "@mui/material";
-import Button from "@/components/ui/Button";
-import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import { useRouter } from "next/router";
-import DynamicField, { IDynamicFieldProps } from "@/components/ui/DynamicField";
+import DynamicField, { IDynamicFieldProps, TConditions } from "@/components/ui/DynamicField";
 
 export interface ITundukDynamicFieldsProps {
   form: UseFormReturn<any>;
   paramsForm: UseFormReturn<any>;
   fields?: IDynamicFieldProps[];
   responseFields?: IDynamicFieldProps[];
+  path?: string;
+  disabled?: boolean;
+  required?: boolean;
+  hidden?: boolean;
+  conditions?: Partial<TConditions>;
   loading?: boolean;
   onPinCheck?: (arg: UseFormReturn<any>) => void;
   onPinReset?: () => void;
@@ -24,12 +27,13 @@ export default function TundukDynamicFields({
   loading,
   onPinCheck,
   onPinReset,
+  ...rest
 }: ITundukDynamicFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
 
   return (
-    <Box display="flex" gap="20px" flexDirection="column" width="100%">
+    <Box display="flex" gap="10px" flexDirection="column" width="100%">
       {fields != null &&
         fields
           ?.sort((a: any, b: any) => Number(a?.sequence ?? 0) - Number(b?.sequence ?? 0))
@@ -44,47 +48,29 @@ export default function TundukDynamicFields({
               justifyContent="end"
             >
               <DynamicField
-                disabled={item?.readonly}
-                hidden={item?.hidden}
-                required={!!item?.required}
+                disabled={rest?.disabled || item?.readonly}
+                hidden={rest?.hidden || item?.hidden}
+                required={!!rest?.required || !!item?.required}
+                conditions={Object.values(rest?.conditions ?? {}).length > 0 ? rest?.conditions : item?.conditions}
+                path={rest?.path || item?.path}
                 type={item?.fieldType}
-                conditions={item?.conditions}
                 form={paramsForm}
                 label={item?.fieldTitles?.[locale ?? ""] ?? ""}
                 defaultValue={item?.defaultValue}
                 fieldName={item?.fieldName}
-                path={item?.path}
                 selectionName={item?.selection ?? ""}
                 options={item?.options}
+                observableForms={[form, paramsForm]}
+                loading={loading}
+                onClick={() => {
+                  if (item?.fieldType === "Button" && onPinCheck) onPinCheck(paramsForm);
+                }}
               />
             </Grid>
           ))}
 
-      <Box display="flex" gap="20px">
-        {onPinCheck && fields != null && (
-          <Button
-            loading={loading}
-            endIcon={<ContentPasteSearchIcon />}
-            sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
-            onClick={() => onPinCheck(paramsForm)}
-          >
-            {t("Check")}
-          </Button>
-        )}
-        {onPinReset && fields != null && (
-          <Button
-            loading={loading}
-            sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
-            onClick={() => onPinReset()}
-            buttonType="danger"
-          >
-            {t("Reset")}
-          </Button>
-        )}
-      </Box>
-
       {responseFields != null && (
-        <Paper sx={{ display: "flex", flexDirection: "column", gap: "20px", p: "20px" }} elevation={4}>
+        <Box>
           {responseFields
             ?.sort((a: any, b: any) => Number(a?.sequence ?? 0) - Number(b?.sequence ?? 0))
             .map((item: Record<string, any>, index: number) => (
@@ -96,23 +82,25 @@ export default function TundukDynamicFields({
                 display="flex"
                 flexDirection="column"
                 justifyContent="end"
+                gap="0px"
               >
                 <DynamicField
-                  disabled={item?.readonly}
-                  hidden={item?.hidden}
-                  required={!!item?.required}
-                  conditions={item?.conditions}
+                  disabled={rest?.disabled || item?.readonly}
+                  hidden={rest?.hidden || item?.hidden}
+                  required={!!rest?.required || !!item?.required}
+                  conditions={Object.values(rest?.conditions ?? {}).length > 0 ? rest?.conditions : item?.conditions}
                   type={item?.fieldType}
                   form={form}
                   label={item?.fieldTitles?.[locale ?? ""] ?? ""}
                   defaultValue={item?.defaultValue}
                   fieldName={item?.fieldName}
-                  path={item?.path}
+                  path={rest?.path || item?.path}
                   selectionName={item?.selection ?? ""}
+                  props={{ box: { mb: "10px" } }}
                 />
               </Grid>
             ))}
-        </Paper>
+        </Box>
       )}
     </Box>
   );
