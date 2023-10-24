@@ -20,6 +20,7 @@ import PersonalData from "@/components/fields/PersonalData";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 import { IPersonSchema } from "@/validator-schemas/person";
+import Checkbox from "@/components/ui/Checkbox";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -40,9 +41,16 @@ export interface IStepFieldsProps {
   onPrev?: Function;
   onNext?: (arg: { step: number | undefined }) => void;
   handleStepNextClick?: Function;
+  setIsUnilateralAction?: any;
 }
 
-export default function FirstStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+export default function FirstStepFields({
+  form,
+  onPrev,
+  onNext,
+  handleStepNextClick,
+  setIsUnilateralAction,
+}: IStepFieldsProps) {
   const userData = useProfileStore((state) => state.userData);
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
@@ -72,6 +80,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
         return (
           <Box display="flex" gap="20px" flexDirection="column">
+            <Checkbox onChange={() => setIsUnilateralAction((prev: boolean) => !prev)} label={t("Unilateral action")} />
+
             <Typography variant="h5">{t("Personal data")}</Typography>
             <PersonalData
               form={form}
