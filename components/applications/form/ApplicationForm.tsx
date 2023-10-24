@@ -151,10 +151,9 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             onNext={({ step, isStepByStep }) => {
               if (!isStepByStep) getDynamicFormAppData();
               setStep((prev) => {
-                if (isUnilateralAction) {
-                  return prev + 3;
-                }
+                if (isUnilateralAction) return prev + 3;
                 if (step != null) return step;
+                if (!isStepByStep) return prev + 2;
                 return prev + 1;
               });
             }}
@@ -193,11 +192,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             tundukParamsFieldsForm={tundukParamsFieldsForm}
             form={form}
             onPrev={() => {
-              if (isUnilateralAction) {
-                setStep(step - 3);
-              } else {
-                setStep(step - 1);
-              }
+              isUnilateralAction ? setStep(step - 3) : setStep(step - 1);
             }}
             onNext={({ step }) =>
               setStep((prev) => {

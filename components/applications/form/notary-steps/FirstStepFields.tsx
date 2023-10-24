@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -41,7 +41,7 @@ export interface IStepFieldsProps {
   onPrev?: Function;
   onNext?: (arg: { step: number | undefined }) => void;
   handleStepNextClick?: Function;
-  setIsUnilateralAction?: any;
+  setIsUnilateralAction?: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function FirstStepFields({
@@ -80,7 +80,10 @@ export default function FirstStepFields({
 
         return (
           <Box display="flex" gap="20px" flexDirection="column">
-            <Checkbox onChange={() => setIsUnilateralAction((prev: boolean) => !prev)} label={t("Unilateral action")} />
+            <Checkbox
+              onChange={() => setIsUnilateralAction && setIsUnilateralAction((prev: boolean) => !prev)}
+              label={t("Unilateral action")}
+            />
 
             <Typography variant="h5">{t("Personal data")}</Typography>
             <PersonalData
