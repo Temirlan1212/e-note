@@ -207,14 +207,14 @@ export default function ApplicationList() {
             },
           },
           {
-            field: "product.name",
+            field: locale !== "en" ? "$t:product.name" : "product.name",
             headerName: "Type of document",
             width: 250,
             editable: false,
             sortable: false,
             filter: {
               data: documentTypeData?.data ?? [],
-              labelField: "name",
+              labelField: locale !== "en" ? "$t:name" : "name",
               valueField: "id",
               type: "dictionary",
               field: "product.id",
