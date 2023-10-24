@@ -7,6 +7,12 @@ export interface IApplicationsQueryParamsData {
   };
 }
 
+interface Criteria {
+  value: any;
+  fieldName: string;
+  operator: string;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(400).json(null);
@@ -34,25 +40,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     requestBody.data = { _domain, _domainContext };
   }
 
-  const criteria = [];
+  const buildFilterCriteria = () => {
+    const criteria: Criteria[] = [];
+    if (searchValue != null) {
+      const fieldsMap = {
+        "requester.fullName": "requester.fullName",
+        "members.fullName": "members.fullName",
+        notaryUniqNumber: "notaryUniqNumber",
+      };
 
-  if (searchValue) {
-    criteria.push({
-      fieldName: "requester.fullName",
-      operator: "like",
-      value: searchValue,
-    });
-    criteria.push({
-      fieldName: "members.fullName",
-      operator: "like",
-      value: searchValue,
-    });
-    criteria.push({
-      fieldName: "notaryUniqNumber",
-      operator: "=",
-      value: searchValue,
-    });
-  }
+      for (const field in fieldsMap) {
+        const key = field as keyof typeof fieldsMap;
+        criteria.push({
+          fieldName: fieldsMap[key],
+          operator: "like",
+          value: searchValue,
+        });
+      }
+    }
+    return criteria;
+  };
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.sale.db.SaleOrder/search", {
     method: "POST",
@@ -85,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         criteria: [
           {
             operator: "or",
-            criteria,
+            criteria: buildFilterCriteria(),
           },
         ],
       },
