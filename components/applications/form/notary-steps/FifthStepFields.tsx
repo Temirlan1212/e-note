@@ -151,6 +151,10 @@ export default function FifthStepFields({
                     >
                       {String(item?.fieldType).toLocaleLowerCase() === "tunduk" ? (
                         <TundukDynamicFields
+                          disabled={item?.disabled}
+                          required={!!item?.required}
+                          hidden={item?.hidden}
+                          conditions={item?.conditions}
                           loading={tundukVehicleDataLoading}
                           form={dynamicForm}
                           paramsForm={tundukParamsFieldsForm}
@@ -158,24 +162,35 @@ export default function FifthStepFields({
                           responseFields={dynamicForm?.getValues(`movable.${0}.disabled`) ? item?.responseFields : null}
                           onPinCheck={async (paramsForm) => {
                             const validated = await paramsForm.trigger();
-                            if (validated) handlePinCheck(item?.url, paramsForm.getValues(), item?.responseFields);
+                            let values = {};
+                            item?.fields?.map((field: Record<string, any>) => {
+                              values = {
+                                ...values,
+                                [getTemplateDocName(undefined, field?.fieldName)]: paramsForm.getValues(
+                                  getTemplateDocName(item?.path ?? field?.path, field?.fieldName)
+                                ),
+                              };
+                            });
+
+                            if (validated) handlePinCheck(item?.url, values, item?.responseFields);
                           }}
                         />
-                      ) : null}
-                      <DynamicField
-                        disabled={item?.readonly}
-                        hidden={item?.hidden}
-                        required={!!item?.required}
-                        conditions={item?.conditions}
-                        type={item?.fieldType}
-                        form={dynamicForm}
-                        label={item?.fieldTitles?.[locale ?? ""] ?? ""}
-                        defaultValue={item?.defaultValue}
-                        fieldName={item?.fieldName}
-                        path={item?.path}
-                        selectionName={item?.selection ?? ""}
-                        options={item?.options}
-                      />
+                      ) : (
+                        <DynamicField
+                          disabled={item?.readonly}
+                          hidden={item?.hidden}
+                          required={!!item?.required}
+                          conditions={item?.conditions}
+                          type={item?.fieldType}
+                          form={dynamicForm}
+                          label={item?.fieldTitles?.[locale ?? ""] ?? ""}
+                          defaultValue={item?.defaultValue}
+                          fieldName={item?.fieldName}
+                          path={item?.path}
+                          selectionName={item?.selection ?? ""}
+                          options={item?.options}
+                        />
+                      )}
                     </Grid>
                   ))}
               </Grid>
