@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { UseFormReturn, useFieldArray } from "react-hook-form";
+import { Controller, UseFormReturn, useFieldArray } from "react-hook-form";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import useFetch from "@/hooks/useFetch";
 import { format } from "date-fns";
@@ -41,16 +41,9 @@ export interface IStepFieldsProps {
   onPrev?: Function;
   onNext?: (arg: { step: number | undefined }) => void;
   handleStepNextClick?: Function;
-  setIsUnilateralAction?: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function FirstStepFields({
-  form,
-  onPrev,
-  onNext,
-  handleStepNextClick,
-  setIsUnilateralAction,
-}: IStepFieldsProps) {
+export default function FirstStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const userData = useProfileStore((state) => state.userData);
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
@@ -80,11 +73,20 @@ export default function FirstStepFields({
 
         return (
           <Box display="flex" gap="20px" flexDirection="column">
-            <Checkbox
-              onChange={() => setIsUnilateralAction && setIsUnilateralAction((prev: boolean) => !prev)}
-              label={t("Unilateral action")}
+            <Controller
+              control={control}
+              name={`unilateralAction`}
+              defaultValue={false}
+              render={({ field, fieldState }) => (
+                <Checkbox
+                  label={t("Unilateral action")}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  {...field}
+                  checked={!!field.value}
+                />
+              )}
             />
-
             <Typography variant="h5">{t("Personal data")}</Typography>
             <PersonalData
               form={form}

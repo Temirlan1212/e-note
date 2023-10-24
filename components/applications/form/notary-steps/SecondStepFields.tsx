@@ -21,16 +21,9 @@ export interface IStepFieldsProps {
   onPrev?: Function;
   onNext?: (arg: { step: number | undefined; isStepByStep: boolean }) => void;
   handleStepNextClick?: Function;
-  isUnilateralAction?: boolean;
 }
 
-export default function SecondStepFields({
-  form,
-  onPrev,
-  onNext,
-  handleStepNextClick,
-  isUnilateralAction,
-}: IStepFieldsProps) {
+export default function SecondStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const profile = useProfileStore.getState();
   const t = useTranslations();
 

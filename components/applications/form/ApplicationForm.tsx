@@ -41,7 +41,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const [userData, setUserData] = useState<IUserData | null>(null);
   const stepNextClickMethod = useRef<(target: number) => Promise<void>>();
   const stepProgress = useRef(0);
-  const [isUnilateralAction, setIsUnilateralAction] = useState(false);
 
   const { data, update } = useFetch("", "POST");
   const {
@@ -142,7 +141,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
               })
             }
             handleStepNextClick={handleStepNextClick}
-            setIsUnilateralAction={setIsUnilateralAction}
           />,
           <NotarySecondStepFields
             key={1}
@@ -150,15 +148,14 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             onPrev={() => setStep(step - 1)}
             onNext={({ step, isStepByStep }) => {
               if (!isStepByStep) getDynamicFormAppData();
+              const value = form.getValues("unilateralAction");
               setStep((prev) => {
-                if (isUnilateralAction) return prev + 3;
-                if (step != null) return step;
+                if (value) return prev + 3;
                 if (!isStepByStep) return prev + 2;
                 return prev + 1;
               });
             }}
             handleStepNextClick={handleStepNextClick}
-            isUnilateralAction={isUnilateralAction}
           />,
           <NotaryThirdStepFields
             key={2}
@@ -192,7 +189,8 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             tundukParamsFieldsForm={tundukParamsFieldsForm}
             form={form}
             onPrev={() => {
-              isUnilateralAction ? setStep(step - 3) : setStep(step - 1);
+              const value = form.getValues("unilateralAction");
+              value ? setStep(step - 3) : setStep(step - 1);
             }}
             onNext={({ step }) =>
               setStep((prev) => {
