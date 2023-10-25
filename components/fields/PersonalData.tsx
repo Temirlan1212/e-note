@@ -231,19 +231,27 @@ export default function PersonalData({
         )}
       </Box>
 
-      {imageURL && (
-        <Box
-          component="img"
-          sx={{
-            position: "absolute",
-            top: { xs: "55px", sm: "16px" },
-            right: "16px",
-            objectFit: "contain",
-            height: { xs: "100px", sm: "200px" },
-            width: { xs: "70px", sm: "170px" },
-          }}
-          src={imageURL}
-          alt="passport avatar"
+      {picture && (
+        <Controller
+          control={control}
+          name={names?.picture ?? ""}
+          defaultValue={defaultValues?.picture ?? null}
+          render={({ field }) => (
+            <Box
+              component="img"
+              sx={{
+                position: "absolute",
+                top: { xs: "55px", sm: "16px" },
+                right: "16px",
+                objectFit: "contain",
+                height: { xs: "100px", sm: "200px" },
+                width: { xs: "70px", sm: "170px" },
+              }}
+              {...field}
+              src={imageURL!}
+              alt="passport avatar"
+            />
+          )}
         />
       )}
 
