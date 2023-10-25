@@ -99,6 +99,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
               fields={{
                 nationality: true,
                 maritalStatus: true,
+                subjectRole: true,
               }}
               onPinCheck={() => handlePinCheck(index)}
               onPinReset={() => handlePinReset(index)}
@@ -183,6 +184,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     notaryDateOfOrder: `requester.${index}.notaryDateOfOrder`,
     nationality: `requester.${index}.nationality`,
     maritalStatus: `requester.${index}.maritalStatus`,
+    subjectRole: `requester.${index}.subjectRole`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({

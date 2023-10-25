@@ -157,5 +157,6 @@ export const personSchema = object()
     familyStatus: boolean(),
     maritalStatus: string(),
     disabled: boolean(),
+    subjectRole: string().required("required"),
   })
   .concat(filesSchema.pick(["files"]));

@@ -81,6 +81,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
               fields={{
                 nationality: true,
                 maritalStatus: true,
+                subjectRole: true,
               }}
               onPinCheck={() => handlePinCheck(index)}
               onPinReset={() => handlePinReset(index)}
@@ -172,6 +173,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     notaryDateOfOrder: `members.${index}.notaryDateOfOrder`,
     nationality: `members.${index}.nationality`,
     maritalStatus: `members.${index}.maritalStatus`,
+    subjectRole: `members.${index}.subjectRole`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({

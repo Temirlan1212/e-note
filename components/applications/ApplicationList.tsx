@@ -1,10 +1,10 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { ValueOf } from "next/dist/shared/lib/constants";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { IActionType } from "@/models/action-type";
 import { IStatus } from "@/models/application-status";
-import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
+import useFetch from "@/hooks/useFetch";
 import { Box, IconButton, Typography } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import PostAddIcon from "@mui/icons-material/PostAdd";
@@ -16,7 +16,6 @@ import { ApplicationListActions } from "./ApplicationListActions";
 import { ApplicationListQRMenu } from "./ApplicationListQRMenu";
 import SearchBar from "@/components/ui/SearchBar";
 import ClearIcon from "@mui/icons-material/Clear";
-import { IApplication } from "@/models/application";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -30,7 +29,6 @@ export default function ApplicationList() {
   const t = useTranslations();
   const { locale } = useRouter();
   const [searchValue, setSearchValue] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
   const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
   const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
   const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
@@ -50,12 +48,6 @@ export default function ApplicationList() {
   const { data, loading, update } = useFetch("/api/applications", "POST", {
     body: appQueryParams,
   });
-
-  useEffect(() => {
-    setFilteredData(data?.data);
-  }, [data?.data]);
-
-  const { data: searchedData, update: search } = useFetch("", "POST");
 
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
     setAppQueryParams((prev) => {
@@ -95,33 +87,16 @@ export default function ApplicationList() {
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    if (value === "") {
-      setAppQueryParams((prevParams) => ({
-        ...prevParams,
-        searchValue: "",
-      }));
-    }
     setSearchValue(value);
   };
 
   const handleSearchSubmit = () => {
     if (searchValue == null) return;
-    search("/api/applications/search", {
-      content: searchValue,
-    });
     setAppQueryParams((prevParams) => ({
       ...prevParams,
       searchValue: searchValue,
     }));
   };
-
-  useEffect(() => {
-    const matchedItems = data?.data?.filter(
-      (dataItem: IApplication) =>
-        Array.isArray(searchedData?.data) && searchedData?.data?.some((searchedItem) => searchedItem.id === dataItem.id)
-    );
-    setFilteredData(matchedItems);
-  }, [searchedData]);
 
   const handleReset = () => {
     setSearchValue("");
@@ -232,14 +207,14 @@ export default function ApplicationList() {
             },
           },
           {
-            field: locale !== "en" ? "$t:product.name" : "product.name",
+            field: "product.name",
             headerName: "Type of document",
             width: 250,
             editable: false,
             sortable: false,
             filter: {
               data: documentTypeData?.data ?? [],
-              labelField: locale !== "en" ? "$t:name" : "name",
+              labelField: "name",
               valueField: "id",
               type: "dictionary",
               field: "product.id",
@@ -298,7 +273,7 @@ export default function ApplicationList() {
             renderCell: (params) => <ApplicationListActions params={params} onDelete={handleDelete} />,
           },
         ]}
-        rows={filteredData ?? []}
+        rows={data?.data ?? []}
         onFilterSubmit={handleFilterSubmit}
         onSortModelChange={handleSortByDate}
         cellMaxHeight="200px"

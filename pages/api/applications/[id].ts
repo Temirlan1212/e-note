@@ -63,6 +63,7 @@ const related: Record<string, typeof fields> = {
     "notaryTotalParticipantsQty",
     "notaryDateOfOrder",
     "disabled",
+    "subjectRole",
   ],
   members: [
     "partnerTypeSelect",
@@ -106,6 +107,7 @@ const related: Record<string, typeof fields> = {
     "notaryTotalParticipantsQty",
     "notaryDateOfOrder",
     "disabled",
+    "subjectRole",
   ],
   documentInfo: ["token", "pdfLink", "editUrl", "fileName"],
 };
