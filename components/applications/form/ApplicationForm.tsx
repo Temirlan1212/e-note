@@ -93,7 +93,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
         .filter((item: Record<string, any>) => item?.responseFields?.length > 0)
         .map((item) => item?.responseFields);
 
-      let related: Record<string, string[]> = { movable: ["disabled"] };
+      let related: Record<string, string[]> = {};
       let fields: string[] = [];
       const regex = /\[(.*?)\]/;
 
