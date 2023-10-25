@@ -73,7 +73,7 @@ function GridTableActionsCell({ row }: { row: Record<string, any> }) {
   );
 }
 
-export default function NotaryMyTemplateList() {
+export default function MyTemplateList() {
   const [selectedPage, setSelectedPage] = useState<number>(1);
   const [keywordValue, setKeywordValue] = useState<string>("");
   const [rowData, setRowData] = useState<IRowData | null>(null);
@@ -204,10 +204,11 @@ export default function NotaryMyTemplateList() {
     }
   }, [allData, keywordValue]);
 
-  const handleCreateTemplate = async () => {};
-
   return (
-    <>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <Typography variant="h4" color="success.main">
+        {t("My templates")}
+      </Typography>
       <SearchBar onChange={handleKeywordChange} onClick={handleKeywordSearch} value={keywordValue} />
 
       <Box sx={{ height: "448px" }}>
@@ -217,27 +218,6 @@ export default function NotaryMyTemplateList() {
       <Box alignSelf="center">
         <Pagination currentPage={selectedPage} totalPages={totalPages} onPageChange={onPageChange} />
       </Box>
-
-      <Box
-        display={"flex"}
-        justifyContent={"space-between"}
-        alignItems={{ xs: "unset", md: "center" }}
-        flexDirection={{ xs: "column", md: "row" }}
-        gap={{ xs: "20px", md: 0 }}
-      >
-        <Typography sx={{ fontSize: "18px", fontWeight: 600 }}>{t("Hand templates")}</Typography>
-        <Button sx={{ width: "auto", padding: "14px 59px" }} onClick={handleCreateTemplate}>
-          {t("Create new template")}
-        </Button>
-      </Box>
-
-      <Box sx={{ height: "448px" }}>
-        <GridTable rows={rowData?.data ?? []} columns={columns} sx={dataGridStyles} onFilterSubmit={onFilterSubmit} />
-      </Box>
-
-      <Box alignSelf="center">
-        <Pagination currentPage={selectedPage} totalPages={totalPages} onPageChange={onPageChange} />
-      </Box>
-    </>
+    </Box>
   );
 }
