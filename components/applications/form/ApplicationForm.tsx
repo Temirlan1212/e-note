@@ -148,9 +148,8 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             onPrev={() => setStep(step - 1)}
             onNext={({ step, isStepByStep }) => {
               if (!isStepByStep) getDynamicFormAppData();
-              const value = form.getValues("unilateralAction");
               setStep((prev) => {
-                if (value) return prev + 3;
+                if (step != null) return step;
                 if (!isStepByStep) return prev + 2;
                 return prev + 1;
               });
@@ -188,10 +187,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             dynamicForm={dynamicForm}
             tundukParamsFieldsForm={tundukParamsFieldsForm}
             form={form}
-            onPrev={() => {
-              const value = form.getValues("unilateralAction");
-              value ? setStep(step - 3) : setStep(step - 1);
-            }}
+            onPrev={() => setStep(step - 1)}
             onNext={({ step }) =>
               setStep((prev) => {
                 if (step != null) return step;
