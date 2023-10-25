@@ -4,4 +4,5 @@ export interface IProduct {
   $version: number;
   name: string;
   fullName: string;
+  "$t:fullName": string;
 }

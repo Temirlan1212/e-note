@@ -36,6 +36,7 @@ export interface INotaryInfoData {
       id: number;
       $version: number;
     };
+    "$t:fullName": string;
     fullName: string;
     id: number;
     $version: number;

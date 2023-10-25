@@ -33,7 +33,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
   };
 
   const titles = [
-    { title: "Name", value: data?.product?.fullName },
+    { title: "Name", value: locale !== "en" ? data?.product?.["$t:fullName"] : data?.product?.fullName },
     { title: "Type of notarial action", value: translatedStatusTitle(actionTypeData?.data, data?.typeNotarialAction) },
     { title: "StatusApplication", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
     { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
