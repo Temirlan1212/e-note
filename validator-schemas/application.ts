@@ -63,6 +63,5 @@ export const applicationSchema = object()
         })
       )
     ),
-    unilateralAction: boolean(),
   })
   .concat(addressSchema.pick(["region", "district", "city"]));
