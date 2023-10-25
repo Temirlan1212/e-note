@@ -11,9 +11,9 @@ import { useRouter } from "next/router";
 import useFetch from "@/hooks/useFetch";
 import { Dispatch, HTMLAttributes, SetStateAction, useState } from "react";
 import useEffectOnce from "@/hooks/useEffectOnce";
-import Radio from "./Radio";
+import Radio from "@/components/ui/Radio";
 import { Subscription } from "react-hook-form/dist/utils/createSubject";
-import Button from "./Button";
+import Button from "@/components/ui/Button";
 
 export type Variant =
   | "Boolean"
@@ -28,7 +28,7 @@ export type Variant =
   | "Radio"
   | "Button";
 
-export type TCondition = Record<string, any>[] | Record<string, any>;
+export type TCondition = Record<string, any>[][] | Record<string, any>[];
 
 export type TConditions = {
   hidden: TCondition;
@@ -37,12 +37,13 @@ export type TConditions = {
   show: TCondition;
 };
 
-export interface IDynamicFieldProps extends HTMLAttributes<HTMLElement> {
+export interface IDynamicFormElementProps extends HTMLAttributes<HTMLElement> {
   type: Variant;
   form: UseFormReturn<any>;
   fieldName: string;
   defaultValue: FieldPathValue<any, any>;
   label?: string;
+  title?: string;
   required?: boolean;
   disabled?: boolean;
   selectionName?: string;
@@ -51,10 +52,11 @@ export interface IDynamicFieldProps extends HTMLAttributes<HTMLElement> {
   conditions?: Partial<TConditions>;
   options?: Record<string, any>[];
   observableForms?: UseFormReturn<any>[];
+  loading?: boolean;
+  color?: string;
   props?: {
     box?: BoxProps;
   };
-  loading?: boolean;
 }
 
 export const getName = (path: string | undefined, name: string | null, regex: RegExp = /\[([^\]]*)\]/g) => {
@@ -103,14 +105,16 @@ const getField = (
     options?: Record<string, any>[];
     loading?: boolean;
     label?: string;
+    color?: string;
   }
 ) => {
-  const { field, selectionData, errorMessage, disabled, form, locale, options, loading, label } = props;
+  const { field, selectionData, errorMessage, disabled, form, locale, options, loading, label, color } = props;
   const { trigger } = form;
 
   const types = {
     String: (
       <Input
+        label={label}
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         helperText={errorMessage}
         onBlur={field.onBlur}
@@ -121,6 +125,7 @@ const getField = (
     ),
     Float: (
       <Input
+        label={label}
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         type="number"
         helperText={errorMessage}
@@ -132,6 +137,7 @@ const getField = (
     ),
     Decimal: (
       <Input
+        label={label}
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         type="number"
         helperText={errorMessage}
@@ -143,6 +149,7 @@ const getField = (
     ),
     Integer: (
       <Input
+        label={label}
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         type="number"
         helperText={errorMessage}
@@ -154,6 +161,7 @@ const getField = (
     ),
     Selection: (
       <Select
+        label={label}
         fullWidth
         selectType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         data={selectionData && selectionData?.length > 0 ? selectionData : options ?? []}
@@ -171,6 +179,7 @@ const getField = (
     ),
     Date: (
       <DatePicker
+        label={label}
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
         value={getValue("Date", field.value)}
         helperText={errorMessage}
@@ -181,9 +190,10 @@ const getField = (
         disabled={disabled}
       />
     ),
-    Boolean: <Checkbox checked={!!field.value} {...field} />,
+    Boolean: <Checkbox label={label} checked={!!field.value} disabled={disabled} {...field} />,
     Time: (
       <TimePicker
+        label={label}
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
         value={getValue("Time", field.value)}
         helperText={errorMessage}
@@ -196,6 +206,7 @@ const getField = (
     ),
     DateTime: (
       <DateTimePicker
+        label={label}
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
         value={getValue("DateTime", field.value)}
         helperText={errorMessage}
@@ -219,7 +230,12 @@ const getField = (
       />
     ),
     Button: (
-      <Button loading={loading} sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}>
+      <Button
+        disabled={disabled}
+        buttonType={(color as any) ?? "primary"}
+        loading={loading}
+        sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
+      >
         {label}
       </Button>
     ),
@@ -245,36 +261,35 @@ const compare = (a: any, b: any, operator: keyof typeof operators) => {
   return operators?.[operator] ? operators[operator] : false;
 };
 
-export const getConditionRuleValue = (condition: TCondition, form: UseFormReturn<any>, path?: string) => {
-  if (!condition) return false;
-  let isNull = false;
-  const value = !!condition?.some((item: Record<string, any>[] | Record<string, any>) => {
+const getConditionRuleValue = (condition: TCondition, form: UseFormReturn<any>, path?: string) => {
+  const getConditionValue = (item: Record<string, any>[] | Record<string, any>): boolean | undefined => {
     if (Array.isArray(item)) {
-      return item.every((subItem) => {
-        const conditionValue = form.getValues(
-          getName(subItem?.path != null ? subItem?.path : path, subItem?.fieldName)
-        );
-        if (conditionValue != null) return compare(conditionValue, subItem?.value, subItem?.operator);
-        isNull = true;
-      });
+      return item
+        .map((subItem) => {
+          const value = form.getValues(getName(subItem?.path ?? path, subItem?.fieldName));
+          if (value === undefined) return undefined;
+          return compare(value, subItem?.value, subItem?.operator);
+        })
+        .filter((item) => item !== undefined)
+        .every((item) => !!item);
     } else {
-      const conditionValue = form.getValues(getName(item?.path != null ? item?.path : path, item?.fieldName));
-      if (conditionValue != null) return compare(conditionValue, item?.value, item?.operator);
-      isNull = true;
+      const value = form.getValues(getName(item?.path ?? path, item?.fieldName));
+      if (value === undefined) return undefined;
+      return compare(value, item?.value, item?.operator);
     }
-  });
-  if (isNull) return null;
-  return value;
+  };
+
+  const res = condition?.map(getConditionValue).filter((item) => item !== undefined);
+  return res?.length > 0 ? res.some((item) => !!item) : null;
 };
 
-const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
+const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
   const {
     form,
     type,
     selectionName,
     disabled,
     fieldName,
-    label,
     defaultValue,
     required,
     path,
@@ -282,6 +297,7 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
     conditions,
     observableForms,
     loading,
+    title,
     ...rest
   } = props;
 
@@ -308,6 +324,7 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
       const condition = conditions?.[key];
       if (condition == null) continue;
       const value = getConditionRuleValue(condition, form, path);
+
       if (value == null) continue;
 
       callback((prev) => {
@@ -318,18 +335,12 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
 
   useEffectOnce(() => {
     let subs: Subscription[] = [];
-
     if (conditions == null) return;
-
     const observeForm = observableForms == null ? [form] : observableForms;
+
     observeForm?.map((form) => {
       handleConditions(form, conditions, setRules);
-
-      const subscription = form.watch(() => {
-        handleConditions(form, conditions, setRules);
-      });
-
-      subs.push(subscription);
+      subs.push(form.watch(() => handleConditions(form, conditions, setRules)));
     });
 
     return () => subs.map((form) => form.unsubscribe());
@@ -364,7 +375,7 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
             {...rest?.props?.box}
             {...rest}
           >
-            {type !== "Button" ? <Typography>{label}</Typography> : null}
+            {!!title ? <Typography>{title}</Typography> : null}
             {getField(type, {
               field,
               errorMessage: fieldState.error?.type !== "disabled" ? errorMessage ?? "" : "",
@@ -373,7 +384,6 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
               form,
               locale,
               loading,
-              label,
               ...rest,
             })}
           </Box>
@@ -383,4 +393,4 @@ const DynamicField: React.FC<IDynamicFieldProps> = (props) => {
   );
 };
 
-export default DynamicField;
+export default DynamicFormElement;

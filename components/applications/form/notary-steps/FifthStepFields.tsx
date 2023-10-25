@@ -9,8 +9,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useRouter } from "next/router";
 import StepperContentStep from "@/components/ui/StepperContentStep";
-import TundukDynamicFields from "@/components/fields/TundukDynamicFields";
-import DynamicField, { getName as getTemplateDocName } from "@/components/ui/DynamicField";
+import RequestDynamicField from "@/components/fields/RequestDynamicField";
+import DynamicFormElement, { getName as getTemplateDocName } from "@/components/ui/DynamicFormElement";
 import { useState } from "react";
 
 export interface IStepFieldsProps {
@@ -112,7 +112,33 @@ export default function FifthStepFields({
     });
 
     setAlertOpen(false);
-    dynamicForm.setValue(`movable.${0}.disabled`, true);
+    handleDisabled(responsefields, true);
+  };
+
+  const handlePinReset = async (fields: Record<string, any>[]) => {
+    fields?.map((field) => {
+      const name = getTemplateDocName(field?.path, field?.fieldName);
+      const value = dynamicForm.getValues(name);
+      const isBoolean = typeof value === "boolean";
+      const isString = typeof value === "string";
+
+      if (isBoolean) {
+        dynamicForm.resetField(name as any, { defaultValue: false });
+      } else if (!isString) {
+        dynamicForm.resetField(name as any, { defaultValue: null });
+      } else if (isString) {
+        dynamicForm.resetField(name as any, { defaultValue: "" });
+      }
+    });
+
+    tundukParamsFieldsForm.reset();
+    handleDisabled(fields, false);
+  };
+
+  const handleDisabled = (fields: Record<string, any>[], value: boolean) => {
+    const disabledField = fields?.find((field) => field?.fieldName === "disabled");
+    if (disabledField == null) return;
+    dynamicForm.setValue(getTemplateDocName(disabledField?.path, disabledField?.fieldName), value);
   };
 
   useEffectOnce(async () => {
@@ -149,17 +175,20 @@ export default function FifthStepFields({
                       justifyContent="end"
                       gap="50px"
                     >
-                      {String(item?.fieldType).toLocaleLowerCase() === "tunduk" ? (
-                        <TundukDynamicFields
-                          disabled={item?.disabled}
-                          required={!!item?.required}
+                      {String(item?.fieldType).toLocaleLowerCase() === "request" ? (
+                        <RequestDynamicField
+                          disabled={item?.readonly}
+                          required={item?.required}
                           hidden={item?.hidden}
                           conditions={item?.conditions}
                           loading={tundukVehicleDataLoading}
                           form={dynamicForm}
                           paramsForm={tundukParamsFieldsForm}
                           fields={item?.fields}
-                          responseFields={dynamicForm?.getValues(`movable.${0}.disabled`) ? item?.responseFields : null}
+                          responseFields={item?.responseFields}
+                          onPinReset={() => {
+                            handlePinReset(item?.responseFields);
+                          }}
                           onPinCheck={async (paramsForm) => {
                             const validated = await paramsForm.trigger();
                             let values = {};
@@ -176,14 +205,15 @@ export default function FifthStepFields({
                           }}
                         />
                       ) : (
-                        <DynamicField
+                        <DynamicFormElement
                           disabled={item?.readonly}
                           hidden={item?.hidden}
                           required={!!item?.required}
                           conditions={item?.conditions}
                           type={item?.fieldType}
                           form={dynamicForm}
-                          label={item?.fieldTitles?.[locale ?? ""] ?? ""}
+                          label={item?.fieldLabels?.[locale ?? ""] ?? ""}
+                          title={item?.fieldTitles?.[locale ?? ""] ?? ""}
                           defaultValue={item?.defaultValue}
                           fieldName={item?.fieldName}
                           path={item?.path}
