@@ -168,6 +168,7 @@ export default function PersonalData({
                 data={[
                   { id: 2, name: t("Individual person") },
                   { id: 1, name: t("Juridical person") },
+                  { id: 3, name: t("Juvenile person") },
                 ]}
                 {...field}
                 value={field.value != null ? field.value : ""}
@@ -219,7 +220,7 @@ export default function PersonalData({
       )}
 
       <Box display="flex" gap="20px" alignItems="self-start" flexDirection={{ xs: "column", md: "row" }}>
-        {(fields?.tundukPersonalNumber == null || !!fields?.tundukPersonalNumber) && (
+        {(fields?.tundukPersonalNumber == null || !!fields?.tundukPersonalNumber) && type != 3 && (
           <>
             <Controller
               control={control}
@@ -320,9 +321,30 @@ export default function PersonalData({
             )}
           </>
         )}
+
+        {(fields?.pin == null || !!fields?.pin) && type == 3 && (
+          <Controller
+            control={control}
+            name={names?.pin ?? ""}
+            defaultValue={defaultValues?.pin ?? ""}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" justifyContent="center" width="100%">
+                <InputLabel>{type != 1 ? t("PIN") : t("TIN")}</InputLabel>
+                <Input
+                  inputProps={{ maxLength: foreigner ? undefined : 14 }}
+                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 14, max: 14 }) : ""}
+                  disabled={disableFields}
+                  {...field}
+                  value={field.value != null ? field.value : ""}
+                />
+              </Box>
+            )}
+          />
+        )}
       </Box>
 
-      {(type == null || type == 2) && (
+      {(type == null || type != 1) && (
         <>
           <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
             {(fields?.lastName == null || !!fields?.lastName) && (
@@ -442,27 +464,6 @@ export default function PersonalData({
                         field.onChange(value?.id != null ? { id: value.id } : null);
                         trigger(field.name);
                       }}
-                    />
-                  </Box>
-                )}
-              />
-            )}
-
-            {(fields?.pin == null || !!fields?.pin) && (
-              <Controller
-                control={control}
-                name={names?.pin ?? ""}
-                defaultValue={defaultValues?.pin ?? ""}
-                render={({ field, fieldState }) => (
-                  <Box display="flex" flexDirection="column" justifyContent="center" width="100%">
-                    <InputLabel>{type != 1 ? t("PIN") : t("TIN")}</InputLabel>
-                    <Input
-                      inputProps={{ maxLength: foreigner ? undefined : 14 }}
-                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 14, max: 14 }) : ""}
-                      disabled={disableFields}
-                      {...field}
-                      value={field.value != null ? field.value : ""}
                     />
                   </Box>
                 )}
