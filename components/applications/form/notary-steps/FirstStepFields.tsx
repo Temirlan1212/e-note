@@ -75,7 +75,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
           <Box display="flex" gap="20px" flexDirection="column">
             <Controller
               control={control}
-              name={`notaryUnilateralAction`}
+              name={"notaryUnilateralAction"}
               defaultValue={false}
               render={({ field, fieldState }) => (
                 <Checkbox
