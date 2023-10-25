@@ -43,17 +43,31 @@ function Layout({ children }: { children: JSX.Element }) {
     }
   });
 
-  useEffectOnce(async () => {
+  useEffectOnce(() => {
     setUser(profile.user);
 
-    if (!profile.userRoleSelected && profile.userData?.activeCompany != null) setIsOpen(true);
+    if (!profile.userRoleSelected && profile.userData?.activeCompany != null) {
+      return setIsOpen(true);
+    }
 
-    if (profile.user == null && router.route.length > 1) setPreviousPath(router.route);
-    if (profile.user != null && previousPath != null) (await router.push(previousPath)) && setPreviousPath(null);
+    return redirect();
+  }, [profile.userData, router.route]);
 
-    if (profile.user == null && isRoutesIncludesPath(userRoutesRendered, router.route)) router.push("/");
-    if (profile.user != null && isRoutesIncludesPath(guestRoutesRendered, router.route)) router.push("/applications");
-  }, [profile.user, router.route]);
+  const redirect = async () => {
+    if (profile.user == null && isRoutesIncludesPath(userRoutesRendered, router.route)) {
+      router.push("/");
+      setPreviousPath(router.route);
+    }
+
+    if (profile.user != null && previousPath != null) {
+      router.push(previousPath);
+      setPreviousPath(null);
+
+      if (router.route === "/login" || router.route === "/") {
+        router.push("/applications");
+      }
+    }
+  };
 
   const handleChooseRole = async (role: 1 | 2) => {
     const result = await setRole("/api/user/select?type=" + role);
@@ -65,36 +79,36 @@ function Layout({ children }: { children: JSX.Element }) {
   };
 
   if (user != null && router.asPath.length > 1 && !isRoutesIncludesPath(guestRoutesRendered, router.asPath)) {
-    return (
-      <PrivateLayout>
-        <>
-          {children}
-          <ConfirmationModal
-            isPermanentOpen={isOpen}
-            title="Enter as"
-            type="hint"
-            hintTitle=""
-            hintText="Enter as description"
-            slots={{
-              button: () => (
-                <Box display="flex" alignItems="center" justifyContent="center" gap="16px" width="100%">
-                  {loading && <CircularProgress sx={{ justifyContent: "center" }} />}
-                  {!loading && (
-                    <>
-                      <Button onClick={() => handleChooseRole(1)}>{t("Notary")}</Button>
-                      <Button onClick={() => handleChooseRole(2)}>{t("Applicant")}</Button>
-                    </>
-                  )}
-                </Box>
-              ),
-            }}
-          />
-        </>
-      </PrivateLayout>
-    );
+    return <PrivateLayout>{children}</PrivateLayout>;
   }
 
-  return <PublicLayout>{children}</PublicLayout>;
+  return (
+    <PublicLayout>
+      <>
+        {children}
+        <ConfirmationModal
+          isPermanentOpen={isOpen}
+          title="Enter as"
+          type="hint"
+          hintTitle=""
+          hintText="Enter as description"
+          slots={{
+            button: () => (
+              <Box display="flex" alignItems="center" justifyContent="center" gap="16px" width="100%">
+                {loading && <CircularProgress sx={{ justifyContent: "center" }} />}
+                {!loading && (
+                  <>
+                    <Button onClick={() => handleChooseRole(1)}>{t("Notary")}</Button>
+                    <Button onClick={() => handleChooseRole(2)}>{t("Applicant")}</Button>
+                  </>
+                )}
+              </Box>
+            ),
+          }}
+        />
+      </>
+    </PublicLayout>
+  );
 }
 
 export default function App({ Component, pageProps }: AppProps) {
