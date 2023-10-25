@@ -34,6 +34,7 @@ export interface IPersonalDataProps {
     notaryLegalParticipantsQty: string;
     notaryTotalParticipantsQty: string;
     notaryDateOfOrder: string;
+    subjectRole?: string;
     picture?: string;
     tundukDocumentSeries?: string;
     tundukDocumentNumber?: string;
@@ -44,6 +45,7 @@ export interface IPersonalDataProps {
   defaultValues?: {
     type?: number | null;
     foreigner?: boolean;
+    subjectRole?: string | null;
     picture?: string;
     lastName?: string;
     firstName?: string;
@@ -69,6 +71,7 @@ export interface IPersonalDataProps {
   fields?: {
     type?: boolean;
     foreigner?: boolean;
+    subjectRole?: boolean;
     picture?: boolean;
     lastName?: boolean;
     firstName?: boolean;
@@ -144,6 +147,11 @@ export default function PersonalData({
     "GET"
   );
 
+  const { data: subjectRoleDictionary, loading: subjectRoleDictionaryLoading } = useFetch(
+    "/api/dictionaries/selection/notary.sale-order.person.role.select",
+    "POST"
+  );
+
   useEffect(() => {
     if (names?.picture! && picture?.id) {
       update(`/api/user/image/` + picture?.id);
@@ -152,43 +160,72 @@ export default function PersonalData({
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        {(fields?.type == null || !!fields?.type) && (
-          <Controller
-            control={control}
-            name={names.type}
-            defaultValue={defaultValues?.type ?? 2}
-            render={({ field, fieldState }) => (
-              <Radio
-                labelField="name"
-                valueField="id"
-                row
-                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                data={[
-                  { id: 2, name: t("Individual person") },
-                  { id: 1, name: t("Juridical person") },
-                ]}
-                {...field}
-                value={field.value != null ? field.value : ""}
-              />
-            )}
-          />
-        )}
+      <Box>
+        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          {(fields?.type == null || !!fields?.type) && (
+            <Controller
+              control={control}
+              name={names.type}
+              defaultValue={defaultValues?.type ?? 2}
+              render={({ field, fieldState }) => (
+                <Radio
+                  labelField="name"
+                  valueField="id"
+                  row
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  data={[
+                    { id: 2, name: t("Individual person") },
+                    { id: 1, name: t("Juridical person") },
+                  ]}
+                  {...field}
+                  value={field.value != null ? field.value : ""}
+                />
+              )}
+            />
+          )}
 
-        {(fields?.foreigner == null || !!fields?.foreigner) && (
+          {(fields?.foreigner == null || !!fields?.foreigner) && (
+            <Controller
+              control={control}
+              name={names.foreigner}
+              defaultValue={defaultValues?.foreigner ?? false}
+              render={({ field, fieldState }) => (
+                <Checkbox
+                  label={t("Foreign person")}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  {...field}
+                  checked={!!field.value}
+                />
+              )}
+            />
+          )}
+        </Box>
+
+        {!!fields?.subjectRole && !!names?.subjectRole && (
           <Controller
             control={control}
-            name={names.foreigner}
-            defaultValue={defaultValues?.foreigner ?? false}
+            name={names.subjectRole}
+            defaultValue={defaultValues?.subjectRole ?? ""}
             render={({ field, fieldState }) => (
-              <Checkbox
-                label={t("Foreign person")}
-                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                {...field}
-                checked={!!field.value}
-              />
+              <Box display="flex" flexDirection="column" width="100%" mt="20px">
+                <InputLabel>{t("Subject role")}</InputLabel>
+                <Select
+                  labelField={
+                    subjectRoleDictionary?.data?.length > 0 && subjectRoleDictionary?.data[0][`title_${locale}`]
+                      ? `title_${locale}`
+                      : "title"
+                  }
+                  valueField="value"
+                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  data={subjectRoleDictionary?.status === 0 ? subjectRoleDictionary?.data ?? [] : []}
+                  loading={subjectRoleDictionaryLoading}
+                  {...field}
+                  value={field.value != null ? field.value : ""}
+                />
+              </Box>
             )}
           />
         )}
