@@ -63,6 +63,5 @@ export const applicationSchema = object()
         })
       )
     ),
-    notaryUnilateralAction: boolean(),
   })
   .concat(addressSchema.pick(["region", "district", "city"]));

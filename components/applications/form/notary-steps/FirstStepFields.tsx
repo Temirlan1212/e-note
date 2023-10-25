@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Controller, UseFormReturn, useFieldArray } from "react-hook-form";
+import { UseFormReturn, useFieldArray } from "react-hook-form";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import useFetch from "@/hooks/useFetch";
 import { format } from "date-fns";
@@ -20,7 +20,6 @@ import PersonalData from "@/components/fields/PersonalData";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 import { IPersonSchema } from "@/validator-schemas/person";
-import Checkbox from "@/components/ui/Checkbox";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -73,20 +72,6 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
         return (
           <Box display="flex" gap="20px" flexDirection="column">
-            <Controller
-              control={control}
-              name={"notaryUnilateralAction"}
-              defaultValue={false}
-              render={({ field, fieldState }) => (
-                <Checkbox
-                  label={t("Unilateral action")}
-                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  {...field}
-                  checked={!!field.value}
-                />
-              )}
-            />
             <Typography variant="h5">{t("Personal data")}</Typography>
             <PersonalData
               form={form}
@@ -281,7 +266,6 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         requester: values.requester,
         statusSelect: 2,
         notarySignatureStatus: 2,
-        notaryUnilateralAction: values.notaryUnilateralAction,
       };
 
       let result = null;
