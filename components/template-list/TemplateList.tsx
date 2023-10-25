@@ -181,7 +181,10 @@ export default function TemplateList() {
   }, [allData, keywordValue]);
 
   return (
-    <>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <Typography variant="h4" color="success.main">
+        {t("System templates")}
+      </Typography>
       <SearchBar onChange={handleKeywordChange} onClick={handleKeywordSearch} value={keywordValue} />
 
       <Box sx={{ height: "448px" }}>
@@ -191,6 +194,6 @@ export default function TemplateList() {
       <Box alignSelf="center">
         <Pagination currentPage={selectedPage} totalPages={totalPages} onPageChange={onPageChange} />
       </Box>
-    </>
+    </Box>
   );
 }

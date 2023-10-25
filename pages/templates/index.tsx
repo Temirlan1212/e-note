@@ -12,16 +12,7 @@ export default function TemplateList() {
       <Head>
         <title>{t("Template list")}</title>
       </Head>
-      <Container
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "30px",
-          alignSelf: "center",
-          padding: { xs: "30px 20px 33px 20px", sm: "30px 20px 49px 20px", md: "60px 60px 46px 60px" },
-          maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
-        }}
-      >
+      <Container maxWidth="xl" sx={{ py: "30px" }}>
         <TemplateListComponent />
       </Container>
     </>
