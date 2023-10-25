@@ -75,7 +75,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
           <Box display="flex" gap="20px" flexDirection="column">
             <Controller
               control={control}
-              name={`unilateralAction`}
+              name={"notaryUnilateralAction"}
               defaultValue={false}
               render={({ field, fieldState }) => (
                 <Checkbox
@@ -99,6 +99,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
               fields={{
                 nationality: true,
                 maritalStatus: true,
+                subjectRole: true,
               }}
               onPinCheck={() => handlePinCheck(index)}
               onPinReset={() => handlePinReset(index)}
@@ -183,6 +184,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     notaryDateOfOrder: `requester.${index}.notaryDateOfOrder`,
     nationality: `requester.${index}.nationality`,
     maritalStatus: `requester.${index}.maritalStatus`,
+    subjectRole: `requester.${index}.subjectRole`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -279,7 +281,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         requester: values.requester,
         statusSelect: 2,
         notarySignatureStatus: 2,
-        unilateralAction: values.unilateralAction,
+        notaryUnilateralAction: values.notaryUnilateralAction,
       };
 
       let result = null;
