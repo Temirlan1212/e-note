@@ -9,7 +9,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useRouter } from "next/router";
 import StepperContentStep from "@/components/ui/StepperContentStep";
-import DynamicField from "@/components/ui/DynamicField";
+import DynamicFormElement from "@/components/ui/DynamicFormElement";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -102,14 +102,15 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                       flexDirection="column"
                       justifyContent="end"
                     >
-                      <DynamicField
+                      <DynamicFormElement
                         disabled={item?.readonly}
                         hidden={item?.hidden}
                         required={!!item?.required}
                         conditions={item?.conditions}
                         type={item?.fieldType}
                         form={dynamicForm}
-                        label={item?.fieldTitles?.[locale ?? ""] ?? ""}
+                        label={item?.fieldLabels?.[locale ?? ""] ?? ""}
+                        title={item?.fieldTitles?.[locale ?? ""] ?? ""}
                         defaultValue={item?.defaultValue}
                         fieldName={item?.fieldName}
                         path={item?.path}
