@@ -149,9 +149,12 @@ const UserCreateContent: FC = () => {
       const pin = values?.personalNumber;
       const series = values?.tundukPassportSeries;
       const number = values?.tundukPassportNumber;
-      const personalData = await tundukPersonalDataFetch(
-        `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`
-      );
+
+      let url = `individual?pin=${pin}&series=${series}&number=${number}`;
+      const personalData: Record<string, any> = await tundukPersonalDataFetch(`/api/tunduk`, {
+        model: `/ws/tunduk/${url}`,
+      });
+
       if (personalData?.status !== 0 || personalData?.data == null) {
         setAlertOpen(true);
         return;
