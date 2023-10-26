@@ -1,26 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { Box, Typography } from "@mui/material";
+import React, { useState, useEffect, ChangeEvent } from "react";
+import { Box, IconButton, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
 import Pagination from "@/components/ui/Pagination";
 import SearchBar from "@/components/ui/SearchBar";
 import Button from "@/components/ui/Button";
 import { GridTable, IFilterSubmitParams, IGridColDef } from "@/components/ui/GridTable";
+import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
+import { ValueOf } from "next/dist/shared/lib/constants";
+import ClearIcon from "@mui/icons-material/Clear";
+import { IActionType } from "@/models/action-type";
+import { useRouter } from "next/router";
+import { INotarialAction, INotarialActionData } from "@/models/notarial-action";
 
-interface IRequestBody {
-  criteria: Array<{
-    fieldName: string;
-    operator: string;
-    value: string;
-  }> | null;
-  operator: string | null;
-}
-
-interface IRowData {
-  status: number;
-  offset: number;
-  total: number;
-  data?: Array<Record<string, any>>;
+interface IAppQueryParams {
+  pageSize: number;
+  page: number;
+  sortBy: string[];
+  filterValues: Record<string, (string | number)[]>;
+  searchValue: string;
 }
 
 function GridTableActionsCell({ row }: { row: Record<string, any> }) {
@@ -58,142 +56,203 @@ function GridTableActionsCell({ row }: { row: Record<string, any> }) {
 }
 
 export default function TemplateList() {
-  const [selectedPage, setSelectedPage] = useState<number>(1);
-  const [keywordValue, setKeywordValue] = useState<string>("");
-  const [rowData, setRowData] = useState<IRowData | null>(null);
+  const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
+    pageSize: 7,
+    page: 1,
+    sortBy: ["id"],
+    filterValues: {},
+    searchValue: "",
+  });
+  const [searchValue, setSearchValue] = useState<string>("");
+
   const t = useTranslations();
+  const { locale } = useRouter();
 
-  const columns: IGridColDef[] = [
-    {
-      field: "id",
-      headerName: "Template ID",
-      width: 180,
-    },
-    {
-      field: "name",
-      headerName: "Template name",
-      width: 340,
-      sortable: false,
-    },
-    {
-      field: "actionType",
-      headerName: "Action type",
-      width: 320,
-      sortable: false,
-      filter: {
-        type: "simple",
-      },
-    },
-    {
-      field: "documentType",
-      headerName: "Document type",
-      width: 640,
-      sortable: false,
-      filter: {
-        type: "simple",
-      },
-    },
-    {
-      field: "objectType",
-      headerName: "Object type",
-      width: 320,
-      sortable: false,
-      filter: {
-        type: "simple",
-      },
-    },
-    {
-      field: "actions",
-      headerName: "Actions",
-      type: "actions",
-      sortable: false,
-      width: 320,
-      cellClassName: "actions-pinnable",
-      renderCell: ({ row }) => <GridTableActionsCell row={row} />,
-    },
-  ];
-
-  const dataGridStyles = {
-    ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": { padding: "10px 16px" },
-    ".MuiDataGrid-columnHeader": { padding: "16px" },
-  };
-
-  const [requestBody, setRequestBody] = useState<IRequestBody>({
-    criteria: null,
-    operator: null,
+  const { data, loading } = useFetch("/api/templates", "POST", {
+    body: appQueryParams,
   });
 
-  const { data: allData } = useFetch("/api/templates/", "POST");
+  const { data: notarialData, loading: notarialLoading } = useFetch<INotarialActionData>(
+    "/api/dictionaries/notarial-action",
+    "GET"
+  );
 
-  const { data: filteredData } = useFetch("/api/templates/", "POST", {
-    body: requestBody,
-  });
-
-  const itemsPerPage = 6;
-  const totalPages = allData != null && Array.isArray(allData.data) ? Math.ceil(allData.data.length / itemsPerPage) : 1;
-
-  const onPageChange = (page: number) => {
-    setSelectedPage(page);
+  const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
+  const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
+    setAppQueryParams((prev) => {
+      return { ...prev, [key]: newValue };
+    });
   };
 
-  const handleKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setKeywordValue(event.target.value);
+  const handleFilterSubmit = async (value: IFilterSubmitParams) => {
+    handleUpdateFilterValues(value);
+    if (value.value.length > 0) updateAppQueryParams("page", 1);
   };
 
-  const handleKeywordSearch = () => {
-    const filterData = allData?.data.filter((field: any) => field.name.includes(keywordValue));
-    const resultObject: IRowData = {
-      status: 0,
-      offset: 0,
-      total: filterData.length,
-      data: filterData,
-    };
-    setRowData(resultObject);
+  const handlePageChange = (page: number) => {
+    if (appQueryParams.page !== page) updateAppQueryParams("page", page);
   };
 
-  const onFilterSubmit = (value: IFilterSubmitParams) => {
-    if (!Array.isArray(value.value)) {
-      const field = value.rowParams.field;
+  const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
+    const type = value.rowParams.colDef.filter?.type;
+    if (type === "dictionary") {
+      const field = value.rowParams.colDef.filter?.field;
+      const prevValue = appQueryParams.filterValues;
 
-      if (field != null) {
-        setRequestBody((prev: any) => {
-          return {
-            ...prev,
-            criteria: [
-              {
-                fieldName: field,
-                operator: "like",
-                value: `%${value.value}%`,
-              },
-            ],
-            operator: "or",
-          };
-        });
-        setRowData(filteredData);
+      if (field && Array.isArray(value.value)) {
+        if (value.value.length > 0) {
+          updateAppQueryParams("filterValues", {
+            ...prevValue,
+            [field]: value.value,
+          });
+        } else {
+          const updatedFilterValues = { ...prevValue };
+          delete updatedFilterValues[field];
+          updateAppQueryParams("filterValues", updatedFilterValues);
+        }
       }
     }
   };
 
-  useEffect(() => {
-    if (allData && keywordValue === "") {
-      setRowData(allData);
+  const handleSortByDate = async (model: GridSortModel) => {
+    const sortBy = model.map((s) => (s.sort === "asc" ? s.field : `-${s.field}`));
+    updateAppQueryParams("sortBy", sortBy);
+  };
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    if (value === "") {
+      setAppQueryParams((prevParams) => ({
+        ...prevParams,
+        searchValue: "",
+      }));
     }
-  }, [allData, keywordValue]);
+    setSearchValue(value);
+  };
+
+  const handleSearchSubmit = () => {
+    if (searchValue == null) return;
+    setAppQueryParams((prevParams) => ({
+      ...prevParams,
+      page: 1,
+      searchValue: searchValue,
+    }));
+  };
+
+  const handleReset = () => {
+    setSearchValue("");
+    setAppQueryParams((prevParams) => ({
+      ...prevParams,
+      searchValue: "",
+    }));
+  };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
       <Typography variant="h4" color="success.main">
         {t("System templates")}
       </Typography>
-      <SearchBar onChange={handleKeywordChange} onClick={handleKeywordSearch} value={keywordValue} />
+      <SearchBar
+        value={searchValue}
+        onChange={handleSearchChange}
+        onClick={handleSearchSubmit}
+        InputProps={{
+          endAdornment: (
+            <IconButton onClick={handleReset} sx={{ visibility: searchValue === "" ? "hidden" : "visible" }}>
+              <ClearIcon />
+            </IconButton>
+          ),
+        }}
+      />
 
-      <Box sx={{ height: "448px" }}>
-        <GridTable rows={rowData?.data ?? []} columns={columns} sx={dataGridStyles} onFilterSubmit={onFilterSubmit} />
-      </Box>
+      <GridTable
+        columns={[
+          {
+            field: "id",
+            headerName: "Template ID",
+            width: 180,
+          },
+          {
+            field: "name",
+            headerName: "Template name",
+            width: 340,
+            sortable: false,
+            valueGetter: (params: GridValueGetterParams) => {
+              return locale !== "en" ? params.row["$t:name"] : params.row.name;
+            },
+          },
+          {
+            field: "notaryActionType",
+            headerName: "Action type",
+            width: 200,
+            editable: false,
+            sortable: false,
+            filter: {
+              data: actionTypeData?.data ?? [],
+              labelField: "title_" + locale,
+              valueField: "value",
+              type: "dictionary",
+              field: "notaryActionType",
+            },
+            valueGetter: (params: GridValueGetterParams) => {
+              if (actionTypeData?.data != null) {
+                const matchedItem = actionTypeData?.data.find((item: IActionType) => item.value == params.value);
+                const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
+                return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
+              }
+              return params.value;
+            },
+          },
+          {
+            field: "notaryObject",
+            headerName: "Object type",
+            width: 320,
+            sortable: false,
+            filter: {
+              data: notarialData?.object ?? [],
+              labelField: "title_" + locale,
+              valueField: "value",
+              type: "dictionary",
+              field: "notaryObject",
+            },
+            valueGetter: (params: GridValueGetterParams) => {
+              if (notarialData?.object != null) {
+                const matchedItem = notarialData?.object?.find((item: INotarialAction) => item.value == params.value);
+                const translatedTitle = matchedItem?.[("title_" + locale) as keyof INotarialAction];
+                return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof INotarialAction] ?? "";
+              }
+              return params.value;
+            },
+          },
+          {
+            field: "actions",
+            type: "actions",
+            sortable: false,
+            width: 320,
+            cellClassName: "actions-pinnable",
+            renderCell: ({ row }) => <GridTableActionsCell row={row} />,
+          },
+        ]}
+        rows={data?.data ?? []}
+        onFilterSubmit={handleFilterSubmit}
+        onSortModelChange={handleSortByDate}
+        cellMaxHeight="200px"
+        loading={loading}
+        sx={{
+          height: "100%",
+          ".executorColumn": {
+            color: "success.main",
+          },
+        }}
+        rowHeight={65}
+      />
 
-      <Box alignSelf="center">
-        <Pagination currentPage={selectedPage} totalPages={totalPages} onPageChange={onPageChange} />
-      </Box>
+      <Pagination
+        sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
+        currentPage={appQueryParams.page}
+        totalPages={data?.total ? Math.ceil(data.total / appQueryParams.pageSize) : 1}
+        onPageChange={handlePageChange}
+      />
     </Box>
   );
 }
