@@ -113,7 +113,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
   useEffectOnce(() => {
     if (notaryData != null && profile.user != null) {
-      setValue("company", notaryData);
+      if (!notaryData?.id) return;
+      setValue("company", { id: notaryData.id });
       setNotaryData(null);
     }
   }, [notaryData]);
