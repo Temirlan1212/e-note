@@ -425,11 +425,11 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       const series = values[entity][index].tundukPassportSeries;
       const number = values[entity][index].tundukPassportNumber;
 
-      const url = isJuridicalPerson
-        ? `/api/tunduk/company-data/${pin}`
-        : `/api/tunduk/personal-data?pin=${pin}&series=${series}&number=${number}`;
+      const url = isJuridicalPerson ? `company/${pin}` : `individual?pin=${pin}&series=${series}&number=${number}`;
 
-      const personalData = await tundukPersonalDataFetch(url);
+      const personalData: Record<string, any> = await tundukPersonalDataFetch(`/api/tunduk`, {
+        model: `/ws/tunduk/${url}`,
+      });
 
       if (personalData?.status !== 0 || personalData?.data == null) {
         setAlertOpen(true);

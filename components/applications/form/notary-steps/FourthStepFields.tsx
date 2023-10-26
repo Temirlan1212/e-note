@@ -407,8 +407,9 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
       const series = values[entity][index].tundukPassportSeries;
       const number = values[entity][index].tundukPassportNumber;
 
-      let url = isJuridicalPerson ? `company/${pin}` : `person/${pin}`;
+      let url = `person/${pin}`;
       if (!!series && !!number) url = `individual?pin=${pin}&series=${series}&number=${number}`;
+      if (isJuridicalPerson) url = `company/${pin}`;
 
       const personalData: Record<string, any> = await tundukPersonalDataFetch(`/api/tunduk`, {
         model: `/ws/tunduk/${url}`,
