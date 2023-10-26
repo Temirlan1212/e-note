@@ -407,14 +407,14 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     const values = getValues();
     const entity = "requester";
 
-    const triggerFields = [getTundukParamsFields(index).tundukDocumentNumber] as const;
+    const triggerFields = [getTundukParamsFields(index).tundukPersonalNumber] as const;
     const validated = await trigger(
       isJuridicalPerson
         ? triggerFields
         : [
             ...triggerFields,
             getTundukParamsFields(index).tundukDocumentSeries,
-            getTundukParamsFields(index).tundukPersonalNumber,
+            getTundukParamsFields(index).tundukDocumentNumber,
           ]
     );
 

@@ -397,7 +397,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     const values = getValues();
     const entity = "members";
 
-    const triggerFields = [getTundukParamsFields(index).tundukDocumentNumber] as const;
+    const triggerFields = [getTundukParamsFields(index).tundukPersonalNumber] as const;
     const validated = await trigger(triggerFields);
 
     if (!validated) return;
