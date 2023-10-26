@@ -38,7 +38,7 @@ function Layout({ children }: { children: JSX.Element }) {
     const code = params.get("code");
 
     if (code != null) {
-      // profile.logInEsi(code);
+      profile.logInEsi(code);
       console.log(code);
     }
   });
