@@ -21,11 +21,21 @@ export const personSchema = object()
         then: (schema) => schema.required("required"),
         otherwise: (schema) => schema.nullable(),
       })
+      .when("partnerTypeSelect", {
+        is: 3,
+        then: (schema) => schema.required("required"),
+        otherwise: (schema) => schema.nullable(),
+      })
       .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
     name: string()
       .trim()
       .when("partnerTypeSelect", {
         is: 2,
+        then: (schema) => schema.required("required"),
+        otherwise: (schema) => schema.nullable(),
+      })
+      .when("partnerTypeSelect", {
+        is: 3,
         then: (schema) => schema.required("required"),
         otherwise: (schema) => schema.nullable(),
       })
@@ -35,15 +45,15 @@ export const personSchema = object()
       .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
     personalNumber: string()
       .trim()
-      .when("foreigner", {
-        is: true,
-        then: (schema) => schema.nullable(),
-        otherwise: (schema) =>
+      .when("partnerTypeSelect", {
+        is: 3,
+        then: (schema) =>
           schema
             .min(14, "minNumbers")
             .max(14, "maxNumbers")
             .required("required")
             .matches(/^[0-9]*$/, "onlyNumbers"),
+        otherwise: (schema) => schema.nullable(),
       }),
     birthDate: date().nullable(),
     citizenship: object({
