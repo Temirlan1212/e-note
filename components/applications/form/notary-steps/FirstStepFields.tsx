@@ -397,7 +397,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
   const handlePinReset = async (index: number) => {
     setValue(`requester.${index}.disabled`, false);
-    resetFields(index, { skip: ["partnerTypeSelect"] });
+    resetFields(index, { skip: ["partnerTypeSelect", "subjectRole"] });
   };
 
   const handlePinCheck = async (index: number) => {
@@ -446,7 +446,13 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       setAlertOpen(false);
 
       resetFields(index, {
-        skip: ["partnerTypeSelect", "tundukPassportNumber", "tundukPassportSeries", "tundukPersonalNumber"],
+        skip: [
+          "partnerTypeSelect",
+          "tundukPassportNumber",
+          "tundukPassportSeries",
+          "tundukPersonalNumber",
+          "subjectRole",
+        ],
       });
       setValue(`requester.${index}.disabled`, true);
 

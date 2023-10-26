@@ -387,7 +387,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
 
   const handlePinReset = async (index: number) => {
     setValue(`members.${index}.disabled`, false);
-    resetFields(index, { skip: ["partnerTypeSelect"] });
+    resetFields(index, { skip: ["partnerTypeSelect", "subjectRole"] });
   };
 
   const handlePinCheck = async (index: number) => {
@@ -428,7 +428,13 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
       setAlertOpen(false);
 
       resetFields(index, {
-        skip: ["partnerTypeSelect", "tundukPassportNumber", "tundukPassportSeries", "tundukPersonalNumber"],
+        skip: [
+          "partnerTypeSelect",
+          "tundukPassportNumber",
+          "tundukPassportSeries",
+          "tundukPersonalNumber",
+          "subjectRole",
+        ],
       });
       setValue(`members.${index}.disabled`, true);
 
