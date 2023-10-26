@@ -52,6 +52,7 @@ export const applicationSchema = object()
       .nullable()
       .default(null)
       .test("nullable-required", "required", (v) => v != null),
+
     requester: array().of(personSchema),
     members: array().of(
       personSchema.concat(
@@ -60,6 +61,7 @@ export const applicationSchema = object()
           tundukPassportNumber: string()
             .trim()
             .matches(/^[0-9]*$/, "onlyNumbers"),
+          subjectRole: string(),
         })
       )
     ),
