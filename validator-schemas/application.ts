@@ -52,6 +52,7 @@ export const applicationSchema = object()
       .nullable()
       .default(null)
       .test("nullable-required", "required", (v) => v != null),
+
     requester: array().of(personSchema),
     members: array().of(
       personSchema.concat(
@@ -64,7 +65,5 @@ export const applicationSchema = object()
         })
       )
     ),
-    notaryUnilateralAction: boolean(),
-    selectedStepByTab: number(),
   })
   .concat(addressSchema.pick(["region", "district", "city"]));
