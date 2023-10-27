@@ -69,7 +69,7 @@ const NotariesCard: FC<INotaryProps> = ({ fullName, image, rating, region, area,
           <Typography>
             {region ? (locale === "ru" || locale === "kg" ? region["$t:name"] : region.name) : ""}
           </Typography>
-          <Typography>{area ? (locale === "ru" || locale === "kg" ? area["$t:name"] : area.name) : ""}.</Typography>
+          <Typography>{area ? (locale === "ru" || locale === "kg" ? area["$t:name"] : area.name) : ""}</Typography>
           <Typography>{location}</Typography>
         </Box>
       </CardContent>

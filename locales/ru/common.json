@@ -214,5 +214,7 @@
   "Enter as description": "У вас есть несколько ролей. Вам необходимо выбрать один для работы в системе",
   "Sorry, nothing found": "Простите, ничего не найдено",
   "PIN": "ПИН",
-  "Copy the place of residence": "Скопировать адрес прописки"
+  "Copy the place of residence": "Скопировать адрес прописки",
+  "License": "Лицензия",
+  "from": "от"
 }

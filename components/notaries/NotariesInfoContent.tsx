@@ -1,4 +1,4 @@
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box, CircularProgress, Typography } from "@mui/material";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
@@ -83,7 +83,13 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: [],
     },
     {
-      text: notaryData[0]?.licenseNo + " от " + formatDate(notaryData[0]?.licenseTermFrom),
+      text:
+        notaryData[0]?.licenseNo && notaryData[0]?.licenseTermFrom
+          ? `${t("License")} ` +
+            notaryData[0]?.licenseNo +
+            ` ${t("from")} ` +
+            formatDate(notaryData[0]?.licenseTermFrom)
+          : null,
       icon: <LicenseIcon />,
       type: "text",
       array: [],
@@ -110,8 +116,14 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: [],
     },
     {
-      text: `${notaryData[0]?.notaryDistrict[locale === "ru" || locale === "kg" ? "$t:name" : "name"]}, ${notaryData[0]
-        ?.address.fullName}`,
+      text:
+        notaryData[0]?.notaryDistrict?.name &&
+        notaryData[0]?.notaryDistrict?.["$t:name"] &&
+        notaryData[0]?.address?.fullName
+          ? `${notaryData[0]?.notaryDistrict?.[
+              locale === "ru" || locale === "kg" ? "$t:name" : "name"
+            ]}, ${notaryData[0]?.address?.fullName}`
+          : null,
       icon: <LocationOnOutlinedIcon />,
       type: "text",
       array: [],
@@ -136,200 +148,208 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const filteredInfoArray = infoArray.filter((item) => item.text);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: {
-          xs: "center",
-          md: "space-between",
-        },
-        flexDirection: {
-          xs: "column",
-          md: "row",
-        },
-      }}
-    >
-      <Box
-        sx={{
-          display: "flex",
-          gap: {
-            xs: "25px",
-            md: "30px",
-          },
-          flexDirection: {
-            xs: "column",
-            md: "row",
-          },
-        }}
-      >
+    <>
+      {!loading ? (
         <Box
           sx={{
             display: "flex",
-            flexDirection: "column",
-            gap: "15px",
-            alignItems: {
+            justifyContent: {
               xs: "center",
-              md: "start",
+              md: "space-between",
+            },
+            flexDirection: {
+              xs: "column",
+              md: "row",
             },
           }}
         >
-          {notaryData[0]?.logo ? (
+          <Box
+            sx={{
+              display: "flex",
+              gap: {
+                xs: "25px",
+                md: "30px",
+              },
+              flexDirection: {
+                xs: "column",
+                md: "row",
+              },
+            }}
+          >
             <Box
               sx={{
-                width: "194px",
-                height: "194px",
-                objectFit: "contain",
+                display: "flex",
+                flexDirection: "column",
+                gap: "15px",
+                alignItems: {
+                  xs: "center",
+                  md: "start",
+                },
               }}
             >
-              <Image src={notaryData[0]?.logo} alt="notaryImage" />
-            </Box>
-          ) : (
-            <Avatar
-              sizes="194"
-              sx={{
-                bgcolor: "success.main",
-                width: "194px",
-                height: "194px",
-                borderRadius: 0,
-              }}
-              aria-label="recipe"
-            />
-          )}
+              {notaryData[0]?.logo ? (
+                <Box
+                  sx={{
+                    width: "194px",
+                    height: "194px",
+                    objectFit: "contain",
+                  }}
+                >
+                  <Image src={notaryData[0]?.logo} alt="notaryImage" />
+                </Box>
+              ) : (
+                <Avatar
+                  sizes="194"
+                  sx={{
+                    bgcolor: "success.main",
+                    width: "194px",
+                    height: "194px",
+                    borderRadius: 0,
+                  }}
+                  aria-label="recipe"
+                />
+              )}
 
-          <Box>
-            <Box display="flex" gap="8px">
-              <Rating value={4} readOnly />
+              <Box>
+                <Box display="flex" gap="8px">
+                  <Rating value={4} readOnly />
+                  <Typography
+                    sx={{
+                      fontSize: "16px",
+                      fontWeight: 600,
+                    }}
+                  >
+                    4,0
+                  </Typography>
+                </Box>
+                <Typography
+                  sx={{
+                    color: "#BDBDBD",
+                    fontSize: "16px",
+                    fontWeight: 400,
+                  }}
+                >
+                  45 оцен.
+                </Typography>
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "20px",
+                padding: "0 30px",
+              }}
+            >
               <Typography
+                component="h3"
                 sx={{
-                  fontSize: "16px",
+                  fontSize: "20px",
                   fontWeight: 600,
                 }}
               >
-                4,0
+                {notaryData[0]?.partner?.fullName}
               </Typography>
+              <Box>
+                <Box display="flex" gap="20px" flexDirection="column">
+                  {filteredInfoArray.map(({ text, icon: Icon, type, array, href }) => {
+                    return (
+                      <Box display="flex" gap="15px" key={text}>
+                        {Icon}
+                        {type === "link" ? (
+                          <Link
+                            rel="noopener noreferrer"
+                            target="_blank"
+                            href={href ?? "#"}
+                            style={{
+                              color: "#1BAA75",
+                            }}
+                          >
+                            {text}
+                          </Link>
+                        ) : (
+                          type === "text" && <Typography>{text}</Typography>
+                        )}
+                        {type === "list" && (
+                          <Box display="flex" flexDirection="column" gap="5px">
+                            <Typography>{text}</Typography>
+                            {array?.map((el, idx) => {
+                              const matchingTitle = workDaysAreaData.find(
+                                (item: any) => item?.order_seq === el?.weekDayNumber - 1
+                              );
+                              const translatedTitle = matchingTitle?.["title_" + locale];
+                              const title = Boolean(translatedTitle) ? translatedTitle : matchingTitle?.title ?? "";
+
+                              const startDate = el?.startDate ? el.startDate.slice(0, 5) : "";
+                              const endDate = el?.endDate ? el.endDate.slice(0, 5) : "";
+                              const timeRange = startDate && endDate ? `${startDate} - ${endDate}` : "";
+                              return (
+                                <Box key={idx}>
+                                  <Typography>
+                                    {title} {timeRange}
+                                  </Typography>
+                                </Box>
+                              );
+                            })}
+                          </Box>
+                        )}
+                      </Box>
+                    );
+                  })}
+                </Box>
+              </Box>
             </Box>
-            <Typography
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "30px",
+              marginTop: { xs: "30px", sm: "30px", md: "unset", lg: "unset" },
+            }}
+          >
+            <Button
+              onClick={handleCreateAppClick}
+              startIcon={<ContentPlusIcon />}
+              color="success"
               sx={{
-                color: "#BDBDBD",
-                fontSize: "16px",
-                fontWeight: 400,
+                width: {
+                  sx: "100%",
+                  md: "320px",
+                },
+                padding: "10px 0",
               }}
             >
-              45 оцен.
-            </Typography>
+              {t("Create application")}
+            </Button>
+
+            {userData?.group?.id === 4 ? null : (
+              <Button
+                startIcon={<CloudMessageIcon />}
+                buttonType="secondary"
+                sx={{
+                  width: {
+                    sx: "100%",
+                    md: "320px",
+                  },
+                  padding: "10px 0",
+                  ":hover": {
+                    backgroundColor: "#3F5984",
+                  },
+                }}
+                onClick={handleOpenChat}
+              >
+                {t("Write a message")}
+              </Button>
+            )}
           </Box>
         </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "20px",
-            padding: "0 30px",
-          }}
-        >
-          <Typography
-            component="h3"
-            sx={{
-              fontSize: "20px",
-              fontWeight: 600,
-            }}
-          >
-            {notaryData[0]?.partner?.fullName}
-          </Typography>
-          <Box>
-            <Box display="flex" gap="20px" flexDirection="column">
-              {filteredInfoArray.map(({ text, icon: Icon, type, array, href }) => {
-                return (
-                  <Box display="flex" gap="15px" key={text}>
-                    {Icon}
-                    {type === "link" ? (
-                      <Link
-                        rel="noopener noreferrer"
-                        target="_blank"
-                        href={href ?? "#"}
-                        style={{
-                          color: "#1BAA75",
-                        }}
-                      >
-                        {text}
-                      </Link>
-                    ) : (
-                      type === "text" && <Typography>{text}</Typography>
-                    )}
-                    {type === "list" && (
-                      <Box display="flex" flexDirection="column" gap="5px">
-                        <Typography>{text}</Typography>
-                        {array?.map((el, idx) => {
-                          const matchingTitle = workDaysAreaData.find(
-                            (item: any) => item?.order_seq === el?.weekDayNumber - 1
-                          );
-                          const translatedTitle = matchingTitle?.["title_" + locale];
-                          const title = Boolean(translatedTitle) ? translatedTitle : matchingTitle?.title ?? "";
-
-                          const startDate = el?.startDate ? el.startDate.slice(0, 5) : "";
-                          const endDate = el?.endDate ? el.endDate.slice(0, 5) : "";
-                          const timeRange = startDate && endDate ? `${startDate} - ${endDate}` : "";
-                          return (
-                            <Box key={idx}>
-                              <Typography>
-                                {title} {timeRange}
-                              </Typography>
-                            </Box>
-                          );
-                        })}
-                      </Box>
-                    )}
-                  </Box>
-                );
-              })}
-            </Box>
-          </Box>
+      ) : (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <CircularProgress color="success" />
         </Box>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "30px",
-          marginTop: { xs: "30px", sm: "30px", md: "unset", lg: "unset" },
-        }}
-      >
-        <Button
-          onClick={handleCreateAppClick}
-          startIcon={<ContentPlusIcon />}
-          color="success"
-          sx={{
-            width: {
-              sx: "100%",
-              md: "320px",
-            },
-            padding: "10px 0",
-          }}
-        >
-          {t("Create application")}
-        </Button>
-
-        {userData?.group?.id === 4 ? null : (
-          <Button
-            startIcon={<CloudMessageIcon />}
-            buttonType="secondary"
-            sx={{
-              width: {
-                sx: "100%",
-                md: "320px",
-              },
-              padding: "10px 0",
-              ":hover": {
-                backgroundColor: "#3F5984",
-              },
-            }}
-            onClick={handleOpenChat}
-          >
-            {t("Write a message")}
-          </Button>
-        )}
-      </Box>
-    </Box>
+      )}
+    </>
   );
 };
 
