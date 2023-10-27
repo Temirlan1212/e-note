@@ -48,6 +48,7 @@ export const applicationSchema = object()
       .test("nullable-required", "required", (v) => v != null),
     product: object({
       id: number().integer().positive(),
+      oneSideAction: boolean(),
     })
       .nullable()
       .default(null)

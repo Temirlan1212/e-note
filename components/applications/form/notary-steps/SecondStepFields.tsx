@@ -144,7 +144,9 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                 }
                 onBlur={field.onBlur}
                 onChange={(event, value) => {
-                  field.onChange(value?.id != null ? { id: value.id } : null);
+                  field.onChange(
+                    value?.id != null ? { id: value.id, oneSideAction: Boolean(value.oneSideAction) } : null
+                  );
                   trigger(field.name);
                 }}
               />
