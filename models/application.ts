@@ -9,6 +9,7 @@ export interface IApplication {
   statusSelect: number;
   typeNotarialAction: number;
   creationDate: string;
+  createdOn: string;
   notaryUniqNumber: string;
   notarySignatureStatus: number;
   uniqueQrCode?: string;

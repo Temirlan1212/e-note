@@ -39,7 +39,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
     { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
     {
       title: "Date of the action",
-      value: data?.creationDate ? format(new Date(data?.creationDate!), "dd.MM.yyyy HH:mm:ss") : "",
+      value: data?.createdOn ? format(new Date(data?.createdOn!), "dd.MM.yyyy HH:mm:ss") : "",
     },
     { title: "Notary's full name", value: data?.company.partner.fullName },
     { title: "Unique registry number", value: data?.notaryUniqNumber },
