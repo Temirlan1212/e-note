@@ -28,7 +28,7 @@ function Layout({ children }: { children: JSX.Element }) {
   const router = useRouter();
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
-  const [previousPath, setPreviousPath] = useState<string | null>(null);
+  const [redirectTo, setRedirectTo] = useState<string | null>("/applications");
   const [isOpen, setIsOpen] = useState(false);
 
   const { loading, update: setRole } = useFetch("", "GET");
@@ -39,35 +39,32 @@ function Layout({ children }: { children: JSX.Element }) {
 
     if (code != null) {
       profile.logInEsi(code);
-      console.log(code);
     }
   });
 
-  useEffectOnce(() => {
+  useEffectOnce(async () => {
     setUser(profile.user);
 
     if (!profile.userRoleSelected && profile.userData?.activeCompany != null) {
       return setIsOpen(true);
     }
 
-    return redirect();
+    const isPrivateRoute = router.route.length > 1 && isRoutesIncludesPath(userRoutesRendered, router.route);
+
+    if (profile.user == null && isPrivateRoute) {
+      setRedirectTo(router.route);
+      return router.push("/");
+    }
+
+    if (profile.user != null && redirectTo != null) {
+      await router.push(redirectTo);
+      return setRedirectTo(null);
+    }
+
+    if (profile.user != null && router.route === "/login") {
+      return setRedirectTo("/applications");
+    }
   }, [profile.userData, router.route]);
-
-  const redirect = async () => {
-    if (profile.user == null && isRoutesIncludesPath(userRoutesRendered, router.route)) {
-      router.push("/");
-      setPreviousPath(router.route);
-    }
-
-    if (profile.user != null && previousPath != null) {
-      router.push(previousPath);
-      setPreviousPath(null);
-
-      if (router.route === "/login" || router.route === "/") {
-        router.push("/applications");
-      }
-    }
-  };
 
   const handleChooseRole = async (role: 1 | 2) => {
     const result = await setRole("/api/user/select?type=" + role);

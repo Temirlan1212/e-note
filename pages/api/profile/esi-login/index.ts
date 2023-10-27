@@ -16,7 +16,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(response.status).json(null);
   }
 
+  const responseData = await response.json();
+
   res.setHeader("cookie", response.headers.get("set-cookie") ?? "");
 
-  return res.status(200).json({ username: response.headers.get("username") });
+  return res.status(200).json(responseData);
 }

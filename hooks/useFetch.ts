@@ -4,8 +4,6 @@ import useEffectOnce from "./useEffectOnce";
 import { useProfileStore } from "@/stores/profile";
 import useNotificationStore from "@/stores/notification";
 
-const cache: Record<string, { date: Date; data: any }> = {};
-
 export interface FetchError {
   status: number;
   message: string;
@@ -48,15 +46,6 @@ export default function useFetch<T = FetchResponseBody>(
       headers["Content-Type"] = "application/json";
     }
 
-    const currentDate = new Date();
-    const cacheDate = cache[url]?.date;
-    const diffMinutes = Math.round((currentDate.getTime() - cacheDate?.getTime()) / 60000);
-
-    if (diffMinutes < 5) {
-      // setData(cache[url].data);
-      // return cache[url].data;
-    }
-
     setLoading(true);
     return fetch(fetchUrl, {
       headers: {
@@ -69,7 +58,6 @@ export default function useFetch<T = FetchResponseBody>(
       .then((res) => {
         if (!res.ok) {
           const error: FetchError = { status: res.status, message: res.statusText };
-          setNotification(error.message);
           throw new Error(JSON.stringify(error));
         }
 
@@ -77,7 +65,6 @@ export default function useFetch<T = FetchResponseBody>(
       })
       .then((res) => {
         setData(res);
-        cache[url] = { date: new Date(), data: res };
         return res;
       })
       .catch((e: Error) => {
@@ -92,7 +79,7 @@ export default function useFetch<T = FetchResponseBody>(
         setError(error);
 
         if (error?.status === 401) {
-          profile.logOut();
+          return profile.logOut();
         }
 
         setNotification(error?.message ?? null);

@@ -2,6 +2,12 @@ import { IRoute } from "./data";
 
 export const routes: IRoute[] = [
   {
+    title: "Profile",
+    link: "/profile",
+    type: "link",
+    icon: "PersonOutline",
+  },
+  {
     title: "Notarial actions",
     link: "/applications",
     type: "menu",
