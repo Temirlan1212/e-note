@@ -86,6 +86,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "notaryUniqNumber",
         "members.fullName",
         "requester.fullName",
+        "barCode.id",
       ],
       sortBy: req.body["sortBy"] ?? [],
       data: {

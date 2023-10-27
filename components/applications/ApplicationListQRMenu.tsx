@@ -45,10 +45,8 @@ export const ApplicationListQRMenu = ({
   };
 
   const onPopupOpen = async () => {
-    if (!Boolean(qrUrl) && params?.row?.uniqueQrCode != null) {
-      const filesRes = await getDocument(`/api/files`, {
-        filters: { fileName: `SaleOrderQRCode_${params?.row?.uniqueQrCode}.png` },
-      });
+    if (!Boolean(qrUrl) && params?.row?.["barCode.id"] != null) {
+      const filesRes = await getDocument("/api/files/dms-from-meta/" + params.row["barCode.id"]);
       const fileId = filesRes?.data?.[0]?.id;
       if (fileId != null) {
         const res = await downloadUpdate(`/api/files/download/${fileId ?? 0}`);
