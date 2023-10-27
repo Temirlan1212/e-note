@@ -5,7 +5,7 @@ import { useState } from "react";
 import { NextIntlClientProvider, useTranslations } from "next-intl";
 import PublicLayout from "@/layouts/Public";
 import PrivateLayout from "@/layouts/Private";
-import { Box, CircularProgress, ThemeProvider } from "@mui/material";
+import { Backdrop, Box, CircularProgress, ThemeProvider } from "@mui/material";
 import theme from "@/themes/default";
 import { useProfileStore } from "@/stores/profile";
 import useNotificationStore from "@/stores/notification";
@@ -29,7 +29,8 @@ function Layout({ children }: { children: JSX.Element }) {
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
   const [redirectTo, setRedirectTo] = useState<string | null>("/applications");
-  const [isOpen, setIsOpen] = useState(false);
+  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
+  const [isBackdropOpen, setIsBackdropOpen] = useState(false);
 
   const { loading, update: setRole } = useFetch("", "GET");
 
@@ -38,7 +39,9 @@ function Layout({ children }: { children: JSX.Element }) {
     const code = params.get("code");
 
     if (code != null) {
-      profile.logInEsi(code);
+      setIsBackdropOpen(true);
+      await profile.logInEsi(code);
+      setIsBackdropOpen(false);
     }
   });
 
@@ -46,7 +49,7 @@ function Layout({ children }: { children: JSX.Element }) {
     setUser(profile.user);
 
     if (!profile.userRoleSelected && profile.userData?.activeCompany != null) {
-      return setIsOpen(true);
+      return setIsRoleModalOpen(true);
     }
 
     const isPrivateRoute = router.route.length > 1 && isRoutesIncludesPath(userRoutesRendered, router.route);
@@ -69,7 +72,7 @@ function Layout({ children }: { children: JSX.Element }) {
   const handleChooseRole = async (role: 1 | 2) => {
     const result = await setRole("/api/user/select?type=" + role);
     if (result?.status === 0 && profile.user != null) {
-      setIsOpen(false);
+      setIsRoleModalOpen(false);
       profile.loadUserData(profile.user);
       profile.setUserRoleSelected(true);
     }
@@ -83,8 +86,11 @@ function Layout({ children }: { children: JSX.Element }) {
     <PublicLayout>
       <>
         {children}
+        <Backdrop open={isBackdropOpen} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+          <CircularProgress sx={{ justifyContent: "center" }} size={60} />
+        </Backdrop>
         <ConfirmationModal
-          isPermanentOpen={isOpen}
+          isPermanentOpen={isRoleModalOpen}
           title="Enter as"
           type="hint"
           hintTitle=""

@@ -53,7 +53,7 @@ export const useProfileStore = create<IProfileState>()(
 
         cookie = setCookie;
         user = await response.json();
-        if (user == null) return;
+        if (user?.username == null) return;
 
         set(() => ({ cookie, user }));
         get().loadUserData(user);
@@ -74,7 +74,7 @@ export const useProfileStore = create<IProfileState>()(
 
         cookie = setCookie;
         user = await response.json();
-        if (user == null) return;
+        if (user?.username == null) return;
 
         set(() => ({ cookie, user }));
         get().loadUserData(user);
