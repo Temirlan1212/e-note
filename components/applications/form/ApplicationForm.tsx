@@ -150,7 +150,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
               if (!isStepByStep) getDynamicFormAppData();
               const oneSideAction = form.getValues("product.oneSideAction");
               setStep((prev) => {
-                if (oneSideAction === true) return prev + 3;
+                if (oneSideAction) return prev + 3;
                 if (step != null) return step;
                 if (!isStepByStep) return prev + 2;
                 return prev + 1;
@@ -191,7 +191,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             form={form}
             onPrev={() => {
               const oneSideAction = form.getValues("product.oneSideAction");
-              oneSideAction === true ? setStep(step - 3) : setStep(step - 1);
+              oneSideAction ? setStep(step - 3) : setStep(step - 1);
             }}
             onNext={({ step }) =>
               setStep((prev) => {
