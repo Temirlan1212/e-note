@@ -145,7 +145,6 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     ({
       tundukDocumentSeries: `requester.${index}.tundukPassportSeries`,
       tundukDocumentNumber: `requester.${index}.tundukPassportNumber`,
-      tundukPersonalNumber: `requester.${index}.tundukPersonalNumber`,
     }) as const;
 
   const getPersonalDataNames = (index: number) => ({
@@ -407,7 +406,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     const values = getValues();
     const entity = "requester";
 
-    const triggerFields = [getTundukParamsFields(index).tundukPersonalNumber] as const;
+    const triggerFields = [getPersonalDataNames(index).pin as any];
     const validated = await trigger(
       isJuridicalPerson
         ? triggerFields
@@ -421,7 +420,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     if (!validated) return;
 
     if (values[entity] != null) {
-      const pin = values[entity][index].tundukPersonalNumber;
+      const pin = values[entity][index].personalNumber;
       const series = values[entity][index].tundukPassportSeries;
       const number = values[entity][index].tundukPassportNumber;
 
@@ -446,18 +445,9 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       setAlertOpen(false);
 
       resetFields(index, {
-        skip: [
-          "partnerTypeSelect",
-          "tundukPassportNumber",
-          "tundukPassportSeries",
-          "tundukPersonalNumber",
-          "subjectRole",
-        ],
+        skip: ["partnerTypeSelect", "tundukPassportNumber", "tundukPassportSeries", "personalNumber", "subjectRole"],
       });
       setValue(`requester.${index}.disabled`, true);
-
-      const emailAddressName = isJuridicalPerson ? partner?.emailAddress?.name : partner?.emailAddress;
-      setValue(`${entity}.${index}.emailAddress.address`, emailAddressName ?? "");
 
       const baseFields = [
         ...Object.values(getPersonalDataNames(index)),
