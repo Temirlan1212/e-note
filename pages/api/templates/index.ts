@@ -1,10 +1,26 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
+enum criteriaFieldNames {
+  isSystem = "isSystem",
+  createdBy = "createdBy.id",
+  object = "notaryObject",
+  objectType = "notaryObjectType",
+  notarialAction = "notaryAction",
+  typeNotarialAction = "notaryActionType",
+  action = "notaryRequestAction",
+}
+
 interface ITemplatesQueryParamsData {
   _domain: string;
   _domainContext: {
     [key: string]: (number | string)[];
   };
+}
+
+interface Criteria {
+  value: any;
+  fieldName: string;
+  operator: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -16,6 +32,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
   const filterValues = req.body["filterValues"];
   const searchValue = req.body["searchValue"];
+  const isSystem = req.body["isSystem"];
+  const createdById = req.body["createdBy"];
   const isFilterValueEmpty = () => Object.keys(filterValues).length < 1;
 
   const requestBody: {
@@ -34,6 +52,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     requestBody.data = { _domain, _domainContext };
   }
 
+  const buildFilterCriteria = () => {
+    const criteria: Criteria[] = [];
+    criteria.push({
+      fieldName: "isSystem",
+      operator: "=",
+      value: isSystem,
+    });
+    // criteria.push({
+    //   fieldName: "name",
+    //   operator: "like",
+    //   value: `%${searchValue}%`,
+    // });
+    if (createdById) {
+      criteria.push({
+        fieldName: "createdBy.id",
+        operator: "=",
+        value: createdById,
+      });
+    }
+    return criteria;
+  };
+
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Product/search", {
     method: "POST",
     headers: {
@@ -41,6 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
+      fields: ["name", "fullName", "$t:name", "$t:fullName", ...Object.values(criteriaFieldNames)],
       offset: page,
       limit: pageSize,
       sortBy: req.body["sortBy"] ?? [],
@@ -48,13 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         criteria: [
           {
             operator: "and",
-            criteria: [
-              {
-                fieldName: "name",
-                operator: "like",
-                value: `%${searchValue}%`,
-              },
-            ],
+            criteria: buildFilterCriteria(),
           },
         ],
       },
