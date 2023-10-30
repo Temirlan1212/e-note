@@ -174,7 +174,6 @@ export default function PersonalData({
                   data={[
                     { id: 2, name: t("Individual person") },
                     { id: 1, name: t("Juridical person") },
-                    { id: 3, name: t("Juvenile person") },
                   ]}
                   {...field}
                   value={field.value != null ? field.value : ""}
@@ -254,7 +253,7 @@ export default function PersonalData({
       )}
 
       <Box display="flex" gap="20px" alignItems="self-start" flexDirection={{ xs: "column", md: "row" }}>
-        {(fields?.pin == null || !!fields?.pin) && type != 3 && (
+        {(fields?.pin == null || !!fields?.pin) && watch(names?.subjectRole ?? "") != "notAnAdult" && (
           <>
             <Controller
               control={control}
