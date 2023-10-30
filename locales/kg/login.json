@@ -41,5 +41,6 @@
   "Fingerprint Login": "Манжа изи менен кирүү",
   "You need to verify your fingerprint to sign in": "Кирүү үчүн манжа изиңизди ырасташыңыз керек",
   "Confirm": "ырастоо",
-  "Unsuccessful login attempt": "Кирүү аракети ийгиликсиз болду"
+  "Unsuccessful login attempt": "Кирүү аракети ийгиликсиз болду",
+  "The link has been sent, check your email": "Шилтеме жөнөтүлдү, электрондук почтаңызды текшериңиз"
 }

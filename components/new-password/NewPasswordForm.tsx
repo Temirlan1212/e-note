@@ -8,16 +8,23 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { INewPasswordSchema, newPasswordSchema } from "@/validator-schemas/new-password";
+import useFetch from "@/hooks/useFetch";
+import { useRouter } from "next/router";
 
 const NewPasswordForm = () => {
   const t = useTranslations();
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+
+  const { data, loading, update } = useFetch("", "POST");
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const form = useForm<INewPasswordSchema>({
     resolver: yupResolver(newPasswordSchema),
   });
+
+  const token = router.asPath.match(/token=([^&]+)/);
 
   const {
     formState: { errors },
@@ -26,8 +33,17 @@ const NewPasswordForm = () => {
   } = form;
 
   const onSubmit = (data: { password: string }) => {
-    console.log(data.password);
+    if (token) {
+      update("/api/password/new-password", {
+        token: token[1],
+        password: data.password,
+      });
+    }
   };
+
+  if (data?.status === 0) {
+    router.push("/");
+  }
 
   return (
     <Box py={5}>
@@ -63,7 +79,7 @@ const NewPasswordForm = () => {
           }}
           name="password"
           error={!!errors.password?.message ?? false}
-          helperText={errors.password?.message && t(errors.password?.message)}
+          helperText={errors.password?.message ? t(errors.password?.message, { min: 8 }) : ""}
           register={register}
         />
         <Input
@@ -89,7 +105,7 @@ const NewPasswordForm = () => {
           helperText={errors.newPassword?.message && t(errors.newPassword?.message)}
           register={register}
         />
-        <Button type="submit" sx={{ padding: "10px 0", width: "100%" }} fullWidth color="success">
+        <Button loading={loading} type="submit" sx={{ padding: "10px 0", width: "100%" }} fullWidth color="success">
           {t("Send")}
         </Button>
       </Box>

@@ -2,17 +2,23 @@ import { useTranslations } from "next-intl";
 import Button from "../ui/Button";
 import Hint from "../ui/Hint";
 import Input from "../ui/Input";
-import { Box, Typography } from "@mui/material";
+import { Alert, Box, Collapse, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { emailSchema, IEmailSchema } from "@/validator-schemas/email";
+import useFetch from "@/hooks/useFetch";
+import React, { useState } from "react";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 const ResetPasswordForm = () => {
   const t = useTranslations();
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const form = useForm<IEmailSchema>({
     resolver: yupResolver(emailSchema),
   });
+
+  const { data, loading, update } = useFetch("", "POST");
 
   const {
     formState: { errors },
@@ -20,8 +26,15 @@ const ResetPasswordForm = () => {
   } = form;
 
   const onSubmit = (data: { email: string }) => {
-    console.log(data.email);
+    update("/api/password/reset/" + data.email);
   };
+
+  useEffectOnce(() => {
+    if (data?.status === 0) {
+      setAlertOpen(true);
+      return;
+    }
+  }, [data?.status]);
 
   return (
     <Box py={5}>
@@ -37,28 +50,45 @@ const ResetPasswordForm = () => {
           margin: "0 auto",
           backgroundColor: "#FFFFFF",
           boxShadow: "0px 5px 20px 0px #E9E9E9",
-          display: "flex",
-          flexDirection: "column",
-          gap: "30px",
         }}
       >
-        <Hint type="hint">{t("To change your password, enter your E-mail, A reset link will be sent to it,")}</Hint>
-        <Input
-          label="E-mail"
-          variant="outlined"
-          color="success"
-          fullWidth
-          InputLabelProps={{
-            shrink: true,
+        <Collapse sx={{ width: "100%", marginBottom: "20px" }} in={alertOpen}>
+          <Alert severity="success" onClose={() => setAlertOpen(false)}>
+            {t("The link has been sent, check your email")}
+          </Alert>
+        </Collapse>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "30px",
           }}
-          name="email"
-          error={!!errors.email?.message ?? false}
-          helperText={errors.email?.message && t(errors.email?.message)}
-          register={form.register}
-        />
-        <Button type="submit" sx={{ padding: "10px 0", width: "100%" }} fullWidth color="success">
-          {t("Send")}
-        </Button>
+        >
+          <Hint type="hint">{t("To change your password, enter your E-mail, A reset link will be sent to it,")}</Hint>
+          <Input
+            label="E-mail"
+            variant="outlined"
+            color="success"
+            fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
+            name="email"
+            error={!!errors.email?.message ?? false}
+            helperText={errors.email?.message && t(errors.email?.message)}
+            register={form.register}
+          />
+          <Button
+            disabled={data?.status === 0}
+            loading={loading}
+            type="submit"
+            sx={{ padding: "10px 0", width: "100%" }}
+            fullWidth
+            color="success"
+          >
+            {t("Send")}
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
