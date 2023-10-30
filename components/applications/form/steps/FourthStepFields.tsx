@@ -108,7 +108,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     type: `members.${index}.partnerTypeSelect`,
     foreigner: `members.${index}.foreigner`,
     lastName: `members.${index}.lastName`,
-    firstName: `members.${index}.name`,
+    firstName: `members.${index}.firstName`,
     middleName: `members.${index}.middleName`,
     pin: `members.${index}.personalNumber`,
     birthDate: `members.${index}.birthDate`,
