@@ -53,7 +53,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
     type: `requester.${index}.partnerTypeSelect`,
     foreigner: `requester.${index}.foreigner`,
     lastName: `requester.${index}.lastName`,
-    firstName: `requester.${index}.name`,
+    firstName: `requester.${index}.firstName`,
     middleName: `requester.${index}.middleName`,
     pin: `requester.${index}.personalNumber`,
     birthDate: `requester.${index}.birthDate`,

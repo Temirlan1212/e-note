@@ -156,7 +156,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     foreigner: `members.${index}.foreigner`,
     picture: `members.${index}.picture`,
     lastName: `members.${index}.lastName`,
-    firstName: `members.${index}.name`,
+    firstName: `members.${index}.firstName`,
     middleName: `members.${index}.middleName`,
     pin: `members.${index}.personalNumber`,
     birthDate: `members.${index}.birthDate`,

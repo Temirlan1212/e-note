@@ -152,7 +152,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     foreigner: `requester.${index}.foreigner`,
     picture: `requester.${index}.picture`,
     lastName: `requester.${index}.lastName`,
-    firstName: `requester.${index}.name`,
+    firstName: `requester.${index}.firstName`,
     middleName: `requester.${index}.middleName`,
     pin: `requester.${index}.personalNumber`,
     birthDate: `requester.${index}.birthDate`,
