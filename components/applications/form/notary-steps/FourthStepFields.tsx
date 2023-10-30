@@ -157,6 +157,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     picture: `members.${index}.picture`,
     lastName: `members.${index}.lastName`,
     firstName: `members.${index}.firstName`,
+    name: `members.${index}.name`,
     middleName: `members.${index}.middleName`,
     pin: `members.${index}.personalNumber`,
     birthDate: `members.${index}.birthDate`,
