@@ -16,7 +16,13 @@ enum SignType {
 
 const signTypes = Object.entries(SignType).map(([label, value]) => ({ label, value }));
 
-export default function SignModal({ base64Doc, onSign }: { base64Doc: string; onSign: (sign: string) => void }) {
+export default function SignModal({
+  base64Doc,
+  onSign,
+}: {
+  base64Doc: string;
+  onSign: (sign: string) => Promise<boolean>;
+}) {
   const t = useTranslations();
   const [isSigned, setIsSigned] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -31,8 +37,8 @@ export default function SignModal({ base64Doc, onSign }: { base64Doc: string; on
     if (signRefCurrent == null) return;
 
     try {
-      const sign = await signRefCurrent?.handleSign(onSign);
-      if (sign == null) {
+      const signed = await signRefCurrent?.handleSign(onSign);
+      if (!signed) {
         setAlertOpen(true);
         return;
       }
