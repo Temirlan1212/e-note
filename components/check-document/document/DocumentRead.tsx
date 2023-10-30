@@ -8,6 +8,7 @@ import { useTheme } from "@mui/material/styles";
 
 import useFetch from "@/hooks/useFetch";
 import { IApplication } from "@/models/application";
+import { useRouter } from "next/router";
 
 interface IDocumentReadProps {
   data: IApplication;
@@ -16,7 +17,7 @@ interface IDocumentReadProps {
 
 const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
   const theme = useTheme();
-  const locale = useLocale();
+  const { locale } = useRouter();
   const t = useTranslations();
 
   const { data: statusData, loading: statusDataLoading } = useFetch(
@@ -39,7 +40,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
   };
 
   const titles = [
-    { title: "Name", value: data?.product?.fullName },
+    { title: "Name", value: locale !== "en" ? data?.product?.["$t:fullName"] : data?.product?.fullName },
     { title: "Type of notarial action", value: translatedStatusTitle(actionTypeData?.data, data?.typeNotarialAction) },
     { title: "Status", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
     { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
