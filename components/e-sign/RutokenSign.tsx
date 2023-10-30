@@ -10,7 +10,7 @@ export interface IRutokenSignProps {
 }
 
 export interface IRutokenSignRef {
-  handleSign: (callback?: (sign: string) => void) => Promise<string | null>;
+  handleSign: (callback?: (sign: string) => Promise<boolean>) => Promise<boolean>;
 }
 
 export default forwardRef(function RutokenSign({ base64Doc }: IRutokenSignProps, ref: Ref<IRutokenSignRef>) {
@@ -61,7 +61,7 @@ export default forwardRef(function RutokenSign({ base64Doc }: IRutokenSignProps,
   };
 
   const handleSign: IRutokenSignRef["handleSign"] = async (callback) => {
-    if (lib == null) return null;
+    if (lib == null) return false;
 
     const authState = await lib.getDeviceInfo(device, lib.TOKEN_INFO_IS_LOGGED_IN);
     if (!authState) await lib.login(device, pin);
@@ -73,9 +73,9 @@ export default forwardRef(function RutokenSign({ base64Doc }: IRutokenSignProps,
 
     if (authState) await lib.logout(device);
 
-    if (callback != null && sign != null) callback(sign);
+    if (callback != null && sign != null) return await callback(sign);
 
-    return sign;
+    return false;
   };
 
   return (

@@ -16,7 +16,7 @@ export interface IJacartaSignProps {
 }
 
 export interface IJacartaSignRef {
-  handleSign: (callback?: (sign: string) => void) => Promise<string | null>;
+  handleSign: (callback?: (sign: string) => Promise<boolean>) => Promise<boolean>;
 }
 
 export default forwardRef(function JacartaSign({ base64Doc }: IJacartaSignProps, ref: Ref<IJacartaSignRef>) {
@@ -72,7 +72,7 @@ export default forwardRef(function JacartaSign({ base64Doc }: IJacartaSignProps,
   };
 
   const handleSign: IJacartaSignRef["handleSign"] = async (callback) => {
-    if (lib == null) return null;
+    if (lib == null) return false;
 
     const authState = lib.getLoggedInState();
     if (authState?.state === 0) lib.bindToken({ args: { tokenID: device, pin } });
@@ -88,9 +88,9 @@ export default forwardRef(function JacartaSign({ base64Doc }: IJacartaSignProps,
 
     if (authState?.state === 1) lib.unbindToken();
 
-    if (callback != null && sign != null) callback(sign);
+    if (callback != null && sign != null) return await callback(sign);
 
-    return sign;
+    return false;
   };
 
   return (

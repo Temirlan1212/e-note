@@ -116,9 +116,11 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
     if (signedPdf?.data?.pdfLink != null && token != null) {
       await handlePdfDownload(signedPdf.data.pdfLink, token);
-
       setIsSigned(true);
+      return true;
     }
+
+    return false;
   };
 
   useEffectOnce(async () => {
