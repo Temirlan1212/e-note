@@ -10,6 +10,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Button from "@/components/ui/Button";
 import PDFViewer from "@/components/PDFViewer";
 import StepperContentStep from "@/components/ui/StepperContentStep";
+import SyncIcon from "@mui/icons-material/Sync";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -50,15 +51,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
         break;
       case 2:
         if (!initialLoad) break;
-
-        const prepareData = await getPrepare(`/api/files/prepare/${id}`);
-        if (prepareData?.data?.saleOrderVersion != null) {
-          setValue("version", prepareData.data.saleOrderVersion);
-        }
-
-        if (prepareData?.data?.pdfLink != null && prepareData?.data?.token != null) {
-          handlePdfDownload(prepareData.data.pdfLink, prepareData.data.token);
-        }
+        handlePrepareDocument();
         break;
     }
   }, [application]);
@@ -86,17 +79,36 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     setDocUrl(URL.createObjectURL(blob));
   };
 
+  const handlePrepareDocument = async () => {
+    const prepareData = await getPrepare(`/api/files/prepare/${id}`);
+    if (prepareData?.data?.saleOrderVersion != null) {
+      setValue("version", prepareData.data.saleOrderVersion);
+    }
+
+    if (prepareData?.data?.pdfLink != null && prepareData?.data?.token != null) {
+      handlePdfDownload(prepareData.data.pdfLink, prepareData.data.token);
+    }
+  };
+
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
-      <StepperContentStep
-        step={6}
-        title={t("View document")}
-        loading={applicationLoading || prepareLoading || pdfLoading}
-      />
+      <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="20px">
+        <StepperContentStep
+          step={6}
+          title={t("View document")}
+          loading={applicationLoading || prepareLoading || pdfLoading}
+        />
+
+        {!applicationLoading && !prepareLoading && !pdfLoading && (
+          <Button onClick={handlePrepareDocument} startIcon={<SyncIcon />} sx={{ width: "auto" }}>
+            {t("Update the document")}
+          </Button>
+        )}
+      </Box>
 
       {docUrl && <PDFViewer fileUrl={docUrl} />}
 

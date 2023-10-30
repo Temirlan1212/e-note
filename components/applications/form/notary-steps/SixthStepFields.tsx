@@ -61,19 +61,11 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     switch (applicationData?.statusSelect) {
       case 1:
         setIsSigned(true);
+        handlePrepareDocument();
         break;
       case 2:
         if (!initialLoad) break;
-
-        const prepareData = await getPrepare(`/api/files/prepare/${id}`);
-        if (prepareData?.data?.saleOrderVersion != null) {
-          setValue("version", prepareData.data.saleOrderVersion);
-        }
-
-        if (prepareData?.data?.pdfLink != null && prepareData?.data?.token != null) {
-          setToken(prepareData.data.token);
-          handlePdfDownload(prepareData.data.pdfLink, prepareData.data.token);
-        }
+        handlePrepareDocument();
         break;
     }
   }, [application]);
@@ -123,6 +115,18 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     return false;
   };
 
+  const handlePrepareDocument = async () => {
+    const prepareData = await getPrepare(`/api/files/prepare/${id}`);
+    if (prepareData?.data?.saleOrderVersion != null) {
+      setValue("version", prepareData.data.saleOrderVersion);
+    }
+
+    if (prepareData?.data?.pdfLink != null && prepareData?.data?.token != null) {
+      setToken(prepareData.data.token);
+      handlePdfDownload(prepareData.data.pdfLink, prepareData.data.token);
+    }
+  };
+
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
@@ -168,6 +172,12 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
         {!applicationLoading && !prepareLoading && !pdfLoading && !signLoading && !syncLoading && (
           <Box display="flex" gap="10px" flexDirection={{ xs: "column", md: "row" }}>
+            <Box>
+              <Button onClick={handlePrepareDocument} startIcon={<SyncIcon />} sx={{ width: "auto" }}>
+                {t("Update the document")}
+              </Button>
+            </Box>
+
             {!isSigned &&
               token &&
               (application?.data?.[0]?.documentInfo?.editUrl || prepare?.data?.editUrl != null) && (
