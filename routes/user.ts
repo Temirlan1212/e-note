@@ -90,6 +90,13 @@ export const routes: IRoute[] = [
       },
     ],
   },
+  {
+    title: "Archive of notarial actions",
+    link: "/applications-archive",
+    type: "menu",
+    role: "notary",
+    icon: "Archive",
+  },
   // {
   //   title: "User registry",
   //   link: "/user-registry",
