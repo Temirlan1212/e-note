@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
-import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
+import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { useProfileStore } from "@/stores/profile";
-import { IProduct } from "@/models/product";
 import { Box, InputLabel } from "@mui/material";
 import Button from "@/components/ui/Button";
-import Select from "@/components/ui/Select";
 import Hint from "@/components/ui/Hint";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -170,17 +168,28 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
             return (
               <Box width="100%" display="flex" flexDirection="column" gap="10px">
                 <InputLabel>{t("Select document from my templates")}</InputLabel>
-                <Select
+                <Autocomplete
                   labelField={locale !== "en" ? "$t:name" : "name"}
-                  valueField="id"
-                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={selectedInput !== "my" && selectedInput !== null}
-                  data={myDocuments?.status === 0 ? (myDocuments?.data as IProduct[]) ?? [] : []}
+                  options={myDocuments?.status === 0 ? (myDocuments?.data as Record<string, any>[]) ?? [] : []}
                   loading={myDocumentsLoading}
-                  value={field.value == null ? "" : field.value}
+                  value={
+                    field.value != null
+                      ? (myDocuments?.data ?? []).find((item: Record<string, any>) => item.id == field.value?.id) ??
+                        null
+                      : null
+                  }
                   onBlur={field.onBlur}
-                  onChange={(...event: any[]) => {
-                    field.onChange(...event);
+                  onChange={(event, value) => {
+                    field.onChange(
+                      value?.id != null
+                        ? {
+                            id: value.id,
+                          }
+                        : null
+                    );
                     trigger(field.name);
                   }}
                 />
