@@ -216,5 +216,8 @@
   "PIN": "ПИН",
   "Copy the place of residence": "Жашаган жерден көчүрүү",
   "License": "Лицензия",
-  "from": "башталышы"
+  "from": "башталышы",
+  "Confirmation of identity": "Жеке көзөмөлдөө",
+  "Verify with your face id": "Face ID аркылуу ырастаңыз",
+  "Verify": "Текшерүү аркылуу өтүңүз"
 }

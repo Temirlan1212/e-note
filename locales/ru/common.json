@@ -216,5 +216,8 @@
   "PIN": "ПИН",
   "Copy the place of residence": "Скопировать адрес прописки",
   "License": "Лицензия",
-  "from": "от"
+  "from": "от",
+  "Confirmation of identity": "Подтверждение личности",
+  "Verify with your face id": "Пройдите верификацию с помощью face id",
+  "Verify": "Пройти верификацию"
 }
