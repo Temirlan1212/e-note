@@ -49,6 +49,7 @@ const UserCreateContent: FC = () => {
     foreigner: "foreigner",
     lastName: "lastName",
     firstName: "firstName",
+    name: "name",
     middleName: "middleName",
     pin: "personalNumber",
     birthDate: "birthDate",

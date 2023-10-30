@@ -153,6 +153,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     picture: `requester.${index}.picture`,
     lastName: `requester.${index}.lastName`,
     firstName: `requester.${index}.firstName`,
+    name: `requester.${index}.name`,
     middleName: `requester.${index}.middleName`,
     pin: `requester.${index}.personalNumber`,
     birthDate: `requester.${index}.birthDate`,

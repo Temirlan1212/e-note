@@ -21,6 +21,7 @@ export interface IPersonalDataProps {
     foreigner: string;
     lastName: string;
     firstName: string;
+    name: string;
     middleName: string;
     pin: string;
     birthDate: string;
@@ -117,6 +118,7 @@ export default function PersonalData({
   const foreigner = watch(names.foreigner);
   const type = watch(names.type);
   const picture = watch(names?.picture!);
+  const firstName = watch(names?.firstName);
 
   const { data: imageData, update } = useFetch<Response>("", "GET", {
     returnResponse: true,
@@ -154,6 +156,10 @@ export default function PersonalData({
       update(`/api/user/image/` + picture?.id);
     }
   }, [picture?.id]);
+
+  useEffect(() => {
+    if (firstName && names?.name) form.setValue(names?.name, firstName);
+  }, [firstName]);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
