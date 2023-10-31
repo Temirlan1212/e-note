@@ -173,7 +173,7 @@
   "Working hours: Mon-Fri, 09:00-18:00": "Время работы: Пн-Пт, 09:00-18:00",
   "Links": "Ссылки",
   "Type": "Тип",
-  "Device": "Устройтсво",
+  "Device": "Устройство",
   "Container": "Контейнер",
   "All notifications": "Все уведомления",
   "No notifications": "Нет уведомлений",
@@ -216,5 +216,8 @@
   "PIN": "ПИН",
   "Copy the place of residence": "Скопировать адрес прописки",
   "License": "Лицензия",
-  "from": "от"
+  "from": "от",
+  "Confirmation of identity": "Подтверждение личности",
+  "Verify with your face id": "Пройдите верификацию с помощью face id",
+  "Verify": "Пройти верификацию"
 }

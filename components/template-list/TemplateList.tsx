@@ -25,7 +25,7 @@ interface ITempQueryParams {
   isSystem: boolean;
 }
 
-interface ITemplateData {
+export interface ITemplateData {
   editUrl: string;
   userToken: string;
 }

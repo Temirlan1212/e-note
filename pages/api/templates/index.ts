@@ -10,13 +10,6 @@ enum criteriaFieldNames {
   action = "notaryRequestAction",
 }
 
-interface ITemplatesQueryParamsData {
-  _domain: string;
-  _domainContext: {
-    [key: string]: (number | string)[];
-  };
-}
-
 interface Criteria {
   value: any;
   fieldName: string;
@@ -33,37 +26,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const filterValues = req.body["filterValues"];
   const searchValue = req.body["searchValue"];
   const isSystem = req.body["isSystem"];
-  const createdById = req.body["createdBy"];
+  const createdById = req.body["createdById"];
   const isFilterValueEmpty = () => Object.keys(filterValues).length < 1;
-
-  const requestBody: {
-    data?: ITemplatesQueryParamsData;
-  } = {};
-
-  if (!isFilterValueEmpty()) {
-    const _domain = Object.keys(filterValues)
-      .map((key) => `self.${key} in :${key.replace(/[.\s]/g, "")}`)
-      .join(" and ");
-
-    const _domainContext = Object.fromEntries(
-      Object.entries(filterValues).map(([key, value]) => [key.replace(/[.\s]/g, ""), value])
-    ) as ITemplatesQueryParamsData["_domainContext"];
-
-    requestBody.data = { _domain, _domainContext };
-  }
 
   const buildFilterCriteria = () => {
     const criteria: Criteria[] = [];
-    criteria.push({
-      fieldName: "isSystem",
-      operator: "=",
-      value: isSystem,
-    });
-    // criteria.push({
-    //   fieldName: "name",
-    //   operator: "like",
-    //   value: `%${searchValue}%`,
-    // });
+    if (!isFilterValueEmpty()) {
+      Object.entries(filterValues).forEach(([key, value]) => {
+        criteria.push({
+          fieldName: key,
+          operator: "in",
+          value,
+        });
+      });
+    }
     if (createdById) {
       criteria.push({
         fieldName: "createdBy.id",
@@ -71,6 +47,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         value: createdById,
       });
     }
+    criteria.push({
+      fieldName: "isSystem",
+      operator: "=",
+      value: isSystem,
+    });
+    criteria.push({
+      fieldName: "name",
+      operator: "like",
+      value: `%${searchValue}%`,
+    });
     return criteria;
   };
 
@@ -93,7 +79,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           },
         ],
       },
-      ...requestBody,
       ...req.body,
       translate: true,
     }),

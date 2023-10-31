@@ -216,5 +216,8 @@
   "PIN": "PIN",
   "Copy the place of residence": "Copy the place of residence",
   "License": "License",
-  "from": "from"
+  "from": "from",
+  "Confirmation of identity": "Confirmation of identity",
+  "Verify with your face id": "Verify with your face id",
+  "Verify": "Verify"
 }
