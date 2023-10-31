@@ -1,10 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-interface ITemplatesQueryParamsData {
-  _domain: string;
-  _domainContext: {
-    [key: string]: (number | string)[];
-  };
+enum criteriaFieldNames {
+  isSystem = "isSystem",
+  createdBy = "createdBy.id",
+  object = "notaryObject",
+  objectType = "notaryObjectType",
+  notarialAction = "notaryAction",
+  typeNotarialAction = "notaryActionType",
+  action = "notaryRequestAction",
+}
+
+interface Criteria {
+  value: any;
+  fieldName: string;
+  operator: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -16,23 +25,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
   const filterValues = req.body["filterValues"];
   const searchValue = req.body["searchValue"];
+  const isSystem = req.body["isSystem"];
+  const createdById = req.body["createdById"];
   const isFilterValueEmpty = () => Object.keys(filterValues).length < 1;
 
-  const requestBody: {
-    data?: ITemplatesQueryParamsData;
-  } = {};
-
-  if (!isFilterValueEmpty()) {
-    const _domain = Object.keys(filterValues)
-      .map((key) => `self.${key} in :${key.replace(/[.\s]/g, "")}`)
-      .join(" and ");
-
-    const _domainContext = Object.fromEntries(
-      Object.entries(filterValues).map(([key, value]) => [key.replace(/[.\s]/g, ""), value])
-    ) as ITemplatesQueryParamsData["_domainContext"];
-
-    requestBody.data = { _domain, _domainContext };
-  }
+  const buildFilterCriteria = () => {
+    const criteria: Criteria[] = [];
+    if (!isFilterValueEmpty()) {
+      Object.entries(filterValues).forEach(([key, value]) => {
+        criteria.push({
+          fieldName: key,
+          operator: "in",
+          value,
+        });
+      });
+    }
+    if (createdById) {
+      criteria.push({
+        fieldName: "createdBy.id",
+        operator: "=",
+        value: createdById,
+      });
+    }
+    criteria.push({
+      fieldName: "isSystem",
+      operator: "=",
+      value: isSystem,
+    });
+    criteria.push({
+      fieldName: "name",
+      operator: "like",
+      value: `%${searchValue}%`,
+    });
+    return criteria;
+  };
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Product/search", {
     method: "POST",
@@ -41,6 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
+      fields: ["name", "fullName", "$t:name", "$t:fullName", ...Object.values(criteriaFieldNames)],
       offset: page,
       limit: pageSize,
       sortBy: req.body["sortBy"] ?? [],
@@ -48,17 +75,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         criteria: [
           {
             operator: "and",
-            criteria: [
-              {
-                fieldName: "name",
-                operator: "like",
-                value: `%${searchValue}%`,
-              },
-            ],
+            criteria: buildFilterCriteria(),
           },
         ],
       },
-      ...requestBody,
       ...req.body,
       translate: true,
     }),

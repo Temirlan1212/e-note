@@ -14,7 +14,7 @@ export default function ArchiveApplicationsDocumentInformation() {
   return (
     <>
       <Head>
-        <title>{t("InformationAboutStatusApplication")}</title>
+        <title>{t("Archive of notarial actions")}</title>
       </Head>
 
       <Container maxWidth="xl">

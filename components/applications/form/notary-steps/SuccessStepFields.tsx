@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useId } from "react";
+import { Dispatch, SetStateAction, useEffect, useId } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn } from "react-hook-form";
 import { IApplicationSchema } from "@/validator-schemas/application";
@@ -8,12 +8,13 @@ import Hint from "@/components/ui/Hint";
 import { GridTable } from "@/components/ui/GridTable";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { GridValueGetterParams } from "@mui/x-data-grid";
 import { IStatus } from "@/models/application-status";
 import { IActionType } from "@/models/action-type";
 import { useRouter } from "next/router";
 import Link from "@/components/ui/Link";
+import { ITemplateData } from "@/components/template-list/TemplateList";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -30,10 +31,31 @@ const getFullName = (name: string | null, lastName: string | null) => {
 
 export default function SuccessStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
-  const { locale } = useRouter();
+  const { locale, push } = useRouter();
   const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
   const { data, loading } = useFetch(`/api/applications/${form.getValues().id ?? ""}`, "POST");
   const dataItem = data?.data?.[0];
+
+  const {
+    data: templateData,
+    loading: templateLoading,
+    update,
+  } = useFetch<FetchResponseBody<ITemplateData>>("", "POST");
+
+  const handleInMyTemplatesClick = async () => {
+    await update("/api/templates/" + dataItem?.product?.id);
+  };
+
+  useEffect(() => {
+    if (templateData?.data?.editUrl && templateData?.data?.userToken) {
+      const href = `${templateData.data.editUrl}?AuthorizationBasic=${templateData.data.userToken.replace(
+        /Basic /,
+        ""
+      )}` as string;
+      window.open(href, "_blank");
+      push("/applications");
+    }
+  }, [templateData?.data]);
 
   return (
     <Box display="flex" gap="30px" flexDirection="column">
@@ -96,7 +118,9 @@ export default function SuccessStepFields({ form, onPrev, onNext }: IStepFieldsP
         />
 
         <Box width={{ xs: "100%", sm: "fit-content" }}>
-          <Button>{t("Add to my templates")}</Button>
+          <Button onClick={handleInMyTemplatesClick} loading={templateLoading}>
+            {t("Add to my templates")}
+          </Button>
         </Box>
       </Box>
 

@@ -25,8 +25,8 @@ const ArchiveApplicationDocumentInfoContent: FC<IApplicationStatusInfoContentPro
 
   const profile = useProfileStore((state) => state);
 
-  useEffectOnce(async () => {
-    await update(id != null ? `/api/applications-archive/${id}` : "", { fields: ["company"] }).then((res) => {
+  useEffectOnce(() => {
+    update(id != null ? `/api/applications-archive/${id}` : "", { fields: ["company"] }).then((res) => {
       if (res?.data?.[0] != null) {
         const currentUser = profile.getUserData()?.partner?.fullName;
 

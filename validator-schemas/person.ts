@@ -27,7 +27,7 @@ export const personSchema = object()
         otherwise: (schema) => schema.nullable(),
       })
       .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
-    name: string()
+    firstName: string()
       .trim()
       .when("partnerTypeSelect", {
         is: 2,

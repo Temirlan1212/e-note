@@ -21,6 +21,7 @@ export interface IPersonalDataProps {
     foreigner: string;
     lastName: string;
     firstName: string;
+    name: string;
     middleName: string;
     pin: string;
     birthDate: string;
@@ -117,6 +118,7 @@ export default function PersonalData({
   const foreigner = watch(names.foreigner);
   const type = watch(names.type);
   const picture = watch(names?.picture!);
+  const firstName = watch(names?.firstName);
 
   const { data: imageData, update } = useFetch<Response>("", "GET", {
     returnResponse: true,
@@ -155,6 +157,10 @@ export default function PersonalData({
     }
   }, [picture?.id]);
 
+  useEffect(() => {
+    if (firstName && names?.name) form.setValue(names?.name, firstName);
+  }, [firstName]);
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box>
@@ -174,7 +180,6 @@ export default function PersonalData({
                   data={[
                     { id: 2, name: t("Individual person") },
                     { id: 1, name: t("Juridical person") },
-                    { id: 3, name: t("Juvenile person") },
                   ]}
                   {...field}
                   value={field.value != null ? field.value : ""}
@@ -254,7 +259,7 @@ export default function PersonalData({
       )}
 
       <Box display="flex" gap="20px" alignItems="self-start" flexDirection={{ xs: "column", md: "row" }}>
-        {(fields?.pin == null || !!fields?.pin) && type != 3 && (
+        {(fields?.pin == null || !!fields?.pin) && watch(names?.subjectRole ?? "") != "notAnAdult" && (
           <>
             <Controller
               control={control}

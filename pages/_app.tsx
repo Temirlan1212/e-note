@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NextIntlClientProvider, useTranslations } from "next-intl";
 import PublicLayout from "@/layouts/Public";
 import PrivateLayout from "@/layouts/Private";
@@ -19,6 +19,7 @@ import Notification from "@/components/ui/Notification";
 import { routes as guestRoutes } from "@/routes/guest";
 import { routes as userRoutes } from "@/routes/user";
 import { getRoutes, isRoutesIncludesPath } from "@/routes/data";
+import FaceIdScanner from "@/components/face-id/FaceId";
 
 const guestRoutesRendered = getRoutes(guestRoutes, "rendered");
 const userRoutesRendered = getRoutes(userRoutes, "rendered");
@@ -31,6 +32,8 @@ function Layout({ children }: { children: JSX.Element }) {
   const [redirectTo, setRedirectTo] = useState<string | null>("/applications");
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
+  const [faceIdScannerOpen, setFaceIdScannerOpen] = useState<boolean>(false);
+  const [faceIdScanner, setFaceIdScanner] = useState(false);
 
   const { loading, update: setRole } = useFetch("", "GET");
 
@@ -70,13 +73,23 @@ function Layout({ children }: { children: JSX.Element }) {
   }, [profile.userData, router.route]);
 
   const handleChooseRole = async (role: 1 | 2) => {
-    const result = await setRole("/api/user/select?type=" + role);
-    if (result?.status === 0 && profile.user != null) {
+    await setRole("/api/user/select?type=" + role);
+    setFaceIdScannerOpen(role === 1 && (user as any)?.username === "21904198400001");
+    if ((user as any)?.username !== "21904198400001" || role === 2) {
       setIsRoleModalOpen(false);
-      profile.loadUserData(profile.user);
+      profile.loadUserData(profile?.user!);
       profile.setUserRoleSelected(true);
     }
   };
+
+  useEffect(() => {
+    if ((user as any)?.username === "21904198400001" && faceIdScanner) {
+      setFaceIdScannerOpen(false);
+      setIsRoleModalOpen(false);
+      profile.loadUserData(profile?.user!);
+      profile.setUserRoleSelected(true);
+    }
+  }, [faceIdScanner]);
 
   if (user != null && router.asPath.length > 1 && !isRoutesIncludesPath(guestRoutesRendered, router.asPath)) {
     return <PrivateLayout>{children}</PrivateLayout>;
@@ -89,6 +102,17 @@ function Layout({ children }: { children: JSX.Element }) {
         <Backdrop open={isBackdropOpen} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
           <CircularProgress sx={{ justifyContent: "center" }} size={60} />
         </Backdrop>
+        <ConfirmationModal
+          isPermanentOpen={faceIdScannerOpen}
+          title="Confirmation of identity"
+          type="hint"
+          hintTitle=""
+          hintText="Verify with your face id"
+          slots={{
+            body: () => <FaceIdScanner getStatus={(status) => setFaceIdScanner(status)} />,
+            button: () => <></>,
+          }}
+        />
         <ConfirmationModal
           isPermanentOpen={isRoleModalOpen}
           title="Enter as"
