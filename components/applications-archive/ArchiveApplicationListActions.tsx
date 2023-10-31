@@ -13,7 +13,7 @@ export const ArchiveApplicationListActions = ({
 
   return (
     <Box display="flex" alignItems="center">
-      <Link href={`/applications-archive/status/${params.row.id}`}>
+      <Link href={`/applications-archive/document/${params.row.id}`}>
         <Tooltip title={t("More detailed")} arrow>
           <IconButton>
             <VisibilityIcon />

@@ -53,8 +53,6 @@ export default function ArchiveApplicationList() {
     setFilteredData(data?.data);
   }, [data?.data]);
 
-  const { data: searchedData, update: search } = useFetch("", "POST");
-
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
     setAppQueryParams((prev) => {
       return { ...prev, [key]: newValue };
@@ -109,14 +107,6 @@ export default function ArchiveApplicationList() {
       searchValue: searchValue,
     }));
   };
-
-  useEffect(() => {
-    const matchedItems = data?.data?.filter(
-      (dataItem: IApplication) =>
-        Array.isArray(searchedData?.data) && searchedData?.data?.some((searchedItem) => searchedItem.id === dataItem.id)
-    );
-    setFilteredData(matchedItems);
-  }, [searchedData]);
 
   const handleReset = () => {
     setSearchValue("");

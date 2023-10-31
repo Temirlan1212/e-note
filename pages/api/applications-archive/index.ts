@@ -22,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
   const filterValues = req.body["filterValues"] || [];
   const searchValue = req.body["searchValue"] || null;
+  const currentUser = req.body["currentUser"];
   const isFilterValueEmty = () => Object.keys(filterValues).length < 1;
 
   const requestBody: {
@@ -40,26 +41,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     requestBody.data = { _domain, _domainContext };
   }
 
+  const searchedFields = ["documentAction", "applicant1", "applicant2"];
+
   const buildFilterCriteria = () => {
-    const criteria: Criteria[] = [
+    const inCriteria: Criteria[] = [];
+    const criteria = [
       {
-        fieldName: "company",
-        operator: "like",
-        value: req.body["currentUser"],
+        operator: "and",
+        criteria: [
+          {
+            operator: "or",
+            criteria: [
+              {
+                fieldName: "company",
+                operator: "like",
+                value: currentUser,
+              },
+            ],
+          },
+          {
+            operator: "or",
+            criteria: inCriteria,
+          },
+        ],
       },
     ];
-    if (searchValue != null) {
-      const fieldsMap = {
-        documentAction: "documentAction",
-        createdDate: "createdDate",
-        applicant1: "applicant1",
-        applicant2: "applicant2",
-      };
 
-      for (const field in fieldsMap) {
-        const key = field as keyof typeof fieldsMap;
-        criteria.push({
-          fieldName: fieldsMap[key],
+    if (searchValue != null) {
+      for (const field of searchedFields) {
+        inCriteria.push({
+          fieldName: field,
           operator: "like",
           value: searchValue,
         });
