@@ -81,5 +81,6 @@
   "Unilateral action": "Бир тараптуу аракет",
   "Juvenile person": "Жашы жете элек",
   "Subject role": "Субъекттин ролу",
-  "Update the document": "Документти жаңыртуу"
+  "Rebuild the document": "Документти жаңыртуу",
+  "All changes made earlier in the document will be lost": "Документке мурда киргизилген бардык өзгөртүүлөр жоголот"
 }

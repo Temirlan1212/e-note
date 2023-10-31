@@ -11,6 +11,7 @@ import Button from "@/components/ui/Button";
 import PDFViewer from "@/components/PDFViewer";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import SyncIcon from "@mui/icons-material/Sync";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -104,9 +105,17 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
         />
 
         {!applicationLoading && !prepareLoading && !pdfLoading && (
-          <Button onClick={handlePrepareDocument} startIcon={<SyncIcon />} sx={{ width: "auto" }}>
-            {t("Update the document")}
-          </Button>
+          <ConfirmationModal
+            title="Rebuild the document"
+            type="hint"
+            hintTitle=""
+            hintText={"All changes made earlier in the document will be lost"}
+            onConfirm={handlePrepareDocument}
+          >
+            <Button startIcon={<SyncIcon />} sx={{ width: "auto" }}>
+              {t("Rebuild the document")}
+            </Button>
+          </ConfirmationModal>
         )}
       </Box>
 
