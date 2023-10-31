@@ -82,5 +82,7 @@
   "Juvenile person": "Несовершеннолетнее лицо",
   "Subject role": "Роль субъекта",
   "Rebuild the document": "Пересобрать документ",
-  "All changes made earlier in the document will be lost": "Все изменения, внесенные ранее в документ, будут утеряны"
+  "All changes made earlier in the document will be lost": "Все изменения, внесенные ранее в документ, будут утеряны",
+  "not signed": "не подписан",
+  "absent": "отсутствует"
 }

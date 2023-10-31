@@ -42,12 +42,12 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
       value: data?.createdOn ? format(new Date(data?.createdOn!), "dd.MM.yyyy HH:mm:ss") : "",
     },
     { title: "Notary's full name", value: data?.company.partner.fullName },
-    { title: "Unique registry number", value: data?.notaryUniqNumber ?? "не подписан" },
+    { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },
   ];
 
   const filteredTitles = titles.map((title) => ({
     ...title,
-    value: title.value != null && title.value !== "" ? title.value : "отсутствует",
+    value: title.value != null && title.value !== "" ? title.value : t("absent"),
   }));
 
   const members = data?.requester.concat(data.members);
