@@ -50,6 +50,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
     },
     { title: "Full name of the notary", value: data?.company?.partner?.fullName },
     { title: "Unique registry number", value: data?.notaryUniqNumber },
+    { title: "Cancel reason str", value: data?.cancelReasonStr },
   ];
 
   const members = data?.requester?.concat(data.members!);

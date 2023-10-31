@@ -85,5 +85,6 @@
   "Canceling an application": "Canceling an application",
   "Do you really want to cancel the application?": "Do you really want to cancel the application?",
   "Enter a reason": "Enter a reason",
+  "Cancel reason str": "Cancel reason str",
   "All changes made earlier in the document will be lost": "All changes made earlier in the document will be lost"
 }

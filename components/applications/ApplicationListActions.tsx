@@ -39,7 +39,7 @@ export const ApplicationListActions = ({
   });
   const { update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
   const { update: downloadUpdate } = useFetch<FetchResponseBody | null>("", "POST");
-  const { update: cancelUpdate } = useFetch<FetchResponseBody | null>("", "POST");
+  const { update: cancelUpdate } = useFetch<FetchResponseBody | null>("", "PUT");
 
   const handleDownloadClick = async () => {
     const pdfResponse = await downloadUpdate(`/api/applications/download/${params.row.id}`);
@@ -97,9 +97,11 @@ export const ApplicationListActions = ({
 
   const handleCancelClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
     if (params.row.id != null && inputValue) {
-      await cancelUpdate("/api/applications/cancel/" + params.row.id, {
+      await cancelUpdate("/api/applications/update/" + params.row.id, {
         id: params.row.id,
         version: params.row.version,
+        statusSelect: 3,
+        notaryReliabilityStatus: "3",
         cancelReasonStr: inputValue,
       });
       callback(false);

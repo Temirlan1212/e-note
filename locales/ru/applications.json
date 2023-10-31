@@ -84,6 +84,7 @@
   "Rebuild the document": "Пересобрать документ",
   "Canceling an application": "Отмена заявки",
   "Enter a reason": "Введите причину отмены заявки",
+  "Cancel reason str": "Причина отмены",
   "Do you really want to cancel the application?": "Вы действительно хотите отменить заявку?",
   "All changes made earlier in the document will be lost": "Все изменения, внесенные ранее в документ, будут утеряны"
 }

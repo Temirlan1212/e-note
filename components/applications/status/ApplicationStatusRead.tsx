@@ -43,6 +43,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
     },
     { title: "Notary's full name", value: data?.company.partner.fullName },
     { title: "Unique registry number", value: data?.notaryUniqNumber },
+    { title: "Cancel reason str", value: data?.cancelReasonStr },
   ];
 
   const members = data?.requester.concat(data.members);
