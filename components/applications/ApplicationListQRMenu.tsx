@@ -30,7 +30,7 @@ export const ApplicationListQRMenu = ({
     returnResponse: true,
   });
 
-  const { update: getDocument, loading: getDocumentLoading } = useFetch("", "POST");
+  const { update: getDocument, loading: documentLoading } = useFetch("", "POST");
 
   const handleCopyLinkClick = () => {
     if (!copied)
@@ -67,7 +67,7 @@ export const ApplicationListQRMenu = ({
         <Box display="flex" flexDirection="column" gap="10px" p="15px" alignItems="center">
           <Typography variant="h6"> {t("Scan the QR code")}</Typography>
 
-          {loading || getDocumentLoading ? (
+          {loading || documentLoading ? (
             <CircularProgress />
           ) : qrUrl != null ? (
             <Image src={qrUrl ?? ""} width={170} height={170} alt="qr code" onError={() => setQrUrl(null)} />
