@@ -42,8 +42,13 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
       value: data?.createdOn ? format(new Date(data?.createdOn!), "dd.MM.yyyy HH:mm:ss") : "",
     },
     { title: "Notary's full name", value: data?.company.partner.fullName },
-    { title: "Unique registry number", value: data?.notaryUniqNumber },
+    { title: "Unique registry number", value: data?.notaryUniqNumber ?? "не подписан" },
   ];
+
+  const filteredTitles = titles.map((title) => ({
+    ...title,
+    value: title.value != null && title.value !== "" ? title.value : "отсутствует",
+  }));
 
   const members = data?.requester.concat(data.members);
 
@@ -66,7 +71,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
               width: "100%",
             }}
           >
-            {titles.map((el, idx) => {
+            {filteredTitles.map((el, idx) => {
               return (
                 <ListItem
                   key={idx}

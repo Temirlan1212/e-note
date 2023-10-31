@@ -52,6 +52,11 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
     { title: "Unique registry number", value: data?.notaryUniqNumber },
   ];
 
+  const filteredTitles = titles.map((title) => ({
+    ...title,
+    value: title.value != null && title.value !== "" ? title.value : "отсутствует",
+  }));
+
   const members = data?.requester?.concat(data.members!);
 
   return (
@@ -73,7 +78,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
               width: "100%",
             }}
           >
-            {titles.map((el, idx) => {
+            {filteredTitles.map((el, idx) => {
               return (
                 <ListItem
                   key={idx}

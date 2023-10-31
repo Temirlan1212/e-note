@@ -29,7 +29,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
   const profile = useProfileStore((state) => state);
 
   const userIsNotary = profile?.userData?.group?.id === 4;
-  const applicationStatusIsCompleted = data?.data[0]?.statusSelect === 1;
+  const applicationStatusIsCompleted = data?.data?.[0]?.statusSelect === 1;
 
   const extractIDs = (...data: any) => {
     const allIDs: number[] = [];
@@ -46,7 +46,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
   };
 
   useEffectOnce(() => {
-    if (data?.data[0] != null) {
+    if (data?.data?.[0] != null) {
       const applicationData = data.data[0];
       const { requester, members, createdBy } = applicationData;
 
@@ -102,7 +102,7 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
           </Button>
         </Link>
       </Box>
-      <ApplicationStatusRead data={data?.data[0]} loading={loading} />
+      <ApplicationStatusRead data={data?.data?.[0]} loading={loading} />
       {accessToView && data?.data[0]?.documentInfo?.pdfLink && data?.data[0]?.documentInfo?.token && (
         <ApplicationStatusView data={data?.data[0]} />
       )}
