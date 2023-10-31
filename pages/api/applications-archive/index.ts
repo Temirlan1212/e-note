@@ -20,8 +20,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
-  const filterValues = req.body["filterValues"] || [];
-  const searchValue = req.body["searchValue"] || null;
+  const filterValues = req.body["filterValues"];
+  const searchValue = req.body["searchValue"];
   const currentUser = req.body["currentUser"];
   const isFilterValueEmty = () => Object.keys(filterValues).length < 1;
 
@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const searchedFields = ["documentAction", "applicant1", "applicant2"];
 
-  const buildFilterCriteria = () => {
+  const buildCriteria = () => {
     const inCriteria: Criteria[] = [];
     const criteria = [
       {
@@ -92,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         limit: pageSize,
         fields: ["documentAction", "createdDate", "applicant1", "applicant2", "company"],
         data: {
-          criteria: buildFilterCriteria(),
+          criteria: buildCriteria(),
         },
         sortBy: req.body["sortBy"] ?? [],
       }),
