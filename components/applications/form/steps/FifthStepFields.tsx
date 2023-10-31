@@ -115,6 +115,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                         fieldName={item?.fieldName}
                         path={item?.path}
                         selectionName={item?.selection ?? ""}
+                        objectName={item?.object ?? ""}
                         options={item?.options}
                       />
                     </Grid>

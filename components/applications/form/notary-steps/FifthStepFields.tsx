@@ -218,6 +218,7 @@ export default function FifthStepFields({
                           fieldName={item?.fieldName}
                           path={item?.path}
                           selectionName={item?.selection ?? ""}
+                          objectName={item?.object ?? ""}
                           options={item?.options}
                         />
                       )}
