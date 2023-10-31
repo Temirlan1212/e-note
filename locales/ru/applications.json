@@ -81,5 +81,6 @@
   "Unilateral action": "Одностороннее действие",
   "Juvenile person": "Несовершеннолетнее лицо",
   "Subject role": "Роль субъекта",
-  "Update the document": "Обновить документ"
+  "Rebuild the document": "Пересобрать документ",
+  "All changes made earlier in the document will be lost": "Все изменения, внесенные ранее в документ, будут утеряны"
 }
