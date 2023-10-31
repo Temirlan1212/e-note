@@ -15,6 +15,7 @@ import PDFViewer from "@/components/PDFViewer";
 import Link from "@/components/ui/Link";
 import SignModal from "@/components/e-sign/SignModal";
 import StepperContentStep from "@/components/ui/StepperContentStep";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -133,7 +134,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
   useEffectOnce(() => {
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
+      if (document.visibilityState === "visible" && isBackdropOpen) {
         setIsBackdropOpen(true);
       }
     };
@@ -173,9 +174,17 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
         {!applicationLoading && !prepareLoading && !pdfLoading && !signLoading && !syncLoading && (
           <Box display="flex" gap="10px" flexDirection={{ xs: "column", md: "row" }}>
             <Box>
-              <Button onClick={handlePrepareDocument} startIcon={<SyncIcon />} sx={{ width: "auto" }}>
-                {t("Update the document")}
-              </Button>
+              <ConfirmationModal
+                title="Rebuild the document"
+                type="hint"
+                hintTitle=""
+                hintText={"All changes made earlier in the document will be lost"}
+                onConfirm={handlePrepareDocument}
+              >
+                <Button startIcon={<SyncIcon />} sx={{ width: "auto" }}>
+                  {t("Rebuild the document")}
+                </Button>
+              </ConfirmationModal>
             </Box>
 
             {!isSigned &&
