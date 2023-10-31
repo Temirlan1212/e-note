@@ -86,6 +86,7 @@ function Layout({ children }: { children: JSX.Element }) {
     if ((user as any)?.username === "21904198400001" && faceIdScanner) {
       setFaceIdScannerOpen(false);
       setIsRoleModalOpen(false);
+      setFaceIdScanner(false);
       profile.loadUserData(profile?.user!);
       profile.setUserRoleSelected(true);
     }
