@@ -45,11 +45,6 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
     { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },
   ];
 
-  const filteredTitles = titles.map((title) => ({
-    ...title,
-    value: title.value != null && title.value !== "" ? title.value : t("absent"),
-  }));
-
   const members = data?.requester.concat(data.members);
 
   return (
@@ -71,7 +66,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
               width: "100%",
             }}
           >
-            {filteredTitles.map((el, idx) => {
+            {titles.map((el, idx) => {
               return (
                 <ListItem
                   key={idx}
@@ -106,7 +101,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                       color: "#687C9B",
                     }}
                   >
-                    {el.value}
+                    {el.value != null && el.value !== "" ? el.value : t("absent")}
                   </Typography>
                 </ListItem>
               );

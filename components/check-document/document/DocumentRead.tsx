@@ -49,13 +49,8 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
       value: data?.creationDate ? format(new Date(data?.creationDate!), "dd.MM.yyyy HH:mm:ss") : "",
     },
     { title: "Full name of the notary", value: data?.company?.partner?.fullName },
-    { title: "Unique registry number", value: data?.notaryUniqNumber },
+    { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },
   ];
-
-  const filteredTitles = titles.map((title) => ({
-    ...title,
-    value: title.value != null && title.value !== "" ? title.value : "отсутствует",
-  }));
 
   const members = data?.requester?.concat(data.members!);
 
@@ -78,7 +73,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
               width: "100%",
             }}
           >
-            {filteredTitles.map((el, idx) => {
+            {titles.map((el, idx) => {
               return (
                 <ListItem
                   key={idx}
@@ -113,7 +108,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
                       color: "#687C9B",
                     }}
                   >
-                    {el.value}
+                    {el.value != null && el.value !== "" ? el.value : t("absent")}
                   </Typography>
                 </ListItem>
               );
