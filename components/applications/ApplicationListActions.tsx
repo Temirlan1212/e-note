@@ -1,10 +1,10 @@
-import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import { Box, IconButton, InputLabel, TextField, Tooltip, Typography } from "@mui/material";
 import { GridRenderCellParams, GridTreeNodeWithRender } from "@mui/x-data-grid";
 import Link from "@/components/ui/Link";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
@@ -15,6 +15,8 @@ import { IUserData } from "@/models/user";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import Button from "@/components/ui/Button";
 import { IFetchByIdData, IFetchNotaryChat } from "@/models/chat";
+import CancelIcon from "@mui/icons-material/Cancel";
+import Input from "@/components/ui/Input";
 
 export const ApplicationListActions = ({
   params,
@@ -25,6 +27,8 @@ export const ApplicationListActions = ({
 }) => {
   const t = useTranslations();
   const [openModal, setOpenModal] = useState(false);
+  const [inputValue, setInputValue] = useState<string | null>(null);
+  const [inputError, setInputError] = useState<boolean>(false);
   const [userData, setUserData] = useState<IUserData | null>();
   const profile = useProfileStore((state) => state);
 
@@ -35,6 +39,7 @@ export const ApplicationListActions = ({
   });
   const { update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
   const { update: downloadUpdate } = useFetch<FetchResponseBody | null>("", "POST");
+  const { update: cancelUpdate } = useFetch<FetchResponseBody | null>("", "POST");
 
   const handleDownloadClick = async () => {
     const pdfResponse = await downloadUpdate(`/api/applications/download/${params.row.id}`);
@@ -87,6 +92,26 @@ export const ApplicationListActions = ({
       await update("/api/applications/delete/" + params.row.id + "?version=" + params.row.version);
       callback(false);
       onDelete();
+    }
+  };
+
+  const handleCancelClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
+    if (params.row.id != null && inputValue) {
+      await cancelUpdate("/api/applications/cancel/" + params.row.id, {
+        id: params.row.id,
+        version: params.row.version,
+        cancelReasonStr: inputValue,
+      });
+      callback(false);
+      onDelete();
+    }
+    setInputError(true);
+  };
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    if (e.target.value) {
+      setInputError(false);
     }
   };
 
@@ -172,6 +197,35 @@ export const ApplicationListActions = ({
             <Tooltip title={t("Delete")} arrow>
               <IconButton>
                 <DeleteIcon />
+              </IconButton>
+            </Tooltip>
+          </ConfirmationModal>
+        </>
+      )}
+
+      {params.row.statusSelect != 3 && (
+        <>
+          <ConfirmationModal
+            hintTitle="Do you really want to cancel the application?"
+            title="Canceling an application"
+            onConfirm={(callback) => handleCancelClick(callback)}
+            slots={{
+              body: () => (
+                <Box sx={{ marginBottom: "20px" }}>
+                  <InputLabel>{t("Enter a reason")}</InputLabel>
+                  <Input
+                    value={inputValue}
+                    onChange={handleSearchChange}
+                    inputType={inputError ? "error" : "secondary"}
+                    helperText={inputError && t("This field is required!")}
+                  />
+                </Box>
+              ),
+            }}
+          >
+            <Tooltip title={t("Cancel")} arrow>
+              <IconButton>
+                <CancelIcon />
               </IconButton>
             </Tooltip>
           </ConfirmationModal>
