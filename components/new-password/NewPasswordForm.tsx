@@ -36,7 +36,7 @@ const NewPasswordForm = () => {
     if (token) {
       update("/api/password/new-password", {
         token: token[1],
-        password: data.password,
+        newPassword: data.password,
       });
     }
   };
@@ -71,6 +71,7 @@ const NewPasswordForm = () => {
         </Hint>
         <Input
           label={t("New Password")}
+          type="password"
           variant="outlined"
           color="success"
           fullWidth
@@ -83,22 +84,13 @@ const NewPasswordForm = () => {
           register={register}
         />
         <Input
-          type={showPassword ? "text" : "password"}
+          type="password"
           label={t("Password confirmation")}
           variant="outlined"
           color="success"
           fullWidth
           InputLabelProps={{
             shrink: true,
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton aria-label="toggle password visibility" onClick={handleClickShowPassword} edge="end">
-                  {showPassword ? <VisibilityOff color="success" /> : <Visibility color="success" />}
-                </IconButton>
-              </InputAdornment>
-            ),
           }}
           name="newPassword"
           error={!!errors.newPassword?.message ?? false}
