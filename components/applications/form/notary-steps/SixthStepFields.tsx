@@ -42,8 +42,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
   const { data: prepare, loading: prepareLoading, update: getPrepare } = useFetch("", "GET");
   const { loading: syncLoading, update: getSync } = useFetch("", "GET");
-  const { update: applicationUpdate } = useFetch("", "PUT");
-  const { loading: signLoading, update: signDocument } = useFetch("", "POST");
+  const { update: signDocument } = useFetch("", "POST");
   const { data: application, loading: applicationLoading } = useFetch(
     id != null ? `/api/applications/${id}` : "",
     "POST"
@@ -168,10 +167,10 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
         <StepperContentStep
           step={6}
           title={t("View document")}
-          loading={applicationLoading || prepareLoading || pdfLoading || signLoading || syncLoading}
+          loading={applicationLoading || prepareLoading || pdfLoading || syncLoading}
         />
 
-        {!applicationLoading && !prepareLoading && !pdfLoading && !signLoading && !syncLoading && (
+        {!applicationLoading && !prepareLoading && !pdfLoading && !syncLoading && (
           <Box display="flex" gap="10px" flexDirection={{ xs: "column", md: "row" }}>
             <Box>
               <ConfirmationModal
@@ -210,7 +209,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
       {docUrl && <PDFViewer fileUrl={docUrl} />}
 
-      {!applicationLoading && !prepareLoading && !pdfLoading && !signLoading && !syncLoading && (
+      {!applicationLoading && !prepareLoading && !pdfLoading && !syncLoading && (
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
           {!isSigned && onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
