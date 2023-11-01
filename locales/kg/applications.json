@@ -86,5 +86,6 @@
   "Do you really want to cancel the application?": "Колдонмоңузду чын эле жокко чыгаргыңыз келеби?",
   "Enter a reason": "Колдонмону жокко чыгаруунун себебин киргизиңиз",
   "Cancel reason str": "Жокко чыгаруунун себеби",
+  "Cancel date": "Жокко чыгаруу датасы",
   "All changes made earlier in the document will be lost": "Документке мурда киргизилген бардык өзгөртүүлөр жоголот"
 }

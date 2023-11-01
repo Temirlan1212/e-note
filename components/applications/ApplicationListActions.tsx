@@ -102,6 +102,7 @@ export const ApplicationListActions = ({
         version: params.row.version,
         statusSelect: 3,
         notaryReliabilityStatus: "3",
+        notaryCancelledDate: new Date().toISOString(),
         cancelReasonStr: inputValue,
       });
       callback(false);
@@ -205,7 +206,7 @@ export const ApplicationListActions = ({
         </>
       )}
 
-      {params.row.statusSelect != 3 && (
+      {params.row.statusSelect === 1 && (
         <>
           <ConfirmationModal
             hintTitle="Do you really want to cancel the application?"

@@ -50,8 +50,17 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
     },
     { title: "Full name of the notary", value: data?.company?.partner?.fullName },
     { title: "Unique registry number", value: data?.notaryUniqNumber },
-    { title: "Cancel reason str", value: data?.cancelReasonStr },
   ];
+
+  if (data?.notaryCancelledDate) {
+    titles.push(
+      { title: "Cancel reason str", value: data?.cancelReasonStr },
+      {
+        title: "Cancel date",
+        value: format(new Date(data?.notaryCancelledDate!), "dd.MM.yyyy HH:mm:ss"),
+      }
+    );
+  }
 
   const members = data?.requester?.concat(data.members!);
 
@@ -107,6 +116,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
                       fontSize: "14px",
                       fontWeight: "500",
                       color: "#687C9B",
+                      wordBreak: "break-all",
                     }}
                   >
                     {el.value}
