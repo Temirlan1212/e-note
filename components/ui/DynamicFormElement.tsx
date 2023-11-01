@@ -14,6 +14,7 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import Radio from "@/components/ui/Radio";
 import { Subscription } from "react-hook-form/dist/utils/createSubject";
 import Button from "@/components/ui/Button";
+import Autocomplete from "@/components/ui/Autocomplete";
 
 export type Variant =
   | "Boolean"
@@ -26,7 +27,8 @@ export type Variant =
   | "DateTime"
   | "Date"
   | "Radio"
-  | "Button";
+  | "Button"
+  | "Object";
 
 export type TCondition = Record<string, any>[][] | Record<string, any>[];
 
@@ -47,6 +49,7 @@ export interface IDynamicFormElementProps extends HTMLAttributes<HTMLElement> {
   required?: boolean;
   disabled?: boolean;
   selectionName?: string;
+  objectName?: string;
   path?: string;
   hidden?: boolean;
   conditions?: Partial<TConditions>;
@@ -79,6 +82,7 @@ const getValue = (field: Variant, value: any) => {
   const types = {
     Boolean: value,
     Selection: isEmptyOrNull(value) ? null : value,
+    Object: isEmptyOrNull(value) ? null : value,
     Float: isEmptyOrNull(value) ? "" : parseInt(value),
     Decimal: isEmptyOrNull(value) ? "" : parseInt(value),
     Integer: isEmptyOrNull(value) ? "" : parseInt(value),
@@ -100,7 +104,7 @@ const getField = (
     field: ControllerRenderProps<any, string>;
     locale: string | undefined;
     errorMessage?: string;
-    selectionData?: Record<string, any>[];
+    optionsData?: Record<string, any>[];
     disabled?: boolean;
     options?: Record<string, any>[];
     loading?: boolean;
@@ -108,7 +112,7 @@ const getField = (
     color?: string;
   }
 ) => {
-  const { field, selectionData, errorMessage, disabled, form, locale, options, loading, label, color } = props;
+  const { field, optionsData, errorMessage, disabled, form, locale, options, loading, label, color } = props;
   const { trigger } = form;
 
   const types = {
@@ -164,7 +168,7 @@ const getField = (
         label={label}
         fullWidth
         selectType={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        data={selectionData && selectionData?.length > 0 ? selectionData : options ?? []}
+        data={optionsData && optionsData?.length > 0 ? optionsData : options ?? []}
         labelField={"title_" + locale}
         valueField="value"
         helperText={errorMessage}
@@ -224,9 +228,35 @@ const getField = (
         row
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
         helperText={errorMessage}
-        data={selectionData && selectionData?.length > 0 ? selectionData : options ?? []}
+        data={optionsData && optionsData?.length > 0 ? optionsData : options ?? []}
         {...field}
         value={getValue("Radio", field.value)}
+      />
+    ),
+    Object: (
+      <Autocomplete
+        labelField={locale !== "en" ? "$t:name" : "name"}
+        type={errorMessage ? "error" : field.value ? "success" : "secondary"}
+        helperText={errorMessage}
+        disabled={disabled}
+        options={optionsData && optionsData?.length > 0 ? optionsData : options ?? []}
+        loading={loading}
+        value={
+          field.value != null
+            ? (optionsData ?? []).find((item: Record<string, any>) => item.id == field.value?.id) ?? null
+            : null
+        }
+        onBlur={field.onBlur}
+        onChange={(event, value) => {
+          field.onChange(
+            value?.id != null
+              ? {
+                  id: value.id,
+                }
+              : null
+          );
+          trigger(field.name);
+        }}
       />
     ),
     Button: (
@@ -298,6 +328,7 @@ const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
     observableForms,
     loading,
     title,
+    objectName,
     ...rest
   } = props;
 
@@ -306,7 +337,7 @@ const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
   const { locale } = useRouter();
   const t = useTranslations();
 
-  const [selectionData, setSelectionData] = useState([]);
+  const [optionsData, setOptionsData] = useState([]);
   const [rules, setRules] = useState({
     hidden: Boolean(hidden),
     disabled: Boolean(disabled),
@@ -347,9 +378,10 @@ const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
   }, [form.watch]);
 
   useEffectOnce(async () => {
-    if (!selectionName) return;
-    const data = await selectionUpdate(`/api/dictionaries/selection/${selectionName}`);
-    if (data?.data != null) setSelectionData(data?.data);
+    if (!selectionName && !objectName) return;
+    const url = `/api/dictionaries/${selectionName ? `selection/${selectionName}` : `rest/${objectName}`}`;
+    const data = await selectionUpdate(url);
+    if (data?.data != null) setOptionsData(data?.data);
   }, []);
 
   return (
@@ -379,7 +411,7 @@ const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
             {getField(type, {
               field,
               errorMessage: fieldState.error?.type !== "disabled" ? errorMessage ?? "" : "",
-              selectionData,
+              optionsData,
               disabled: rules?.disabled || fieldState.error?.type === "disabled",
               form,
               locale,
