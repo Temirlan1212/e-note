@@ -14,6 +14,8 @@ const fields: string[] = [
   "typeNotarialAction",
   "action",
   "product",
+  "cancelReasonStr",
+  "notaryCancelledDate",
   "creationDate",
   "statusSelect",
   "notarySignatureStatus",
