@@ -187,6 +187,11 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                       value?.id != null
                         ? {
                             id: value.id,
+                            oneSideAction: value.hasOwnProperty("oneSideAction")
+                              ? typeof value.oneSideAction === "boolean"
+                                ? value.oneSideAction
+                                : false
+                              : false,
                           }
                         : null
                     );
