@@ -1,7 +1,7 @@
 import React, { FC, useState } from "react";
 import { ValueOf } from "next/dist/shared/lib/constants";
 import { useTranslations } from "next-intl";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, CircularProgress, IconButton, Typography } from "@mui/material";
 import NotariesList from "./NotariesList";
 import useFetch from "@/hooks/useFetch";
 import HeirNotFoundData from "../search-for-heirs/HeirNotFoundData";
@@ -178,6 +178,10 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
           data={notaryData}
           notariesQueryParams={notariesQueryParams}
         />
+      ) : loading ? (
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <CircularProgress />
+        </Box>
       ) : (
         <HeirNotFoundData />
       )}
