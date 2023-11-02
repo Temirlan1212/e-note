@@ -49,7 +49,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
       value: data?.creationDate ? format(new Date(data?.creationDate!), "dd.MM.yyyy HH:mm:ss") : "",
     },
     { title: "Full name of the notary", value: data?.company?.partner?.fullName },
-    { title: "Unique registry number", value: data?.notaryUniqNumber },
+    { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },
   ];
 
   if (data?.notaryCancelledDate) {
@@ -119,7 +119,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
                       wordBreak: "break-all",
                     }}
                   >
-                    {el.value}
+                    {el.value != null && el.value !== "" ? el.value : t("absent")}
                   </Typography>
                 </ListItem>
               );

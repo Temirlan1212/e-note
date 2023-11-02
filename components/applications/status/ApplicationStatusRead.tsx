@@ -42,7 +42,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
       value: data?.createdOn ? format(new Date(data?.createdOn!), "dd.MM.yyyy HH:mm:ss") : "",
     },
     { title: "Notary's full name", value: data?.company.partner.fullName },
-    { title: "Unique registry number", value: data?.notaryUniqNumber },
+    { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },
   ];
 
   if (data?.notaryCancelledDate) {
@@ -112,7 +112,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                       wordBreak: "break-all",
                     }}
                   >
-                    {el.value}
+                    {el.value != null && el.value !== "" ? el.value : t("absent")}
                   </Typography>
                 </ListItem>
               );
