@@ -5,6 +5,7 @@ const fields: string[] = [
   "foreigner",
   "lastName",
   "name",
+  "firstName",
   "middleName",
   "personalNumber",
   "birthDate",
