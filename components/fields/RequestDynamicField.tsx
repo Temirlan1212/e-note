@@ -50,6 +50,7 @@ export default function RequestDynamicField({
                 defaultValue={item?.defaultValue}
                 fieldName={item?.fieldName}
                 selectionName={item?.selection ?? ""}
+                objectName={item?.object ?? ""}
                 options={item?.options}
                 observableForms={[form, paramsForm]}
                 loading={item?.actionType?.toLowerCase() === "reset" ? false : loading}
@@ -91,6 +92,7 @@ export default function RequestDynamicField({
                 fieldName={item?.fieldName}
                 path={rest?.path || item?.path}
                 selectionName={item?.selection ?? ""}
+                objectName={item?.object ?? ""}
                 props={{ box: { mb: "10px" } }}
               />
             </Grid>

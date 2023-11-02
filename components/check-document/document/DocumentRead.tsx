@@ -52,6 +52,16 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
     { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },
   ];
 
+  if (data?.notaryCancelledDate) {
+    titles.push(
+      { title: "Cancel reason str", value: data?.cancelReasonStr },
+      {
+        title: "Cancel date",
+        value: format(new Date(data?.notaryCancelledDate!), "dd.MM.yyyy HH:mm:ss"),
+      }
+    );
+  }
+
   const members = data?.requester?.concat(data.members!);
 
   return (
@@ -106,6 +116,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
                       fontSize: "14px",
                       fontWeight: "500",
                       color: "#687C9B",
+                      wordBreak: "break-all",
                     }}
                   >
                     {el.value != null && el.value !== "" ? el.value : t("absent")}

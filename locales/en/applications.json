@@ -82,7 +82,12 @@
   "Juvenile person": "Juvenile person",
   "Subject role": "Subject role",
   "Rebuild the document": "Rebuild the document",
-  "All changes made earlier in the document will be lost": "All changes made earlier in the document will be lost",
   "not signed": "not signed",
-  "absent": "absent"
+  "absent": "absent",
+  "Canceling an application": "Canceling an application",
+  "Do you really want to cancel the application?": "Do you really want to cancel the application?",
+  "Enter a reason": "Enter a reason",
+  "Cancel reason str": "Cancel reason",
+  "Cancel date": "Cancel date",
+  "All changes made earlier in the document will be lost": "All changes made earlier in the document will be lost"
 }

@@ -41,5 +41,6 @@
   "Fingerprint Login": "Fingerprint Login",
   "You need to verify your fingerprint to sign in": "You need to verify your fingerprint to sign in",
   "Confirm": "Confirm",
-  "Unsuccessful login attempt": "Unsuccessful login attempt"
+  "Unsuccessful login attempt": "Unsuccessful login attempt",
+  "The link has been sent, check your email": "The link has been sent, check your email"
 }

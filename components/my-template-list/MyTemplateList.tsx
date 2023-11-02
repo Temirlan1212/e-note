@@ -28,7 +28,7 @@ export default function TemplateList() {
   const [tempQueryParams, setTempQueryParams] = useState<ITempQueryParams>({
     pageSize: 7,
     page: 1,
-    sortBy: ["id"],
+    sortBy: [],
     filterValues: {},
     searchValue: "",
     isSystem: false,

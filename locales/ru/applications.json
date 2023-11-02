@@ -82,7 +82,12 @@
   "Juvenile person": "Несовершеннолетнее лицо",
   "Subject role": "Роль субъекта",
   "Rebuild the document": "Пересобрать документ",
-  "All changes made earlier in the document will be lost": "Все изменения, внесенные ранее в документ, будут утеряны",
   "not signed": "не подписан",
-  "absent": "отсутствует"
+  "absent": "отсутствует",
+  "Canceling an application": "Отмена заявки",
+  "Enter a reason": "Введите причину отмены заявки",
+  "Cancel reason str": "Причина отмены",
+  "Cancel date": "Дата отмены",
+  "Do you really want to cancel the application?": "Вы действительно хотите отменить заявку?",
+  "All changes made earlier in the document will be lost": "Все изменения, внесенные ранее в документ, будут утеряны"
 }

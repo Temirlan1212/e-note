@@ -18,6 +18,8 @@ export interface IApplication {
   product: IProduct;
   requester: IPartner[];
   members: IPartner[];
+  cancelReasonStr?: string;
+  notaryCancelledDate?: string;
   documentInfo: {
     pdfLink: string;
     token: string;

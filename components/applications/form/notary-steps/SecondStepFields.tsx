@@ -169,7 +169,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
               <Box width="100%" display="flex" flexDirection="column" gap="10px">
                 <InputLabel>{t("Select document from my templates")}</InputLabel>
                 <Autocomplete
-                  labelField={locale !== "en" ? "$t:name" : "name"}
+                  labelField="name"
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={selectedInput !== "my" && selectedInput !== null}
@@ -187,6 +187,11 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                       value?.id != null
                         ? {
                             id: value.id,
+                            oneSideAction: value.hasOwnProperty("oneSideAction")
+                              ? typeof value.oneSideAction === "boolean"
+                                ? value.oneSideAction
+                                : false
+                              : false,
                           }
                         : null
                     );
