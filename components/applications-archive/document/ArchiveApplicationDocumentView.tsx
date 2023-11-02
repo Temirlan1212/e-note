@@ -18,11 +18,7 @@ const ArchiveApplicationDocumentView: FC<IArchiveApplicationDocumentViewProps> =
     return { __html: data };
   };
 
-  return (
-    <Box display="flex" flexDirection="column" gap="25px">
-      <Box dangerouslySetInnerHTML={createHtml(data?.data?.[0]?.reportContent)} />
-    </Box>
-  );
+  return <Box dangerouslySetInnerHTML={createHtml(data?.data?.[0]?.reportContent)} />;
 };
 
 export default ArchiveApplicationDocumentView;
