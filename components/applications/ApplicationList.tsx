@@ -275,7 +275,7 @@ export default function ApplicationList() {
             sortable: true,
           },
           {
-            field: "createdBy.fullName",
+            field: "createdBy.partner.fullName",
             headerName: "Executor",
             width: 200,
             sortable: false,
@@ -284,7 +284,7 @@ export default function ApplicationList() {
               labelField: locale === "ru" || locale === "kg" ? "title_ru" : "title",
               valueField: "value",
               type: "dictionary",
-              field: "createdBy.fullName",
+              field: "createdBy.partner.fullName",
             },
             cellClassName: "executorColumn",
           },

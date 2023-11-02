@@ -77,7 +77,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "product.id",
         "product.name",
         "createdBy.id",
-        "createdBy.fullName",
+        "createdBy.partner.fullName",
         "statusSelect",
         "creationDate",
         "createdBy",
