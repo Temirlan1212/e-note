@@ -25,6 +25,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         fieldName: "isArchived",
         operator: "=",
         value: false,
+      },
+      {
+        fieldName: "message.relatedModel",
+        operator: "=",
+        value: "com.axelor.apps.sale.db.SaleOrder",
       }
     );
   }
@@ -38,7 +43,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     body: JSON.stringify({
       offset: 0,
       limit: pageSize,
-      fields: ["version", "isArchived", "isRead", "isStarred", "message", "message.body", "userId", "createdOn"],
+      fields: [
+        "version",
+        "isArchived",
+        "message.relatedId",
+        "message.subject",
+        "isRead",
+        "isStarred",
+        "userId",
+        "createdOn",
+      ],
       sortBy: ["-createdOn"],
       data: {
         operator: "and",
