@@ -77,15 +77,18 @@ const ArchiveApplicationDocumentInfoContent: FC<IApplicationStatusInfoContentPro
           </Button>
         </Link>
       </Box>
-      {data ? (
-        accessToView ? (
-          <ArchiveApplicationDocumentView data={data} loading={loading} />
+      {data &&
+        (accessToView ? (
+          loading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <ArchiveApplicationDocumentView data={data} />
+          )
         ) : (
           <Typography>{t("You do not have access to view this document")}</Typography>
-        )
-      ) : (
-        <CircularProgress />
-      )}
+        ))}
     </Box>
   );
 };

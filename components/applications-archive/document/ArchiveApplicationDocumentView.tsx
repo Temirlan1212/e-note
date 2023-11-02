@@ -7,13 +7,12 @@ import { FetchResponseBody } from "@/hooks/useFetch";
 
 interface IArchiveApplicationDocumentViewProps {
   data: FetchResponseBody | null;
-  loading: boolean;
 }
 
 const ArchiveApplicationDocumentView: FC<IArchiveApplicationDocumentViewProps> = (props) => {
   const t = useTranslations();
 
-  const { data, loading } = props;
+  const { data } = props;
 
   const createHtml = (data: any) => {
     return { __html: data };
@@ -21,13 +20,7 @@ const ArchiveApplicationDocumentView: FC<IArchiveApplicationDocumentViewProps> =
 
   return (
     <Box display="flex" flexDirection="column" gap="25px">
-      {!loading ? (
-        <Box dangerouslySetInnerHTML={createHtml(data?.data?.[0]?.reportContent)} />
-      ) : (
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <CircularProgress color="success" />
-        </Box>
-      )}
+      <Box dangerouslySetInnerHTML={createHtml(data?.data?.[0]?.reportContent)} />
     </Box>
   );
 };
