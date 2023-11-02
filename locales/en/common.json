@@ -220,5 +220,6 @@
   "from": "from",
   "Confirmation of identity": "Confirmation of identity",
   "Verify with your face id": "Verify with your face id",
-  "Verify": "Verify"
+  "Verify": "Verify",
+  "User with this email not exists": "User with this email not exists"
 }
