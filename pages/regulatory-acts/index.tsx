@@ -1,4 +1,4 @@
-import { Box, Container, List, ListItem, Typography } from "@mui/material";
+import { Box, CircularProgress, Container, List, ListItem, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import LinkIcon from "@/public/icons/link.svg";
 import Link from "@/components/ui/Link";
@@ -7,6 +7,7 @@ import Head from "next/head";
 import { GetStaticPropsContext } from "next";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { useRouter } from "next/router";
+import HeirNotFoundData from "@/components/search-for-heirs/HeirNotFoundData";
 
 interface IRegulatoryActs {
   title: string;
@@ -19,7 +20,10 @@ const RegulatoryActs: React.FC = () => {
   const t = useTranslations();
   const { locale } = useRouter();
 
-  const { data: regulatoryActsData } = useFetch<FetchResponseBody | null>("/api/regulatory-acts", "POST");
+  const { data: regulatoryActsData, loading: regulatoryActsLoading } = useFetch<FetchResponseBody | null>(
+    "/api/regulatory-acts",
+    "POST"
+  );
 
   return (
     <>
@@ -43,39 +47,54 @@ const RegulatoryActs: React.FC = () => {
             <Typography variant="h1" fontWeight={600}>
               {t("Regulatory framework")}
             </Typography>
-
-            <List sx={{ display: "flex", flexDirection: "column", gap: "35px" }}>
-              {regulatoryActsData?.data?.map(({ title, url, id, ["$t:title"]: tTitle }: IRegulatoryActs) => (
-                <ListItem disablePadding key={id}>
-                  <Link
-                    href={url}
-                    display="flex"
-                    maxWidth={602}
-                    sx={{
-                      "&:hover": {
-                        color: "success.main",
-                      },
-                    }}
-                    justifyContent="space-between"
-                    width="100%"
-                    target="_blank"
-                    underline="hover"
-                    gap="30px"
-                  >
-                    <Typography color="inherit">{locale === "en" ? title : tTitle}</Typography>
-                    <Box>
-                      <LinkIcon />
-                    </Box>
-                  </Link>
-                </ListItem>
-              ))}
-            </List>
+            {regulatoryActsLoading ? (
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <CircularProgress />
+              </Box>
+            ) : (
+              regulatoryActsData && (
+                <List sx={{ display: "flex", flexDirection: "column", gap: "35px" }}>
+                  {regulatoryActsData?.data?.map(({ title, url, id, ["$t:title"]: tTitle }: IRegulatoryActs) => (
+                    <ListItem disablePadding key={id}>
+                      <Link
+                        href={url}
+                        display="flex"
+                        maxWidth={602}
+                        sx={{
+                          "&:hover": {
+                            color: "success.main",
+                          },
+                        }}
+                        justifyContent="space-between"
+                        width="100%"
+                        target="_blank"
+                        underline="hover"
+                        gap="30px"
+                      >
+                        <Typography color="inherit">{locale === "en" ? title : tTitle}</Typography>
+                        <Box>
+                          <LinkIcon />
+                        </Box>
+                      </Link>
+                    </ListItem>
+                  ))}
+                </List>
+              )
+            )}
           </Box>
-
-          <Box width={{ xs: 280, sm: 400, md: 500 }}>
-            <Image src="/images/legal-framework.png" alt="E-notariat" width={500} height={398} layout="responsive" />
-          </Box>
+          {regulatoryActsData && (
+            <Box width={{ xs: 280, sm: 400, md: 500 }}>
+              <Image src="/images/legal-framework.png" alt="E-notariat" width={500} height={398} layout="responsive" />
+            </Box>
+          )}
         </Box>
+        {regulatoryActsLoading
+          ? null
+          : !regulatoryActsData && (
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <HeirNotFoundData />
+              </Box>
+            )}
       </Container>
     </>
   );
