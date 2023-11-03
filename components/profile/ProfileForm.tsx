@@ -12,7 +12,7 @@ import ProfilePasswordForm from "./ProfilePasswordForm";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IUserProfileSchema, userProfileSchema } from "@/validator-schemas/profile";
 import { IProfileState, useProfileStore } from "@/stores/profile";
-import { IUserData } from "@/models/user";
+import { IEmail, IUserData } from "@/models/user";
 
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -27,6 +27,7 @@ interface IProfileFormProps {}
 
 interface IExtendedUserData extends IUserData {
   "partner.mobilePhone"?: string;
+  "partner.emailAddress"?: IEmail;
 }
 
 async function blobToFile(blob: Blob, fileName: string): Promise<File> {
@@ -52,12 +53,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     returnResponse: true,
   });
 
-  const {
-    data: userEmailData,
-    update: getUserEmailData,
-    loading: userEmailLoading,
-  } = useFetch<FetchResponseBody>("", "POST");
-
   useEffectOnce(async () => {
     const image: any = await imageData?.blob();
 
@@ -78,12 +73,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
         mobilePhone: userData?.["partner.mobilePhone"],
       },
     },
-  });
-
-  useEffectOnce(() => {
-    getUserEmailData(userData?.partner?.id != null ? `/api/profile/partner/${userData.partner.id}` : "", {
-      fields: ["emailAddress"],
-    });
   });
 
   const t = useTranslations();
@@ -121,8 +110,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               version: userData?.partner?.$version,
               mobilePhone: data?.partner?.mobilePhone,
               emailAddress: {
-                id: userEmailData?.data?.[0]?.emailAddress?.id,
-                version: userEmailData?.data?.[0]?.emailAddress?.$version,
+                id: userData?.["partner.emailAddress"]?.id,
+                version: userData?.["partner.emailAddress"]?.$version,
                 address: data.email,
               },
             },
@@ -150,8 +139,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             version: userData?.partner?.$version,
             mobilePhone: data?.partner?.mobilePhone,
             emailAddress: {
-              id: userEmailData?.data?.[0]?.emailAddress?.id,
-              version: userEmailData?.data?.[0]?.emailAddress?.$version,
+              id: userData?.["partner.emailAddress"]?.id,
+              version: userData?.["partner.emailAddress"]?.$version,
               address: data.email,
             },
           },
@@ -356,7 +345,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 E-mail
               </InputLabel>
               <Input
-                disabled={userEmailLoading}
                 fullWidth
                 error={!!errors.email?.message ?? false}
                 helperText={errors.email?.message ? t(errors.email?.message) : ""}
