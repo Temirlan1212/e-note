@@ -220,5 +220,6 @@
   "from": "от",
   "Confirmation of identity": "Подтверждение личности",
   "Verify with your face id": "Пройдите верификацию с помощью face id",
-  "Verify": "Пройти верификацию"
+  "Verify": "Пройти верификацию",
+  "User with this email not exists": "Пользователь с таким электронным адресом не существует"
 }

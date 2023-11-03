@@ -27,14 +27,15 @@ const ResetPasswordForm = () => {
 
   const onSubmit = (data: { email: string }) => {
     update("/api/password/reset/" + data.email);
+    setAlertOpen(false);
   };
 
   useEffectOnce(() => {
-    if (data?.status === 0) {
+    if (data) {
       setAlertOpen(true);
       return;
     }
-  }, [data?.status]);
+  }, [data]);
 
   return (
     <Box py={5}>
@@ -53,8 +54,8 @@ const ResetPasswordForm = () => {
         }}
       >
         <Collapse sx={{ width: "100%", marginBottom: "20px" }} in={alertOpen}>
-          <Alert severity="success" onClose={() => setAlertOpen(false)}>
-            {t("The link has been sent, check your email")}
+          <Alert severity={data?.status === 0 ? "success" : "error"} onClose={() => setAlertOpen(false)}>
+            {t(data?.status === 0 ? "The link has been sent, check your email" : "User with this email not exists")}
           </Alert>
         </Collapse>
         <Box
