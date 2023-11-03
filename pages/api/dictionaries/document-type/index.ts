@@ -3,11 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export enum criteriaFieldNames {
   isSystem = "isSystem",
   createdBy = "createdBy.id",
-  object = "notaryObject",
-  objectType = "notaryObjectType",
-  notarialAction = "notaryAction",
-  typeNotarialAction = "notaryActionType",
-  action = "notaryRequestAction",
+  action = "notaryAction.id",
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
