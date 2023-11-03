@@ -14,7 +14,7 @@ import { IUserProfileSchema, userProfileSchema } from "@/validator-schemas/profi
 import { IProfileState, useProfileStore } from "@/stores/profile";
 import { IUserData } from "@/models/user";
 
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { Controller } from "react-hook-form";
 import dynamic from "next/dynamic";
@@ -52,6 +52,12 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     returnResponse: true,
   });
 
+  const {
+    data: userEmailData,
+    update: getUserEmailData,
+    loading: userEmailLoading,
+  } = useFetch<FetchResponseBody>("", "POST");
+
   useEffectOnce(async () => {
     const image: any = await imageData?.blob();
 
@@ -72,6 +78,12 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
         mobilePhone: userData?.["partner.mobilePhone"],
       },
     },
+  });
+
+  useEffectOnce(async () => {
+    await getUserEmailData(userData?.partner?.id != null ? `/api/profile/partner/${userData.partner.id}` : "", {
+      fields: ["emailAddress"],
+    });
   });
 
   const t = useTranslations();
@@ -102,13 +114,17 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           await update("/api/profile/update/" + userData?.id, {
             id: userData?.id,
             version: userData?.version,
-            email: data.email,
             name: data.fullName,
             image: reader.result.toString(),
             partner: {
               id: userData?.partner?.id,
               version: userData?.partner?.$version,
               mobilePhone: data?.partner?.mobilePhone,
+              emailAddress: {
+                id: userEmailData?.data?.[0]?.emailAddress?.id,
+                version: userEmailData?.data?.[0]?.emailAddress?.$version,
+                address: data.email,
+              },
             },
           }).then((res) => {
             if (res && res.ok) {
@@ -127,13 +143,17 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
         await update("/api/profile/update/" + userData?.id, {
           id: userData?.id,
           version: userData?.version,
-          email: data.email,
           name: data.fullName,
           image: null,
           partner: {
             id: userData?.partner?.id,
             version: userData?.partner?.$version,
             mobilePhone: data?.partner?.mobilePhone,
+            emailAddress: {
+              id: userEmailData?.data?.[0]?.emailAddress?.id,
+              version: userEmailData?.data?.[0]?.emailAddress?.$version,
+              address: data.email,
+            },
           },
         }).then((res) => {
           if (res && res.ok) {
@@ -336,6 +356,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 E-mail
               </InputLabel>
               <Input
+                disabled={userEmailLoading}
                 fullWidth
                 error={!!errors.email?.message ?? false}
                 helperText={errors.email?.message ? t(errors.email?.message) : ""}
