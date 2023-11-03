@@ -34,9 +34,9 @@ const ChatContent: FC = () => {
   };
 
   const filteredUsers = (data?.data ?? []).filter((user) =>
-    userData?.group.id === 4
-      ? user?.chatCreator?.toLowerCase().includes(searchQuery.toLowerCase())
-      : user?.notary?.name.toLowerCase().includes(searchQuery.toLowerCase())
+    userData?.partner.fullName === user.guest
+      ? user.chatCreator?.toLowerCase().includes(searchQuery.toLowerCase())
+      : user.guest?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const activeContact = filteredUsers?.find((user) => user.chatId === activeContactId);
@@ -83,8 +83,8 @@ const ChatContent: FC = () => {
         }}
       >
         <ChatListBoard
-          isNotary={userData?.group?.id === 4}
           users={filteredUsers}
+          partnerName={userData?.partner.fullName}
           handleContactClick={handleContactClick}
           activeContact={activeContact}
           searchQuery={searchQuery}
@@ -94,8 +94,8 @@ const ChatContent: FC = () => {
         {activeContact ? (
           <ChatMessageBoard
             userToken={contact?.userToken}
-            name={userData?.group.id === 4 ? contact?.chatCreator : contact?.notary.name}
-            chatCreator={userData?.group.id === 4 ? contact?.chatCreator : contact?.notary.name}
+            name={userData?.partner.fullName === contact?.guest ? contact?.chatCreator : contact?.guest}
+            chatCreator={userData?.partner.fullName === contact?.guest ? contact?.chatCreator : contact?.guest}
             chatLink={contact?.chatRoomLink}
           />
         ) : (

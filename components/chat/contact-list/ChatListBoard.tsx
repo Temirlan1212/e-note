@@ -14,12 +14,12 @@ interface IChatListBoardProps {
   activeContact?: IContact;
   users: IContact[];
   searchQuery: string;
+  partnerName?: string;
   setSearchQuery: (query: string) => void;
-  isNotary: boolean;
 }
 
 const ChatListBoard: FC<IChatListBoardProps> = (props) => {
-  const { handleContactClick, activeContact, users, searchQuery, isNotary, setSearchQuery } = props;
+  const { handleContactClick, activeContact, users, partnerName, searchQuery, setSearchQuery } = props;
 
   const t = useTranslations();
 
@@ -91,7 +91,7 @@ const ChatListBoard: FC<IChatListBoardProps> = (props) => {
             <ChatListItem
               key={user.chatId}
               activeContact={activeContact?.chatId}
-              contactName={isNotary ? user.chatCreator : user.notary.name}
+              contactName={partnerName === user.guest ? user.chatCreator : user.guest}
               contactId={user.chatId}
               onContactClick={() => handleContactClick(user.chatId)}
               chatLink={user.chatRoomLink}
