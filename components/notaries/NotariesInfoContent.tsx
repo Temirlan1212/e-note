@@ -28,7 +28,9 @@ import { IUserData } from "@/models/user";
 import { IContact } from "@/models/chat";
 import useNotariesStore from "@/stores/notaries";
 
-interface INotariesInfoContentProps {}
+interface INotariesInfoContentProps {
+  userId?: string | string[];
+}
 
 enum TypeOfNotary {
   State = "state",
@@ -54,7 +56,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const { data: workDaysArea } = useFetch("/api/notaries/dictionaries/work-days", "GET");
 
-  const { update: contactUpdate } = useFetch<IContact>("", "POST");
+  const { update: contactUpdate, loading: contactLoading, error } = useFetch<IContact>("", "POST");
 
   const notaryData = data?.data || [];
 
@@ -63,10 +65,13 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const normalizePhoneNumber = (phoneNumber: string) => phoneNumber?.replace(/\D/g, "");
 
   const handleOpenChat = async () => {
-    const res = await contactUpdate("/api/chat/create/user/" + router.query.id);
+    const res = await contactUpdate("/api/chat/create/user/" + props.userId);
     if (res?.data?.chatRoomLink) {
       const href = `${res.data.chatRoomLink}?AuthorizationBasic=${res.data.userToken.replace(/Basic /, "")}` as string;
       window.open(href, "_blank");
+    }
+    if (error?.status === 401) {
+      router.push("/login");
     }
   };
 
@@ -327,6 +332,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
               <Button
                 startIcon={<CloudMessageIcon />}
                 buttonType="secondary"
+                loading={contactLoading}
                 sx={{
                   width: {
                     sx: "100%",
