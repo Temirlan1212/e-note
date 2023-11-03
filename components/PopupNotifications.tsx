@@ -11,6 +11,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import CircleIcon from "@mui/icons-material/Circle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { INotification } from "@/models/notification";
+import Link from "@/components/ui/Link";
 
 interface INotificationData extends FetchResponseBody {
   data: INotification[];
@@ -153,6 +154,7 @@ export default function PopupNotifications() {
                   display: "flex",
                   width: "100%",
                   justifyContent: "space-between",
+                  alignItems: "center",
                   cursor: "pointer",
                   borderBottom: "1px solid #F6F6F6",
                   padding: "15px",
@@ -187,8 +189,15 @@ export default function PopupNotifications() {
                         maxHeight: "39px",
                       }}
                     >
-                      {t(`${notification.message.subject}`)}
+                      {t(`${notification?.["message.subject"]}`)}
                     </Typography>
+                    <Link
+                      href={`/applications/status/` + notification?.["message.relatedId"]}
+                      fontSize={12}
+                      color="textPrimary"
+                    >
+                      {t("More")}
+                    </Link>
                     <Typography fontSize={12} color="textSecondary">
                       {getTimeAgo(notification.createdOn)}
                     </Typography>
