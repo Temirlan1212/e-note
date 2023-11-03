@@ -1,4 +1,6 @@
 import { IUser, IUserCredentials, IUserData } from "@/models/user";
+import { isRoutesIncludesPath } from "@/routes/data";
+import { routes as userRoutes } from "@/routes/user";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -7,10 +9,12 @@ export interface IProfileState {
   user: IUser | null;
   userData: IUserData | null;
   userRoleSelected: boolean;
+  redirectTo: string | null;
   getCookie: () => string | null;
   getUser: () => IUser | null;
   getUserData: () => IUserData | null;
   setUserRoleSelected: (value: boolean) => void;
+  setRedirectTo: (value: string | null) => void;
   logIn: (credentials: IUserCredentials) => Promise<void>;
   logInEsi: (code: string) => Promise<void>;
   logOut: () => void;
@@ -24,6 +28,7 @@ export const useProfileStore = create<IProfileState>()(
       user: null,
       userData: null,
       userRoleSelected: false,
+      redirectTo: "/applications",
       getCookie: () => {
         return get().cookie;
       },
@@ -35,6 +40,10 @@ export const useProfileStore = create<IProfileState>()(
       },
       setUserRoleSelected: (value) => {
         set(() => ({ userRoleSelected: value }));
+      },
+      setRedirectTo: (value) => {
+        const isCorrect = value != null && value.length > 1 && isRoutesIncludesPath(userRoutes, value);
+        set(() => ({ redirectTo: isCorrect ? value : null }));
       },
       logIn: async (credentials) => {
         let cookie: string | null = null;
@@ -80,7 +89,14 @@ export const useProfileStore = create<IProfileState>()(
         get().loadUserData(user);
       },
       logOut: () => {
-        set(() => ({ cookie: null, user: null, userData: null, userRoleSelected: false }));
+        const redirectTo = get().redirectTo;
+        set(() => ({
+          cookie: null,
+          user: null,
+          userData: null,
+          userRoleSelected: false,
+          redirectTo: redirectTo != null ? redirectTo : "/applications",
+        }));
       },
       loadUserData: async (user) => {
         const cookie = get().cookie;
