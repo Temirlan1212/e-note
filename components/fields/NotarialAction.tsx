@@ -56,9 +56,9 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
 
   useEffectOnce(() => {
     if (actionVal != null) {
-      const { object, objectType, notarialAction, typeNotarialAction, action } = getValues();
+      const { action } = getValues();
       updateSearchedDoc("/api/dictionaries/document-type", {
-        formValues: { object, objectType, notarialAction, typeNotarialAction, action },
+        formValues: { action },
       });
     }
   }, [actionVal]);
