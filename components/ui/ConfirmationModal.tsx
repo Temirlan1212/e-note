@@ -15,6 +15,7 @@ export interface IConfirmationModal extends Omit<ModalProps, "slots"> {
   hintText: string;
   type: "warning" | "error" | "hint";
   title: string;
+  isCloseIconShown: boolean;
   slots?: {
     button?: (callback: Dispatch<SetStateAction<boolean>>) => React.ReactNode;
     body?: (callback: Dispatch<SetStateAction<boolean>>) => React.ReactNode;
@@ -31,6 +32,7 @@ export const ConfirmationModal = ({
   hintText = "",
   type = "error",
   title = "Deleting the record",
+  isCloseIconShown = false,
   onToggle,
   ...rest
 }: Partial<IConfirmationModal>) => {
@@ -58,7 +60,7 @@ export const ConfirmationModal = ({
             <Typography variant="h6" fontWeight={600}>
               {t(title)}
             </Typography>
-            {isPermanentOpen !== true && (
+            {isCloseIconShown && (
               <IconButton onClick={handleToggle}>
                 <CloseIcon />
               </IconButton>

@@ -95,6 +95,13 @@ function Layout({ children }: { children: JSX.Element }) {
     return <PrivateLayout>{children}</PrivateLayout>;
   }
 
+  const handleLogout = () => {
+    profile.logOut();
+    router.push("/");
+    setIsRoleModalOpen(false);
+    setFaceIdScannerOpen(false);
+  };
+
   return (
     <PublicLayout>
       <>
@@ -104,6 +111,8 @@ function Layout({ children }: { children: JSX.Element }) {
         </Backdrop>
         <ConfirmationModal
           isPermanentOpen={faceIdScannerOpen}
+          isCloseIconShown={true}
+          onToggle={handleLogout}
           title="Confirmation of identity"
           type="hint"
           hintTitle=""
