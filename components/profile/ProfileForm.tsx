@@ -80,8 +80,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     },
   });
 
-  useEffectOnce(async () => {
-    await getUserEmailData(userData?.partner?.id != null ? `/api/profile/partner/${userData.partner.id}` : "", {
+  useEffectOnce(() => {
+    getUserEmailData(userData?.partner?.id != null ? `/api/profile/partner/${userData.partner.id}` : "", {
       fields: ["emailAddress"],
     });
   });
