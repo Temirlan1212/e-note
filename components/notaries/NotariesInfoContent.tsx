@@ -70,10 +70,13 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       const href = `${res.data.chatRoomLink}?AuthorizationBasic=${res.data.userToken.replace(/Basic /, "")}` as string;
       window.open(href, "_blank");
     }
+  };
+
+  useEffect(() => {
     if (error?.status === 401) {
       router.push("/login");
     }
-  };
+  }, [error]);
 
   const infoArray = [
     {
