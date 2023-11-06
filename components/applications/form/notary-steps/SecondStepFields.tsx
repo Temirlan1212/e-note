@@ -151,6 +151,11 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                               ? value.oneSideAction
                               : false
                             : false,
+                          isProductCancelled: value.hasOwnProperty("isProductCancelled")
+                            ? typeof value.isProductCancelled === "boolean"
+                              ? value.isProductCancelled
+                              : false
+                            : false,
                         }
                       : null
                   );
@@ -190,6 +195,11 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                             oneSideAction: value.hasOwnProperty("oneSideAction")
                               ? typeof value.oneSideAction === "boolean"
                                 ? value.oneSideAction
+                                : false
+                              : false,
+                            isProductCancelled: value.hasOwnProperty("isProductCancelled")
+                              ? typeof value.isProductCancelled === "boolean"
+                                ? value.isProductCancelled
                                 : false
                               : false,
                           }

@@ -182,7 +182,7 @@ export const ApplicationListActions = ({
         </IconButton>
       </Tooltip>
 
-      {params.row.statusSelect != 1 && (
+      {params.row.statusSelect === 2 && (
         <>
           <Link href={`/applications/edit/${params.row.id}`}>
             <Tooltip title={t("Edit")} arrow>
@@ -206,7 +206,7 @@ export const ApplicationListActions = ({
         </>
       )}
 
-      {params.row.statusSelect === 1 && (
+      {params.row.statusSelect === 1 && params.row?.["product.isProductCancelled"] && (
         <>
           <ConfirmationModal
             hintTitle="Do you really want to cancel the application?"
