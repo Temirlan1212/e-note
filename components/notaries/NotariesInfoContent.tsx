@@ -16,12 +16,11 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 
-import profileImage from "@/public/images/avatar.png";
 import LicenseIcon from "@/public/icons/license.svg";
 import ContentPlusIcon from "@/public/icons/content-plus.svg";
 import CloudMessageIcon from "@/public/icons/cloud-message.svg";
 import useFetch from "@/hooks/useFetch";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useProfileStore } from "@/stores/profile";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IUserData } from "@/models/user";
@@ -48,7 +47,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const { locale } = useRouter();
 
   const [userData, setUserData] = useState<IUserData | null>(null);
-  const [imageURL, setImageURL] = useState<string | null>(null);
+  const [base64Image, setBase64Image] = useState<string | null>(null);
 
   const profile = useProfileStore((state) => state);
   const setNotaryData = useNotariesStore((state) => state.setNotaryData);
@@ -88,17 +87,11 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
     }
   );
 
-  async function blobToFile(blob: Blob, fileName: string): Promise<File> {
-    return new File([blob], fileName, { type: blob?.type });
-  }
-
   useEffectOnce(async () => {
-    const image: any = await imageData?.blob();
-
-    const convertedFile = await blobToFile(image, "avatar-image.png");
-    const url = URL.createObjectURL(convertedFile);
-
-    setImageURL(url);
+    const base64String = await imageData?.text();
+    if (base64String) {
+      setBase64Image(base64String);
+    }
   }, [imageData]);
 
   const infoArray = [
@@ -220,8 +213,6 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
             >
               {imageLoading ? (
                 <CircularProgress />
-              ) : imageURL ? (
-                <Image src={imageURL} width={194} height={194} objectFit="contain" alt="notaryImage" />
               ) : (
                 <Avatar
                   sizes="194"
@@ -232,6 +223,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                     borderRadius: 0,
                   }}
                   aria-label="recipe"
+                  src={base64Image!}
                 />
               )}
               {ratingLoading ? (

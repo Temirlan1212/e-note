@@ -21,13 +21,9 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, 
   const { locale } = useRouter();
   const t = useTranslations();
 
-  const [imageURL, setImageURL] = useState<string | null>(null);
+  const [base64Image, setBase64Image] = useState<string | null>(null);
 
   const { data: ratingData, loading: ratingLoading } = useFetch(id != null ? `/api/rating/${id}` : "", "GET");
-
-  async function blobToFile(blob: Blob, fileName: string): Promise<File> {
-    return new File([blob], fileName, { type: blob?.type });
-  }
 
   const { data: imageData, loading: imageLoading } = useFetch<Response>(
     partnerUserId != null ? "/api/notaries/download-image/" + partnerUserId : "",
@@ -38,12 +34,10 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, 
   );
 
   useEffectOnce(async () => {
-    const image: any = await imageData?.blob();
-
-    const convertedFile = await blobToFile(image, "avatar-image.png");
-    const url = URL.createObjectURL(convertedFile);
-
-    setImageURL(url);
+    const base64String = await imageData?.text();
+    if (base64String) {
+      setBase64Image(base64String);
+    }
   }, [imageData]);
 
   return imageLoading || ratingLoading ? (
@@ -70,7 +64,7 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, 
         avatar={
           <Avatar
             sizes="100"
-            src={imageURL!}
+            src={base64Image!}
             sx={{
               bgcolor: "success.main",
               width: { xs: "50px", md: "100px" },

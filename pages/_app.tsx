@@ -62,14 +62,14 @@ function Layout({ children }: { children: JSX.Element }) {
       return router.push("/");
     }
 
-    // if (profile.user != null && redirectTo != null) {
-    //   await router.push(redirectTo);
-    //   return setRedirectTo(null);
-    // }
+    if (profile.user != null && redirectTo != null) {
+      await router.push(redirectTo);
+      return setRedirectTo(null);
+    }
 
-    // if (profile.user != null && router.route === "/login") {
-    //   return setRedirectTo("/applications");
-    // }
+    if (profile.user != null && router.route === "/login") {
+      return setRedirectTo("/applications");
+    }
   }, [profile.userData, router.route]);
 
   const handleChooseRole = async (role: 1 | 2) => {
