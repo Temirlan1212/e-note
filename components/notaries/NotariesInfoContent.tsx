@@ -43,20 +43,30 @@ const formatDate = (inputDate: string | number | Date) => {
 };
 
 const NotariesInfoContent = (props: INotariesInfoContentProps) => {
-  const [userData, setUserData] = useState<IUserData | null>(null);
   const t = useTranslations();
   const router = useRouter();
   const { locale } = useRouter();
 
+  const [userData, setUserData] = useState<IUserData | null>(null);
+  const [imageURL, setImageURL] = useState<string | null>(null);
+
   const profile = useProfileStore((state) => state);
   const setNotaryData = useNotariesStore((state) => state.setNotaryData);
+
   const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
 
   const { data: workDaysArea } = useFetch("/api/notaries/dictionaries/work-days", "GET");
 
   const { update: contactUpdate } = useFetch<IContact>("", "POST");
 
+  const { data: ratingData, loading: ratingLoading } = useFetch(
+    router?.query?.id != null ? `/api/rating/${router?.query?.id}` : "",
+    "GET"
+  );
+
   const notaryData = data?.data || [];
+
+  const partnerUserId = notaryData[0]?.partner?.user?.id;
 
   const workDaysAreaData = workDaysArea?.data || [];
 
@@ -69,6 +79,27 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       window.open(href, "_blank");
     }
   };
+
+  const { data: imageData, loading: imageLoading } = useFetch<Response>(
+    partnerUserId != null ? "/api/notaries/download-image/" + partnerUserId : "",
+    "GET",
+    {
+      returnResponse: true,
+    }
+  );
+
+  async function blobToFile(blob: Blob, fileName: string): Promise<File> {
+    return new File([blob], fileName, { type: blob?.type });
+  }
+
+  useEffectOnce(async () => {
+    const image: any = await imageData?.blob();
+
+    const convertedFile = await blobToFile(image, "avatar-image.png");
+    const url = URL.createObjectURL(convertedFile);
+
+    setImageURL(url);
+  }, [imageData]);
 
   const infoArray = [
     {
@@ -187,16 +218,10 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                 },
               }}
             >
-              {notaryData[0]?.logo ? (
-                <Box
-                  sx={{
-                    width: "194px",
-                    height: "194px",
-                    objectFit: "contain",
-                  }}
-                >
-                  <Image src={notaryData[0]?.logo} alt="notaryImage" />
-                </Box>
+              {imageLoading ? (
+                <CircularProgress />
+              ) : imageURL ? (
+                <Image src={imageURL} width={194} height={194} objectFit="contain" alt="notaryImage" />
               ) : (
                 <Avatar
                   sizes="194"
@@ -209,29 +234,28 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                   aria-label="recipe"
                 />
               )}
-
-              <Box>
-                <Box display="flex" gap="8px">
-                  <Rating value={4} readOnly />
+              {ratingLoading ? (
+                <CircularProgress />
+              ) : (
+                <Box>
+                  <Box display="flex" gap="8px">
+                    <Rating value={ratingData?.data?.count || 0} readOnly />
+                    {ratingData?.data?.count ? (
+                      <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>{ratingData?.data?.count}</Typography>
+                    ) : null}
+                  </Box>
                   <Typography
                     sx={{
+                      color: "#BDBDBD",
                       fontSize: "16px",
-                      fontWeight: 600,
+                      fontWeight: 400,
                     }}
                   >
-                    4,0
+                    {ratingData?.data?.average != null ? Number(ratingData?.data?.average).toFixed(1) : "0"}{" "}
+                    {t("ratings")}
                   </Typography>
                 </Box>
-                <Typography
-                  sx={{
-                    color: "#BDBDBD",
-                    fontSize: "16px",
-                    fontWeight: 400,
-                  }}
-                >
-                  45 оцен.
-                </Typography>
-              </Box>
+              )}
             </Box>
             <Box
               sx={{

@@ -1,25 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
+  const { id } = req.query;
+  if (req.method !== "GET") {
     return res.status(400).json(null);
   }
 
-  const { id } = req.query;
-
-  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/ws/action", {
-    method: "POST",
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/rating/notary/" + id, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      action: "com.axelor.notary.web.RatingController:getRating",
-      data: {
-        context: {
-          id: id,
-        },
-      },
-    }),
   });
 
   if (!response.ok) {

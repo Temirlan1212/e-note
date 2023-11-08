@@ -1,29 +1,54 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { Avatar, Box, Card, CardContent, CardHeader, CircularProgress, Typography } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import Rating from "@/components/ui/Rating";
 import { useRouter } from "next/router";
 import { INotaryGeo } from "@/models/notaries";
-import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
+import useFetch from "@/hooks/useFetch";
+import { useTranslations } from "next-intl";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface INotaryProps {
   id?: number;
   fullName?: string;
-  image?: string;
   region?: INotaryGeo;
   area?: INotaryGeo;
   location?: string;
+  partnerUserId?: number;
 }
 
-const NotariesCard: FC<INotaryProps> = ({ id, fullName, image, region, area, location }) => {
+const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, partnerUserId }) => {
   const { locale } = useRouter();
+  const t = useTranslations();
 
-  const { data: ratingData, loading: ratingLoading } = useFetch<FetchResponseBody>(
-    id != null ? `/api/rating/${id}` : "",
-    "POST"
+  const [imageURL, setImageURL] = useState<string | null>(null);
+
+  const { data: ratingData, loading: ratingLoading } = useFetch(id != null ? `/api/rating/${id}` : "", "GET");
+
+  async function blobToFile(blob: Blob, fileName: string): Promise<File> {
+    return new File([blob], fileName, { type: blob?.type });
+  }
+
+  const { data: imageData, loading: imageLoading } = useFetch<Response>(
+    partnerUserId != null ? "/api/notaries/download-image/" + partnerUserId : "",
+    "GET",
+    {
+      returnResponse: true,
+    }
   );
 
-  return (
+  useEffectOnce(async () => {
+    const image: any = await imageData?.blob();
+
+    const convertedFile = await blobToFile(image, "avatar-image.png");
+    const url = URL.createObjectURL(convertedFile);
+
+    setImageURL(url);
+  }, [imageData]);
+
+  return imageLoading || ratingLoading ? (
+    <CircularProgress />
+  ) : (
     <Card
       sx={{
         width: { xs: "100%", md: "17.8rem" },
@@ -45,7 +70,7 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, image, region, area, loc
         avatar={
           <Avatar
             sizes="100"
-            src={image}
+            src={imageURL!}
             sx={{
               bgcolor: "success.main",
               width: { xs: "50px", md: "100px" },
@@ -65,17 +90,15 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, image, region, area, loc
         title={fullName}
       />
       <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: { xs: "start", md: "center" } }}>
-        {ratingLoading ? (
-          <CircularProgress />
-        ) : (
-          <Box sx={{ display: "flex" }} gap="8px">
-            <Rating value={ratingData?.data?.count || 0} readOnly />
-            <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>{ratingData?.data?.count ?? "4.0"}</Typography>
-            <Typography sx={{ color: "#BDBDBD", fontSize: "16px", fontWeight: 400 }}>
-              {ratingData?.data?.average}
-            </Typography>
-          </Box>
-        )}
+        <Box sx={{ display: "flex" }} gap="8px">
+          <Rating value={ratingData?.data?.count || 0} readOnly />
+          {ratingData?.data?.count ? (
+            <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>{ratingData?.data?.count}</Typography>
+          ) : null}
+          <Typography sx={{ color: "#BDBDBD", fontSize: "16px", fontWeight: 400 }}>
+            {ratingData?.data?.average != null ? Number(ratingData?.data?.average).toFixed(1) : "0"} {t("ratings")}
+          </Typography>
+        </Box>
         <Box sx={{ display: { xs: "none", md: "block" }, width: "100%", marginTop: "20px" }}>
           <Typography>
             {region ? (locale === "ru" || locale === "kg" ? region["$t:name"] : region.name) : ""}
