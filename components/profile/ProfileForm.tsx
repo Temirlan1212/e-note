@@ -12,9 +12,9 @@ import ProfilePasswordForm from "./ProfilePasswordForm";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IUserProfileSchema, userProfileSchema } from "@/validator-schemas/profile";
 import { IProfileState, useProfileStore } from "@/stores/profile";
-import { IUserData } from "@/models/user";
+import { IEmail, IUserData } from "@/models/user";
 
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { Controller } from "react-hook-form";
 import dynamic from "next/dynamic";
@@ -27,6 +27,7 @@ interface IProfileFormProps {}
 
 interface IExtendedUserData extends IUserData {
   "partner.mobilePhone"?: string;
+  "partner.emailAddress"?: IEmail;
 }
 
 async function blobToFile(blob: Blob, fileName: string): Promise<File> {
@@ -102,13 +103,17 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           await update("/api/profile/update/" + userData?.id, {
             id: userData?.id,
             version: userData?.version,
-            email: data.email,
             name: data.fullName,
             image: reader.result.toString(),
             partner: {
               id: userData?.partner?.id,
               version: userData?.partner?.$version,
               mobilePhone: data?.partner?.mobilePhone,
+              emailAddress: {
+                id: userData?.["partner.emailAddress"]?.id,
+                version: userData?.["partner.emailAddress"]?.$version,
+                address: data.email,
+              },
             },
           }).then((res) => {
             if (res && res.ok) {
@@ -127,13 +132,17 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
         await update("/api/profile/update/" + userData?.id, {
           id: userData?.id,
           version: userData?.version,
-          email: data.email,
           name: data.fullName,
           image: null,
           partner: {
             id: userData?.partner?.id,
             version: userData?.partner?.$version,
             mobilePhone: data?.partner?.mobilePhone,
+            emailAddress: {
+              id: userData?.["partner.emailAddress"]?.id,
+              version: userData?.["partner.emailAddress"]?.$version,
+              address: data.email,
+            },
           },
         }).then((res) => {
           if (res && res.ok) {

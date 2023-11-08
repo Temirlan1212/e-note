@@ -20,14 +20,16 @@ import LicenseIcon from "@/public/icons/license.svg";
 import ContentPlusIcon from "@/public/icons/content-plus.svg";
 import CloudMessageIcon from "@/public/icons/cloud-message.svg";
 import useFetch from "@/hooks/useFetch";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProfileStore } from "@/stores/profile";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IUserData } from "@/models/user";
 import { IContact } from "@/models/chat";
 import useNotariesStore from "@/stores/notaries";
 
-interface INotariesInfoContentProps {}
+interface INotariesInfoContentProps {
+  userId?: string | string[];
+}
 
 enum TypeOfNotary {
   State = "state",
@@ -56,7 +58,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const { data: workDaysArea } = useFetch("/api/notaries/dictionaries/work-days", "GET");
 
-  const { update: contactUpdate } = useFetch<IContact>("", "POST");
+  const { update: contactUpdate, loading: contactLoading, error } = useFetch<IContact>("", "POST");
 
   const { data: ratingData, loading: ratingLoading } = useFetch(
     router?.query?.id != null ? `/api/rating/${router?.query?.id}` : "",
@@ -72,7 +74,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const normalizePhoneNumber = (phoneNumber: string) => phoneNumber?.replace(/\D/g, "");
 
   const handleOpenChat = async () => {
-    const res = await contactUpdate("/api/chat/create/user/" + router.query.id);
+    const res = await contactUpdate("/api/chat/create/user/" + props.userId);
     if (res?.data?.chatRoomLink) {
       const href = `${res.data.chatRoomLink}?AuthorizationBasic=${res.data.userToken.replace(/Basic /, "")}` as string;
       window.open(href, "_blank");
@@ -93,6 +95,12 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       setBase64Image(base64String);
     }
   }, [imageData]);
+
+  useEffect(() => {
+    if (error?.status === 401) {
+      router.push("/login");
+    }
+  }, [error]);
 
   const infoArray = [
     {
@@ -343,6 +351,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
               <Button
                 startIcon={<CloudMessageIcon />}
                 buttonType="secondary"
+                loading={contactLoading}
                 sx={{
                   width: {
                     sx: "100%",

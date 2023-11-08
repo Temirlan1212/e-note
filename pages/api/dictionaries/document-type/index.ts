@@ -3,11 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export enum criteriaFieldNames {
   isSystem = "isSystem",
   createdBy = "createdBy.id",
-  object = "notaryObject",
-  objectType = "notaryObjectType",
-  notarialAction = "notaryAction",
-  typeNotarialAction = "notaryActionType",
-  action = "notaryRequestAction",
+  action = "notaryAction.id",
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -41,7 +37,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     body: JSON.stringify({
       offset: 0,
       limit: 100,
-      fields: ["name", "fullName", "$t:name", "$t:fullName", "oneSideAction", ...Object.values(criteriaFieldNames)],
+      fields: [
+        "name",
+        "fullName",
+        "$t:name",
+        "$t:fullName",
+        "oneSideAction",
+        "isProductCancelled",
+        ...Object.values(criteriaFieldNames),
+      ],
       translate: true,
       data: {
         operator: "and",

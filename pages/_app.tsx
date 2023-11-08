@@ -29,7 +29,6 @@ function Layout({ children }: { children: JSX.Element }) {
   const router = useRouter();
   const profile = useProfileStore((state) => state);
   const [user, setUser]: [IUser | null, Function] = useState(null);
-  const [redirectTo, setRedirectTo] = useState<string | null>("/applications");
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
   const [faceIdScannerOpen, setFaceIdScannerOpen] = useState<boolean>(false);
@@ -58,17 +57,17 @@ function Layout({ children }: { children: JSX.Element }) {
     const isPrivateRoute = router.route.length > 1 && isRoutesIncludesPath(userRoutesRendered, router.route);
 
     if (profile.user == null && isPrivateRoute) {
-      setRedirectTo(router.route);
+      profile.setRedirectTo(router.route);
       return router.push("/");
     }
 
-    if (profile.user != null && redirectTo != null) {
-      await router.push(redirectTo);
-      return setRedirectTo(null);
+    if (profile.user != null && profile.redirectTo != null) {
+      await router.push(profile.redirectTo);
+      return profile.setRedirectTo(null);
     }
 
     if (profile.user != null && router.route === "/login") {
-      return setRedirectTo("/applications");
+      return profile.setRedirectTo("/applications");
     }
   }, [profile.userData, router.route]);
 

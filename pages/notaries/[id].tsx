@@ -79,7 +79,7 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
           }}
           marginBottom="40px"
         >
-          <NotariesInfoContent />
+          <NotariesInfoContent userId={router.query.userId} />
           {!loading && data ? (
             <LeafletMap
               zoom={12}

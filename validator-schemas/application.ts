@@ -49,6 +49,7 @@ export const applicationSchema = object()
     product: object({
       id: number().integer().positive(),
       oneSideAction: boolean(),
+      idProductCancelled: boolean(),
     })
       .nullable()
       .default(null)

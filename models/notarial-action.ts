@@ -8,5 +8,5 @@ export interface INotarialAction {
 }
 
 export type INotarialActionData = {
-  [key in "object" | "objectType" | "notarialAction" | "typeNotarialAction" | "action"]: INotarialAction[];
+  data: INotarialAction[];
 };
