@@ -130,7 +130,11 @@ export const ApplicationListActions = ({
   const handleCopy = async () => {
     await getCopy("/api/applications/copy/" + params.row.id).then((res) => {
       updateCopyData("/api/applications/copy/update", {
-        data: res?.data[0],
+        data: {
+          ...res?.data[0],
+          statusSelect: 2,
+          notaryUniqNumber: null,
+        },
       });
     });
   };
