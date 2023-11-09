@@ -43,14 +43,13 @@ const NotariesList: FC<INotaryListProps> = ({ loading, data, notariesQueryParams
                 <Link
                   href={{
                     pathname: `/notaries/${encodeURIComponent(notary.id)}`,
-                    query: { userId: notary["partner.user.id"] },
                   }}
                   style={{ textDecoration: "none" }}
                 >
                   <Grid item key={notary?.id} xs={12} sm={12} md={3}>
                     <NotariesCard
                       id={notary?.id}
-                      partnerUserId={notary["partner.user.id"]}
+                      userId={notary["partner.user.id"]}
                       fullName={notary["partner.fullName"]}
                       region={notary["address.region"]}
                       area={notary["address.district"]}

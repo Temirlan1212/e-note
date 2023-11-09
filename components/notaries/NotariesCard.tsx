@@ -14,10 +14,10 @@ interface INotaryProps {
   region?: INotaryGeo;
   area?: INotaryGeo;
   location?: string;
-  partnerUserId?: number;
+  userId?: number;
 }
 
-const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, partnerUserId }) => {
+const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, userId }) => {
   const { locale } = useRouter();
   const t = useTranslations();
 
@@ -26,7 +26,7 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, 
   const { data: ratingData, loading: ratingLoading } = useFetch(id != null ? `/api/rating/${id}` : "", "GET");
 
   const { data: imageData, loading: imageLoading } = useFetch<Response>(
-    partnerUserId != null ? "/api/notaries/download-image/" + partnerUserId : "",
+    userId != null ? "/api/notaries/download-image/" + userId : "",
     "GET",
     {
       returnResponse: true,

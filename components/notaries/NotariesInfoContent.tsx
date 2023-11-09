@@ -27,9 +27,7 @@ import { IUserData } from "@/models/user";
 import { IContact } from "@/models/chat";
 import useNotariesStore from "@/stores/notaries";
 
-interface INotariesInfoContentProps {
-  userId?: string | string[];
-}
+interface INotariesInfoContentProps {}
 
 enum TypeOfNotary {
   State = "state",
@@ -67,14 +65,14 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const notaryData = data?.data || [];
 
-  const partnerUserId = notaryData[0]?.partner?.user?.id;
+  const userId = notaryData[0]?.partner?.user?.id;
 
   const workDaysAreaData = workDaysArea?.data || [];
 
   const normalizePhoneNumber = (phoneNumber: string) => phoneNumber?.replace(/\D/g, "");
 
   const handleOpenChat = async () => {
-    const res = await contactUpdate("/api/chat/create/user/" + props.userId);
+    const res = await contactUpdate("/api/chat/create/user/" + userId);
     if (res?.data?.chatRoomLink) {
       const href = `${res.data.chatRoomLink}?AuthorizationBasic=${res.data.userToken.replace(/Basic /, "")}` as string;
       window.open(href, "_blank");
@@ -82,7 +80,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   };
 
   const { data: imageData, loading: imageLoading } = useFetch<Response>(
-    partnerUserId != null ? "/api/notaries/download-image/" + partnerUserId : "",
+    userId != null ? "/api/notaries/download-image/" + userId : "",
     "GET",
     {
       returnResponse: true,
