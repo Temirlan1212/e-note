@@ -296,14 +296,14 @@ const getConditionRuleValue = (condition: TCondition, form: UseFormReturn<any>, 
     if (Array.isArray(item)) {
       return item
         .map((subItem) => {
-          const value = form.getValues(getName(subItem?.path ?? path, subItem?.fieldName));
+          const value = form.getValues(getName(subItem?.path == null ? path : subItem?.path, subItem?.fieldName));
           if (value === undefined) return undefined;
           return compare(value, subItem?.value, subItem?.operator);
         })
         .filter((item) => item !== undefined)
         .every((item) => !!item);
     } else {
-      const value = form.getValues(getName(item?.path ?? path, item?.fieldName));
+      const value = form.getValues(getName(item?.path == null ? path : item?.path, item?.fieldName));
       if (value === undefined) return undefined;
       return compare(value, item?.value, item?.operator);
     }

@@ -12,6 +12,7 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 import RequestDynamicField from "@/components/fields/RequestDynamicField";
 import DynamicFormElement, { getName as getTemplateDocName } from "@/components/ui/DynamicFormElement";
 import { useState } from "react";
+import { useProfileStore } from "@/stores/profile";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -41,6 +42,7 @@ export default function FifthStepFields({
   const { locale } = useRouter();
   const productId = form.watch("product.id");
   const [alertOpen, setAlertOpen] = useState(false);
+  const activeCompanyId = useProfileStore((state) => state.userData?.activeCompany?.id);
 
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
   const { update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
@@ -144,6 +146,10 @@ export default function FifthStepFields({
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
+
+  useEffectOnce(() => {
+    dynamicForm.setValue("isActiveCompanyId", !!activeCompanyId);
+  }, [activeCompanyId]);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
