@@ -32,7 +32,7 @@ export default function Address({ form, names, defaultValues, disableFields }: I
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
-      <Area form={form} names={names} defaultValues={defaultValues} />
+      <Area form={form} disableFields={disableFields} names={names} defaultValues={defaultValues} />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller

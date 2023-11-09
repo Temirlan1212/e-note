@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
@@ -32,11 +32,15 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   const productId = watch("product.id");
 
   const [loading, setLoading] = useState(false);
+  const [disable, setDisable] = useState(false);
   const [selectedInput, setSelectedInput] = useState<"my" | "system" | null>(null);
 
   const { data: myDocuments, loading: myDocumentsLoading, update: getMyDocuments } = useFetch("", "POST");
   const { data: systemDocuments, loading: systemDocumentsLoading, update: getSystemDocuments } = useFetch("", "POST");
   const { update: applicationUpdate } = useFetch("", "PUT");
+
+  const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
+  const product = watch("product");
 
   useEffectOnce(async () => {
     const myDocs = await getMyDocuments("/api/dictionaries/document-type", {
@@ -112,6 +116,10 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
 
+  useEffect(() => {
+    if (isEditableCopy && product) setDisable(true);
+  }, []);
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
@@ -131,7 +139,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                 labelField={locale !== "en" ? "$t:name" : "name"}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={selectedInput !== "system" && selectedInput !== null}
+                disabled={disable || (selectedInput !== "system" && selectedInput !== null)}
                 options={systemDocuments?.status === 0 ? (systemDocuments?.data as Record<string, any>[]) ?? [] : []}
                 loading={systemDocumentsLoading}
                 value={
@@ -177,7 +185,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                   labelField="name"
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={selectedInput !== "my" && selectedInput !== null}
+                  disabled={disable || (selectedInput !== "my" && selectedInput !== null)}
                   options={myDocuments?.status === 0 ? (myDocuments?.data as Record<string, any>[]) ?? [] : []}
                   loading={myDocumentsLoading}
                   value={

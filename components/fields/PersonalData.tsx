@@ -111,6 +111,7 @@ export default function PersonalData({
   const t = useTranslations();
 
   const [imageURL, setImageURL] = useState<string | null>(null);
+  const [disable, setDisable] = useState(false);
   const { locale } = useRouter();
 
   const { trigger, control, watch, resetField } = form;
@@ -118,7 +119,10 @@ export default function PersonalData({
   const foreigner = watch(names.foreigner);
   const type = watch(names.type);
   const picture = watch(names?.picture!);
+  const pin = watch(names?.pin);
+  const lastName = watch(names?.lastName);
   const firstName = watch(names?.firstName);
+  const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
 
   const { data: imageData, update } = useFetch<Response>("", "GET", {
     returnResponse: true,
@@ -161,6 +165,12 @@ export default function PersonalData({
     if (firstName && names?.name) form.setValue(names?.name, firstName);
   }, [firstName]);
 
+  useEffect(() => {
+    if (isEditableCopy) {
+      if (pin || lastName || firstName) setDisable(true);
+    }
+  }, [isEditableCopy]);
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box>
@@ -175,6 +185,7 @@ export default function PersonalData({
                   labelField="name"
                   valueField="id"
                   row
+                  disabled={isEditableCopy}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   data={[
@@ -196,6 +207,7 @@ export default function PersonalData({
               render={({ field, fieldState }) => (
                 <Checkbox
                   label={t("Foreign person")}
+                  disabled={isEditableCopy}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   {...field}
@@ -220,6 +232,7 @@ export default function PersonalData({
                       ? `title_${locale}`
                       : "title"
                   }
+                  disabled={isEditableCopy}
                   valueField="value"
                   selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -273,6 +286,7 @@ export default function PersonalData({
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 14, max: 14 }) : ""}
                     {...field}
+                    disabled={disable}
                     value={field.value != null ? field.value : ""}
                   />
                 </Box>
@@ -297,6 +311,7 @@ export default function PersonalData({
                             ? `title_${locale}`
                             : "title"
                         }
+                        disabled={isEditableCopy}
                         valueField="value"
                         selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                         helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -325,6 +340,7 @@ export default function PersonalData({
                     <Box display="flex" flexDirection="column" width="100%">
                       <InputLabel>{t("Number")}</InputLabel>
                       <Input
+                        disabled={isEditableCopy}
                         inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                         helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                         {...field}
@@ -338,6 +354,7 @@ export default function PersonalData({
               <Box height="66px" display="flex" alignItems="self-end" gap="10px">
                 {onPinCheck && (
                   <Button
+                    disabled={isEditableCopy}
                     loading={loading}
                     endIcon={<ContentPasteSearchIcon />}
                     sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
@@ -350,6 +367,7 @@ export default function PersonalData({
                 {disableFields && onPinReset && (
                   <Button
                     buttonType="danger"
+                    disabled={isEditableCopy}
                     sx={{ flex: 0, minWidth: "auto", padding: "8px 16px" }}
                     onClick={onPinReset}
                   >
@@ -376,7 +394,7 @@ export default function PersonalData({
                       {t("Last name")}
                     </InputLabel>
                     <Input
-                      disabled={disableFields}
+                      disabled={disableFields || disable}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       {...field}
@@ -397,7 +415,7 @@ export default function PersonalData({
                       {t("First name")}
                     </InputLabel>
                     <Input
-                      disabled={disableFields}
+                      disabled={disableFields || disable}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       {...field}
@@ -416,7 +434,7 @@ export default function PersonalData({
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Middle name")}</InputLabel>
                     <Input
-                      disabled={disableFields}
+                      disabled={disableFields || isEditableCopy}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       {...field}
@@ -437,7 +455,7 @@ export default function PersonalData({
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Birth date")}</InputLabel>
                     <DatePicker
-                      disabled={disableFields}
+                      disabled={disableFields || isEditableCopy}
                       type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       value={field.value != null ? new Date(field.value) : null}
@@ -460,7 +478,7 @@ export default function PersonalData({
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Citizenship")}</InputLabel>
                     <Autocomplete
-                      disabled={disableFields}
+                      disabled={disableFields || isEditableCopy}
                       labelField={locale === "ru" || locale === "kg" ? "$t:name" : "name"}
                       type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -497,7 +515,7 @@ export default function PersonalData({
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Nationality")}</InputLabel>
                     <Input
-                      disabled={disableFields}
+                      disabled={disableFields || isEditableCopy}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       {...field}
@@ -516,7 +534,7 @@ export default function PersonalData({
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Marital status")}</InputLabel>
                     <Input
-                      disabled={disableFields}
+                      disabled={disableFields || isEditableCopy}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                       {...field}

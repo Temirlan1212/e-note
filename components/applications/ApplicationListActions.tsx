@@ -134,6 +134,7 @@ export const ApplicationListActions = ({
           ...res?.data[0],
           statusSelect: 2,
           notaryUniqNumber: null,
+          isToPrintLineSubTotal: true,
         },
       });
     });
@@ -141,7 +142,7 @@ export const ApplicationListActions = ({
 
   useEffect(() => {
     if (copyData?.data[0]?.id) {
-      router.push(`/applications/status/${copyData?.data[0]?.id}`);
+      router.push(`/applications/edit/${copyData?.data[0]?.id}`);
     }
   }, [copyData?.data[0]?.id]);
 

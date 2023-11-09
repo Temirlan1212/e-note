@@ -20,6 +20,7 @@ const fields: string[] = [
   "statusSelect",
   "notarySignatureStatus",
   "company.partner.fullName",
+  "isToPrintLineSubTotal",
 ];
 
 const related: Record<string, typeof fields> = {

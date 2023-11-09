@@ -69,6 +69,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     {
       getElement(index: number, loading?: boolean) {
         const partnerType = watch(`requester.${index}.partnerTypeSelect`);
+        const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
 
         return (
           <Box display="flex" gap="20px" flexDirection="column">
@@ -94,7 +95,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
               <>
                 <Typography variant="h5">{t("Identity document")}</Typography>
                 <IdentityDocument
-                  disableFields={watch(`requester.${index}.disabled`)}
+                  disableFields={isEditableCopy || watch(`requester.${index}.disabled`)}
                   form={form}
                   names={getIdentityDocumentNames(index)}
                 />
@@ -102,13 +103,18 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
             )}
 
             <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
-            <Address form={form} names={getAddressNames(index)} disableFields={watch(`requester.${index}.disabled`)} />
+            <Address
+              form={form}
+              names={getAddressNames(index)}
+              disableFields={isEditableCopy || watch(`requester.${index}.disabled`)}
+            />
 
             {partnerType != 1 && (
               <>
                 <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap="10px">
                   <Typography variant="h5">{t("Actual place of residence")}</Typography>
                   <Button
+                    disabled={isEditableCopy}
                     sx={{ width: "fit-content" }}
                     onClick={() => {
                       Object.entries(getAddressNames(index) ?? {})?.map(([key, name]) => {
@@ -120,16 +126,22 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                   </Button>
                 </Box>
 
-                <Address form={form} names={getActualAddressNames(index)} />
+                <Address form={form} names={getActualAddressNames(index)} disableFields={isEditableCopy} />
               </>
             )}
 
             <Typography variant="h5">{t("Contacts")}</Typography>
-            <Contact form={form} names={getContactNames(index)} />
+            <Contact form={form} names={getContactNames(index)} disableFields={isEditableCopy} />
 
             <Typography variant="h5">{t("Files to upload")}</Typography>
 
-            <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={index} />
+            <AttachedFiles
+              disabled={isEditableCopy}
+              form={form}
+              ref={attachedFilesRef}
+              name="requester"
+              index={index}
+            />
           </Box>
         );
       },
@@ -140,6 +152,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
   const { update: tundukPersonalDataFetch, loading: tundukPersonalDataLoading } = useFetch("", "POST");
+
+  const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
 
   const getTundukParamsFields = (index: number) =>
     ({
@@ -491,22 +505,24 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
           };
         })}
         actionsContent={
-          <>
-            <Button
-              buttonType="primary"
-              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-              onClick={handleAddTabClick}
-            >
-              <AddIcon />
-            </Button>
-            <Button
-              buttonType="secondary"
-              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-              onClick={handleRemoveTabClick}
-            >
-              <RemoveIcon />
-            </Button>
-          </>
+          !isEditableCopy && (
+            <>
+              <Button
+                buttonType="primary"
+                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+                onClick={handleAddTabClick}
+              >
+                <AddIcon />
+              </Button>
+              <Button
+                buttonType="secondary"
+                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+                onClick={handleRemoveTabClick}
+              >
+                <RemoveIcon />
+              </Button>
+            </>
+          )
         }
         onTabChange={(index) => attachedFilesRef.current?.tabChange(index)}
       />
