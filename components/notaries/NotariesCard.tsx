@@ -1,24 +1,48 @@
-import React, { FC } from "react";
-import { Avatar, Box, Card, CardContent, CardHeader, Typography } from "@mui/material";
+import React, { FC, useState } from "react";
+import { Avatar, Box, Card, CardContent, CardHeader, CircularProgress, Typography } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import Rating from "@/components/ui/Rating";
 import { useRouter } from "next/router";
 import { INotaryGeo } from "@/models/notaries";
+import useFetch from "@/hooks/useFetch";
+import { useTranslations } from "next-intl";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface INotaryProps {
   id?: number;
   fullName?: string;
-  image?: string;
-  rating?: number;
   region?: INotaryGeo;
   area?: INotaryGeo;
   location?: string;
+  userId?: number;
 }
 
-const NotariesCard: FC<INotaryProps> = ({ fullName, image, rating, region, area, location }) => {
+const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, userId }) => {
   const { locale } = useRouter();
+  const t = useTranslations();
 
-  return (
+  const [base64Image, setBase64Image] = useState<string | null>(null);
+
+  const { data: ratingData, loading: ratingLoading } = useFetch(id != null ? `/api/rating/${id}` : "", "GET");
+
+  const { data: imageData, loading: imageLoading } = useFetch<Response>(
+    userId != null ? "/api/notaries/download-image/" + userId : "",
+    "GET",
+    {
+      returnResponse: true,
+    }
+  );
+
+  useEffectOnce(async () => {
+    const base64String = await imageData?.text();
+    if (base64String) {
+      setBase64Image(base64String);
+    }
+  }, [imageData]);
+
+  return imageLoading || ratingLoading ? (
+    <CircularProgress />
+  ) : (
     <Card
       sx={{
         width: { xs: "100%", md: "17.8rem" },
@@ -40,7 +64,7 @@ const NotariesCard: FC<INotaryProps> = ({ fullName, image, rating, region, area,
         avatar={
           <Avatar
             sizes="100"
-            src={image}
+            src={base64Image!}
             sx={{
               bgcolor: "success.main",
               width: { xs: "50px", md: "100px" },
@@ -61,9 +85,13 @@ const NotariesCard: FC<INotaryProps> = ({ fullName, image, rating, region, area,
       />
       <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: { xs: "start", md: "center" } }}>
         <Box sx={{ display: "flex" }} gap="8px">
-          <Rating value={rating || 0} readOnly />
-          <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>{rating ?? "4.0"}</Typography>
-          <Typography sx={{ color: "#BDBDBD", fontSize: "16px", fontWeight: 400 }}>45 оцен.</Typography>
+          <Rating value={ratingData?.data?.count || 0} readOnly />
+          {ratingData?.data?.count ? (
+            <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>{ratingData?.data?.count}</Typography>
+          ) : null}
+          <Typography sx={{ color: "#BDBDBD", fontSize: "16px", fontWeight: 400 }}>
+            {ratingData?.data?.average != null ? Number(ratingData?.data?.average).toFixed(1) : "0"} {t("ratings")}
+          </Typography>
         </Box>
         <Box sx={{ display: { xs: "none", md: "block" }, width: "100%", marginTop: "20px" }}>
           <Typography>
