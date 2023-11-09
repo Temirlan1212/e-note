@@ -266,8 +266,9 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           />,
           <FifthStepFields
             key={4}
-            form={form}
             dynamicForm={dynamicForm}
+            tundukParamsFieldsForm={tundukParamsFieldsForm}
+            form={form}
             onPrev={() => setStep(step - 1)}
             onNext={({ step }) =>
               setStep((prev) => {

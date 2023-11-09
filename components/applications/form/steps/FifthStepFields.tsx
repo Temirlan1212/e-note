@@ -3,18 +3,22 @@ import { UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Grid, Typography } from "@mui/material";
+import { Alert, Box, Collapse, Grid, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useRouter } from "next/router";
 import StepperContentStep from "@/components/ui/StepperContentStep";
-import DynamicFormElement from "@/components/ui/DynamicFormElement";
+import RequestDynamicField from "@/components/fields/RequestDynamicField";
+import DynamicFormElement, { getName as getTemplateDocName } from "@/components/ui/DynamicFormElement";
+import { useState } from "react";
+import { useProfileStore } from "@/stores/profile";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   dynamicForm: UseFormReturn<any>;
-  onPrev?: Function | null;
+  tundukParamsFieldsForm: UseFormReturn<any>;
+  onPrev?: Function;
   onNext?: (arg: { step: number | undefined }) => void;
   handleStepNextClick?: Function;
 }
@@ -26,12 +30,22 @@ const getTemplateDocGroupName = (group: Record<string, any>, locale: string | un
   return groupNameLocale ? groupNameLocale : groupName;
 };
 
-export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+export default function FifthStepFields({
+  form,
+  dynamicForm,
+  onPrev,
+  onNext,
+  tundukParamsFieldsForm,
+  handleStepNextClick,
+}: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
+  const [alertOpen, setAlertOpen] = useState(false);
+  const activeCompanyId = useProfileStore((state) => state.userData?.activeCompany?.id);
 
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
+  const { update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
 
   const {
     update: getDocumentTemplateData,
@@ -66,7 +80,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
       if (result != null && result.data != null && result.data[0]?.id != null) {
         setValue("id", result.data[0].id);
         setValue("version", result.data[0].version);
-        if (onNext != null) onNext({ step: targetStep });
+        onNext({ step: targetStep });
       }
     }
   };
@@ -75,13 +89,77 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     if (onPrev != null) onPrev();
   };
 
+  const handlePinCheck = async (
+    url: string | null,
+    paramsValue: Record<string, any>,
+    responsefields: Record<string, any>[]
+  ) => {
+    if (!url) return;
+
+    const tundukUrl = url.replace(/\${(.*?)}/g, (match, placeholder) => {
+      return paramsValue[placeholder] || match;
+    });
+
+    const vehicleData = await tundukVehicleDataFetch(`/api/tunduk`, { model: tundukUrl });
+    if (vehicleData?.status !== 0 || vehicleData?.data == null) {
+      setAlertOpen(true);
+      return;
+    }
+
+    responsefields?.map((field) => {
+      const formName = getTemplateDocName(field?.path, field?.fieldName);
+      const fieldName = field?.fieldName;
+      const value = vehicleData?.data?.[0]?.[fieldName] ?? vehicleData?.data?.[0]?.notaryPartner?.[0]?.[fieldName];
+      if (value != null && value !== "") dynamicForm.setValue(formName, value);
+    });
+
+    setAlertOpen(false);
+    handleDisabled(responsefields, true);
+  };
+
+  const handlePinReset = async (fields: Record<string, any>[]) => {
+    fields?.map((field) => {
+      const name = getTemplateDocName(field?.path, field?.fieldName);
+      const value = dynamicForm.getValues(name);
+      const isBoolean = typeof value === "boolean";
+      const isString = typeof value === "string";
+
+      if (isBoolean) {
+        dynamicForm.resetField(name as any, { defaultValue: false });
+      } else if (!isString) {
+        dynamicForm.resetField(name as any, { defaultValue: null });
+      } else if (isString) {
+        dynamicForm.resetField(name as any, { defaultValue: "" });
+      }
+    });
+
+    tundukParamsFieldsForm.reset();
+    handleDisabled(fields, false);
+  };
+
+  const handleDisabled = (fields: Record<string, any>[], value: boolean) => {
+    const disabledField = fields?.find((field) => field?.fieldName === "disabled");
+    if (disabledField == null) return;
+    dynamicForm.setValue(getTemplateDocName(disabledField?.path, disabledField?.fieldName), value);
+  };
+
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
 
+  useEffectOnce(() => {
+    dynamicForm.setValue("isActiveCompanyId", !!activeCompanyId);
+  }, [activeCompanyId]);
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <StepperContentStep step={5} title={t("Additional information")} loading={documentTemplateLoading} />
+
+      <Collapse in={alertOpen}>
+        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+          {t("Sorry, nothing found")}
+        </Alert>
+      </Collapse>
 
       <Box display="flex" flexDirection="column" gap="30px">
         {documentTemplateData?.data &&
@@ -94,30 +172,62 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                   ?.sort((a: any, b: any) => Number(a?.sequence ?? 0) - Number(b?.sequence ?? 0))
                   .map((item: Record<string, any>, index: number) => (
                     <Grid
+                      key={index}
                       item
                       md={item?.elementWidth ?? 12}
-                      key={index}
                       width="100%"
                       display="flex"
                       flexDirection="column"
                       justifyContent="end"
+                      gap="50px"
                     >
-                      <DynamicFormElement
-                        disabled={item?.readonly}
-                        hidden={item?.hidden}
-                        required={!!item?.required}
-                        conditions={item?.conditions}
-                        type={item?.fieldType}
-                        form={dynamicForm}
-                        label={item?.fieldLabels?.[locale ?? ""] ?? ""}
-                        title={item?.fieldTitles?.[locale ?? ""] ?? ""}
-                        defaultValue={item?.defaultValue}
-                        fieldName={item?.fieldName}
-                        path={item?.path}
-                        selectionName={item?.selection ?? ""}
-                        objectName={item?.object ?? ""}
-                        options={item?.options}
-                      />
+                      {String(item?.fieldType).toLocaleLowerCase() === "request" ? (
+                        <RequestDynamicField
+                          disabled={item?.readonly}
+                          required={item?.required}
+                          hidden={item?.hidden}
+                          conditions={item?.conditions}
+                          loading={tundukVehicleDataLoading}
+                          form={dynamicForm}
+                          paramsForm={tundukParamsFieldsForm}
+                          fields={item?.fields}
+                          responseFields={item?.responseFields}
+                          onPinReset={() => {
+                            handlePinReset(item?.responseFields);
+                          }}
+                          onPinCheck={async (paramsForm) => {
+                            const validated = await paramsForm.trigger();
+                            let values = {};
+                            item?.fields?.map((field: Record<string, any>) => {
+                              values = {
+                                ...values,
+                                [getTemplateDocName(undefined, field?.fieldName)]: paramsForm.getValues(
+                                  getTemplateDocName(item?.path ?? field?.path, field?.fieldName)
+                                ),
+                              };
+                            });
+
+                            if (validated) handlePinCheck(item?.url, values, item?.responseFields);
+                          }}
+                        />
+                      ) : (
+                        <DynamicFormElement
+                          disabled={item?.readonly}
+                          hidden={item?.hidden}
+                          required={!!item?.required}
+                          conditions={item?.conditions}
+                          type={item?.fieldType}
+                          form={dynamicForm}
+                          label={item?.fieldLabels?.[locale ?? ""] ?? ""}
+                          title={item?.fieldTitles?.[locale ?? ""] ?? ""}
+                          defaultValue={item?.defaultValue}
+                          fieldName={item?.fieldName}
+                          path={item?.path}
+                          selectionName={item?.selection ?? ""}
+                          objectName={item?.object ?? ""}
+                          options={item?.options}
+                        />
+                      )}
                     </Grid>
                   ))}
               </Grid>

@@ -38,10 +38,10 @@ export default function RequestDynamicField({
           .map((item: Record<string, any>, index: number) => (
             <Grid item md={item?.elementWidth ?? 12} key={index} width="100%">
               <DynamicFormElement
-                disabled={rest?.disabled != null ? rest?.disabled : item?.readonly}
-                hidden={rest?.hidden != null ? rest?.hidden : item?.hidden}
-                required={rest?.required != null ? rest?.required : !!item?.required}
-                conditions={Object.values(rest?.conditions ?? {}).length > 0 ? rest?.conditions : item?.conditions}
+                disabled={item?.readonly != null ? !!item?.readonly : !!rest?.disabled}
+                hidden={item?.hidden != null ? !!item?.hidden : !!rest?.hidden}
+                required={item?.required != null ? !!item?.required : !!rest?.required}
+                conditions={Object.values(item?.conditions ?? {}).length > 0 ? item?.conditions : rest?.conditions}
                 path={rest?.path || item?.path}
                 type={item?.fieldType}
                 form={paramsForm}
@@ -80,10 +80,10 @@ export default function RequestDynamicField({
               paddingTop="0px !important"
             >
               <DynamicFormElement
-                disabled={rest?.disabled != null ? rest?.disabled : item?.readonly}
-                hidden={rest?.hidden != null ? rest?.hidden : item?.hidden}
-                required={rest?.required != null ? rest?.required : !!item?.required}
-                conditions={Object.values(rest?.conditions ?? {}).length > 0 ? rest?.conditions : item?.conditions}
+                disabled={item?.readonly != null ? !!item?.readonly : !!rest?.disabled}
+                hidden={item?.hidden != null ? !!item?.hidden : !!rest?.hidden}
+                required={item?.required != null ? !!item?.required : !!rest?.required}
+                conditions={Object.values(item?.conditions ?? {}).length > 0 ? item?.conditions : rest?.conditions}
                 type={item?.fieldType}
                 form={form}
                 label={item?.fieldLabels?.[locale ?? ""] ?? ""}
