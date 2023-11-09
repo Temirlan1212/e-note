@@ -90,5 +90,6 @@
   "Cancel reason str": "Причина отмены",
   "Cancel date": "Дата отмены",
   "Do you really want to cancel the application?": "Вы действительно хотите отменить заявку?",
-  "All changes made earlier in the document will be lost": "Все изменения, внесенные ранее в документ, будут утеряны"
+  "All changes made earlier in the document will be lost": "Все изменения, внесенные ранее в документ, будут утеряны",
+  "Copy": "Скопировать"
 }

@@ -141,17 +141,19 @@ export const ApplicationListActions = ({
 
   useEffect(() => {
     if (copyData?.data[0]?.id) {
-      router.push(`/applications/edit/${copyData?.data[0]?.id}`);
+      router.push(`/applications/status/${copyData?.data[0]?.id}`);
     }
   }, [copyData?.data[0]?.id]);
 
   return (
     <Box display="flex" alignItems="center">
-      <Tooltip title={t("Copy")} arrow>
-        <IconButton onClick={handleCopy}>
-          <FileCopyIcon />
-        </IconButton>
-      </Tooltip>
+      {userData?.group.id === 4 && (
+        <Tooltip title={t("Copy")} arrow>
+          <IconButton onClick={handleCopy}>
+            <FileCopyIcon />
+          </IconButton>
+        </Tooltip>
+      )}
       {userData?.group.id === 4 && (
         <ConfirmationModal
           title="Write a message"
