@@ -13,6 +13,7 @@ import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import { INotarialAction, INotarialActionData } from "@/models/notarial-action";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import Input from "@/components/ui/Input";
+import { useProfileStore } from "@/stores/profile";
 
 interface ITempQueryParams {
   pageSize: number;
@@ -32,6 +33,7 @@ const capitalize = (str: string) => str?.[0].toUpperCase() + str?.slice(1);
 
 function GridTableActionsCell({ row }: { row: Record<string, any> }) {
   const t = useTranslations();
+  const profileId = useProfileStore.getState().userData?.group.id;
   const [inputValue, setInputValue] = useState<string | null>(null);
   const [inputError, setInputError] = useState<boolean>(false);
 
@@ -74,39 +76,41 @@ function GridTableActionsCell({ row }: { row: Record<string, any> }) {
         </Typography>
       </Button>
 
-      <ConfirmationModal
-        title={t("To my templates")}
-        hintText={t("Do you really want to add to the My Templates section?")}
-        hintTitle=""
-        onConfirm={(callback) => handleInMyTemplatesClick(callback)}
-        slots={{
-          body: () => (
-            <Box sx={{ marginBottom: "20px" }}>
-              <InputLabel>{t("Enter a template name")}</InputLabel>
-              <Input
-                value={inputValue}
-                onChange={handleSearchChange}
-                inputType={inputError ? "error" : "secondary"}
-                helperText={inputError && t("This field is required!")}
-              />
-            </Box>
-          ),
-        }}
-      >
-        <Button
-          variant="text"
-          sx={{
-            width: "130px",
-            border: "1px dashed #CDCDCD",
-            "&:hover": { backgroundColor: "inherit" },
+      {profileId === 4 && (
+        <ConfirmationModal
+          title={t("To my templates")}
+          hintText={t("Do you really want to add to the My Templates section?")}
+          hintTitle=""
+          onConfirm={(callback) => handleInMyTemplatesClick(callback)}
+          slots={{
+            body: () => (
+              <Box sx={{ marginBottom: "20px" }}>
+                <InputLabel>{t("Enter a template name")}</InputLabel>
+                <Input
+                  value={inputValue}
+                  onChange={handleSearchChange}
+                  inputType={inputError ? "error" : "secondary"}
+                  helperText={inputError && t("This field is required!")}
+                />
+              </Box>
+            ),
           }}
-          loading={loading}
         >
-          <Typography fontSize={14} fontWeight={600}>
-            {t("In my templates")}
-          </Typography>
-        </Button>
-      </ConfirmationModal>
+          <Button
+            variant="text"
+            sx={{
+              width: "130px",
+              border: "1px dashed #CDCDCD",
+              "&:hover": { backgroundColor: "inherit" },
+            }}
+            loading={loading}
+          >
+            <Typography fontSize={14} fontWeight={600}>
+              {t("In my templates")}
+            </Typography>
+          </Button>
+        </ConfirmationModal>
+      )}
     </Box>
   );
 }
