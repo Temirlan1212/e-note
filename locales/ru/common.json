@@ -221,5 +221,7 @@
   "Confirmation of identity": "Подтверждение личности",
   "Verify with your face id": "Пройдите верификацию с помощью face id",
   "Verify": "Пройти верификацию",
-  "User with this email not exists": "Пользователь с таким электронным адресом не существует"
+  "User with this email not exists": "Пользователь с таким электронным адресом не существует",
+  "not signed": "не подписан",
+  "absent": "отсутствует"
 }

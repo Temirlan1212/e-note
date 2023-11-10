@@ -49,11 +49,16 @@ export const personSchema = object()
         is: true,
         then: (schema) => schema.nullable(),
         otherwise: (schema) =>
-          schema
-            .min(14, "minNumbers")
-            .max(14, "maxNumbers")
-            .required("required")
-            .matches(/^[0-9]*$/, "onlyNumbers"),
+          schema.when("subjectRole", {
+            is: "notAnAdult",
+            then: (schema) => schema.nullable(),
+            otherwise: (schema) =>
+              schema
+                .min(14, "minNumbers")
+                .max(14, "maxNumbers")
+                .required("required")
+                .matches(/^[0-9]*$/, "onlyNumbers"),
+          }),
       }),
     birthDate: date().nullable(),
     citizenship: object({

@@ -16,7 +16,6 @@ import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 
-import profileImage from "@/public/images/avatar.png";
 import LicenseIcon from "@/public/icons/license.svg";
 import ContentPlusIcon from "@/public/icons/content-plus.svg";
 import CloudMessageIcon from "@/public/icons/cloud-message.svg";
@@ -28,9 +27,7 @@ import { IUserData } from "@/models/user";
 import { IContact } from "@/models/chat";
 import useNotariesStore from "@/stores/notaries";
 
-interface INotariesInfoContentProps {
-  userId?: string | string[];
-}
+interface INotariesInfoContentProps {}
 
 enum TypeOfNotary {
   State = "state",
@@ -45,32 +42,57 @@ const formatDate = (inputDate: string | number | Date) => {
 };
 
 const NotariesInfoContent = (props: INotariesInfoContentProps) => {
-  const [userData, setUserData] = useState<IUserData | null>(null);
   const t = useTranslations();
   const router = useRouter();
   const { locale } = useRouter();
 
+  const [userData, setUserData] = useState<IUserData | null>(null);
+  const [base64Image, setBase64Image] = useState<string | null>(null);
+
   const profile = useProfileStore((state) => state);
   const setNotaryData = useNotariesStore((state) => state.setNotaryData);
+
   const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
 
   const { data: workDaysArea } = useFetch("/api/notaries/dictionaries/work-days", "GET");
 
   const { update: contactUpdate, loading: contactLoading, error } = useFetch<IContact>("", "POST");
 
+  const { data: ratingData, loading: ratingLoading } = useFetch(
+    router?.query?.id != null ? `/api/rating/${router?.query?.id}` : "",
+    "GET"
+  );
+
   const notaryData = data?.data || [];
+
+  const userId = notaryData[0]?.partner?.user?.id;
 
   const workDaysAreaData = workDaysArea?.data || [];
 
   const normalizePhoneNumber = (phoneNumber: string) => phoneNumber?.replace(/\D/g, "");
 
   const handleOpenChat = async () => {
-    const res = await contactUpdate("/api/chat/create/user/" + props.userId);
+    const res = await contactUpdate("/api/chat/create/user/" + userId);
     if (res?.data?.chatRoomLink) {
       const href = `${res.data.chatRoomLink}?AuthorizationBasic=${res.data.userToken.replace(/Basic /, "")}` as string;
       window.open(href, "_blank");
     }
   };
+
+  const { data: imageData, loading: imageLoading } = useFetch<Response>(
+    userId != null ? "/api/notaries/download-image/" + userId : "",
+    "GET",
+    {
+      returnResponse: true,
+    }
+  );
+
+  useEffectOnce(async () => {
+    const base64String = await imageData?.text();
+    if (base64String) {
+      setBase64Image(base64String);
+    }
+  }, [imageData]);
 
   useEffect(() => {
     if (error?.status === 401) {
@@ -195,16 +217,8 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                 },
               }}
             >
-              {notaryData[0]?.logo ? (
-                <Box
-                  sx={{
-                    width: "194px",
-                    height: "194px",
-                    objectFit: "contain",
-                  }}
-                >
-                  <Image src={notaryData[0]?.logo} alt="notaryImage" />
-                </Box>
+              {imageLoading ? (
+                <CircularProgress />
               ) : (
                 <Avatar
                   sizes="194"
@@ -215,31 +229,31 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                     borderRadius: 0,
                   }}
                   aria-label="recipe"
+                  src={base64Image!}
                 />
               )}
-
-              <Box>
-                <Box display="flex" gap="8px">
-                  <Rating value={4} readOnly />
+              {ratingLoading ? (
+                <CircularProgress />
+              ) : (
+                <Box>
+                  <Box display="flex" gap="8px">
+                    <Rating value={ratingData?.data?.count || 0} readOnly />
+                    {ratingData?.data?.count ? (
+                      <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>{ratingData?.data?.count}</Typography>
+                    ) : null}
+                  </Box>
                   <Typography
                     sx={{
+                      color: "#BDBDBD",
                       fontSize: "16px",
-                      fontWeight: 600,
+                      fontWeight: 400,
                     }}
                   >
-                    4,0
+                    {ratingData?.data?.average != null ? Number(ratingData?.data?.average).toFixed(1) : "0"}{" "}
+                    {t("ratings")}
                   </Typography>
                 </Box>
-                <Typography
-                  sx={{
-                    color: "#BDBDBD",
-                    fontSize: "16px",
-                    fontWeight: 400,
-                  }}
-                >
-                  45 оцен.
-                </Typography>
-              </Box>
+              )}
             </Box>
             <Box
               sx={{

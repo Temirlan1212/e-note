@@ -7,13 +7,13 @@ export interface INotaryGeo {
 export interface INotary {
   "partner.rating": number;
   "logo.fileName": string;
-  "partner.user.id": string;
   "address.district": INotaryGeo;
   "address.city": INotaryGeo;
   "address.region": INotaryGeo;
   id: number;
   "partner.simpleFullName": string;
   "partner.fullName": string;
+  "partner.user.id": number;
   name: string;
 }
 
