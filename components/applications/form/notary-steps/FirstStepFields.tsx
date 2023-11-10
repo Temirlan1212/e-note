@@ -32,7 +32,7 @@ interface IBaseEntityFields {
 }
 
 export interface ITabListItem {
-  getElement: (index: number, loading?: boolean) => JSX.Element;
+  getElement: (index: number, loading?: boolean, isEditableCopy?: boolean) => JSX.Element;
 }
 
 export interface IStepFieldsProps {
@@ -67,9 +67,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
-      getElement(index: number, loading?: boolean) {
+      getElement(index: number, loading?: boolean, isEditableCopy?: boolean) {
         const partnerType = watch(`requester.${index}.partnerTypeSelect`);
-        const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
 
         return (
           <Box display="flex" gap="20px" flexDirection="column">
@@ -501,7 +500,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
           return {
             tabErrorsCount: tabsErrorsCounts[index] ?? 0,
             tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: getElement(index, tundukPersonalDataLoading) ?? <></>,
+            tabPanelContent: getElement(index, tundukPersonalDataLoading, isEditableCopy) ?? <></>,
           };
         })}
         actionsContent={

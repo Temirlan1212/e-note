@@ -30,7 +30,7 @@ interface IBaseEntityFields {
 }
 
 export interface ITabListItem {
-  getElement: (index: number, loading?: boolean) => JSX.Element;
+  getElement: (index: number, loading?: boolean, isEditableCopy?: boolean) => JSX.Element;
 }
 
 export interface IStepFieldsProps {
@@ -64,7 +64,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
-      getElement(index: number, loading?: boolean) {
+      getElement(index: number, loading?: boolean, isEditableCopy?: boolean) {
         const partnerType = watch(`members.${index}.partnerTypeSelect`);
 
         return (
@@ -474,7 +474,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
           return {
             tabErrorsCount: tabsErrorsCounts[index] ?? 0,
             tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: getElement(index, tundukPersonalDataLoading) ?? <></>,
+            tabPanelContent: getElement(index, tundukPersonalDataLoading, isEditableCopy) ?? <></>,
           };
         })}
         actionsContent={
