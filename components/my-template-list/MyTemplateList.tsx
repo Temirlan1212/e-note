@@ -284,7 +284,7 @@ export default function TemplateList() {
             field: "actions",
             type: "actions",
             sortable: false,
-            width: 320,
+            width: 200,
             cellClassName: "actions-pinnable",
             renderCell: () => (
               <Button href="/applications/create" variant="contained">

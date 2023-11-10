@@ -1,8 +1,8 @@
-import { Dispatch, SetStateAction, useEffect, useId } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useId, useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn } from "react-hook-form";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Typography } from "@mui/material";
+import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Hint from "@/components/ui/Hint";
 import { GridTable } from "@/components/ui/GridTable";
@@ -15,6 +15,8 @@ import { IActionType } from "@/models/action-type";
 import { useRouter } from "next/router";
 import Link from "@/components/ui/Link";
 import { ITemplateData } from "@/components/template-list/TemplateList";
+import Input from "@/components/ui/Input";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -32,6 +34,8 @@ const getFullName = (name: string | null, lastName: string | null) => {
 export default function SuccessStepFields({ form, onPrev, onNext }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale, push } = useRouter();
+  const [inputValue, setInputValue] = useState<string | null>(null);
+  const [inputError, setInputError] = useState<boolean>(false);
   const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
   const { data, loading } = useFetch(`/api/applications/${form.getValues().id ?? ""}`, "POST");
   const dataItem = data?.data?.[0];
@@ -42,8 +46,26 @@ export default function SuccessStepFields({ form, onPrev, onNext }: IStepFieldsP
     update,
   } = useFetch<FetchResponseBody<ITemplateData>>("", "POST");
 
-  const handleInMyTemplatesClick = async () => {
-    await update("/api/templates/" + dataItem?.product?.id);
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    if (e.target.value) {
+      setInputError(false);
+    }
+  };
+
+  const handleInMyTemplatesClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
+    if (inputValue && !templateLoading) {
+      callback(false);
+      await update("/api/templates/create", {
+        id: dataItem?.product?.id,
+        name: inputValue,
+      });
+      setInputValue(null);
+      setInputError(false);
+    }
+    if (!inputValue) {
+      setInputError(true);
+    }
   };
 
   useEffect(() => {
@@ -117,11 +139,29 @@ export default function SuccessStepFields({ form, onPrev, onNext }: IStepFieldsP
           ]}
         />
 
-        <Box width={{ xs: "100%", sm: "fit-content" }}>
-          <Button onClick={handleInMyTemplatesClick} loading={templateLoading}>
-            {t("Add to my templates")}
-          </Button>
-        </Box>
+        <ConfirmationModal
+          title={t("To my templates")}
+          hintText={t("Do you really want to add to the My Templates section?")}
+          hintTitle=""
+          onConfirm={(callback) => handleInMyTemplatesClick(callback)}
+          slots={{
+            body: () => (
+              <Box sx={{ marginBottom: "20px" }}>
+                <InputLabel>{t("Enter a template name")}</InputLabel>
+                <Input
+                  value={inputValue}
+                  onChange={handleSearchChange}
+                  inputType={inputError ? "error" : "secondary"}
+                  helperText={inputError && t("This field is required!")}
+                />
+              </Box>
+            ),
+          }}
+        >
+          <Box width={{ xs: "100%", sm: "fit-content" }}>
+            <Button loading={templateLoading}>{t("Add to my templates")}</Button>
+          </Box>
+        </ConfirmationModal>
       </Box>
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
