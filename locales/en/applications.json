@@ -88,5 +88,8 @@
   "Enter a reason": "Enter a reason",
   "Cancel reason str": "Cancel reason",
   "Cancel date": "Cancel date",
-  "All changes made earlier in the document will be lost": "All changes made earlier in the document will be lost"
+  "All changes made earlier in the document will be lost": "All changes made earlier in the document will be lost",
+  "To my templates": "Add to \"My templates\"",
+  "Do you really want to add to the My Templates section?": "Do you really want to add to the \"My templates\" section?",
+  "Enter a template name": "Enter a template name"
 }
