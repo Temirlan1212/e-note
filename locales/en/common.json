@@ -223,5 +223,6 @@
   "Verify": "Verify",
   "User with this email not exists": "User with this email not exists",
   "not signed": "not signed",
-  "absent": "absent"
+  "absent": "absent",
+  "Copy": "Copy"
 }

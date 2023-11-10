@@ -41,6 +41,7 @@ export const applicationSchema = object()
       .transform((value) => (isNaN(value) ? null : value))
       .nullable()
       .test("nullable-required", "required", (v) => v != null),
+    isToPrintLineSubTotal: boolean().nullable(),
     action: number()
       .integer()
       .transform((value) => (isNaN(value) ? null : value))

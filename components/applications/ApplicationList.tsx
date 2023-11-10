@@ -291,7 +291,7 @@ export default function ApplicationList() {
           {
             field: "actions",
             headerName: "",
-            width: 225,
+            width: 275,
             sortable: false,
             type: "actions",
             cellClassName: "actions-pinnable",

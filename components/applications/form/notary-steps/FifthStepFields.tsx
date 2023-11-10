@@ -41,6 +41,8 @@ export default function FifthStepFields({
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
+  const isEditableCopy = form.watch("isToPrintLineSubTotal") as boolean;
+
   const [alertOpen, setAlertOpen] = useState(false);
   const activeCompanyId = useProfileStore((state) => state.userData?.activeCompany?.id);
 
@@ -183,7 +185,7 @@ export default function FifthStepFields({
                     >
                       {String(item?.fieldType).toLocaleLowerCase() === "request" ? (
                         <RequestDynamicField
-                          disabled={item?.readonly}
+                          disabled={isEditableCopy || item?.readonly}
                           required={item?.required}
                           hidden={item?.hidden}
                           conditions={item?.conditions}
@@ -212,7 +214,7 @@ export default function FifthStepFields({
                         />
                       ) : (
                         <DynamicFormElement
-                          disabled={item?.readonly}
+                          disabled={isEditableCopy || item?.readonly}
                           hidden={item?.hidden}
                           required={!!item?.required}
                           conditions={item?.conditions}

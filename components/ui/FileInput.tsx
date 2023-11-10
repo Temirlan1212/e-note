@@ -11,11 +11,12 @@ enum types {
 export type IFileInputProps = MuiFileInputProps<boolean | undefined> & {
   inputType?: keyof typeof types;
   value?: File | File[] | null;
+  disabled?: boolean;
   onChange?: (file: File | File[] | null) => void;
 };
 
 export default forwardRef<HTMLDivElement, IFileInputProps>(function FileInput(
-  { inputType = "secondary", helperText, value, onChange, ...rest }: IFileInputProps,
+  { inputType = "secondary", helperText, value, onChange, disabled, ...rest }: IFileInputProps,
   ref
 ) {
   const styles = {
@@ -50,7 +51,13 @@ export default forwardRef<HTMLDivElement, IFileInputProps>(function FileInput(
 
   return (
     <FormControl error={inputType === "error"} ref={ref}>
-      <MuiFileInput sx={mergedStyles} value={value ?? file} onChange={onChange ?? handleOnChange} {...rest} />
+      <MuiFileInput
+        disabled={disabled}
+        sx={mergedStyles}
+        value={value ?? file}
+        onChange={onChange ?? handleOnChange}
+        {...rest}
+      />
       {helperText && <FormHelperText error={inputType === "error"}>{helperText}</FormHelperText>}
     </FormControl>
   );

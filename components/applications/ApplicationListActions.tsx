@@ -8,6 +8,7 @@ import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "reac
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
 import ChatIcon from "@mui/icons-material/Chat";
 import { useTranslations } from "next-intl";
 import { useProfileStore } from "@/stores/profile";
@@ -17,6 +18,7 @@ import Button from "@/components/ui/Button";
 import { IFetchByIdData, IFetchNotaryChat } from "@/models/chat";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Input from "@/components/ui/Input";
+import { useRouter } from "next/router";
 
 export const ApplicationListActions = ({
   params,
@@ -25,6 +27,7 @@ export const ApplicationListActions = ({
   params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>;
   onDelete: () => void;
 }) => {
+  const router = useRouter();
   const t = useTranslations();
   const [openModal, setOpenModal] = useState(false);
   const [inputValue, setInputValue] = useState<string | null>(null);
@@ -40,6 +43,8 @@ export const ApplicationListActions = ({
   const { update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
   const { update: downloadUpdate } = useFetch<FetchResponseBody | null>("", "POST");
   const { update: cancelUpdate } = useFetch<FetchResponseBody | null>("", "PUT");
+  const { update: getCopy } = useFetch<IFetchByIdData>("", "GET");
+  const { data: copyData, update: updateCopyData } = useFetch<IFetchByIdData>("", "POST");
 
   const handleDownloadClick = async () => {
     const pdfResponse = await downloadUpdate(`/api/applications/download/${params.row.id}`);
@@ -122,8 +127,35 @@ export const ApplicationListActions = ({
     setUserData(profile.userData);
   }, [profile.userData]);
 
+  const handleCopy = async () => {
+    await getCopy("/api/applications/copy/" + params.row.id).then((res) => {
+      updateCopyData("/api/applications/copy/update", {
+        data: {
+          ...res?.data[0],
+          statusSelect: 2,
+          notaryUniqNumber: null,
+          isToPrintLineSubTotal: true,
+          documentInfo: null,
+        },
+      });
+    });
+  };
+
+  useEffect(() => {
+    if (copyData?.data[0]?.id) {
+      router.push(`/applications/edit/${copyData?.data[0]?.id}`);
+    }
+  }, [copyData?.data[0]?.id]);
+
   return (
     <Box display="flex" alignItems="center">
+      {userData?.group.id === 4 && (
+        <Tooltip title={t("Copy")} arrow>
+          <IconButton onClick={handleCopy}>
+            <FileCopyIcon />
+          </IconButton>
+        </Tooltip>
+      )}
       {userData?.group.id === 4 && (
         <ConfirmationModal
           title="Write a message"

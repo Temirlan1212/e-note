@@ -30,7 +30,7 @@ interface IBaseEntityFields {
 }
 
 export interface ITabListItem {
-  getElement: (index: number, loading?: boolean) => JSX.Element;
+  getElement: (index: number, loading?: boolean, isEditableCopy?: boolean) => JSX.Element;
 }
 
 export interface IStepFieldsProps {
@@ -64,7 +64,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
-      getElement(index: number, loading?: boolean) {
+      getElement(index: number, loading?: boolean, isEditableCopy?: boolean) {
         const partnerType = watch(`members.${index}.partnerTypeSelect`);
 
         return (
@@ -91,7 +91,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
               <>
                 <Typography variant="h5">{t("Identity document")}</Typography>
                 <IdentityDocument
-                  disableFields={watch(`members.${index}.disabled`)}
+                  disableFields={isEditableCopy || watch(`members.${index}.disabled`)}
                   form={form}
                   names={getIdentityDocumentNames(index)}
                 />
@@ -103,9 +103,10 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
               form={form}
               names={getAddressNames(index)}
               disableFields={
-                watch(`members.${index}.disabled`) &&
-                !!watch(`members.${index}.tundukPassportSeries`) &&
-                !!watch(`members.${index}.tundukPassportNumber`)
+                isEditableCopy ||
+                (watch(`members.${index}.disabled`) &&
+                  !!watch(`members.${index}.tundukPassportSeries`) &&
+                  !!watch(`members.${index}.tundukPassportNumber`))
               }
             />
 
@@ -114,6 +115,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                 <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap="10px">
                   <Typography variant="h5">{t("Actual place of residence")}</Typography>
                   <Button
+                    disabled={isEditableCopy}
                     sx={{ width: "fit-content" }}
                     onClick={() => {
                       Object.entries(getAddressNames(index) ?? {})?.map(([key, name]) => {
@@ -125,16 +127,16 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                   </Button>
                 </Box>
 
-                <Address form={form} names={getActualAddressNames(index)} />
+                <Address disableFields={isEditableCopy} form={form} names={getActualAddressNames(index)} />
               </>
             )}
 
             <Typography variant="h5">{t("Contacts")}</Typography>
-            <Contact form={form} names={getContactNames(index)} />
+            <Contact disableFields={isEditableCopy} form={form} names={getContactNames(index)} />
 
             <Typography variant="h5">{t("Files to upload")}</Typography>
 
-            <AttachedFiles form={form} ref={attachedFilesRef} name="members" index={index} />
+            <AttachedFiles disabled={isEditableCopy} form={form} ref={attachedFilesRef} name="members" index={index} />
           </Box>
         );
       },
@@ -144,6 +146,8 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
   const { update: tundukPersonalDataFetch, loading: tundukPersonalDataLoading } = useFetch("", "POST");
+
+  const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
 
   const getTundukParamsFields = (index: number) =>
     ({
@@ -470,26 +474,28 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
           return {
             tabErrorsCount: tabsErrorsCounts[index] ?? 0,
             tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: getElement(index, tundukPersonalDataLoading) ?? <></>,
+            tabPanelContent: getElement(index, tundukPersonalDataLoading, isEditableCopy) ?? <></>,
           };
         })}
         actionsContent={
-          <>
-            <Button
-              buttonType={"primary"}
-              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-              onClick={handleAddTabClick}
-            >
-              <AddIcon />
-            </Button>
-            <Button
-              buttonType={"secondary"}
-              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-              onClick={handleRemoveTabClick}
-            >
-              <RemoveIcon />
-            </Button>
-          </>
+          !isEditableCopy && (
+            <>
+              <Button
+                buttonType={"primary"}
+                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+                onClick={handleAddTabClick}
+              >
+                <AddIcon />
+              </Button>
+              <Button
+                buttonType={"secondary"}
+                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+                onClick={handleRemoveTabClick}
+              >
+                <RemoveIcon />
+              </Button>
+            </>
+          )
         }
         onTabChange={(index) => attachedFilesRef.current?.tabChange(index)}
       />
