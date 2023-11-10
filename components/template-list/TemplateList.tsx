@@ -33,7 +33,7 @@ const capitalize = (str: string) => str?.[0].toUpperCase() + str?.slice(1);
 
 function GridTableActionsCell({ row }: { row: Record<string, any> }) {
   const t = useTranslations();
-  const profileId = useProfileStore.getState().userData?.group.id;
+  const isNotary = useProfileStore.getState().userData?.activeCompany != null;
   const [inputValue, setInputValue] = useState<string | null>(null);
   const [inputError, setInputError] = useState<boolean>(false);
 
@@ -76,7 +76,7 @@ function GridTableActionsCell({ row }: { row: Record<string, any> }) {
         </Typography>
       </Button>
 
-      {profileId === 4 && (
+      {isNotary && (
         <ConfirmationModal
           title={t("To my templates")}
           hintText={t("Do you really want to add to the My Templates section?")}
