@@ -135,6 +135,7 @@ export const ApplicationListActions = ({
           statusSelect: 2,
           notaryUniqNumber: null,
           isToPrintLineSubTotal: true,
+          documentInfo: null,
         },
       });
     });
