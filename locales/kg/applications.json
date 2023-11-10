@@ -88,5 +88,8 @@
   "Enter a reason": "Колдонмону жокко чыгаруунун себебин киргизиңиз",
   "Cancel reason str": "Жокко чыгаруунун себеби",
   "Cancel date": "Жокко чыгаруу датасы",
-  "All changes made earlier in the document will be lost": "Документке мурда киргизилген бардык өзгөртүүлөр жоголот"
+  "All changes made earlier in the document will be lost": "Документке мурда киргизилген бардык өзгөртүүлөр жоголот",
+  "To my templates": "\"Менин калыптарыма\" кошуу",
+  "Do you really want to add to the My Templates section?": "\"Менин калыптарым\" бөлүмүнө чын эле кошкуңуз келеби?",
+  "Enter a template name": "Үлгү атын киргизиңиз"
 }

@@ -28,5 +28,8 @@
   "Select action": "Выбрать действие",
   "Create new template": "Создать новый шаблон",
   "Hand templates": "Ручные шаблоны",
-  "Purpose of action": "Цель действия"
+  "Purpose of action": "Цель действия",
+  "To my templates": "Добавление в \"Мои шаблоны\"",
+  "Do you really want to add to the My Templates section?": "Вы действительно хотите добавить в раздел \"Мои шаблоны\"?",
+  "Enter a template name": "Введите название шаблона"
 }
