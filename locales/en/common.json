@@ -223,5 +223,8 @@
   "Verify": "Verify",
   "User with this email not exists": "User with this email not exists",
   "not signed": "not signed",
-  "absent": "absent"
+  "absent": "absent",
+  "Start recording": "Start recording",
+  "Stop recording": "Stop recording",
+  "Re-record": "Re-record"
 }

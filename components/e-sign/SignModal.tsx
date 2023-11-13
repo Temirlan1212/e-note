@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { PropsWithChildren, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Alert, Box, Collapse, InputLabel, SelectChangeEvent, Typography } from "@mui/material";
 import KeyIcon from "@mui/icons-material/Key";
@@ -19,10 +19,11 @@ const signTypes = Object.entries(SignType).map(([label, value]) => ({ label, val
 export default function SignModal({
   base64Doc,
   onSign,
-}: {
+  children,
+}: PropsWithChildren<{
   base64Doc: string;
   onSign: (sign: string) => Promise<boolean>;
-}) {
+}>) {
   const t = useTranslations();
   const [isSigned, setIsSigned] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -117,9 +118,15 @@ export default function SignModal({
       }}
       onToggle={handleToggle}
     >
-      <Button startIcon={<KeyIcon />} sx={{ width: "auto" }}>
-        {t("Sign")}
-      </Button>
+      <>
+        {!children ? (
+          <Button startIcon={<KeyIcon />} sx={{ width: "auto" }}>
+            {t("Sign")}
+          </Button>
+        ) : (
+          children
+        )}
+      </>
     </ConfirmationModal>
   );
 }

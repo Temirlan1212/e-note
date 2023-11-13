@@ -88,5 +88,8 @@
   "Enter a reason": "Колдонмону жокко чыгаруунун себебин киргизиңиз",
   "Cancel reason str": "Жокко чыгаруунун себеби",
   "Cancel date": "Жокко чыгаруу датасы",
-  "All changes made earlier in the document will be lost": "Документке мурда киргизилген бардык өзгөртүүлөр жоголот"
+  "All changes made earlier in the document will be lost": "Документке мурда киргизилген бардык өзгөртүүлөр жоголот",
+  "Video recording": "Видео тартуу",
+  "To record a video, select a participant": "Видео тартуу үчүн катышуучуну тандаңыз",
+  "The maximum amount of video recording time is 30 seconds": "Видеону тартуунун максималдуу убактысы-30 секунд"
 }

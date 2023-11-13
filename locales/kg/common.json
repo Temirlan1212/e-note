@@ -223,5 +223,8 @@
   "Verify": "Текшерүү аркылуу өтүңүз",
   "User with this email not exists": "Бул электрондук почта дареги бар колдонуучу жок",
   "not signed": "кол коюлган эмес",
-  "absent": "жок"
+  "absent": "жок",
+  "Start recording": "Тартууну баштоо",
+  "Stop recording": "Тартууну токтотуу",
+  "Re-record": "Башынан тартуу"
 }

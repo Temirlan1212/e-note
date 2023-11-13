@@ -1,9 +1,8 @@
-import { FC, useCallback, useEffect, useRef, useState } from "react";
-import Webcam from "react-webcam";
+import { Dispatch, FC, SetStateAction } from "react";
 import useFetch from "@/hooks/useFetch";
-import { Alert, Box, Collapse, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import Button from "@/components/ui/Button";
+import Webcam from "@/components/ui/Webcam";
 
 interface IFaceIdScannerProps {
   getStatus: (status: boolean) => void;
@@ -11,107 +10,50 @@ interface IFaceIdScannerProps {
 
 const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
   const t = useTranslations();
-  const webcamRef = useRef<Webcam | null>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const [capturing, setCapturing] = useState(false);
-  const [recordedChunks, setRecordedChunks] = useState<BlobPart[]>([]);
-  const [isCameraAvailable, setIsCameraAvailable] = useState(true);
-  const [alertOpen, setAlertOpen] = useState(false);
 
   const { update, loading } = useFetch("", "POST");
 
-  const handleStartCaptureClick = useCallback(() => {
-    setAlertOpen(false);
-    setCapturing(true);
-    const mediaRecorder = new MediaRecorder(webcamRef.current?.stream as MediaStream, {
-      mimeType: "video/webm;codecs=H264",
-      videoBitsPerSecond: 200000,
-    });
-    mediaRecorder.addEventListener("dataavailable", handleDataAvailable);
-    mediaRecorder.start();
-
-    setTimeout(() => {
-      mediaRecorder.stop();
-      setCapturing(false);
-    }, 2000);
-  }, [recordedChunks, webcamRef, setCapturing, mediaRecorderRef]);
-
-  const handleDownload = useCallback(() => {
+  const handleDownload = async (
+    recordedChunks: BlobPart[],
+    setAlertOpen: Dispatch<SetStateAction<boolean>>,
+    setChunks: Dispatch<SetStateAction<BlobPart[]>>
+  ) => {
     if (recordedChunks.length) {
       const blob = new Blob(recordedChunks, { type: "video/webm" });
       const formData = new FormData();
       formData.append("file", blob);
-      update("/api/face-id", formData).then((res) => {
+      await update("/api/face-id", formData).then((res) => {
         if (!res?.data?.success) {
           setAlertOpen(true);
         }
         getStatus(res?.data?.success);
       });
-      setRecordedChunks([]);
+      setChunks([]);
     }
-  }, [recordedChunks]);
-
-  if (recordedChunks.length > 0) {
-    handleDownload();
-  }
-
-  const handleDataAvailable = useCallback(
-    ({ data }: BlobEvent) => {
-      if (data.size > 0) {
-        setRecordedChunks((prev) => prev.concat(data));
-      }
-    },
-    [setRecordedChunks]
-  );
-
-  useEffect(() => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then((stream) => {
-        setIsCameraAvailable(true);
-        stream.getTracks().forEach((track) => track.stop());
-      })
-      .catch((e) => {
-        setIsCameraAvailable(false);
-        console.log(e);
-      });
-  }, []);
+  };
 
   return (
     <>
-      <Box display="flex" flexDirection="column" gap="15px">
-        <Collapse in={alertOpen}>
-          <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-            {t("This action failed")}
-          </Alert>
-        </Collapse>
-        {isCameraAvailable ? (
-          <>
-            <Webcam
-              width="100%"
-              height="200px"
-              videoConstraints={{ facingMode: "user" }}
-              audio={false}
-              ref={webcamRef}
-            />
+      <Webcam
+        audio={false}
+        slots={{
+          body: ({ capturing, start }) => (
             <Button
               sx={{
                 fontSize: { xs: "14px", sm: "16px" },
               }}
               buttonType="secondary"
-              onClick={handleStartCaptureClick}
+              onClick={start}
               loading={loading}
               disabled={capturing}
             >
               {t("Verify")}
             </Button>
-          </>
-        ) : (
-          <Typography align="center" fontSize={{ xs: "14px", sm: "16px" }} fontWeight={600}>
-            {t("Camera unavailable")}
-          </Typography>
-        )}
-      </Box>
+          ),
+          footer: () => <></>,
+        }}
+        onStop={({ chunks, setAlert, setChunks }) => handleDownload(chunks, setAlert, setChunks)}
+      />
     </>
   );
 };

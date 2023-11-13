@@ -88,5 +88,8 @@
   "Enter a reason": "Enter a reason",
   "Cancel reason str": "Cancel reason",
   "Cancel date": "Cancel date",
-  "All changes made earlier in the document will be lost": "All changes made earlier in the document will be lost"
+  "All changes made earlier in the document will be lost": "All changes made earlier in the document will be lost",
+  "Video recording": "Video recording",
+  "To record a video, select a participant": "To record a video, select a participant",
+  "The maximum amount of video recording time is 30 seconds": "The maximum amount of video recording time is 30 seconds"
 }
