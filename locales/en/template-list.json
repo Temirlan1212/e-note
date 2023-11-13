@@ -28,5 +28,8 @@
   "Select action": "Select action",
   "Create new template": "Create new template",
   "Hand templates": "Hand templates",
-  "Purpose of action": "Purpose of action"
+  "Purpose of action": "Purpose of action",
+  "To my templates": "Add to \"My templates\"",
+  "Do you really want to add to the My Templates section?": "Do you really want to add to the \"My templates\" section?",
+  "Enter a template name": "Enter a template name"
 }

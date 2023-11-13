@@ -86,6 +86,7 @@ export const routes: IRoute[] = [
         title: "My templates",
         link: "/my-templates",
         type: "menu",
+        role: "notary",
         icon: "CollectionsBookmark",
       },
     ],

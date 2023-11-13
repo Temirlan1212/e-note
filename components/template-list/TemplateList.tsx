@@ -1,8 +1,8 @@
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useEffect, Dispatch, SetStateAction } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 import { ValueOf } from "next/dist/shared/lib/constants";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, InputLabel, Typography } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import ClearIcon from "@mui/icons-material/Clear";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
@@ -11,6 +11,9 @@ import SearchBar from "@/components/ui/SearchBar";
 import Button from "@/components/ui/Button";
 import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import { INotarialAction, INotarialActionData } from "@/models/notarial-action";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import Input from "@/components/ui/Input";
+import { useProfileStore } from "@/stores/profile";
 
 interface ITempQueryParams {
   pageSize: number;
@@ -30,11 +33,32 @@ const capitalize = (str: string) => str?.[0].toUpperCase() + str?.slice(1);
 
 function GridTableActionsCell({ row }: { row: Record<string, any> }) {
   const t = useTranslations();
+  const isNotary = useProfileStore.getState().userData?.activeCompany != null;
+  const [inputValue, setInputValue] = useState<string | null>(null);
+  const [inputError, setInputError] = useState<boolean>(false);
 
   const { data, loading, update } = useFetch<FetchResponseBody<ITemplateData>>("", "POST");
 
-  const handleInMyTemplatesClick = async () => {
-    await update("/api/templates/" + row.id);
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    if (e.target.value) {
+      setInputError(false);
+    }
+  };
+
+  const handleInMyTemplatesClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
+    if (inputValue && !loading) {
+      callback(false);
+      await update("/api/templates/create", {
+        id: row.id,
+        name: inputValue,
+      });
+      setInputValue(null);
+      setInputError(false);
+    }
+    if (!inputValue) {
+      setInputError(true);
+    }
   };
 
   useEffect(() => {
@@ -52,19 +76,41 @@ function GridTableActionsCell({ row }: { row: Record<string, any> }) {
         </Typography>
       </Button>
 
-      <Button
-        variant="text"
-        sx={{
-          border: "1px dashed #CDCDCD",
-          "&:hover": { backgroundColor: "inherit" },
-        }}
-        loading={loading}
-        onClick={handleInMyTemplatesClick}
-      >
-        <Typography fontSize={14} fontWeight={600}>
-          {t("In my templates")}
-        </Typography>
-      </Button>
+      {isNotary && (
+        <ConfirmationModal
+          title={t("To my templates")}
+          hintText={t("Do you really want to add to the My Templates section?")}
+          hintTitle=""
+          onConfirm={(callback) => handleInMyTemplatesClick(callback)}
+          slots={{
+            body: () => (
+              <Box sx={{ marginBottom: "20px" }}>
+                <InputLabel>{t("Enter a template name")}</InputLabel>
+                <Input
+                  value={inputValue}
+                  onChange={handleSearchChange}
+                  inputType={inputError ? "error" : "secondary"}
+                  helperText={inputError && t("This field is required!")}
+                />
+              </Box>
+            ),
+          }}
+        >
+          <Button
+            variant="text"
+            sx={{
+              width: "130px",
+              border: "1px dashed #CDCDCD",
+              "&:hover": { backgroundColor: "inherit" },
+            }}
+            loading={loading}
+          >
+            <Typography fontSize={14} fontWeight={600}>
+              {t("In my templates")}
+            </Typography>
+          </Button>
+        </ConfirmationModal>
+      )}
     </Box>
   );
 }
@@ -86,27 +132,27 @@ export default function TemplateList() {
     body: tempQueryParams,
   });
 
-  const { data: objectData, loading: objectLoading } = useFetch<INotarialActionData>(
+  const { data: objectData } = useFetch<INotarialActionData>(
     `/api/dictionaries/notarial-action?actionType=object`,
     "POST"
   );
 
-  const { data: objectTypeData, loading: objectTypeLoading } = useFetch<INotarialActionData>(
+  const { data: objectTypeData } = useFetch<INotarialActionData>(
     `/api/dictionaries/notarial-action?actionType=objectType`,
     "POST"
   );
 
-  const { data: notarialActionData, loading: notarialActionLoading } = useFetch<INotarialActionData>(
+  const { data: notarialActionData } = useFetch<INotarialActionData>(
     `/api/dictionaries/notarial-action?actionType=notarialAction`,
     "POST"
   );
 
-  const { data: typeNotarialActionData, loading: typeNotarialActionLoading } = useFetch<INotarialActionData>(
+  const { data: typeNotarialActionData } = useFetch<INotarialActionData>(
     `/api/dictionaries/notarial-action?actionType=typeNotarialAction}`,
     "POST"
   );
 
-  const { data: actionData, loading: actionLoading } = useFetch<INotarialActionData>(
+  const { data: actionData } = useFetch<INotarialActionData>(
     `/api/dictionaries/notarial-action?actionType=action`,
     "POST"
   );

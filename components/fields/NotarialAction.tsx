@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { INotarialActionData } from "@/models/notarial-action";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import Autocomplete from "@/components/ui/Autocomplete";
+import { useEffect, useState } from "react";
 
 export interface INotarialActionProps {
   form: UseFormReturn<any>;
@@ -18,8 +19,11 @@ export interface INotarialActionProps {
 export default function NotarialAction({ form, step }: INotarialActionProps) {
   const t = useTranslations();
   const { locale } = useRouter();
+  const [disable, setDisable] = useState(false);
 
   const { trigger, control, watch, resetField, getValues, setValue } = form;
+
+  const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
 
   const objectVal = watch("object");
   const objectTypeVal = watch("objectType");
@@ -58,10 +62,14 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
     if (actionVal != null) {
       const { action } = getValues();
       updateSearchedDoc("/api/dictionaries/document-type", {
-        formValues: { action },
+        formValues: { action, isSystem: true },
       });
     }
   }, [actionVal]);
+
+  useEffect(() => {
+    if (isEditableCopy && objectVal) setDisable(true);
+  }, []);
 
   return (
     <>
@@ -85,6 +93,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
 
               <Select
                 fullWidth
+                disabled={disable}
                 selectType={errorMessage ? "error" : field.value ? "success" : "secondary"}
                 data={objectList ?? []}
                 labelField={"nameIn" + locale?.[0].toUpperCase() + locale?.slice(1)}
@@ -117,7 +126,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
               <InputLabel>{t("Object type")}</InputLabel>
               <Select
-                disabled={!objectVal}
+                disabled={!objectVal || disable}
                 selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 data={objectTypeList ?? []}
                 labelField={"nameIn" + locale?.[0].toUpperCase() + locale?.slice(1)}
@@ -153,7 +162,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
               <InputLabel>{t("Notarial action")}</InputLabel>
               <Select
-                disabled={!objectTypeVal}
+                disabled={!objectTypeVal || disable}
                 selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 data={notarialActionList ?? []}
                 labelField={"nameIn" + locale?.[0].toUpperCase() + locale?.slice(1)}
@@ -187,7 +196,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
               <InputLabel>{t("Type of notarial action")}</InputLabel>
               <Select
-                disabled={!notarialActionVal}
+                disabled={!notarialActionVal || disable}
                 selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 data={typeNotarialActionList ?? []}
                 labelField={"nameIn" + locale?.[0].toUpperCase() + locale?.slice(1)}
@@ -219,7 +228,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
               <InputLabel>{t("Purpose of action")}</InputLabel>
               <Select
-                disabled={!typeNotarialActionVal}
+                disabled={!typeNotarialActionVal || disable}
                 selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 data={actionList ?? []}
                 labelField={"nameIn" + locale?.[0].toUpperCase() + locale?.slice(1)}
@@ -247,7 +256,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
           <Box width="100%" display="flex" flexDirection="column" gap="10px">
             <InputLabel>{t("Document")}</InputLabel>
             <Autocomplete
-              disabled={!actionVal}
+              disabled={!actionVal || disable}
               labelField={locale !== "en" ? "$t:name" : "name"}
               type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
               helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}

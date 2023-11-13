@@ -93,5 +93,8 @@
   "To record a video, select a participant": "Чтобы записать видео, выберите участника",
   "The maximum amount of video recording time is 30 seconds": "Максимальное время записи видео составляет 30 секунд",
   "Sign as declarant": "Подписать как декларант",
-  "Your browser does not support the video tag.": "Ваш браузер не поддерживает тег видео."
+  "Your browser does not support the video tag.": "Ваш браузер не поддерживает тег видео.",
+  "To my templates": "Добавление в \"Мои шаблоны\"",
+  "Do you really want to add to the My Templates section?": "Вы действительно хотите добавить в раздел \"Мои шаблоны\"?",
+  "Enter a template name": "Введите название шаблона"
 }
