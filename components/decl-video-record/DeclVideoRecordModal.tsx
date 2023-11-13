@@ -167,6 +167,8 @@ const VideoUpload = ({
 
   return (
     <Webcam
+      videoBitsPerSecond={0}
+      muted={true}
       variant={{ type: "record", blobUrl: null }}
       audio={true}
       maxCaptureTime={30000}

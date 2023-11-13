@@ -129,7 +129,7 @@ const Webcam: FC<IWebcamProps> = ({
                   }
                   type="video/webm"
                 />
-                Your browser does not support the video tag.
+                {t("Your browser does not support the video tag.")}
               </video>
             ) : null}
 

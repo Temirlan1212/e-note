@@ -91,5 +91,7 @@
   "All changes made earlier in the document will be lost": "Документке мурда киргизилген бардык өзгөртүүлөр жоголот",
   "Video recording": "Видео тартуу",
   "To record a video, select a participant": "Видео тартуу үчүн катышуучуну тандаңыз",
-  "The maximum amount of video recording time is 30 seconds": "Видеону тартуунун максималдуу убактысы-30 секунд"
+  "The maximum amount of video recording time is 30 seconds": "Видеону тартуунун максималдуу убактысы-30 секунд",
+  "Sign as declarant": "Декларант катары кол коюу",
+  "Your browser does not support the video tag.": "Сиздин браузериңиз видео тэгди колдобойт."
 }

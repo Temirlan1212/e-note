@@ -40,7 +40,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const [token, setToken] = useState<string>();
   const [isSigned, setIsSigned] = useState(false);
   const [isDeclSigned, setIsDeclSigned] = useState(false);
-  const [declVideoRecordOpen, setDeclVideoRecordOpen] = useState(true);
+  const [declVideoRecordOpen, setDeclVideoRecordOpen] = useState(false);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
 
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
@@ -222,7 +222,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
                   }}
                 >
                   <Button startIcon={<KeyIcon />} sx={{ width: "auto" }}>
-                    Подпись декларант
+                    {t("Sign as declarant")}
                   </Button>
                 </SignModal>
               )}

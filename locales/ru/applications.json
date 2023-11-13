@@ -91,5 +91,7 @@
   "All changes made earlier in the document will be lost": "Все изменения, внесенные ранее в документ, будут утеряны",
   "Video recording": "Видеозапись",
   "To record a video, select a participant": "Чтобы записать видео, выберите участника",
-  "The maximum amount of video recording time is 30 seconds": "Максимальное время записи видео составляет 30 секунд"
+  "The maximum amount of video recording time is 30 seconds": "Максимальное время записи видео составляет 30 секунд",
+  "Sign as declarant": "Подписать как декларант",
+  "Your browser does not support the video tag.": "Ваш браузер не поддерживает тег видео."
 }
