@@ -23,7 +23,15 @@ interface IAppQueryParams {
   page: number;
   sortBy: string[];
   filterValues: Record<string, (string | number)[]>;
-  searchValue: string;
+}
+
+interface ISearchedData {
+  SaleOrder: Partial<IApplication>;
+  content: string;
+  editUrl: string;
+  id: number;
+  title: string;
+  url: string;
 }
 
 export default function ApplicationList() {
@@ -31,6 +39,7 @@ export default function ApplicationList() {
   const { locale } = useRouter();
   const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [isSearchedData, setIsSearchedData] = useState(false);
   const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
   const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
   const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
@@ -44,7 +53,6 @@ export default function ApplicationList() {
     page: 1,
     sortBy: ["-creationDate"],
     filterValues: {},
-    searchValue: "",
   });
 
   const { data, loading, update } = useFetch("/api/applications", "POST", {
@@ -55,7 +63,7 @@ export default function ApplicationList() {
     setFilteredData(data?.data);
   }, [data?.data]);
 
-  const { data: searchedData, update: search } = useFetch("", "POST");
+  const { data: searchedData, update: search, loading: searchLoading } = useFetch("", "POST");
 
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
     setAppQueryParams((prev) => {
@@ -96,38 +104,34 @@ export default function ApplicationList() {
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     if (value === "") {
+      setIsSearchedData(false);
       setAppQueryParams((prevParams) => ({
         ...prevParams,
-        searchValue: "",
       }));
     }
     setSearchValue(value);
   };
 
   const handleSearchSubmit = () => {
-    if (searchValue == null) return;
+    if (searchValue == null || searchValue === "") return;
     search("/api/applications/search", {
       content: searchValue,
     });
-    setAppQueryParams((prevParams) => ({
-      ...prevParams,
-      searchValue: searchValue,
-    }));
+    setIsSearchedData(true);
   };
 
   useEffect(() => {
-    const matchedItems = data?.data?.filter(
-      (dataItem: IApplication) =>
-        Array.isArray(searchedData?.data) && searchedData?.data?.some((searchedItem) => searchedItem.id === dataItem.id)
-    );
-    setFilteredData(matchedItems);
+    const searchedDataArray = searchedData?.data?.map((item: ISearchedData) => item?.SaleOrder) || [];
+
+    setFilteredData(searchedDataArray);
+    setIsSearchedData(searchedDataArray.length > 0);
   }, [searchedData]);
 
   const handleReset = () => {
     setSearchValue("");
+    setIsSearchedData(false);
     setAppQueryParams((prevParams) => ({
       ...prevParams,
-      searchValue: "",
     }));
   };
 
@@ -147,6 +151,11 @@ export default function ApplicationList() {
         updateAppQueryParams("page", pageQuantity);
       }
     }
+  };
+
+  const calculateTotalPages = () => {
+    const sourceData = isSearchedData ? searchedData?.data : data;
+    return Math.ceil((sourceData?.total || 1) / appQueryParams.pageSize);
   };
 
   return (
@@ -202,12 +211,18 @@ export default function ApplicationList() {
             headerName: "Member-1",
             width: 200,
             sortable: true,
+            valueGetter: (params: GridValueGetterParams) => {
+              return isSearchedData ? params.row?.requester?.[0]?.fullName : params.row?.["requester.fullName"];
+            },
           },
           {
             field: "members.fullName",
             headerName: "Member-2",
             width: 200,
             sortable: true,
+            valueGetter: (params: GridValueGetterParams) => {
+              return isSearchedData ? params.row?.members?.[0]?.fullName : params.row?.["members.fullName"];
+            },
           },
           {
             field: "typeNotarialAction",
@@ -224,7 +239,9 @@ export default function ApplicationList() {
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (actionTypeData?.data != null) {
-                const matchedItem = actionTypeData?.data.find((item: IActionType) => item.value == params.value);
+                const matchedItem = actionTypeData?.data.find(
+                  (item: IActionType) => item.value == (isSearchedData ? params.row.typeNotarialAction : params.value)
+                );
                 const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
                 return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
               }
@@ -243,6 +260,11 @@ export default function ApplicationList() {
               valueField: "id",
               type: "dictionary",
               field: "product.id",
+            },
+            valueGetter: (params: GridValueGetterParams) => {
+              const nameKey = locale !== "en" ? "$t:product.name" : "product.name";
+              const fullNameKey = locale !== "en" ? "$t:fullName" : "fullName";
+              return isSearchedData ? params.row?.product?.[fullNameKey] : params.row?.[nameKey];
             },
           },
           {
@@ -287,6 +309,9 @@ export default function ApplicationList() {
               field: "createdBy.partner.fullName",
             },
             cellClassName: "executorColumn",
+            valueGetter: (params: GridValueGetterParams) => {
+              return isSearchedData ? params.row?.createdBy?.fullName : params.row?.["createdBy.partner.fullName"];
+            },
           },
           {
             field: "actions",
@@ -302,7 +327,7 @@ export default function ApplicationList() {
         onFilterSubmit={handleFilterSubmit}
         onSortModelChange={handleSortByDate}
         cellMaxHeight="200px"
-        loading={loading}
+        loading={loading || searchLoading}
         sx={{
           height: "100%",
           ".executorColumn": {
@@ -315,7 +340,7 @@ export default function ApplicationList() {
       <Pagination
         sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
         currentPage={appQueryParams.page}
-        totalPages={data?.total ? Math.ceil(data.total / appQueryParams.pageSize) : 1}
+        totalPages={calculateTotalPages()}
         onPageChange={handlePageChange}
       />
     </Box>
