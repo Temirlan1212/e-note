@@ -62,7 +62,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
     if (actionVal != null) {
       const { action } = getValues();
       updateSearchedDoc("/api/dictionaries/document-type", {
-        formValues: { action },
+        formValues: { action, isSystem: true },
       });
     }
   }, [actionVal]);

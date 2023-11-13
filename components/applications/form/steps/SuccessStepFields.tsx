@@ -97,10 +97,6 @@ export default function SuccessStepFields({ form, onPrev, onNext }: IStepFieldsP
             }}
           />
         </Box>
-
-        <Box width={{ xs: "100%", sm: "fit-content" }}>
-          <Button>{t("Add to my templates")}</Button>
-        </Box>
       </Box>
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
