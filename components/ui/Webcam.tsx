@@ -83,9 +83,11 @@ const Webcam: FC<IWebcamProps> = ({
     setRecordedChunks([]);
   };
 
-  if (recordedChunks.length > 0 && onStop) {
-    onStop({ chunks: recordedChunks, setAlert: setAlertOpen, setChunks: setRecordedChunks });
-  }
+  useEffectOnce(() => {
+    if (recordedChunks.length > 0 && onStop) {
+      onStop({ chunks: recordedChunks, setAlert: setAlertOpen, setChunks: setRecordedChunks });
+    }
+  }, [recordedChunks.length]);
 
   const handleDataAvailable = useCallback(
     ({ data }: BlobEvent) => {
