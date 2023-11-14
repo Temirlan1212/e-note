@@ -25,7 +25,7 @@ interface IAppQueryParams {
   filterValues: Record<string, (string | number)[]>;
 }
 
-interface ISearchedData {
+interface ISearchedDataItem {
   SaleOrder: Partial<IApplication>;
   content: string;
   editUrl: string;
@@ -55,7 +55,7 @@ export default function ApplicationList() {
     filterValues: {},
   });
 
-  const { data, loading, update } = useFetch("/api/applications", "POST", {
+  const { data, loading, update } = useFetch<FetchResponseBody | null>("/api/applications", "POST", {
     body: appQueryParams,
   });
 
@@ -63,7 +63,7 @@ export default function ApplicationList() {
     setFilteredData(data?.data);
   }, [data?.data]);
 
-  const { data: searchedData, update: search, loading: searchLoading } = useFetch("", "POST");
+  const { data: searchedData, update: search, loading: searchLoading } = useFetch<FetchResponseBody | null>("", "POST");
 
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
     setAppQueryParams((prev) => {
@@ -121,7 +121,7 @@ export default function ApplicationList() {
   };
 
   useEffect(() => {
-    const searchedDataArray = searchedData?.data?.map((item: ISearchedData) => item?.SaleOrder) || [];
+    const searchedDataArray = searchedData?.data?.map((item: ISearchedDataItem) => item?.SaleOrder) || [];
 
     setFilteredData(searchedDataArray);
     setIsSearchedData(searchedDataArray.length > 0);
