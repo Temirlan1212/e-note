@@ -155,7 +155,7 @@ export default function ApplicationList() {
 
   const calculateTotalPages = () => {
     const sourceData = isSearchedData ? searchedData?.data : data;
-    return Math.ceil((sourceData?.total || 1) / appQueryParams.pageSize);
+    return Math.ceil((sourceData?.total || sourceData?.length || 1) / appQueryParams.pageSize);
   };
 
   return (
