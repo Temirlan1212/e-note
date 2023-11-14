@@ -16,7 +16,7 @@ export default function CheckByPDF() {
 
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target?.files) {
-      setFile(e.target?.files[0]!);
+      setFile(e.target?.files[0]);
     }
   };
 
