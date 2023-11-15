@@ -59,6 +59,10 @@ export default function ApplicationList() {
     body: appQueryParams,
   });
 
+  useEffect(() => {
+    setFilteredData(data?.data);
+  }, [data?.data]);
+
   const { data: searchedData, update: search, loading: searchLoading } = useFetch<FetchResponseBody | null>("", "POST");
 
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
@@ -122,8 +126,11 @@ export default function ApplicationList() {
 
   const handleReset = () => {
     setSearchValue("");
-    setIsSearchedData(false);
     setFilteredData([]);
+    setIsSearchedData(false);
+    setAppQueryParams((prevParams) => ({
+      ...prevParams,
+    }));
   };
 
   const handleSortByDate = async (model: GridSortModel) => {
@@ -314,7 +321,7 @@ export default function ApplicationList() {
             renderCell: (params) => <ApplicationListActions params={params} onDelete={handleDelete} />,
           },
         ]}
-        rows={filteredData?.length > 0 ? filteredData : data?.data ?? []}
+        rows={filteredData ?? []}
         onFilterSubmit={handleFilterSubmit}
         onSortModelChange={handleSortByDate}
         cellMaxHeight="200px"
