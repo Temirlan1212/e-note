@@ -89,6 +89,12 @@
   "Cancel reason str": "Жокко чыгаруунун себеби",
   "Cancel date": "Жокко чыгаруу датасы",
   "All changes made earlier in the document will be lost": "Документке мурда киргизилген бардык өзгөртүүлөр жоголот",
+  "Video recording": "Видео тартуу",
+  "To record a video, select a participant": "Видео тартуу үчүн катышуучуну тандаңыз",
+  "The maximum amount of video recording time is 30 seconds": "Видеону тартуунун максималдуу убактысы-30 секунд",
+  "Last recorded video": "Акыркы жазылган видео",
+  "Sign as declarant": "Декларант катары кол коюу",
+  "Your browser does not support the video tag.": "Сиздин браузериңиз видео тэгди колдобойт.",
   "To my templates": "\"Менин калыптарыма\" кошуу",
   "Do you really want to add to the My Templates section?": "\"Менин калыптарым\" бөлүмүнө чын эле кошкуңуз келеби?",
   "Enter a template name": "Үлгү атын киргизиңиз"

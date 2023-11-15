@@ -11,12 +11,15 @@ export default async function handler(req: NextRequest) {
     return new Response(null, { status: 400 });
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/dms/download/" + searchParams.get("id"), {
-    method: "GET",
-    headers: {
-      Cookie: req.headers.get("server-cookie")?.toString() ?? "",
-    },
-  });
+  const response = await fetch(
+    process.env.BACKEND_API_URL + `/ws/rest/com.axelor.meta.db.MetaFile/${searchParams.get("id")}/content/download/`,
+    {
+      method: "GET",
+      headers: {
+        Cookie: req.headers.get("server-cookie")?.toString() ?? "",
+      },
+    }
+  );
 
   if (!response.ok) {
     return new Response(null, { status: response.status });

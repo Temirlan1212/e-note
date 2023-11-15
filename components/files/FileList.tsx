@@ -16,10 +16,9 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
   const { data: downloadData, update: downloadUpdate } = useFetch<Response>("", "GET", {
     returnResponse: true,
   });
-  const { data: deletedData, update: deleteUpdate } = useFetch<Response>("", "DELETE", {
+  const { data: deletedData, update: deleteUpdate } = useFetch<Response>("", "POST", {
     returnResponse: true,
   });
-  const { update: getId } = useFetch<Response>("", "POST");
 
   useEffectOnce(async () => {
     if (downloadData == null || downloadData.body == null || downloadData.blob == null) return;
@@ -44,14 +43,13 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
   };
 
   const handleDownloadClick = () => {
-    getId("/api/files/dms-from-meta/" + row.id).then((res) => {
-      downloadUpdate(`/api/files/download/${res.data[0]?.id}`);
-    });
+    downloadUpdate("/api/files/download/" + row.id);
   };
 
   const handleDeleteClick = () => {
-    getId("/api/files/dms-from-meta/" + row.id).then((res) => {
-      deleteUpdate(`/api/files/delete/${res.data[0]?.id}`);
+    deleteUpdate("/api/files/delete/" + row.id, {
+      id: row.id,
+      version: row.version,
     });
   };
 

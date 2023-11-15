@@ -22,6 +22,7 @@ const fields: string[] = [
   "statusSelect",
   "notarySignatureStatus",
   "company.partner.fullName",
+  "files",
   "isToPrintLineSubTotal",
 ];
 

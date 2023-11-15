@@ -224,5 +224,8 @@
   "User with this email not exists": "Бул электрондук почта дареги бар колдонуучу жок",
   "not signed": "кол коюлган эмес",
   "absent": "жок",
+  "Start recording": "Тартууну баштоо",
+  "Stop recording": "Тартууну токтотуу",
+  "Re-record": "Башынан тартуу",
   "Copy": "Көчүрүү"
 }

@@ -224,5 +224,8 @@
   "User with this email not exists": "Пользователь с таким электронным адресом не существует",
   "not signed": "не подписан",
   "absent": "отсутствует",
+  "Start recording": "Начать запись",
+  "Stop recording": "Остановить запись",
+  "Re-record": "Перезаписать",
   "Copy": "Скопировать"
 }

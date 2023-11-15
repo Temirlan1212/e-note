@@ -89,6 +89,12 @@
   "Cancel date": "Дата отмены",
   "Do you really want to cancel the application?": "Вы действительно хотите отменить заявку?",
   "All changes made earlier in the document will be lost": "Все изменения, внесенные ранее в документ, будут утеряны",
+  "Video recording": "Видеозапись",
+  "To record a video, select a participant": "Чтобы записать видео, выберите участника",
+  "The maximum amount of video recording time is 30 seconds": "Максимальное время записи видео составляет 30 секунд",
+  "Last recorded video": "Последнее записанное видео",
+  "Sign as declarant": "Подписать как декларант",
+  "Your browser does not support the video tag.": "Ваш браузер не поддерживает тег видео.",
   "To my templates": "Добавление в \"Мои шаблоны\"",
   "Do you really want to add to the My Templates section?": "Вы действительно хотите добавить в раздел \"Мои шаблоны\"?",
   "Enter a template name": "Введите название шаблона"
