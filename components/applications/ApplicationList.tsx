@@ -100,6 +100,7 @@ export default function ApplicationList() {
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     if (value === "") {
+      setFilteredData([]);
       setIsSearchedData(false);
       setAppQueryParams((prevParams) => ({
         ...prevParams,
@@ -110,11 +111,11 @@ export default function ApplicationList() {
 
   const handleSearchSubmit = async () => {
     if (searchValue == null || searchValue === "") return;
-    const data = await search("/api/applications/search", {
+    const searchResult = await search("/api/applications/search", {
       content: searchValue,
     });
 
-    const searchedDataArray = data?.data?.map((item: ISearchedDataItem) => item?.SaleOrder) || [];
+    const searchedDataArray = searchResult?.data?.map((item: ISearchedDataItem) => item?.SaleOrder) || [];
     setFilteredData(searchedDataArray);
     setIsSearchedData(searchedDataArray.length > 0);
   };
