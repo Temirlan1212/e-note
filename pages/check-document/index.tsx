@@ -1,97 +1,80 @@
-import React, { useState } from "react";
+import React, { ReactNode, useState } from "react";
 import Head from "next/head";
-import { Container, Typography } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import { Box, Container, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 
 import Button from "@/components/ui/Button";
 import CheckByID from "@/components/check-document/CheckByID";
 import CheckByQR from "@/components/check-document/CheckByQR";
+import CheckByPDF from "@/components/check-document/CheckByPDF";
+
+const Tabs: Record<number, ReactNode> = {
+  1: <CheckByID />,
+  2: <CheckByQR />,
+  3: <CheckByPDF />,
+};
 
 export default function CheckDocument() {
-  const [isVariantClicked, setIsVariantClicked] = useState(false);
-  const [isCheckByID, setIsCheckByID] = useState(true);
-  const [isCheckByQR, setIsCheckByQR] = useState(false);
   const t = useTranslations();
+  const [docId, setDocId] = useState(1);
 
-  const handleVariantClick = () => {
-    setIsVariantClicked(!isVariantClicked);
-    setIsCheckByID(!isCheckByID);
-    setIsCheckByQR(!isCheckByQR);
+  const handleDocClick = (id: number) => {
+    setDocId(id);
   };
+
+  const tabs = [
+    {
+      id: 1,
+      text: "By document ID",
+      click: () => handleDocClick(1),
+    },
+    {
+      id: 2,
+      text: "By QR code",
+      click: () => handleDocClick(2),
+    },
+    {
+      id: 3,
+      text: "By PDF",
+      click: () => handleDocClick(3),
+    },
+  ];
 
   return (
     <>
       <Head>
         <title>{t("Check document")}</title>
       </Head>
-      <Container
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: { xs: "0 20px 0 20px", sm: "0 124px 0 124px", md: "0 267px 0 267px" },
-        }}
-      >
-        <Container
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            flexDirection: "column",
-            marginTop: { xs: "40px", sm: "50px", md: "60px" },
-            marginBottom: { xs: "59px", sm: "99px", md: "122px" },
-            gap: "50px",
-          }}
-        >
-          <Typography align="center" fontSize={{ xs: "24px", sm: "24px", md: "36px" }} fontWeight={600}>
-            {t("Check document")}
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={6}>
+      <Container maxWidth="sm" sx={{ display: "flex", flexDirection: "column", gap: "30px", py: "50px" }}>
+        <Typography align="center" fontSize={{ xs: "24px", sm: "24px", md: "36px" }} fontWeight={600}>
+          {t("Check document")}
+        </Typography>
+        <Box display="flex" gap="10px">
+          {tabs.map((tab) => {
+            const isActive = docId === tab.id;
+
+            return (
               <Button
-                variant={isVariantClicked ? "text" : "contained"}
+                key={tab.id}
+                variant={isActive ? "contained" : "text"}
                 sx={{
-                  boxShadow: isVariantClicked ? "" : "0px 10px 20px 0px #99DBAF",
-                  background: isVariantClicked ? "#EFEFEF" : "",
+                  fontSize: { sm: "12px", md: "16px" },
+                  boxShadow: isActive ? "0px 10px 20px 0px #99DBAF" : "",
+                  background: isActive ? "" : "#EFEFEF",
                   padding: "10px 0",
+                  "&:hover": {
+                    color: "#EFEFEF",
+                  },
                 }}
-                color={isVariantClicked ? "inherit" : "success"}
-                onClick={handleVariantClick}
+                onClick={tab.click}
               >
-                <Typography
-                  color={isVariantClicked ? "black" : "default"}
-                  fontSize={{ xs: "14px", md: "16px" }}
-                  fontWeight={isVariantClicked ? 400 : 600}
-                >
-                  {t("By document ID")}
-                </Typography>
+                {t(tab.text)}
               </Button>
-            </Grid>
-            <Grid item xs={6}>
-              <Button
-                variant={!isVariantClicked ? "text" : "contained"}
-                sx={{
-                  boxShadow: !isVariantClicked ? "" : "0px 10px 20px 0px #99DBAF",
-                  background: !isVariantClicked ? "#EFEFEF" : "",
-                  padding: "10px 0",
-                }}
-                color={!isVariantClicked ? "inherit" : "success"}
-                onClick={handleVariantClick}
-              >
-                <Typography
-                  color={!isVariantClicked ? "black" : "default"}
-                  fontSize={{ xs: "14px", md: "16px" }}
-                  fontWeight={!isVariantClicked ? 400 : 600}
-                >
-                  {t("By QR code")}
-                </Typography>
-              </Button>
-            </Grid>
-          </Grid>
-          {isCheckByID && <CheckByID />}
-          {isCheckByQR && <CheckByQR />}
-        </Container>
+            );
+          })}
+        </Box>
+        {Tabs[docId]}
       </Container>
     </>
   );

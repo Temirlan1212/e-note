@@ -2,6 +2,7 @@
   "Check document": "Проверка документа",
   "By document ID": "По ID документа",
   "By QR code": "По QR коду",
+  "By PDF": "По PDF",
   "Enter a unique number (ID) of the document to search:": "Введите уникальный номер (ID) документа для поиска:",
   "Each notarial document has its unique number, consisting of n-characters Click on the": "У каждого нотариального документа есть его уникальный номер, состоящий из 5-символов.",
   "link": "ссылку",
