@@ -59,10 +59,6 @@ export default function ApplicationList() {
     body: appQueryParams,
   });
 
-  useEffect(() => {
-    setFilteredData(data?.data);
-  }, [data?.data]);
-
   const { data: searchedData, update: search, loading: searchLoading } = useFetch<FetchResponseBody | null>("", "POST");
 
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
@@ -112,27 +108,21 @@ export default function ApplicationList() {
     setSearchValue(value);
   };
 
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = async () => {
     if (searchValue == null || searchValue === "") return;
-    search("/api/applications/search", {
+    const data = await search("/api/applications/search", {
       content: searchValue,
     });
-    setIsSearchedData(true);
-  };
 
-  useEffect(() => {
-    const searchedDataArray = searchedData?.data?.map((item: ISearchedDataItem) => item?.SaleOrder) || [];
-
+    const searchedDataArray = data?.data?.map((item: ISearchedDataItem) => item?.SaleOrder) || [];
     setFilteredData(searchedDataArray);
     setIsSearchedData(searchedDataArray.length > 0);
-  }, [searchedData]);
+  };
 
   const handleReset = () => {
     setSearchValue("");
     setIsSearchedData(false);
-    setAppQueryParams((prevParams) => ({
-      ...prevParams,
-    }));
+    setFilteredData([]);
   };
 
   const handleSortByDate = async (model: GridSortModel) => {
@@ -323,7 +313,7 @@ export default function ApplicationList() {
             renderCell: (params) => <ApplicationListActions params={params} onDelete={handleDelete} />,
           },
         ]}
-        rows={filteredData ?? []}
+        rows={filteredData?.length > 0 ? filteredData : data?.data ?? []}
         onFilterSubmit={handleFilterSubmit}
         onSortModelChange={handleSortByDate}
         cellMaxHeight="200px"
