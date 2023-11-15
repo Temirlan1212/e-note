@@ -202,13 +202,13 @@ export default function ApplicationList() {
             field: "notaryUniqNumber",
             headerName: "Unique number",
             width: 200,
-            sortable: true,
+            sortable: isSearchedData ? false : true,
           },
           {
             field: "requester.fullName",
             headerName: "Member-1",
             width: 200,
-            sortable: true,
+            sortable: isSearchedData ? false : true,
             valueGetter: (params: GridValueGetterParams) => {
               return isSearchedData ? params.row?.requester?.[0]?.fullName : params.row?.["requester.fullName"];
             },
@@ -217,7 +217,7 @@ export default function ApplicationList() {
             field: "members.fullName",
             headerName: "Member-2",
             width: 200,
-            sortable: true,
+            sortable: isSearchedData ? false : true,
             valueGetter: (params: GridValueGetterParams) => {
               return isSearchedData ? params.row?.members?.[0]?.fullName : params.row?.["members.fullName"];
             },
@@ -228,13 +228,15 @@ export default function ApplicationList() {
             width: 200,
             editable: false,
             sortable: false,
-            filter: {
-              data: actionTypeData?.data ?? [],
-              labelField: "title_" + locale,
-              valueField: "value",
-              type: "dictionary",
-              field: "typeNotarialAction",
-            },
+            filter: isSearchedData
+              ? undefined
+              : {
+                  data: actionTypeData?.data ?? [],
+                  labelField: "title_" + locale,
+                  valueField: "value",
+                  type: "dictionary",
+                  field: "typeNotarialAction",
+                },
             valueGetter: (params: GridValueGetterParams) => {
               if (actionTypeData?.data != null) {
                 const matchedItem = actionTypeData?.data.find(
@@ -252,13 +254,15 @@ export default function ApplicationList() {
             width: 250,
             editable: false,
             sortable: false,
-            filter: {
-              data: documentTypeData?.data ?? [],
-              labelField: locale !== "en" ? "$t:name" : "name",
-              valueField: "id",
-              type: "dictionary",
-              field: "product.id",
-            },
+            filter: isSearchedData
+              ? undefined
+              : {
+                  data: documentTypeData?.data ?? [],
+                  labelField: locale !== "en" ? "$t:name" : "name",
+                  valueField: "id",
+                  type: "dictionary",
+                  field: "product.id",
+                },
             valueGetter: (params: GridValueGetterParams) => {
               const nameKey = locale !== "en" ? "$t:product.name" : "product.name";
               const fullNameKey = locale !== "en" ? "$t:fullName" : "fullName";
@@ -272,13 +276,15 @@ export default function ApplicationList() {
             width: 200,
             editable: false,
             sortable: false,
-            filter: {
-              data: statusData?.data ?? [],
-              labelField: "title_" + locale,
-              valueField: "value",
-              type: "dictionary",
-              field: "statusSelect",
-            },
+            filter: isSearchedData
+              ? undefined
+              : {
+                  data: statusData?.data ?? [],
+                  labelField: "title_" + locale,
+                  valueField: "value",
+                  type: "dictionary",
+                  field: "statusSelect",
+                },
             valueGetter: (params: GridValueGetterParams) => {
               if (statusData != null) {
                 const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(params.value));
@@ -292,20 +298,22 @@ export default function ApplicationList() {
             field: "creationDate",
             headerName: "Date",
             width: 170,
-            sortable: true,
+            sortable: isSearchedData ? false : true,
           },
           {
             field: "createdBy.partner.fullName",
             headerName: "Executor",
             width: 200,
             sortable: false,
-            filter: {
-              data: executorData?.data ?? [],
-              labelField: locale === "ru" || locale === "kg" ? "title_ru" : "title",
-              valueField: "value",
-              type: "dictionary",
-              field: "createdBy.partner.fullName",
-            },
+            filter: isSearchedData
+              ? undefined
+              : {
+                  data: executorData?.data ?? [],
+                  labelField: locale === "ru" || locale === "kg" ? "title_ru" : "title",
+                  valueField: "value",
+                  type: "dictionary",
+                  field: "createdBy.partner.fullName",
+                },
             cellClassName: "executorColumn",
             valueGetter: (params: GridValueGetterParams) => {
               return isSearchedData ? params.row?.createdBy?.fullName : params.row?.["createdBy.partner.fullName"];
