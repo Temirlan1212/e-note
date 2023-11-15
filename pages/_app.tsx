@@ -121,26 +121,28 @@ function Layout({ children }: { children: JSX.Element }) {
             button: () => <></>,
           }}
         />
-        <ConfirmationModal
-          isPermanentOpen={isRoleModalOpen}
-          title="Enter as"
-          type="hint"
-          hintTitle=""
-          hintText="Enter as description"
-          slots={{
-            button: () => (
-              <Box display="flex" alignItems="center" justifyContent="center" gap="16px" width="100%">
-                {loading && <CircularProgress sx={{ justifyContent: "center" }} />}
-                {!loading && (
-                  <>
-                    <Button onClick={() => handleChooseRole(1)}>{t("Notary")}</Button>
-                    <Button onClick={() => handleChooseRole(2)}>{t("Applicant")}</Button>
-                  </>
-                )}
-              </Box>
-            ),
-          }}
-        />
+        {!faceIdScannerOpen && (
+          <ConfirmationModal
+            isPermanentOpen={isRoleModalOpen}
+            title="Enter as"
+            type="hint"
+            hintTitle=""
+            hintText="Enter as description"
+            slots={{
+              button: () => (
+                <Box display="flex" alignItems="center" justifyContent="center" gap="16px" width="100%">
+                  {loading && <CircularProgress sx={{ justifyContent: "center" }} />}
+                  {!loading && (
+                    <>
+                      <Button onClick={() => handleChooseRole(1)}>{t("Notary")}</Button>
+                      <Button onClick={() => handleChooseRole(2)}>{t("Applicant")}</Button>
+                    </>
+                  )}
+                </Box>
+              ),
+            }}
+          />
+        )}
       </>
     </PublicLayout>
   );
