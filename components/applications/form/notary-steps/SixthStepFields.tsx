@@ -46,7 +46,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
   const { data: prepare, loading: prepareLoading, update: getPrepare } = useFetch("", "GET");
   const { loading: syncLoading, update: getSync } = useFetch("", "GET");
-  const { update: signDocument } = useFetch("", "POST");
+  const { update: signDocument, loading } = useFetch("", "POST");
   const { data: application, loading: applicationLoading } = useFetch(
     id != null ? `/api/applications/${id}` : "",
     "POST"
@@ -210,11 +210,16 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
             <Box display="flex" gap="10px" flexWrap="wrap">
               {!isSigned && base64Doc != null && (
-                <SignModal base64Doc={base64Doc} onSign={(sign) => handleSign(sign, setIsSigned)} />
+                <SignModal
+                  signLoading={loading}
+                  base64Doc={base64Doc}
+                  onSign={(sign) => handleSign(sign, setIsSigned)}
+                />
               )}
               {!isDeclSigned && base64Doc != null && (
                 <SignModal
                   base64Doc={base64Doc}
+                  signLoading={loading}
                   onSign={async (sign) => {
                     const isSigned = await handleSign(sign, setIsDeclSigned);
                     if (isSigned) setDeclVideoRecordOpen(isSigned);

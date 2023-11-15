@@ -16,7 +16,15 @@ export default function DeclVideoRecordModal(props: Partial<IConfirmationModal &
   const { update, loading } = useFetch("", "POST");
   const [users, setUsers] = useState<Record<string, any>[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
+  const [showVideo, setShowVideo] = useState(false);
   const [files, setFiles] = useState<{ fileName: string; id: number }[]>([]);
+
+  const handleGoBack = () => {
+    if (!showVideo) {
+      setUserId(null);
+    }
+    setShowVideo(false);
+  };
 
   useEffectOnce(async () => {
     if (applicationId == null) return;
@@ -90,7 +98,7 @@ export default function DeclVideoRecordModal(props: Partial<IConfirmationModal &
 
             {isUserSelected && !loading ? (
               <Box>
-                <IconButton onClick={() => setUserId(null)}>
+                <IconButton sx={{ marginBottom: "15px" }} onClick={handleGoBack}>
                   <KeyboardBackspaceIcon />
                 </IconButton>
                 <VideoUpload
@@ -101,6 +109,8 @@ export default function DeclVideoRecordModal(props: Partial<IConfirmationModal &
                       : null
                   }
                   applicationId={applicationId}
+                  setShowVideo={(value) => setShowVideo(value)}
+                  showVideo={showVideo}
                 />
               </Box>
             ) : null}
@@ -118,30 +128,22 @@ const VideoUpload = ({
   userId,
   fileId,
   applicationId,
+  setShowVideo,
+  showVideo,
 }: {
   applicationId: string;
   userId: number;
   fileId: number | null;
+  setShowVideo: Dispatch<SetStateAction<boolean>>;
+  showVideo: boolean;
 }) => {
   const t = useTranslations();
+  const [blobURL, setBlobURL] = useState<string>("");
 
-  // const { update: downloadUpdate } = useFetch<Response>("", "GET", {
-  //   returnResponse: true,
-  // });
+  const { update: downloadUpdate } = useFetch<Response>("", "GET", {
+    returnResponse: true,
+  });
   const { update, loading } = useFetch("", "POST");
-
-  useEffectOnce(async () => {
-    if (fileId != null) handleGetDocument(fileId);
-  }, []);
-
-  const handleGetDocument = async (id: number) => {
-    // if (fileId != null) {
-    //   const res = await downloadUpdate(`/api/files/download/${fileId ?? 0}`);
-    //   const blobData = await res.blob();
-    //   const blobURL = URL.createObjectURL(blobData);
-    //   console.log(blobURL);
-    // }
-  };
 
   const handleDownload = async (
     recordedChunks: BlobPart[],
@@ -165,42 +167,60 @@ const VideoUpload = ({
     }
   };
 
-  return (
-    <Webcam
-      videoBitsPerSecond={0}
-      muted={true}
-      variant={{ type: "record", blobUrl: null }}
-      audio={true}
-      maxCaptureTime={30000}
-      slots={{
-        footer: ({ restart, chunks, setAlert, setChunks }) => (
-          <>
-            {setAlert != null && setChunks != null && chunks != null && chunks?.length > 0 ? (
-              <Box display="flex" justifyContent="space-between" gap="15px">
-                <Button
-                  sx={{
-                    fontSize: { xs: "14px", sm: "16px" },
-                  }}
-                  buttonType="primary"
-                  onClick={() => handleDownload(chunks, setAlert, setChunks)}
-                >
-                  {t("Upload")}
-                </Button>
+  useEffectOnce(async () => {
+    if (fileId != null) {
+      const res = await downloadUpdate(`/api/files/download/${fileId ?? 0}`);
+      const blobData = await res.blob();
+      setBlobURL(URL.createObjectURL(blobData));
+    }
+  }, []);
 
-                <Button
-                  sx={{
-                    fontSize: { xs: "14px", sm: "16px" },
-                  }}
-                  buttonType="danger"
-                  onClick={restart}
-                >
-                  {t("Re-record")}
-                </Button>
-              </Box>
-            ) : null}
-          </>
-        ),
-      }}
-    />
+  return (
+    <>
+      {blobURL && !showVideo && <Button onClick={() => setShowVideo(true)}>{t("Last recorded video")}</Button>}
+      {showVideo ? (
+        <video src={blobURL} width="100%" height="auto" controls>
+          {t("Your browser does not support the video tag.")}
+        </video>
+      ) : (
+        <Webcam
+          videoBitsPerSecond={0}
+          muted={true}
+          variant={{ type: "record", blobUrl: null }}
+          audio={true}
+          maxCaptureTime={30000}
+          slots={{
+            footer: ({ restart, chunks, setAlert, setChunks }) => (
+              <>
+                {setAlert != null && setChunks != null && chunks != null && chunks?.length > 0 ? (
+                  <Box display="flex" justifyContent="space-between" gap="15px">
+                    <Button
+                      sx={{
+                        fontSize: { xs: "14px", sm: "16px" },
+                      }}
+                      buttonType="primary"
+                      loading={loading}
+                      onClick={() => handleDownload(chunks, setAlert, setChunks)}
+                    >
+                      {t("Upload")}
+                    </Button>
+
+                    <Button
+                      sx={{
+                        fontSize: { xs: "14px", sm: "16px" },
+                      }}
+                      buttonType="danger"
+                      onClick={restart}
+                    >
+                      {t("Re-record")}
+                    </Button>
+                  </Box>
+                ) : null}
+              </>
+            ),
+          }}
+        />
+      )}
+    </>
   );
 };

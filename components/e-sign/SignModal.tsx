@@ -20,9 +20,11 @@ export default function SignModal({
   base64Doc,
   onSign,
   children,
+  signLoading,
 }: PropsWithChildren<{
   base64Doc: string;
   onSign: (sign: string) => Promise<boolean>;
+  signLoading?: boolean;
 }>) {
   const t = useTranslations();
   const [isSigned, setIsSigned] = useState(false);
@@ -110,6 +112,7 @@ export default function SignModal({
             <Button
               sx={{ marginTop: "15px" }}
               onClick={() => (faceIdScanner ? onSign("sign") : setFaceIdScanner(true))}
+              loading={signLoading}
             >
               {t(faceIdScanner ? "Without EDS" : "Without Face ID")}
             </Button>
