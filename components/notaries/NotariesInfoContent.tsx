@@ -239,7 +239,9 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                   <Box display="flex" gap="8px">
                     <Rating value={ratingData?.data?.count || 0} readOnly />
                     {ratingData?.data?.count ? (
-                      <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>{ratingData?.data?.count}</Typography>
+                      <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
+                        {ratingData?.data?.average != null ? Number(ratingData?.data?.average).toFixed(1) : "0"}
+                      </Typography>
                     ) : null}
                   </Box>
                   <Typography
@@ -249,8 +251,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
                       fontWeight: 400,
                     }}
                   >
-                    {ratingData?.data?.average != null ? Number(ratingData?.data?.average).toFixed(1) : "0"}{" "}
-                    {t("ratings")}
+                    {ratingData?.data?.count} {t("ratings")}
                   </Typography>
                 </Box>
               )}

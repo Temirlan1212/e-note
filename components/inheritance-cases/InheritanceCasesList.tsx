@@ -41,7 +41,7 @@ export default function InheritanceCases() {
     },
     {
       field: "pin",
-      headerName: t("PIN of the deceased"),
+      headerName: "PIN of the deceased",
       width: 210,
       filter: {
         type: "simple",
@@ -50,7 +50,7 @@ export default function InheritanceCases() {
     },
     {
       field: "fullName",
-      headerName: t("Full name of the deceased"),
+      headerName: "Full name of the deceased",
       width: 270,
       filter: {
         type: "simple",
@@ -59,28 +59,28 @@ export default function InheritanceCases() {
     },
     {
       field: "dateOfBirth",
-      headerName: t("Date of birth"),
+      headerName: "Date of birth",
       width: 180,
     },
     {
       field: "placeOfLastResidence",
-      headerName: t("Place of last residence"),
+      headerName: "Place of last residence",
       width: 270,
       sortable: false,
     },
     {
       field: "dateOfDeath",
-      headerName: t("Date of death"),
+      headerName: "Date of death",
       width: 200,
     },
     {
       field: "dateOfCreation",
-      headerName: t("Date of creation"),
+      headerName: "Date of creation",
       width: 210,
     },
     {
       field: "whoCreated",
-      headerName: t("Who created"),
+      headerName: "Created by",
       width: 200,
       sortable: false,
     },
@@ -190,9 +190,9 @@ export default function InheritanceCases() {
 
   const selectSortData = [
     { value: "all", label: t("All years") },
-    { value: `2023 ${t("год")}`, label: `2023 ${t("год")}` },
-    { value: `2022 ${t("год")}`, label: `2022 ${t("год")}` },
-    { value: `2021 ${t("год")}`, label: `2021 ${t("год")}` },
+    { value: `2023 ${t("year")}`, label: `2023 ${t("year")}` },
+    { value: `2022 ${t("year")}`, label: `2022 ${t("year")}` },
+    { value: `2021 ${t("year")}`, label: `2021 ${t("year")}` },
   ];
 
   const dataGridStyles = {

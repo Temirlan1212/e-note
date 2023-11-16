@@ -23,7 +23,7 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, 
 
   const [base64Image, setBase64Image] = useState<string | null>(null);
 
-  const { data: ratingData, loading: ratingLoading } = useFetch(id != null ? `/api/rating/${id}` : "", "GET");
+  const { data: ratingData } = useFetch(id != null ? `/api/rating/${id}` : "", "GET");
 
   const { data: imageData, loading: imageLoading } = useFetch<Response>(
     userId != null ? "/api/notaries/download-image/" + userId : "",
@@ -40,9 +40,7 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, 
     }
   }, [imageData]);
 
-  return imageLoading || ratingLoading ? (
-    <CircularProgress />
-  ) : (
+  return (
     <Card
       sx={{
         width: { xs: "100%", md: "17.8rem" },
@@ -55,42 +53,48 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, 
         "&:hover": { backgroundColor: "white", boxShadow: "0px 10px 20px 0px #cbcaca", cursor: "pointer" },
       }}
     >
-      <CardHeader
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "row", md: "column" },
-          gap: { xs: "10px", md: 0 },
-        }}
-        avatar={
-          <Avatar
-            sizes="100"
-            src={base64Image!}
-            sx={{
-              bgcolor: "success.main",
-              width: { xs: "50px", md: "100px" },
-              height: { xs: "50px", md: "100px" },
-              marginBottom: { xs: 0, md: "20px" },
-            }}
-            aria-label="recipe"
-          >
-            <PermIdentityIcon
+      {imageLoading ? (
+        <CircularProgress />
+      ) : (
+        <CardHeader
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "row", md: "column" },
+            gap: { xs: "10px", md: 0 },
+          }}
+          avatar={
+            <Avatar
+              sizes="100"
+              src={base64Image!}
               sx={{
-                width: { xs: "25px", md: "50px" },
-                height: { xs: "25px", md: "50px" },
+                bgcolor: "success.main",
+                width: { xs: "50px", md: "100px" },
+                height: { xs: "50px", md: "100px" },
+                marginBottom: { xs: 0, md: "20px" },
               }}
-            />
-          </Avatar>
-        }
-        title={fullName}
-      />
+              aria-label="recipe"
+            >
+              <PermIdentityIcon
+                sx={{
+                  width: { xs: "25px", md: "50px" },
+                  height: { xs: "25px", md: "50px" },
+                }}
+              />
+            </Avatar>
+          }
+          title={fullName}
+        />
+      )}
       <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: { xs: "start", md: "center" } }}>
         <Box sx={{ display: "flex" }} gap="8px">
           <Rating value={ratingData?.data?.count || 0} readOnly />
           {ratingData?.data?.count ? (
-            <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>{ratingData?.data?.count}</Typography>
+            <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
+              {ratingData?.data?.average != null ? Number(ratingData?.data?.average).toFixed(1) : "0"}
+            </Typography>
           ) : null}
           <Typography sx={{ color: "#BDBDBD", fontSize: "16px", fontWeight: 400 }}>
-            {ratingData?.data?.average != null ? Number(ratingData?.data?.average).toFixed(1) : "0"} {t("ratings")}
+            {ratingData?.data?.count} {t("ratings")}
           </Typography>
         </Box>
         <Box sx={{ display: { xs: "none", md: "block" }, width: "100%", marginTop: "20px" }}>
