@@ -23,7 +23,15 @@ interface IAppQueryParams {
   page: number;
   sortBy: string[];
   filterValues: Record<string, (string | number)[]>;
-  searchValue: string;
+}
+
+interface ISearchedDataItem {
+  SaleOrder: Partial<IApplication>;
+  content: string;
+  editUrl: string;
+  id: number;
+  title: string;
+  url: string;
 }
 
 export default function ApplicationList() {
@@ -31,6 +39,7 @@ export default function ApplicationList() {
   const { locale } = useRouter();
   const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [isSearchedData, setIsSearchedData] = useState(false);
   const { data: actionTypeData } = useFetch("/api/dictionaries/action-type", "POST");
   const { data: documentTypeData } = useFetch("/api/dictionaries/document-type", "POST");
   const { data: statusData } = useFetch("/api/dictionaries/application-status", "POST");
@@ -44,10 +53,9 @@ export default function ApplicationList() {
     page: 1,
     sortBy: ["-creationDate"],
     filterValues: {},
-    searchValue: "",
   });
 
-  const { data, loading, update } = useFetch("/api/applications", "POST", {
+  const { data, loading, update } = useFetch<FetchResponseBody | null>("/api/applications", "POST", {
     body: appQueryParams,
   });
 
@@ -55,7 +63,7 @@ export default function ApplicationList() {
     setFilteredData(data?.data);
   }, [data?.data]);
 
-  const { data: searchedData, update: search } = useFetch("", "POST");
+  const { data: searchedData, update: search, loading: searchLoading } = useFetch<FetchResponseBody | null>("", "POST");
 
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
     setAppQueryParams((prev) => {
@@ -96,38 +104,32 @@ export default function ApplicationList() {
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     if (value === "") {
+      setFilteredData([]);
+      setIsSearchedData(false);
       setAppQueryParams((prevParams) => ({
         ...prevParams,
-        searchValue: "",
       }));
     }
     setSearchValue(value);
   };
 
-  const handleSearchSubmit = () => {
-    if (searchValue == null) return;
-    search("/api/applications/search", {
+  const handleSearchSubmit = async () => {
+    if (searchValue == null || searchValue === "") return;
+    const searchResult = await search("/api/applications/search", {
       content: searchValue,
     });
-    setAppQueryParams((prevParams) => ({
-      ...prevParams,
-      searchValue: searchValue,
-    }));
-  };
 
-  useEffect(() => {
-    const matchedItems = data?.data?.filter(
-      (dataItem: IApplication) =>
-        Array.isArray(searchedData?.data) && searchedData?.data?.some((searchedItem) => searchedItem.id === dataItem.id)
-    );
-    setFilteredData(matchedItems);
-  }, [searchedData]);
+    const searchedDataArray = searchResult?.data?.map((item: ISearchedDataItem) => item?.SaleOrder) || [];
+    setFilteredData(searchedDataArray);
+    setIsSearchedData(searchedDataArray.length > 0);
+  };
 
   const handleReset = () => {
     setSearchValue("");
+    setFilteredData([]);
+    setIsSearchedData(false);
     setAppQueryParams((prevParams) => ({
       ...prevParams,
-      searchValue: "",
     }));
   };
 
@@ -147,6 +149,11 @@ export default function ApplicationList() {
         updateAppQueryParams("page", pageQuantity);
       }
     }
+  };
+
+  const calculateTotalPages = () => {
+    const sourceData = isSearchedData ? searchedData?.data : data;
+    return Math.ceil((sourceData?.total || sourceData?.length || 1) / appQueryParams.pageSize);
   };
 
   return (
@@ -195,19 +202,25 @@ export default function ApplicationList() {
             field: "notaryUniqNumber",
             headerName: "Unique number",
             width: 200,
-            sortable: true,
+            sortable: isSearchedData ? false : true,
           },
           {
             field: "requester.fullName",
             headerName: "Member-1",
             width: 200,
-            sortable: true,
+            sortable: isSearchedData ? false : true,
+            valueGetter: (params: GridValueGetterParams) => {
+              return isSearchedData ? params.row?.requester?.[0]?.fullName : params.row?.["requester.fullName"];
+            },
           },
           {
             field: "members.fullName",
             headerName: "Member-2",
             width: 200,
-            sortable: true,
+            sortable: isSearchedData ? false : true,
+            valueGetter: (params: GridValueGetterParams) => {
+              return isSearchedData ? params.row?.members?.[0]?.fullName : params.row?.["members.fullName"];
+            },
           },
           {
             field: "typeNotarialAction",
@@ -215,16 +228,20 @@ export default function ApplicationList() {
             width: 200,
             editable: false,
             sortable: false,
-            filter: {
-              data: actionTypeData?.data ?? [],
-              labelField: "title_" + locale,
-              valueField: "value",
-              type: "dictionary",
-              field: "typeNotarialAction",
-            },
+            filter: isSearchedData
+              ? undefined
+              : {
+                  data: actionTypeData?.data ?? [],
+                  labelField: "title_" + locale,
+                  valueField: "value",
+                  type: "dictionary",
+                  field: "typeNotarialAction",
+                },
             valueGetter: (params: GridValueGetterParams) => {
               if (actionTypeData?.data != null) {
-                const matchedItem = actionTypeData?.data.find((item: IActionType) => item.value == params.value);
+                const matchedItem = actionTypeData?.data.find(
+                  (item: IActionType) => item.value == (isSearchedData ? params.row.typeNotarialAction : params.value)
+                );
                 const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
                 return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
               }
@@ -237,12 +254,19 @@ export default function ApplicationList() {
             width: 250,
             editable: false,
             sortable: false,
-            filter: {
-              data: documentTypeData?.data ?? [],
-              labelField: locale !== "en" ? "$t:name" : "name",
-              valueField: "id",
-              type: "dictionary",
-              field: "product.id",
+            filter: isSearchedData
+              ? undefined
+              : {
+                  data: documentTypeData?.data ?? [],
+                  labelField: locale !== "en" ? "$t:name" : "name",
+                  valueField: "id",
+                  type: "dictionary",
+                  field: "product.id",
+                },
+            valueGetter: (params: GridValueGetterParams) => {
+              const nameKey = locale !== "en" ? "$t:product.name" : "product.name";
+              const fullNameKey = locale !== "en" ? "$t:fullName" : "fullName";
+              return isSearchedData ? params.row?.product?.[fullNameKey] : params.row?.[nameKey];
             },
           },
           {
@@ -252,13 +276,15 @@ export default function ApplicationList() {
             width: 200,
             editable: false,
             sortable: false,
-            filter: {
-              data: statusData?.data ?? [],
-              labelField: "title_" + locale,
-              valueField: "value",
-              type: "dictionary",
-              field: "statusSelect",
-            },
+            filter: isSearchedData
+              ? undefined
+              : {
+                  data: statusData?.data ?? [],
+                  labelField: "title_" + locale,
+                  valueField: "value",
+                  type: "dictionary",
+                  field: "statusSelect",
+                },
             valueGetter: (params: GridValueGetterParams) => {
               if (statusData != null) {
                 const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(params.value));
@@ -272,21 +298,26 @@ export default function ApplicationList() {
             field: "creationDate",
             headerName: "Date",
             width: 170,
-            sortable: true,
+            sortable: isSearchedData ? false : true,
           },
           {
             field: "createdBy.partner.fullName",
             headerName: "Executor",
             width: 200,
             sortable: false,
-            filter: {
-              data: executorData?.data ?? [],
-              labelField: locale === "ru" || locale === "kg" ? "title_ru" : "title",
-              valueField: "value",
-              type: "dictionary",
-              field: "createdBy.partner.fullName",
-            },
+            filter: isSearchedData
+              ? undefined
+              : {
+                  data: executorData?.data ?? [],
+                  labelField: locale === "ru" || locale === "kg" ? "title_ru" : "title",
+                  valueField: "value",
+                  type: "dictionary",
+                  field: "createdBy.partner.fullName",
+                },
             cellClassName: "executorColumn",
+            valueGetter: (params: GridValueGetterParams) => {
+              return isSearchedData ? params.row?.createdBy?.fullName : params.row?.["createdBy.partner.fullName"];
+            },
           },
           {
             field: "actions",
@@ -302,7 +333,7 @@ export default function ApplicationList() {
         onFilterSubmit={handleFilterSubmit}
         onSortModelChange={handleSortByDate}
         cellMaxHeight="200px"
-        loading={loading}
+        loading={loading || searchLoading}
         sx={{
           height: "100%",
           ".executorColumn": {
@@ -315,7 +346,7 @@ export default function ApplicationList() {
       <Pagination
         sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
         currentPage={appQueryParams.page}
-        totalPages={data?.total ? Math.ceil(data.total / appQueryParams.pageSize) : 1}
+        totalPages={calculateTotalPages()}
         onPageChange={handlePageChange}
       />
     </Box>
