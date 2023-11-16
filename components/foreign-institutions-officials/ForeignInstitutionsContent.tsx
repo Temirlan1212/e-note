@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Box, Typography } from "@mui/material";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import Button from "@/components/ui/Button";
 import Pagination from "@/components/ui/Pagination";
@@ -16,19 +16,12 @@ interface IRequestBody {
   pageSize?: number;
   page?: number;
   sortBy?: string[];
-  filterValues: Record<string, (string | number)[]>;
-}
-
-interface IRowData {
-  status: number;
-  offset: number;
-  total: number;
-  data?: Array<Record<string, any>>;
+  filterValues: Record<string, any>;
 }
 
 export default function ForeignInstitutionsOfficialsContent() {
   const t = useTranslations();
-  const [rowData, setRowData] = useState<IRowData | null>(null);
+  const [rowData, setRowData] = useState<FetchResponseBody | null>(null);
   const [fileName, setFileName] = useState<string | null>("");
 
   const [requestBody, setRequestBody] = useState<IRequestBody>({
@@ -78,20 +71,23 @@ export default function ForeignInstitutionsOfficialsContent() {
   };
 
   const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
-    const field = value.rowParams.colDef.field;
-    const prevValue = requestBody.filterValues;
+    const type = value.rowParams.colDef.filter?.type;
+    if (type === "simple") {
+      const field = value.rowParams.colDef.field;
+      const prevValue = requestBody.filterValues;
 
-    if (field && Array.isArray(value.value)) {
-      if (value.value.length > 0) {
-        updateRequestBodyParams("filterValues", {
-          ...prevValue,
-          [field]: value.value,
-        });
-        updateRequestBodyParams("requestType", "searchFilter");
-      } else {
-        const updatedFilterValues = { ...prevValue };
-        delete updatedFilterValues[field];
-        updateRequestBodyParams("filterValues", updatedFilterValues);
+      if (field) {
+        if (value.value.length > 0 && value.value) {
+          updateRequestBodyParams("filterValues", {
+            ...prevValue,
+            [field]: value.value,
+          });
+          updateRequestBodyParams("requestType", "searchFilter");
+        } else {
+          const updatedFilterValues = { ...prevValue };
+          delete updatedFilterValues[field];
+          updateRequestBodyParams("filterValues", updatedFilterValues);
+        }
       }
     }
   };

@@ -68,12 +68,14 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
     const searchValue = form.getValues().keyWord;
     if (searchValue == null) return;
     updateNotariesQueryParams("searchValue", searchValue);
+    updateNotariesQueryParams("page", 1);
   };
 
   const handleSearchReset = () => {
     resetField("keyWord");
     if (notariesQueryParams.searchValue) {
       updateNotariesQueryParams("searchValue", "");
+      updateNotariesQueryParams("page", 1);
     }
   };
 
@@ -97,6 +99,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
     }
     if (Object.values(filteredData).every((item) => item == null)) return;
     updateNotariesQueryParams("filterData", filteredData);
+    updateNotariesQueryParams("page", 1);
   };
 
   const handleToggleCollapse = () => setisCollapsed(!isCollapsed);
