@@ -97,5 +97,6 @@
   "The maximum amount of video recording time is 30 seconds": "The maximum amount of video recording time is 30 seconds",
   "Last recorded video": "Last recorded video",
   "Sign as declarant": "Sign as declarant",
-  "Your browser does not support the video tag.": "Your browser does not support the video tag."
+  "Your browser does not support the video tag": "Your browser does not support the video tag",
+  "Video recorded": "Video recorded"
 }

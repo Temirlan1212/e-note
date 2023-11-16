@@ -27,6 +27,10 @@ export default function DeclVideoRecordModal(props: Partial<IConfirmationModal &
   };
 
   useEffectOnce(async () => {
+    handleDeclList();
+  });
+
+  const handleDeclList = async () => {
     if (applicationId == null) return;
     const res = await update(`/api/applications/${applicationId}`);
     const application = res?.data?.[0];
@@ -37,9 +41,13 @@ export default function DeclVideoRecordModal(props: Partial<IConfirmationModal &
     if (application?.files?.length > 0) setFiles(application.files);
 
     setUsers(users);
-  });
+  };
 
   const isUserSelected = userId != null;
+
+  const getLastFileId = (id: number | null) => {
+    return files.length > 0 ? files.findLast((item) => item.fileName.includes(String(id)))?.id ?? null : null;
+  };
 
   if (applicationId == null) return;
 
@@ -57,7 +65,11 @@ export default function DeclVideoRecordModal(props: Partial<IConfirmationModal &
       slots={{
         body: () => (
           <Box sx={{ maxHeight: { xs: "300px", md: "unset" }, overflowY: { xs: "scroll", md: "unset" } }}>
-            {loading && <CircularProgress sx={{ margin: "10px auto", display: "flex" }} />}
+            {loading && (
+              <Box height={250}>
+                <CircularProgress sx={{ margin: "10px auto", display: "flex" }} />
+              </Box>
+            )}
 
             {!isUserSelected && !loading ? (
               <List sx={{ width: "100%", bgcolor: "background.paper", maxHeight: 300, overflow: "auto" }}>
@@ -85,6 +97,16 @@ export default function DeclVideoRecordModal(props: Partial<IConfirmationModal &
                                     {item.personalNumber}
                                   </Typography>
                                 )}
+                                {getLastFileId(item?.id ? item.id : null) != null && (
+                                  <Typography
+                                    sx={{ display: "block" }}
+                                    component="span"
+                                    variant="body2"
+                                    color="text.damger"
+                                  >
+                                    {t("Video recorded")}
+                                  </Typography>
+                                )}
                               </>
                             }
                           />
@@ -102,15 +124,10 @@ export default function DeclVideoRecordModal(props: Partial<IConfirmationModal &
                   <KeyboardBackspaceIcon />
                 </IconButton>
                 <VideoUpload
+                  onUpload={handleDeclList}
                   userId={userId}
-                  fileId={
-                    files.length > 0
-                      ? files.findLast((item) => item.fileName.includes(String(userId)))?.id ?? null
-                      : null
-                  }
+                  fileId={getLastFileId(userId)}
                   applicationId={applicationId}
-                  setShowVideo={(value) => setShowVideo(value)}
-                  showVideo={showVideo}
                 />
               </Box>
             ) : null}
@@ -128,14 +145,12 @@ const VideoUpload = ({
   userId,
   fileId,
   applicationId,
-  setShowVideo,
-  showVideo,
+  onUpload,
 }: {
   applicationId: string;
   userId: number;
   fileId: number | null;
-  setShowVideo: Dispatch<SetStateAction<boolean>>;
-  showVideo: boolean;
+  onUpload: () => Promise<void>;
 }) => {
   const t = useTranslations();
   const [blobURL, setBlobURL] = useState<string>("");
@@ -145,7 +160,7 @@ const VideoUpload = ({
   });
   const { update, loading } = useFetch("", "POST");
 
-  const handleDownload = async (
+  const handleUpload = async (
     recordedChunks: BlobPart[],
     setAlertOpen: Dispatch<SetStateAction<boolean>>,
     setChunks: Dispatch<SetStateAction<BlobPart[]>>
@@ -156,71 +171,81 @@ const VideoUpload = ({
       const formData = new FormData();
       formData.append("file", blob);
       await update(`/api/applications/video-upload?saleOrderId=${applicationId}&partnerId=${userId}`, formData).then(
-        (res) => {
+        async (res) => {
           if (res?.status === -1) {
             setAlertOpen(true);
           } else {
+            await onUpload();
             setChunks([]);
+            if (fileId != null) handleDownload(fileId);
           }
         }
       );
     }
   };
 
-  useEffectOnce(async () => {
-    if (fileId != null) {
-      const res = await downloadUpdate(`/api/files/download/${fileId ?? 0}`);
+  const handleDownload = async (id: number) => {
+    if (id != null) {
+      const res = await downloadUpdate(`/api/files/download/${id ?? 0}`);
       const blobData = await res.blob();
       setBlobURL(URL.createObjectURL(blobData));
     }
+  };
+
+  useEffectOnce(async () => {
+    if (fileId != null) handleDownload(fileId);
   }, []);
 
   return (
     <>
-      {blobURL && !showVideo && <Button onClick={() => setShowVideo(true)}>{t("Last recorded video")}</Button>}
-      {showVideo ? (
-        <video src={blobURL} width="100%" height="auto" controls>
-          {t("Your browser does not support the video tag.")}
-        </video>
-      ) : (
-        <Webcam
-          videoBitsPerSecond={0}
-          muted={true}
-          variant={{ type: "record", blobUrl: null }}
-          audio={true}
-          maxCaptureTime={30000}
-          slots={{
-            footer: ({ restart, chunks, setAlert, setChunks }) => (
+      <Webcam
+        videoBitsPerSecond={0}
+        muted={true}
+        variant={{ type: "record", blobUrl: !!blobURL ? blobURL : null }}
+        audio={true}
+        maxCaptureTime={30000}
+        slots={{
+          footer: ({ restart, chunks, setAlert, setChunks }) => {
+            if (setAlert == null || setChunks == null || restart == null) return <></>;
+            const isVideoRecorded = !!(chunks != null && chunks?.length > 0);
+
+            return (
               <>
-                {setAlert != null && setChunks != null && chunks != null && chunks?.length > 0 ? (
-                  <Box display="flex" justifyContent="space-between" gap="15px">
+                <Box display="flex" justifyContent="space-between" gap="15px">
+                  {isVideoRecorded && (
                     <Button
                       sx={{
                         fontSize: { xs: "14px", sm: "16px" },
                       }}
                       buttonType="primary"
                       loading={loading}
-                      onClick={() => handleDownload(chunks, setAlert, setChunks)}
+                      onClick={() => handleUpload(chunks, setAlert, setChunks)}
                     >
                       {t("Upload")}
                     </Button>
+                  )}
 
-                    <Button
-                      sx={{
-                        fontSize: { xs: "14px", sm: "16px" },
-                      }}
-                      buttonType="danger"
-                      onClick={restart}
-                    >
-                      {t("Re-record")}
-                    </Button>
-                  </Box>
-                ) : null}
+                  {isVideoRecorded ||
+                    (!!blobURL && (
+                      <Button
+                        sx={{
+                          fontSize: { xs: "14px", sm: "16px" },
+                        }}
+                        buttonType="danger"
+                        onClick={() => {
+                          restart();
+                          setBlobURL("");
+                        }}
+                      >
+                        {t("Re-record")}
+                      </Button>
+                    ))}
+                </Box>
               </>
-            ),
-          }}
-        />
-      )}
+            );
+          },
+        }}
+      />
     </>
   );
 };
