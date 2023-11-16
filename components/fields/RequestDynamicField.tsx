@@ -10,6 +10,7 @@ export interface IRequestDynamicFieldProps {
   responseFields?: IDynamicFormElementProps[];
   path?: string;
   disabled?: boolean;
+  isPermanentDisabled?: boolean;
   required?: boolean;
   hidden?: boolean;
   conditions?: Partial<TConditions>;
@@ -24,6 +25,7 @@ export default function RequestDynamicField({
   fields,
   responseFields,
   loading,
+  isPermanentDisabled,
   onPinCheck,
   onPinReset,
   ...rest
@@ -38,7 +40,13 @@ export default function RequestDynamicField({
           .map((item: Record<string, any>, index: number) => (
             <Grid item md={item?.elementWidth ?? 12} key={index} width="100%">
               <DynamicFormElement
-                disabled={item?.readonly != null ? !!item?.readonly : !!rest?.disabled}
+                disabled={
+                  isPermanentDisabled
+                    ? isPermanentDisabled
+                    : item?.readonly != null
+                    ? !!item?.readonly
+                    : !!rest?.disabled
+                }
                 hidden={item?.hidden != null ? !!item?.hidden : !!rest?.hidden}
                 required={item?.required != null ? !!item?.required : !!rest?.required}
                 conditions={Object.values(item?.conditions ?? {}).length > 0 ? item?.conditions : rest?.conditions}
@@ -80,7 +88,13 @@ export default function RequestDynamicField({
               paddingTop="0px !important"
             >
               <DynamicFormElement
-                disabled={item?.readonly != null ? !!item?.readonly : !!rest?.disabled}
+                disabled={
+                  isPermanentDisabled
+                    ? isPermanentDisabled
+                    : item?.readonly != null
+                    ? !!item?.readonly
+                    : !!rest?.disabled
+                }
                 hidden={item?.hidden != null ? !!item?.hidden : !!rest?.hidden}
                 required={item?.required != null ? !!item?.required : !!rest?.required}
                 conditions={Object.values(item?.conditions ?? {}).length > 0 ? item?.conditions : rest?.conditions}

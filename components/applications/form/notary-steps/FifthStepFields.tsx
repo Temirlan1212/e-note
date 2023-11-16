@@ -186,6 +186,7 @@ export default function FifthStepFields({
                       {String(item?.fieldType).toLocaleLowerCase() === "request" ? (
                         <RequestDynamicField
                           disabled={isEditableCopy || item?.readonly}
+                          isPermanentDisabled={isEditableCopy}
                           required={item?.required}
                           hidden={item?.hidden}
                           conditions={item?.conditions}
