@@ -111,6 +111,8 @@ const Webcam: FC<IWebcamProps> = ({
       });
   }, []);
 
+  const isBlobUrl = variant?.type === "record" && variant?.blobUrl != null;
+
   return (
     <>
       <Box display="flex" flexDirection="column" gap="15px">
@@ -121,34 +123,37 @@ const Webcam: FC<IWebcamProps> = ({
         </Collapse>
         {isCameraAvailable ? (
           <>
-            {variant?.type === "record" && recordedChunks?.length > 0 ? (
-              <video width="100%" height="auto" controls>
-                <source
-                  src={
-                    variant?.blobUrl != null
-                      ? variant.blobUrl
-                      : URL.createObjectURL(new Blob(recordedChunks, { type: "video/webm" }))
-                  }
-                  type="video/webm"
-                />
-                {t("Your browser does not support the video tag.")}
+            {recordedChunks?.length > 0 || isBlobUrl ? (
+              <video
+                src={
+                  isBlobUrl
+                    ? variant?.blobUrl ?? ""
+                    : URL.createObjectURL(new Blob(recordedChunks, { type: "video/webm" }))
+                }
+                width="100%"
+                height="auto"
+                controls
+              >
+                {t("Your browser does not support the video tag")}
               </video>
             ) : null}
 
-            <ReactWebcam
-              style={{ display: recordedChunks?.length > 0 && variant?.type === "record" ? "none" : "block" }}
-              width="100%"
-              height="200px"
-              videoConstraints={{ facingMode: "user" }}
-              ref={webcamRef}
-              {...rest}
-            />
+            {!isBlobUrl && (
+              <ReactWebcam
+                style={{ display: recordedChunks?.length > 0 && variant?.type === "record" ? "none" : "block" }}
+                width="100%"
+                height="200px"
+                videoConstraints={{ facingMode: "user" }}
+                ref={webcamRef}
+                {...rest}
+              />
+            )}
 
             {slots?.body ? (
               <Box>{slots.body({ capturing, start: handleStartCaptureClick, stop: handleStopCaptureClick })}</Box>
             ) : (
               <>
-                {recordedChunks.length < 1 && variant?.type === "record" && (
+                {!isBlobUrl && recordedChunks.length < 1 && variant?.type === "record" && (
                   <Button
                     endIcon={capturing ? <Countdown seconds={maxCaptureTime / 1000} /> : null}
                     sx={{
