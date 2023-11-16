@@ -75,6 +75,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
     resetField("keyWord");
     if (notariesQueryParams.searchValue) {
       updateNotariesQueryParams("searchValue", "");
+      updateNotariesQueryParams("page", 1);
     }
   };
 
