@@ -1,60 +1,94 @@
-import React, { useState } from "react";
-import { Typography, Box, Popover, IconButton, Badge } from "@mui/material";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/router";
+import { Box, Popover, IconButton, Badge, List, ListItem, ListItemText, CircularProgress } from "@mui/material";
+import { useProfileStore } from "../stores/profile";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import Button from "@/components/ui/Button";
-import { useProfileStore } from "../stores/profile";
-import { IUserData } from "@/models/user";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import CircleIcon from "@mui/icons-material/Circle";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { INotification } from "@/models/notification";
-import Link from "@/components/ui/Link";
-
-interface INotificationData extends FetchResponseBody {
-  data: INotification[];
-}
+import { useIntersect } from "@/hooks/useIntersect";
+import { IUserData } from "@/models/user";
 
 export default function PopupNotifications() {
-  const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
-  const [showLoadMore, setShowLoadMore] = useState(false);
-  const [limit, setLimit] = useState(5);
-  const [userData, setUserData] = useState<IUserData | null>();
-
   const t = useTranslations();
+  const router = useRouter();
+  const lastItemRef = useRef<HTMLDivElement | null>(null);
+  const { inView } = useIntersect(lastItemRef);
+  const [anchorEl, setAnchorEl] = useState<(EventTarget & HTMLButtonElement) | null>(null);
+  const [limit, setLimit] = useState(5);
+  const [userData, setUserData] = useState<IUserData | null>(null);
+
   const profile = useProfileStore((state) => state);
 
-  const { data: message, update: readMessage } = useFetch("", "POST");
-  const { data: deletedMessage, update: deleteMessage } = useFetch("", "POST");
+  const { data: readData, update: readMessage } = useFetch("", "POST");
+  const { data: deletedData, update: deleteMessage } = useFetch("", "POST");
 
-  const {
-    data: messages,
-    update,
-    loading,
-  } = useFetch<INotificationData>(userData?.id ? `/api/notifications?userId=${userData?.id}` : "", "POST");
+  const { data: notifications, update, loading } = useFetch<FetchResponseBody<INotification[]>>("", "POST");
 
-  const handleNotificationPopupToggle = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleFetchNotifications = async () => {
+    await update("/api/notifications", {
+      pageSize: limit,
+    });
+  };
+
+  const handleNotificationPopupToggle = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setAnchorEl(anchorEl == null ? event.currentTarget : null);
+    if (anchorEl == null) {
+      await handleFetchNotifications();
+    }
   };
 
-  const handleRead = (notification: INotification) => {
-    readMessage("/api/notifications/isRead", {
+  const handleRead = async (notification: INotification) => {
+    if (notification?.linkToChat) {
+      const href = `${notification.linkToChat}?AuthorizationBasic=${notification.chatToken.replace(
+        /Basic /,
+        ""
+      )}` as string;
+      window.open(href, "_blank");
+    }
+    if (notification["message.subject"]) {
+      await readMessage("/api/notifications/isRead", {
+        id: notification.id,
+        version: notification.version,
+      });
+      router.push(`/applications/status/${notification["message.relatedId"]}`);
+    }
+  };
+
+  const handleDelete = async (notification: INotification) => {
+    await deleteMessage("/api/notifications/isArchived", {
       id: notification.id,
       version: notification.version,
     });
   };
 
-  const handleDelete = (notification: INotification) => {
-    deleteMessage("/api/notifications/isArchived", {
-      id: notification.id,
-      version: notification.version,
-    });
+  useEffectOnce(() => {
+    handleFetchNotifications();
+  }, [limit, readData, deletedData]);
+
+  useEffectOnce(() => {
+    setUserData(profile.userData);
+  }, [profile.userData]);
+
+  useEffect(() => {
+    if (inView && !loading && limit <= notifications?.total!) {
+      setLimit(limit + 5);
+    }
+  }, [inView]);
+
+  const isUnreadNotification = () => {
+    if (notifications?.data?.length!) {
+      return notifications?.data?.some((notification) => !notification.isRead);
+    }
   };
 
-  const getTimeAgo = (isoDate: string): string => {
-    const timeDiff = Math.floor((Date.now() - new Date(isoDate).getTime()) / 1000);
+  const getTimeAgo = (notification: INotification): string => {
+    const timeDiff = Math.floor((Date.now() - new Date(notification.createdOn).getTime()) / 1000);
+    if (notification.linkToChat) return "";
 
     if (timeDiff < 60) {
       return `${timeDiff} ${t("sec")}`;
@@ -70,60 +104,17 @@ export default function PopupNotifications() {
     }
   };
 
-  const handleLoadMore = () => {
-    setLimit(limit + 4);
-  };
-
-  const withBadge = () => {
-    if (Array.isArray(messages?.data)) {
-      return messages?.data.find((notification) => !notification.isRead);
-    }
-    return false;
-  };
-
-  useEffectOnce(() => {
-    setUserData(profile.userData);
-  }, [profile.userData]);
-
-  useEffectOnce(() => {
-    if (userData?.id == null) return;
-
-    update(userData?.id ? `/api/notifications?userId=${userData?.id}` : "", {
-      pageSize: limit,
-    });
-  }, [limit, message, deletedMessage]);
-
-  useEffectOnce(() => {
-    if (messages?.total! > limit) {
-      setShowLoadMore(true);
-    } else {
-      setShowLoadMore(false);
-    }
-    if (messages?.total === limit) {
-      setShowLoadMore(false);
-    }
-  }, [messages?.data, limit]);
-
   return (
     <>
-      {userData?.id && (
-        <IconButton onClick={handleNotificationPopupToggle} sx={{ padding: 1, color: "inherit" }}>
-          {!!anchorEl ? (
-            <NotificationsIcon color="success" />
-          ) : withBadge() ? (
-            <Badge color="success" variant="dot">
-              <NotificationsOutlinedIcon color="inherit" />
-            </Badge>
-          ) : (
-            <NotificationsOutlinedIcon color="inherit" />
-          )}
+      {userData && (
+        <IconButton onClick={handleNotificationPopupToggle} sx={{ color: "inherit" }}>
+          <Badge color="success" variant="dot" invisible={!isUnreadNotification()}>
+            {!!anchorEl ? <NotificationsIcon color="success" /> : <NotificationsOutlinedIcon color="inherit" />}
+          </Badge>
         </IconButton>
       )}
 
       <Popover
-        sx={{
-          maxHeight: "400px",
-        }}
         open={!!anchorEl}
         anchorEl={anchorEl}
         onClose={handleNotificationPopupToggle}
@@ -136,135 +127,76 @@ export default function PopupNotifications() {
           horizontal: "right",
         }}
       >
-        <Box
+        <List
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
             width: { xs: "100%", sm: "100%", md: "320px" },
+            boxShadow: "6px -14px 20px 0px rgba(0, 0, 0, 0.5)",
             maxHeight: "280px",
             overflowY: "auto",
           }}
         >
-          {messages?.data?.length ? (
-            messages?.data.map((notification) => (
-              <Box
+          {notifications?.data?.length! ? (
+            notifications?.data?.map((notification, idx) => (
+              <ListItem
+                key={notification.id}
                 sx={{
-                  display: "flex",
-                  width: "100%",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  padding: "0",
                   cursor: "pointer",
                   borderBottom: "1px solid #F6F6F6",
-                  padding: "15px",
                   "&:hover": {
                     backgroundColor: "#F6F6F6",
                   },
                 }}
-                key={notification.id}
               >
-                <Box
-                  sx={{
-                    wordBreak: "break-word",
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "5px",
-                    alignItems: "flex-start",
-                  }}
+                <ListItemText
                   onClick={() => handleRead(notification)}
-                >
-                  {!notification.isRead && <CircleIcon color="success" sx={{ width: "12px", height: "12px" }} />}
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "5px",
-                    }}
-                  >
-                    <Typography
-                      fontSize={14}
-                      color="textPrimary"
-                      sx={{
-                        maxHeight: "39px",
+                  sx={{
+                    padding: "10px 15px",
+                    wordBreak: "break-word",
+                  }}
+                  primaryTypographyProps={{ fontSize: { xs: "14px", md: "16px" } }}
+                  secondaryTypographyProps={{ fontSize: { xs: "12px", md: "14px" } }}
+                  primary={
+                    <Badge
+                      color="success"
+                      variant="dot"
+                      invisible={notification.isRead}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "left",
                       }}
                     >
-                      {t(`${notification?.["message.subject"]}`)}
-                    </Typography>
-                    <Link
-                      href={`/applications/status/` + notification?.["message.relatedId"]}
-                      fontSize={12}
-                      color="textPrimary"
-                    >
-                      {t("More")}
-                    </Link>
-                    <Typography fontSize={12} color="textSecondary">
-                      {getTimeAgo(notification.createdOn)}
-                    </Typography>
-                  </Box>
-                </Box>
-                <IconButton onClick={() => handleDelete(notification)}>
-                  <DeleteIcon />
-                </IconButton>
-              </Box>
+                      {notification?.displayName || t(notification["message.subject"])}
+                    </Badge>
+                  }
+                  secondary={getTimeAgo(notification)}
+                />
+                {notification["message.subject"] && (
+                  <IconButton onClick={() => handleDelete(notification)}>
+                    <DeleteIcon />
+                  </IconButton>
+                )}
+              </ListItem>
             ))
           ) : (
-            <Box
-              sx={{
-                padding: "15px",
-                display: "flex",
-                justifyContent: "center",
-                borderBottom: "1px solid #F6F6F6",
-                width: "100%",
-              }}
-            >
-              <Typography
-                fontSize={14}
-                alignSelf="center"
-                color="textPrimary"
-                sx={{
-                  fontWeight: 600,
-                  maxHeight: "39px",
-                }}
-              >
-                {t("No notifications")}
-              </Typography>
+            <ListItem>
+              <ListItemText sx={{ fontWeight: 600 }} color="textPrimary" primary={t("No notifications")} />
+            </ListItem>
+          )}
+          <Box ref={lastItemRef} />
+          {loading && (
+            <Box sx={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
+              <CircularProgress />
             </Box>
           )}
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            padding: "10px",
-          }}
-        >
-          {showLoadMore && (
-            <Button
-              variant="text"
-              loading={loading}
-              sx={{
-                fontSize: "14px",
-                fontWeight: 600,
-                "&:hover": { backgroundColor: "unset", color: "success" },
-                padding: "unset",
-              }}
-              onClick={handleLoadMore}
-            >
-              {t("Show more")}
-            </Button>
-          )}
+        </List>
+        <Box sx={{ padding: "10px" }}>
           <Button
             onClick={handleNotificationPopupToggle}
             variant="text"
             buttonType="secondary"
             sx={{
-              fontSize: "14px",
-              fontWeight: 600,
+              fontSize: { xs: "12px", md: "14px" },
               "&:hover": { backgroundColor: "unset", color: "secondary" },
               padding: "unset",
             }}

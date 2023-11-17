@@ -8,4 +8,7 @@ export interface INotification {
   id: number;
   subject: string;
   version: number;
+  linkToChat: string;
+  displayName: string;
+  chatToken: string;
 }

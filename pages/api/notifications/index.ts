@@ -1,62 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any | null>) {
-  const { userId } = req.query;
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }
 
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
-  const criteria: Record<string, string | boolean | number>[] = [];
 
-  if (typeof userId === "string") {
-    criteria.push(
-      {
-        fieldName: "user.id",
-        operator: "=",
-        value: !Number.isNaN(parseInt(userId)) ? parseInt(userId) : 0,
-      },
-      {
-        fieldName: "message.subject",
-        operator: "!=",
-        value: "Quotation/sale order created",
-      },
-      {
-        fieldName: "isArchived",
-        operator: "=",
-        value: false,
-      },
-      {
-        fieldName: "message.relatedModel",
-        operator: "=",
-        value: "com.axelor.apps.sale.db.SaleOrder",
-      }
-    );
-  }
-
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.mail.db.MailFlags/search", {
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/chats/notification", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      offset: 0,
-      limit: pageSize,
-      fields: [
-        "version",
-        "isArchived",
-        "message.relatedId",
-        "message.subject",
-        "isRead",
-        "isStarred",
-        "userId",
-        "createdOn",
-      ],
-      sortBy: ["-createdOn"],
       data: {
-        operator: "and",
-        criteria: criteria,
+        limit: pageSize,
+        offset: 0,
       },
       ...req.body,
     }),
