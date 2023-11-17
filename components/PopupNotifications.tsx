@@ -73,7 +73,7 @@ export default function PopupNotifications() {
   }, [profile.userData]);
 
   useEffect(() => {
-    if (inView && limit <= notifications?.total!) {
+    if (inView && !loading && limit <= notifications?.total!) {
       setLimit(limit + 5);
     }
   }, [inView]);
