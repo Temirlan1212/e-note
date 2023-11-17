@@ -229,6 +229,7 @@ const getField = (
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
         helperText={errorMessage}
         data={optionsData && optionsData?.length > 0 ? optionsData : options ?? []}
+        disabled={disabled}
         {...field}
         value={getValue("Radio", field.value)}
       />
