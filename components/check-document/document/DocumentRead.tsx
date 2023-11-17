@@ -40,7 +40,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
   };
 
   const titles = [
-    { title: "Name", value: locale !== "en" ? data?.product?.["$t:name"] : data?.product?.name },
+    { title: "Name", value: locale !== "en" ? data?.product?.["$t:name"] || data?.product?.name : data?.product?.name },
     { title: "Type of notarial action", value: translatedStatusTitle(actionTypeData?.data, data?.typeNotarialAction) },
     { title: "Status", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
     { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },

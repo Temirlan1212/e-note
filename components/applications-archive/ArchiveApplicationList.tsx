@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
 import { Box, IconButton, Typography } from "@mui/material";
-import { GridSortModel } from "@mui/x-data-grid";
+import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import Pagination from "@/components/ui/Pagination";
 import { ArchiveApplicationListActions } from "@/components/applications-archive/ArchiveApplicationListActions";
@@ -12,6 +12,7 @@ import SearchBar from "@/components/ui/SearchBar";
 import ClearIcon from "@mui/icons-material/Clear";
 import { IApplication } from "@/models/application";
 import { useProfileStore } from "@/stores/profile";
+import { format } from "date-fns";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -182,6 +183,9 @@ export default function ArchiveApplicationList() {
             headerName: "Date",
             width: 170,
             sortable: true,
+            valueGetter: (params: GridValueGetterParams) => {
+              return format(new Date(params.row?.createdDate), "yyyy-MM-dd");
+            },
           },
           {
             field: "company",
