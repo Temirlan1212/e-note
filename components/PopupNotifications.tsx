@@ -151,9 +151,11 @@ export default function PopupNotifications() {
                 <ListItemText
                   onClick={() => handleRead(notification)}
                   sx={{
-                    padding: "10px 0 10px 15px",
+                    padding: "10px 15px",
                     wordBreak: "break-word",
                   }}
+                  primaryTypographyProps={{ fontSize: { xs: "14px", md: "16px" } }}
+                  secondaryTypographyProps={{ fontSize: { xs: "12px", md: "14px" } }}
                   primary={
                     <Badge
                       color="success"
@@ -194,7 +196,7 @@ export default function PopupNotifications() {
             variant="text"
             buttonType="secondary"
             sx={{
-              fontSize: "14px",
+              fontSize: { xs: "12px", md: "14px" },
               "&:hover": { backgroundColor: "unset", color: "secondary" },
               padding: "unset",
             }}
