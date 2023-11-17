@@ -37,7 +37,9 @@ export default function PopupNotifications() {
 
   const handleNotificationPopupToggle = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     setAnchorEl(anchorEl == null ? event.currentTarget : null);
-    setLimit(5);
+    if (anchorEl == null) {
+      await handleFetchNotifications();
+    }
   };
 
   const handleRead = async (notification: INotification) => {
@@ -66,7 +68,7 @@ export default function PopupNotifications() {
 
   useEffectOnce(() => {
     handleFetchNotifications();
-  }, [limit, !!anchorEl, readData, deletedData]);
+  }, [limit, readData, deletedData]);
 
   useEffectOnce(() => {
     setUserData(profile.userData);
