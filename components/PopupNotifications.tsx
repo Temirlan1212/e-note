@@ -125,7 +125,14 @@ export default function PopupNotifications() {
           horizontal: "right",
         }}
       >
-        <List sx={{ width: { xs: "100%", sm: "100%", md: "320px" }, maxHeight: "280px", overflowY: "auto" }}>
+        <List
+          sx={{
+            width: { xs: "100%", sm: "100%", md: "320px" },
+            boxShadow: "6px -14px 20px 0px rgba(0, 0, 0, 0.5)",
+            maxHeight: "280px",
+            overflowY: "auto",
+          }}
+        >
           {notifications?.data?.length! ? (
             notifications?.data?.map((notification, idx) => (
               <ListItem
@@ -140,7 +147,6 @@ export default function PopupNotifications() {
                 }}
               >
                 <ListItemText
-                  ref={notifications?.data?.length! - 1 === idx ? lastItemRef : undefined}
                   onClick={() => handleRead(notification)}
                   sx={{
                     padding: "10px 0 10px 15px",
@@ -173,6 +179,7 @@ export default function PopupNotifications() {
               <ListItemText sx={{ fontWeight: 600 }} color="textPrimary" primary={t("No notifications")} />
             </ListItem>
           )}
+          <Box ref={lastItemRef} />
           {loading && (
             <Box sx={{ display: "flex", justifyContent: "center", marginTop: "10px" }}>
               <CircularProgress />
