@@ -266,7 +266,9 @@ export default function ApplicationList() {
             valueGetter: (params: GridValueGetterParams) => {
               const nameKey = locale !== "en" ? "$t:product.name" : "product.name";
               const fullNameKey = locale !== "en" ? "$t:fullName" : "fullName";
-              return isSearchedData ? params.row?.product?.[fullNameKey] : params.row?.[nameKey];
+              return isSearchedData
+                ? params.row?.product?.[fullNameKey]
+                : params.row?.[nameKey] || params.row?.["product.name"];
             },
           },
           {
