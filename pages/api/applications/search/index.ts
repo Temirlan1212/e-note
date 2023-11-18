@@ -5,6 +5,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json(null);
   }
 
+  const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
+  const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
+  const searchValue = req.body["searchValue"];
+
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/files/full-text-search", {
     method: "POST",
     headers: {
@@ -13,7 +17,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     },
     body: JSON.stringify({
       data: {
-        content: req.body.content,
+        offset: page,
+        limit: pageSize,
+        content: searchValue,
       },
     }),
   });

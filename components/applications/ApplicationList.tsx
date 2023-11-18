@@ -25,6 +25,12 @@ interface IAppQueryParams {
   filterValues: Record<string, (string | number)[]>;
 }
 
+interface ISearchParams {
+  searchValue: string | null;
+  pageSize: number;
+  page: number;
+}
+
 interface ISearchedDataItem {
   SaleOrder: Partial<IApplication>;
   content: string;
@@ -55,6 +61,12 @@ export default function ApplicationList() {
     filterValues: {},
   });
 
+  const [searchParams, setSearchParams] = useState<ISearchParams>({
+    pageSize: 7,
+    page: 1,
+    searchValue: null,
+  });
+
   const { data, loading, update } = useFetch<FetchResponseBody | null>("/api/applications", "POST", {
     body: appQueryParams,
   });
@@ -63,10 +75,31 @@ export default function ApplicationList() {
     setFilteredData(data?.data);
   }, [data?.data]);
 
-  const { data: searchedData, update: search, loading: searchLoading } = useFetch<FetchResponseBody | null>("", "POST");
+  const {
+    data: searchedData,
+    update: search,
+    loading: searchLoading,
+  } = useFetch<FetchResponseBody | null>("/api/applications/search", "POST", {
+    body: searchParams,
+  });
+
+  useEffect(() => {
+    if (searchedData?.total) {
+      const searchedDataArray = searchedData?.data?.map((item: ISearchedDataItem) => item?.SaleOrder) || [];
+
+      if (searchedDataArray.length > 0) setFilteredData(searchedDataArray);
+      setIsSearchedData(searchedDataArray.length > 0);
+    }
+  }, [searchedData?.data]);
 
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
     setAppQueryParams((prev) => {
+      return { ...prev, [key]: newValue };
+    });
+  };
+
+  const updateSearchParams = (key: keyof ISearchParams, newValue: ValueOf<ISearchParams>) => {
+    setSearchParams((prev) => {
       return { ...prev, [key]: newValue };
     });
   };
@@ -77,7 +110,14 @@ export default function ApplicationList() {
   };
 
   const handlePageChange = (page: number) => {
-    if (appQueryParams.page !== page) updateAppQueryParams("page", page);
+    if (isSearchedData) {
+      if (searchParams.page !== page) {
+        return updateSearchParams("page", page);
+      }
+    }
+    if (appQueryParams.page !== page) {
+      updateAppQueryParams("page", page);
+    }
   };
 
   const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
@@ -115,13 +155,10 @@ export default function ApplicationList() {
 
   const handleSearchSubmit = async () => {
     if (searchValue == null || searchValue === "") return;
-    const searchResult = await search("/api/applications/search", {
-      content: searchValue,
-    });
-
-    const searchedDataArray = searchResult?.data?.map((item: ISearchedDataItem) => item?.SaleOrder) || [];
-    setFilteredData(searchedDataArray);
-    setIsSearchedData(searchedDataArray.length > 0);
+    setSearchParams((prevParams) => ({
+      ...prevParams,
+      searchValue: searchValue,
+    }));
   };
 
   const handleReset = () => {
@@ -144,16 +181,16 @@ export default function ApplicationList() {
       const pageQuantity = Math.ceil(res.total / appQueryParams.pageSize);
       const page = appQueryParams.page;
       if (pageQuantity >= page) {
-        updateAppQueryParams("page", page);
+        isSearchedData ? updateSearchParams("page", page) : updateAppQueryParams("page", page);
       } else {
-        updateAppQueryParams("page", pageQuantity);
+        isSearchedData ? updateSearchParams("page", pageQuantity) : updateAppQueryParams("page", pageQuantity);
       }
     }
   };
 
   const calculateTotalPages = () => {
-    const sourceData = isSearchedData ? searchedData?.data : data;
-    return Math.ceil((sourceData?.total || sourceData?.length || 1) / appQueryParams.pageSize);
+    const sourceData = isSearchedData ? searchedData : data;
+    return Math.ceil((sourceData?.total || 1) / appQueryParams.pageSize);
   };
 
   return (
@@ -347,7 +384,7 @@ export default function ApplicationList() {
 
       <Pagination
         sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
-        currentPage={appQueryParams.page}
+        currentPage={isSearchedData ? searchParams.page : appQueryParams.page}
         totalPages={calculateTotalPages()}
         onPageChange={handlePageChange}
       />
