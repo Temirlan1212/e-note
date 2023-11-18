@@ -3,13 +3,13 @@ import { Box, CircularProgress, Divider, IconButton, List, ListItem, ListItemTex
 import { ConfirmationModal, IConfirmationModal } from "@/components/ui/ConfirmationModal";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import useFetch from "@/hooks/useFetch";
-import { Dispatch, Fragment, SetStateAction, useState } from "react";
+import { Dispatch, Fragment, PropsWithChildren, SetStateAction, useState } from "react";
 import Webcam from "@/components/ui/Webcam";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { useRouter } from "next/router";
 import Button from "@/components/ui/Button";
 
-export default function DeclVideoRecordModal(props: Partial<IConfirmationModal & { onFinish: () => void }>) {
+export default function DeclVideoRecordModal(props: Partial<PropsWithChildren<IConfirmationModal>>) {
   const t = useTranslations();
   const router = useRouter();
   const { id: applicationId } = router.query as { id: string | null };
@@ -133,10 +133,10 @@ export default function DeclVideoRecordModal(props: Partial<IConfirmationModal &
             ) : null}
           </Box>
         ),
-        button: () => (isUserSelected ? null : <Button onClick={props.onFinish}>{t("Done")}</Button>),
+        button: (callback) => (isUserSelected ? null : <Button onClick={() => callback(false)}>{t("Done")}</Button>),
       }}
     >
-      <></>
+      {props?.children ?? <></>}
     </ConfirmationModal>
   );
 }

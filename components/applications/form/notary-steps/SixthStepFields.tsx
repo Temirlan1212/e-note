@@ -18,6 +18,7 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import DeclVideoRecordModal from "@/components/decl-video-record/DeclVideoRecordModal";
 import KeyIcon from "@mui/icons-material/Key";
+import VideocamIcon from "@mui/icons-material/Videocam";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -40,7 +41,6 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const [token, setToken] = useState<string>();
   const [isSigned, setIsSigned] = useState(false);
   const [isDeclSigned, setIsDeclSigned] = useState(false);
-  const [declVideoRecordOpen, setDeclVideoRecordOpen] = useState(false);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
 
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
@@ -167,7 +167,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
         </IconButton>
       </Backdrop>
 
-      <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", lg: "row" }}>
+      <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column" }}>
         <StepperContentStep
           step={6}
           title={t("View document")}
@@ -175,68 +175,61 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
         />
 
         {!applicationLoading && !prepareLoading && !pdfLoading && !syncLoading && (
-          <Box display="flex" gap="10px 0" flexDirection="column" justifyContent="flex-end">
-            <Box display="flex" gap="10px" flexWrap="wrap">
-              <Box display="flex" gap="10px" flexWrap="wrap">
-                <ConfirmationModal
-                  title="Rebuild the document"
-                  type="hint"
-                  hintTitle=""
-                  hintText={"All changes made earlier in the document will be lost"}
-                  onConfirm={handlePrepareDocument}
+          <Box
+            display="flex"
+            gap="10px"
+            justifyContent="flex-end"
+            flexWrap="wrap"
+            flexDirection={{ xs: "column", md: "row" }}
+          >
+            <ConfirmationModal
+              title="Rebuild the document"
+              type="hint"
+              hintTitle=""
+              hintText={"All changes made earlier in the document will be lost"}
+              onConfirm={handlePrepareDocument}
+            >
+              <Button startIcon={<SyncIcon />} sx={{ flexGrow: "1" }}>
+                {t("Rebuild the document")}
+              </Button>
+            </ConfirmationModal>
+
+            {!isSigned &&
+              token &&
+              (application?.data?.[0]?.documentInfo?.editUrl || prepare?.data?.editUrl != null) && (
+                <Link
+                  href={`${
+                    application?.data[0]?.documentInfo?.editUrl ?? prepare?.data?.editUrl
+                  }?AuthorizationBasic=${token.replace(/Basic /, "")}`}
+                  target="_blank"
+                  onClick={() => setIsBackdropOpen(true)}
                 >
-                  <Button startIcon={<SyncIcon />} sx={{ width: "auto" }}>
-                    {t("Rebuild the document")}
+                  <Button startIcon={<EditIcon />} sx={{ flexGrow: "1" }}>
+                    {t("Edit")}
                   </Button>
-                </ConfirmationModal>
-              </Box>
-
-              {!isSigned &&
-                token &&
-                (application?.data?.[0]?.documentInfo?.editUrl || prepare?.data?.editUrl != null) && (
-                  <Link
-                    href={`${
-                      application?.data[0]?.documentInfo?.editUrl ?? prepare?.data?.editUrl
-                    }?AuthorizationBasic=${token.replace(/Basic /, "")}`}
-                    target="_blank"
-                    onClick={() => setIsBackdropOpen(true)}
-                  >
-                    <Button startIcon={<EditIcon />} sx={{ width: "auto" }}>
-                      {t("Edit")}
-                    </Button>
-                  </Link>
-                )}
-            </Box>
-
-            <Box display="flex" gap="10px" flexWrap="wrap">
-              {!isSigned && base64Doc != null && (
-                <SignModal
-                  signLoading={loading}
-                  base64Doc={base64Doc}
-                  onSign={(sign) => handleSign(sign, setIsSigned)}
-                />
+                </Link>
               )}
-              {!isDeclSigned && base64Doc != null && (
-                <SignModal
-                  base64Doc={base64Doc}
-                  signLoading={loading}
-                  onSign={async (sign) => {
-                    const isSigned = await handleSign(sign, setIsDeclSigned);
-                    if (isSigned) setDeclVideoRecordOpen(isSigned);
-                    return isSigned;
-                  }}
-                >
-                  <Button startIcon={<KeyIcon />} sx={{ width: "auto" }}>
-                    {t("Sign as declarant")}
-                  </Button>
-                </SignModal>
-              )}
-            </Box>
 
-            <DeclVideoRecordModal
-              isPermanentOpen={declVideoRecordOpen}
-              onFinish={() => setDeclVideoRecordOpen(false)}
-            />
+            {!isSigned && base64Doc != null && (
+              <SignModal signLoading={loading} base64Doc={base64Doc} onSign={(sign) => handleSign(sign, setIsSigned)} />
+            )}
+            {!isDeclSigned && base64Doc != null && (
+              <SignModal
+                base64Doc={base64Doc}
+                signLoading={loading}
+                onSign={async (sign) => handleSign(sign, setIsDeclSigned)}
+              >
+                <Button startIcon={<KeyIcon />} sx={{ flexGrow: "1" }}>
+                  {t("Sign as declarant")}
+                </Button>
+              </SignModal>
+            )}
+
+            <DeclVideoRecordModal>
+              <Button startIcon={<VideocamIcon />} sx={{ flexGrow: "1" }}>
+                {t("Record a video")}
+              </Button>
+            </DeclVideoRecordModal>
           </Box>
         )}
       </Box>
