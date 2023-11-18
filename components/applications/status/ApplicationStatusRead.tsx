@@ -41,7 +41,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
       title: "Date of the action",
       value: data?.createdOn ? format(new Date(data?.createdOn!), "dd.MM.yyyy HH:mm:ss") : "",
     },
-    { title: "Notary's full name", value: data?.company.partner.fullName },
+    { title: "Notary's full name", value: data?.company.partner?.fullName },
     { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },
   ];
 
@@ -166,7 +166,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                         color: "#687C9B",
                       }}
                     >
-                      {member.lastName} {member.name} {member.middleName}
+                      {member?.lastName} {member?.name} {member?.middleName}
                     </Typography>
                     <Typography
                       sx={{
@@ -175,7 +175,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                         color: "#687C9B",
                       }}
                     >
-                      {member.mainAddress.fullName}
+                      {member?.mainAddress?.fullName}
                     </Typography>
                   </Box>
                 ))}
