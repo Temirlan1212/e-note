@@ -123,7 +123,7 @@ export default function SignModal({
     >
       <>
         {!children ? (
-          <Button startIcon={<KeyIcon />} sx={{ width: "auto" }}>
+          <Button startIcon={<KeyIcon />} sx={{ flexGrow: "1" }}>
             {t("Sign")}
           </Button>
         ) : (
