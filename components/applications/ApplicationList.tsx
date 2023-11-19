@@ -84,13 +84,18 @@ export default function ApplicationList() {
   });
 
   useEffect(() => {
+    if (searchedData?.total === 0) {
+      setFilteredData([]);
+    }
     if (searchedData?.total) {
       const searchedDataArray = searchedData?.data?.map((item: ISearchedDataItem) => item?.SaleOrder) || [];
 
-      if (searchedDataArray.length > 0) setFilteredData(searchedDataArray);
-      setIsSearchedData(searchedDataArray.length > 0);
+      if (searchedDataArray.length > 0) {
+        setFilteredData(searchedDataArray);
+        setIsSearchedData(true);
+      }
     }
-  }, [searchedData?.data]);
+  }, [searchedData]);
 
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
     setAppQueryParams((prev) => {
