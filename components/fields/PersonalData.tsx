@@ -129,15 +129,10 @@ export default function PersonalData({
   });
 
   useEffectOnce(async () => {
-    if (imageData == null || imageData.body == null || imageData.blob == null) return;
-
-    const blob = await imageData.blob();
-
-    const imageLink = URL.createObjectURL(blob);
-    setImageURL(imageLink);
-    return () => {
-      URL.revokeObjectURL(imageLink);
-    };
+    const base64String = await imageData?.text();
+    if (base64String) {
+      setImageURL(`data:image/jpeg;base64,${base64String}`);
+    }
   }, [imageData]);
 
   const { data: citizenshipDictionary, loading: citizenshipDictionaryLoading } = useFetch(
