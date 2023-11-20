@@ -51,10 +51,12 @@ export default function PopupNotifications() {
       window.open(href, "_blank");
     }
     if (notification["message.subject"]) {
-      await readMessage("/api/notifications/isRead", {
-        id: notification.id,
-        version: notification.version,
-      });
+      if (!notification.isRead) {
+        await readMessage("/api/notifications/isRead", {
+          id: notification.id,
+          version: notification.version,
+        });
+      }
       router.push(`/applications/status/${notification["message.relatedId"]}`);
     }
   };
