@@ -29,6 +29,8 @@
   "The password must be at least 6 characters long": "Сырсөз кеминде 6 тамгадан турушу керек",
   "The password must be no more than 40 characters": "Сырсөз 40тан ашпашы керек",
   "Login to your personal account": "Жеке Каттоо эсебиңизге кирүү",
+  "Go to your personal account": "Жеке каттоо эсебиңизге кирүү",
+  "Personal account": "Жеке каттоо",
   "Other ways to log in": "Кирүүнүн башка жолдору",
   "Enter": "Кирүү",
   "Enter as": "Катары кирүү",
