@@ -30,7 +30,7 @@ interface IBaseEntityFields {
 }
 
 export interface ITabListItem {
-  getElement: (index: number, loading?: boolean, isEditableCopy?: boolean) => JSX.Element;
+  getElement: (index: number, loading?: boolean, isEditableCopy?: boolean, isTundukFieldsOpen?: boolean) => JSX.Element;
 }
 
 export interface IStepFieldsProps {
@@ -64,7 +64,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
-      getElement(index: number, loading?: boolean, isEditableCopy?: boolean) {
+      getElement(index: number, loading?: boolean, isEditableCopy?: boolean, isTundukFieldsOpen?: boolean) {
         const partnerType = watch(`members.${index}.partnerTypeSelect`);
 
         return (
@@ -77,7 +77,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                 ...getPersonalDataNames(index),
                 ...getTundukParamsFields(index),
               }}
-              disableFields={watch(`members.${index}.disabled`)}
+              disableFields={isTundukFieldsOpen}
               fields={{
                 nationality: true,
                 maritalStatus: true,
@@ -91,7 +91,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
               <>
                 <Typography variant="h5">{t("Identity document")}</Typography>
                 <IdentityDocument
-                  disableFields={isEditableCopy || watch(`members.${index}.disabled`)}
+                  disableFields={isTundukFieldsOpen || isEditableCopy}
                   form={form}
                   names={getIdentityDocumentNames(index)}
                 />
@@ -104,7 +104,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
               names={getAddressNames(index)}
               disableFields={
                 isEditableCopy ||
-                (watch(`members.${index}.disabled`) &&
+                (isTundukFieldsOpen &&
                   !!watch(`members.${index}.tundukPassportSeries`) &&
                   !!watch(`members.${index}.tundukPassportNumber`))
               }
@@ -148,6 +148,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const { update: tundukPersonalDataFetch, loading: tundukPersonalDataLoading } = useFetch("", "POST");
 
   const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
+  const isFieldsOpen = watch("openFields") as boolean;
 
   const getTundukParamsFields = (index: number) =>
     ({
@@ -474,7 +475,13 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
           return {
             tabErrorsCount: tabsErrorsCounts[index] ?? 0,
             tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: getElement(index, tundukPersonalDataLoading, isEditableCopy) ?? <></>,
+            tabPanelContent: getElement(
+              index,
+              tundukPersonalDataLoading,
+              isEditableCopy,
+              isFieldsOpen
+              // || watch(`requester.${index}.disabled`)
+            ) ?? <></>,
           };
         })}
         actionsContent={

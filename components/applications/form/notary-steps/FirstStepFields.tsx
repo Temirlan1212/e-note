@@ -32,7 +32,7 @@ interface IBaseEntityFields {
 }
 
 export interface ITabListItem {
-  getElement: (index: number, loading?: boolean, isEditableCopy?: boolean) => JSX.Element;
+  getElement: (index: number, loading?: boolean, isEditableCopy?: boolean, isTundukFieldsOpen?: boolean) => JSX.Element;
 }
 
 export interface IStepFieldsProps {
@@ -67,7 +67,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
-      getElement(index: number, loading?: boolean, isEditableCopy?: boolean) {
+      getElement(index: number, loading?: boolean, isEditableCopy?: boolean, isTundukFieldsOpen?: boolean) {
         const partnerType = watch(`requester.${index}.partnerTypeSelect`);
 
         return (
@@ -80,7 +80,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                 ...getPersonalDataNames(index),
                 ...getTundukParamsFields(index),
               }}
-              disableFields={watch(`requester.${index}.disabled`)}
+              disableFields={isTundukFieldsOpen}
               fields={{
                 nationality: true,
                 maritalStatus: true,
@@ -94,7 +94,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
               <>
                 <Typography variant="h5">{t("Identity document")}</Typography>
                 <IdentityDocument
-                  disableFields={isEditableCopy || watch(`requester.${index}.disabled`)}
+                  disableFields={isTundukFieldsOpen || isEditableCopy}
                   form={form}
                   names={getIdentityDocumentNames(index)}
                 />
@@ -102,11 +102,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
             )}
 
             <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
-            <Address
-              form={form}
-              names={getAddressNames(index)}
-              disableFields={isEditableCopy || watch(`requester.${index}.disabled`)}
-            />
+            <Address form={form} names={getAddressNames(index)} disableFields={isTundukFieldsOpen || isEditableCopy} />
 
             {partnerType != 1 && (
               <>
@@ -153,6 +149,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const { update: tundukPersonalDataFetch, loading: tundukPersonalDataLoading } = useFetch("", "POST");
 
   const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
+  const isFieldsOpen = watch("openFields") as boolean;
 
   const getTundukParamsFields = (index: number) =>
     ({
@@ -500,7 +497,13 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
           return {
             tabErrorsCount: tabsErrorsCounts[index] ?? 0,
             tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: getElement(index, tundukPersonalDataLoading, isEditableCopy) ?? <></>,
+            tabPanelContent: getElement(
+              index,
+              tundukPersonalDataLoading,
+              isEditableCopy,
+              isFieldsOpen
+              // || watch(`requester.${index}.disabled`)
+            ) ?? <></>,
           };
         })}
         actionsContent={
