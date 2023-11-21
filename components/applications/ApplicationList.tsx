@@ -17,12 +17,21 @@ import { ApplicationListQRMenu } from "./ApplicationListQRMenu";
 import SearchBar from "@/components/ui/SearchBar";
 import ClearIcon from "@mui/icons-material/Clear";
 import { IApplication } from "@/models/application";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { IKeywordSchema, keywordSchema } from "@/validator-schemas/keyword";
 
 interface IAppQueryParams {
   pageSize: number;
   page: number;
   sortBy: string[];
   filterValues: Record<string, (string | number)[]>;
+}
+
+interface ISearchParams {
+  searchValue: string | null;
+  pageSize: number;
+  page: number;
 }
 
 interface ISearchedDataItem {
@@ -48,11 +57,28 @@ export default function ApplicationList() {
     "POST"
   );
 
+  const form = useForm<IKeywordSchema>({
+    resolver: yupResolver<IKeywordSchema>(keywordSchema),
+  });
+
+  const {
+    formState: { errors },
+    resetField,
+    handleSubmit,
+    register,
+  } = form;
+
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,
     page: 1,
     sortBy: ["-creationDate"],
     filterValues: {},
+  });
+
+  const [searchParams, setSearchParams] = useState<ISearchParams>({
+    pageSize: 7,
+    page: 1,
+    searchValue: null,
   });
 
   const { data, loading, update } = useFetch<FetchResponseBody | null>("/api/applications", "POST", {
@@ -63,10 +89,37 @@ export default function ApplicationList() {
     setFilteredData(data?.data);
   }, [data?.data]);
 
-  const { data: searchedData, update: search, loading: searchLoading } = useFetch<FetchResponseBody | null>("", "POST");
+  const {
+    data: searchedData,
+    update: search,
+    loading: searchLoading,
+  } = useFetch<FetchResponseBody | null>("/api/applications/search", "POST", {
+    body: searchParams,
+  });
+
+  useEffect(() => {
+    if (searchedData?.total === 0) {
+      setFilteredData([]);
+      setIsSearchedData(true);
+    }
+    if (searchedData?.total) {
+      const searchedDataArray = searchedData?.data?.map((item: ISearchedDataItem) => item?.SaleOrder) || [];
+
+      if (searchedDataArray.length > 0) {
+        setFilteredData(searchedDataArray);
+        setIsSearchedData(true);
+      }
+    }
+  }, [searchedData]);
 
   const updateAppQueryParams = (key: keyof IAppQueryParams, newValue: ValueOf<IAppQueryParams>) => {
     setAppQueryParams((prev) => {
+      return { ...prev, [key]: newValue };
+    });
+  };
+
+  const updateSearchParams = (key: keyof ISearchParams, newValue: ValueOf<ISearchParams>) => {
+    setSearchParams((prev) => {
       return { ...prev, [key]: newValue };
     });
   };
@@ -77,7 +130,14 @@ export default function ApplicationList() {
   };
 
   const handlePageChange = (page: number) => {
-    if (appQueryParams.page !== page) updateAppQueryParams("page", page);
+    if (isSearchedData) {
+      if (searchParams.page !== page) {
+        return updateSearchParams("page", page);
+      }
+    }
+    if (appQueryParams.page !== page) {
+      updateAppQueryParams("page", page);
+    }
   };
 
   const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
@@ -104,6 +164,7 @@ export default function ApplicationList() {
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     if (value === "") {
+      resetField("keyword");
       setFilteredData([]);
       setIsSearchedData(false);
       setAppQueryParams((prevParams) => ({
@@ -115,17 +176,15 @@ export default function ApplicationList() {
 
   const handleSearchSubmit = async () => {
     if (searchValue == null || searchValue === "") return;
-    const searchResult = await search("/api/applications/search", {
-      content: searchValue,
-    });
-
-    const searchedDataArray = searchResult?.data?.map((item: ISearchedDataItem) => item?.SaleOrder) || [];
-    setFilteredData(searchedDataArray);
-    setIsSearchedData(searchedDataArray.length > 0);
+    setSearchParams((prevParams) => ({
+      ...prevParams,
+      searchValue: searchValue,
+    }));
   };
 
   const handleReset = () => {
     setSearchValue("");
+    resetField("keyword");
     setFilteredData([]);
     setIsSearchedData(false);
     setAppQueryParams((prevParams) => ({
@@ -144,16 +203,16 @@ export default function ApplicationList() {
       const pageQuantity = Math.ceil(res.total / appQueryParams.pageSize);
       const page = appQueryParams.page;
       if (pageQuantity >= page) {
-        updateAppQueryParams("page", page);
+        isSearchedData ? updateSearchParams("page", page) : updateAppQueryParams("page", page);
       } else {
-        updateAppQueryParams("page", pageQuantity);
+        isSearchedData ? updateSearchParams("page", pageQuantity) : updateAppQueryParams("page", pageQuantity);
       }
     }
   };
 
   const calculateTotalPages = () => {
-    const sourceData = isSearchedData ? searchedData?.data : data;
-    return Math.ceil((sourceData?.total || sourceData?.length || 1) / appQueryParams.pageSize);
+    const sourceData = isSearchedData ? searchedData : data;
+    return Math.ceil((sourceData?.total || 1) / appQueryParams.pageSize);
   };
 
   return (
@@ -170,6 +229,8 @@ export default function ApplicationList() {
       </Box>
 
       <Box
+        component="form"
+        onSubmit={handleSubmit(handleSearchSubmit)}
         sx={{
           marginBottom: "20px",
           width: { xs: "100%", md: "70%" },
@@ -178,7 +239,6 @@ export default function ApplicationList() {
         <SearchBar
           value={searchValue}
           onChange={handleSearchChange}
-          onClick={handleSearchSubmit}
           InputProps={{
             endAdornment: (
               <IconButton onClick={handleReset} sx={{ visibility: searchValue === "" ? "hidden" : "visible" }}>
@@ -186,6 +246,10 @@ export default function ApplicationList() {
               </IconButton>
             ),
           }}
+          name="keyword"
+          error={!!errors.keyword?.message ?? false}
+          helperText={errors.keyword?.message ? t(errors.keyword?.message, { min: 7, max: 30 }) : ""}
+          register={register}
         />
       </Box>
 
@@ -347,7 +411,7 @@ export default function ApplicationList() {
 
       <Pagination
         sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
-        currentPage={appQueryParams.page}
+        currentPage={isSearchedData ? searchParams.page : appQueryParams.page}
         totalPages={calculateTotalPages()}
         onPageChange={handlePageChange}
       />
