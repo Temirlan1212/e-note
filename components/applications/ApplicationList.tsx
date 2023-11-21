@@ -17,6 +17,9 @@ import { ApplicationListQRMenu } from "./ApplicationListQRMenu";
 import SearchBar from "@/components/ui/SearchBar";
 import ClearIcon from "@mui/icons-material/Clear";
 import { IApplication } from "@/models/application";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { IKeywordSchema, keywordSchema } from "@/validator-schemas/keyword";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -53,6 +56,17 @@ export default function ApplicationList() {
     "/api/dictionaries/selection/notary.filter.saleorder.by.performer.type.select",
     "POST"
   );
+
+  const form = useForm<IKeywordSchema>({
+    resolver: yupResolver<IKeywordSchema>(keywordSchema),
+  });
+
+  const {
+    formState: { errors },
+    resetField,
+    handleSubmit,
+    register,
+  } = form;
 
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,
@@ -149,6 +163,7 @@ export default function ApplicationList() {
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     if (value === "") {
+      resetField("keyword");
       setFilteredData([]);
       setIsSearchedData(false);
       setAppQueryParams((prevParams) => ({
@@ -168,6 +183,7 @@ export default function ApplicationList() {
 
   const handleReset = () => {
     setSearchValue("");
+    resetField("keyword");
     setFilteredData([]);
     setIsSearchedData(false);
     setAppQueryParams((prevParams) => ({
@@ -212,6 +228,8 @@ export default function ApplicationList() {
       </Box>
 
       <Box
+        component="form"
+        onSubmit={handleSubmit(handleSearchSubmit)}
         sx={{
           marginBottom: "20px",
           width: { xs: "100%", md: "70%" },
@@ -220,7 +238,6 @@ export default function ApplicationList() {
         <SearchBar
           value={searchValue}
           onChange={handleSearchChange}
-          onClick={handleSearchSubmit}
           InputProps={{
             endAdornment: (
               <IconButton onClick={handleReset} sx={{ visibility: searchValue === "" ? "hidden" : "visible" }}>
@@ -228,6 +245,10 @@ export default function ApplicationList() {
               </IconButton>
             ),
           }}
+          name="keyword"
+          error={!!errors.keyword?.message ?? false}
+          helperText={errors.keyword?.message ? t(errors.keyword?.message, { min: 7, max: 30 }) : ""}
+          register={register}
         />
       </Box>
 

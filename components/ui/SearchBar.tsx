@@ -17,7 +17,7 @@ const SearchBar: React.FC<ISearchBarProps> = (props) => {
   return (
     <Box display="flex" sx={boxSx}>
       <Input fullWidth placeholder={t("Search")} {...rest} />
-      <Button sx={{ width: "80px" }} type="submit" color="success" loading={loading} onClick={onClick}>
+      <Button sx={{ width: "80px", height: "43px" }} type="submit" color="success" loading={loading} onClick={onClick}>
         <SearchOutlined />
       </Button>
     </Box>
