@@ -50,6 +50,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   } = useFetch("", "POST");
 
   const { update: getDocumentTemplateData, loading: documentTemplateDataLoading } = useFetch("", "GET");
+  const { update: getNotaryApp } = useFetch("", "POST");
 
   const form = useForm<IApplicationSchema>({
     mode: "onTouched",
@@ -78,6 +79,12 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
       if (status === 1) router.push("/applications");
     }
     setLoading(false);
+
+    const res = await getNotaryApp("/api/app-notary");
+    if (Array.isArray(res?.data) && res?.data.length > 0) {
+      const item = res.data[0];
+      form.setValue("openFields", !!item?.openFields);
+    }
   });
 
   const getDynamicFormAppData = async () => {
