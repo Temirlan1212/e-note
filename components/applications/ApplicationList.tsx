@@ -100,6 +100,7 @@ export default function ApplicationList() {
   useEffect(() => {
     if (searchedData?.total === 0) {
       setFilteredData([]);
+      setIsSearchedData(true);
     }
     if (searchedData?.total) {
       const searchedDataArray = searchedData?.data?.map((item: ISearchedDataItem) => item?.SaleOrder) || [];
