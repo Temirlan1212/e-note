@@ -5,7 +5,7 @@ import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import useConvert from "@/hooks/useConvert";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Backdrop, IconButton } from "@mui/material";
+import { Box, Backdrop, IconButton, Menu } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import EditIcon from "@mui/icons-material/Edit";
@@ -19,6 +19,7 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import DeclVideoRecordModal from "@/components/decl-video-record/DeclVideoRecordModal";
 import KeyIcon from "@mui/icons-material/Key";
 import VideocamIcon from "@mui/icons-material/Videocam";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -42,6 +43,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const [isSigned, setIsSigned] = useState(false);
   const [isDeclSigned, setIsDeclSigned] = useState(false);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<null | HTMLElement>(null);
 
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
   const { data: prepare, loading: prepareLoading, update: getPrepare } = useFetch("", "GET");
@@ -167,71 +169,94 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
         </IconButton>
       </Backdrop>
 
-      <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column" }}>
+      <Box display="flex" justifyContent="space-between" gap="20px">
         <StepperContentStep
           step={6}
           title={t("View document")}
           loading={applicationLoading || prepareLoading || pdfLoading || syncLoading}
         />
 
-        {!applicationLoading && !prepareLoading && !pdfLoading && !syncLoading && (
-          <Box
-            display="flex"
-            gap="10px"
-            justifyContent="flex-end"
-            flexWrap="wrap"
-            flexDirection={{ xs: "column", md: "row" }}
+        <Box display="flex" gap="10px" justifyContent="flex-end" padding="10px" flexWrap="wrap">
+          {!isSigned && base64Doc != null && (
+            <SignModal signLoading={loading} base64Doc={base64Doc} onSign={(sign) => handleSign(sign, setIsSigned)} />
+          )}
+          <IconButton
+            aria-label="more"
+            id="long-button"
+            aria-controls={isMoreMenuOpen ? "long-menu" : undefined}
+            aria-expanded={isMoreMenuOpen ? "true" : undefined}
+            aria-haspopup="true"
+            onClick={(event) => setIsMoreMenuOpen(event.currentTarget)}
           >
-            <ConfirmationModal
-              title="Rebuild the document"
-              type="hint"
-              hintTitle=""
-              hintText={"All changes made earlier in the document will be lost"}
-              onConfirm={handlePrepareDocument}
-            >
-              <Button startIcon={<SyncIcon />} sx={{ flexGrow: "1" }}>
-                {t("Rebuild the document")}
-              </Button>
-            </ConfirmationModal>
-
-            {!isSigned &&
-              token &&
-              (application?.data?.[0]?.documentInfo?.editUrl || prepare?.data?.editUrl != null) && (
-                <Link
-                  href={`${
-                    application?.data[0]?.documentInfo?.editUrl ?? prepare?.data?.editUrl
-                  }?AuthorizationBasic=${token.replace(/Basic /, "")}`}
-                  target="_blank"
-                  onClick={() => setIsBackdropOpen(true)}
-                >
-                  <Button startIcon={<EditIcon />} sx={{ flexGrow: "1" }}>
-                    {t("Edit")}
-                  </Button>
-                </Link>
-              )}
-
-            {!isSigned && base64Doc != null && (
-              <SignModal signLoading={loading} base64Doc={base64Doc} onSign={(sign) => handleSign(sign, setIsSigned)} />
-            )}
-            {!isDeclSigned && base64Doc != null && (
-              <SignModal
-                base64Doc={base64Doc}
-                signLoading={loading}
-                onSign={async (sign) => handleSign(sign, setIsDeclSigned)}
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            id="long-menu"
+            MenuListProps={{
+              "aria-labelledby": "long-button",
+            }}
+            anchorEl={isMoreMenuOpen}
+            open={!!isMoreMenuOpen}
+            onClose={() => setIsMoreMenuOpen(null)}
+          >
+            {!applicationLoading && !prepareLoading && !pdfLoading && !syncLoading && (
+              <Box
+                display="flex"
+                gap="10px"
+                justifyContent="flex-end"
+                padding="10px"
+                flexWrap="wrap"
+                flexDirection={{ xs: "column" }}
               >
-                <Button startIcon={<KeyIcon />} sx={{ flexGrow: "1" }}>
-                  {t("Sign as declarant")}
-                </Button>
-              </SignModal>
-            )}
+                <ConfirmationModal
+                  title="Rebuild the document"
+                  type="hint"
+                  hintTitle=""
+                  hintText={"All changes made earlier in the document will be lost"}
+                  onConfirm={handlePrepareDocument}
+                >
+                  <Button startIcon={<SyncIcon />} sx={{ flexGrow: "1" }}>
+                    {t("Rebuild the document")}
+                  </Button>
+                </ConfirmationModal>
 
-            <DeclVideoRecordModal>
-              <Button startIcon={<VideocamIcon />} sx={{ flexGrow: "1" }}>
-                {t("Record a video")}
-              </Button>
-            </DeclVideoRecordModal>
-          </Box>
-        )}
+                {!isSigned &&
+                  token &&
+                  (application?.data?.[0]?.documentInfo?.editUrl || prepare?.data?.editUrl != null) && (
+                    <Link
+                      href={`${
+                        application?.data[0]?.documentInfo?.editUrl ?? prepare?.data?.editUrl
+                      }?AuthorizationBasic=${token.replace(/Basic /, "")}`}
+                      target="_blank"
+                      onClick={() => setIsBackdropOpen(true)}
+                    >
+                      <Button startIcon={<EditIcon />} sx={{ flexGrow: "1" }}>
+                        {t("Edit")}
+                      </Button>
+                    </Link>
+                  )}
+
+                {!isDeclSigned && base64Doc != null && (
+                  <SignModal
+                    base64Doc={base64Doc}
+                    signLoading={loading}
+                    onSign={async (sign) => handleSign(sign, setIsDeclSigned)}
+                  >
+                    <Button startIcon={<KeyIcon />} sx={{ flexGrow: "1" }}>
+                      {t("Sign as declarant")}
+                    </Button>
+                  </SignModal>
+                )}
+
+                <DeclVideoRecordModal>
+                  <Button startIcon={<VideocamIcon />} sx={{ flexGrow: "1" }}>
+                    {t("Record a video")}
+                  </Button>
+                </DeclVideoRecordModal>
+              </Box>
+            )}
+          </Menu>
+        </Box>
       </Box>
 
       {docUrl && <PDFViewer fileUrl={docUrl} />}
