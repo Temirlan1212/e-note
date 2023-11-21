@@ -31,9 +31,7 @@ export default function Contact({ form, names, defaultValues, disableFields }: I
           defaultValue={defaultValues?.phone ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel required sx={{ ".MuiFormLabel-asterisk": { color: "error.main" } }}>
-                {t("Phone number")}
-              </InputLabel>
+              <InputLabel>{t("Phone number")}</InputLabel>
               <TelInput
                 disabled={disableFields}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
