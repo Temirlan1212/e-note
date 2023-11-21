@@ -99,5 +99,7 @@
   "Do you really want to add to the My Templates section?": "Вы действительно хотите добавить в раздел \"Мои шаблоны\"?",
   "Enter a template name": "Введите название шаблона",
   "Video recorded": "Видео было записано",
-  "Record a video": "Записать видео"
+  "Record a video": "Записать видео",
+  "Choose from the template tree": "Выбрать из дерева шаблонов",
+  "Select from the list of templates": "Выбрать из списка шаблонов"
 }

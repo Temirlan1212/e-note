@@ -12,6 +12,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import FirstStepFields from "./steps/FirstStepFields";
 import SecondStepFields from "./steps/SecondStepFields";
+import PreSecondStepFields from "./notary-steps/SecondStepFields";
 import ThirdStepFields from "./steps/ThirdStepFields";
 import FourthStepFields from "./steps/FourthStepFields";
 import FifthStepFields from "./steps/FifthStepFields";
@@ -183,7 +184,13 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           <NotaryFourthStepFields
             key={3}
             form={form}
-            onPrev={() => setStep(step - 1)}
+            onPrev={() => {
+              if (form.watch("selectTemplateFromMade")) {
+                setStep(step - 2);
+              } else {
+                setStep(step - 1);
+              }
+            }}
             onNext={({ step }) =>
               setStep((prev) => {
                 if (step != null) return step;
@@ -192,7 +199,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             }
             handleStepNextClick={handleStepNextClick}
           />,
-
           <NotaryFifthStepFields
             key={4}
             dynamicForm={dynamicForm}
@@ -236,13 +242,31 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             }
             handleStepNextClick={handleStepNextClick}
           />,
+          <PreSecondStepFields
+            key={1}
+            form={form}
+            onPrev={() => setStep(step - 1)}
+            onNext={({ step, isStepByStep }) => {
+              if (!isStepByStep) getDynamicFormAppData();
+              const oneSideAction = form.getValues("product.oneSideAction");
+              setStep((prev) => {
+                if (oneSideAction && !isStepByStep) return prev + 3;
+                if (step != null) return step;
+                if (!isStepByStep) return prev + 2;
+                return prev + 1;
+              });
+            }}
+            handleStepNextClick={handleStepNextClick}
+          />,
           <SecondStepFields
             key={1}
             form={form}
             onPrev={() => setStep(step - 1)}
             onNext={({ step }) => {
+              const oneSideAction = form.getValues("product.oneSideAction");
               getDynamicFormAppData();
               setStep((prev) => {
+                if (oneSideAction) return prev + 2;
                 if (step != null) return step;
                 return prev + 1;
               });
@@ -252,19 +276,31 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           <ThirdStepFields
             key={2}
             form={form}
-            onPrev={() => setStep(step - 1)}
-            onNext={({ step }) =>
+            onPrev={() => {
+              if (form.watch("selectTemplateFromMade")) {
+                setStep(step - 2);
+              } else {
+                setStep(step - 1);
+              }
+            }}
+            onNext={({ step }) => {
+              const oneSideAction = form.getValues("product.oneSideAction");
+              getDynamicFormAppData();
               setStep((prev) => {
+                if (oneSideAction) return prev + 2;
                 if (step != null) return step;
                 return prev + 1;
-              })
-            }
+              });
+            }}
             handleStepNextClick={handleStepNextClick}
           />,
           <FourthStepFields
             key={3}
             form={form}
-            onPrev={() => setStep(step - 1)}
+            onPrev={() => {
+              const oneSideAction = form.getValues("product.oneSideAction");
+              oneSideAction ? setStep(step - 3) : setStep(step - 1);
+            }}
             onNext={({ step }) =>
               setStep((prev) => {
                 if (step != null) return step;
