@@ -19,7 +19,7 @@ interface ITempQueryParams {
   pageSize: number;
   page: number;
   sortBy: string[];
-  filterValues: Record<string, (string | number)[]>;
+  filterValues: Record<string, { id: string | number }[]>;
   searchValue: string;
   isSystem: boolean;
 }
@@ -148,7 +148,7 @@ export default function TemplateList() {
   );
 
   const { data: typeNotarialActionData } = useFetch<INotarialActionData>(
-    `/api/dictionaries/notarial-action?actionType=typeNotarialAction}`,
+    `/api/dictionaries/notarial-action?actionType=typeNotarialAction`,
     "POST"
   );
 
@@ -180,9 +180,10 @@ export default function TemplateList() {
 
       if (field && Array.isArray(value.value)) {
         if (value.value.length > 0) {
+          const updatedValues = value.value.map((item) => ({ id: item }));
           updateAppQueryParams("filterValues", {
             ...prevValue,
-            [field]: value.value,
+            [field]: updatedValues,
           });
         } else {
           const updatedFilterValues = { ...prevValue };
@@ -270,11 +271,11 @@ export default function TemplateList() {
               labelField: "nameIn" + capitalize(locale ?? ""),
               valueField: "id",
               type: "dictionary",
-              field: "notaryObject",
+              field: "object",
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (objectData?.data != null) {
-                const matchedItem = objectData?.data?.find((item: INotarialAction) => item.id == params.id);
+                const matchedItem = objectData?.data?.find((item: INotarialAction) => item.id == params.row.object?.id);
                 const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
                 return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
               }
@@ -291,11 +292,13 @@ export default function TemplateList() {
               labelField: "nameIn" + capitalize(locale ?? ""),
               valueField: "id",
               type: "dictionary",
-              field: "notaryObjectType",
+              field: "objectType",
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (objectTypeData?.data != null) {
-                const matchedItem = objectTypeData?.data?.find((item: INotarialAction) => item.id == params.id);
+                const matchedItem = objectTypeData?.data?.find(
+                  (item: INotarialAction) => item.id == params.row.objectType?.id
+                );
                 const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
                 return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
               }
@@ -313,11 +316,13 @@ export default function TemplateList() {
               labelField: "nameIn" + capitalize(locale ?? ""),
               valueField: "id",
               type: "dictionary",
-              field: "notaryAction",
+              field: "notarialAction",
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (notarialActionData?.data != null) {
-                const matchedItem = notarialActionData?.data.find((item: INotarialAction) => item.id == params.id);
+                const matchedItem = notarialActionData?.data.find(
+                  (item: INotarialAction) => item.id == params.row.notarialAction?.id
+                );
                 const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
                 return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
               }
@@ -335,11 +340,13 @@ export default function TemplateList() {
               labelField: "nameIn" + capitalize(locale ?? ""),
               valueField: "id",
               type: "dictionary",
-              field: "notaryActionType",
+              field: "typeNotarialAction",
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (typeNotarialActionData?.data != null) {
-                const matchedItem = typeNotarialActionData?.data.find((item: INotarialAction) => item.id == params.id);
+                const matchedItem = typeNotarialActionData?.data.find(
+                  (item: INotarialAction) => item.id == params.row.typeNotarialAction?.id
+                );
                 const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
                 return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
               }
@@ -356,11 +363,13 @@ export default function TemplateList() {
               labelField: "nameIn" + capitalize(locale ?? ""),
               valueField: "id",
               type: "dictionary",
-              field: "notaryRequestAction",
+              field: "notaryAction",
             },
             valueGetter: (params: GridValueGetterParams) => {
               if (actionData?.data != null) {
-                const matchedItem = actionData?.data?.find((item: INotarialAction) => item.id == params.id);
+                const matchedItem = actionData?.data?.find(
+                  (item: INotarialAction) => item.id == params.row.notaryAction?.id
+                );
                 const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
                 return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
               }
