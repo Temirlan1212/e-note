@@ -71,7 +71,7 @@ const DateTime: React.ForwardRefRenderFunction<HTMLDivElement, IDateTimeProps> =
           ref={ref}
           value={value ?? null}
           onChange={(val) => (onChange ? onChange(val) : null)}
-          format="dd.MM.yy hh:mm"
+          format="dd.MM.yyyy hh:mm"
           {...rest}
         />
         {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
