@@ -29,6 +29,8 @@
   "The password must be at least 6 characters long": "Пароль должен содержать не менее 6 символов",
   "The password must be no more than 40 characters": "Пароль должен содержать не более 40 символов",
   "Login to your personal account": "Вход в личный кабинет",
+  "Go to your personal account": "Перейти в личный кабинет",
+  "Personal account": "Личный кабинет",
   "Other ways to log in": "Другие способы входа",
   "Enter": "Войти",
   "Enter as": "Войти как",

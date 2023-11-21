@@ -55,7 +55,7 @@ export default function ProfileDropdownButton() {
           {userData.partner?.fullName || userData.activeCompany?.name}
         </Button>
         <Menu anchorEl={menu} open={open} onClose={handleMenuToggle}>
-          <MenuItem onClick={handleProfileClick}>{t("Profile")}</MenuItem>
+          <MenuItem onClick={handleProfileClick}>{t("Personal account")}</MenuItem>
           <MenuItem onClick={handleLogoutClick}>{t("Logout")}</MenuItem>
         </Menu>
       </>
