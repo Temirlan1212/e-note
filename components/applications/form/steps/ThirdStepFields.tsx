@@ -15,6 +15,7 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { useProfileStore } from "@/stores/profile";
+import ExpandingFields from "@/components/fields/ExpandingFields";
 
 interface IBaseEntityFields {
   id?: number;
@@ -227,41 +228,45 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
       <Typography variant="h5">{t("Personal data")}</Typography>
       <PersonalData form={form} names={getPersonalDataNames(0)} />
 
-      {partnerType != 1 && (
-        <>
-          <Typography variant="h5">{t("Identity document")}</Typography>
-          <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
-        </>
-      )}
+      <ExpandingFields title="Additional information">
+        <Box display="flex" gap="20px" flexDirection="column">
+          {partnerType != 1 && (
+            <>
+              <Typography variant="h5">{t("Identity document")}</Typography>
+              <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
+            </>
+          )}
 
-      <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
-      <Address form={form} names={getAddressNames(0)} />
+          <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
+          <Address form={form} names={getAddressNames(0)} />
 
-      {partnerType != 1 && (
-        <>
-          <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap="10px">
-            <Typography variant="h5">{t("Actual place of residence")}</Typography>
-            <Button
-              sx={{ width: "fit-content" }}
-              onClick={() => {
-                Object.entries(getAddressNames(0) ?? {})?.map(([key, name]) => {
-                  setValue((getActualAddressNames(0) as any)[key], getValues(name as any));
-                });
-              }}
-            >
-              {t("Copy the place of residence")}
-            </Button>
-          </Box>
+          {partnerType != 1 && (
+            <>
+              <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap="10px">
+                <Typography variant="h5">{t("Actual place of residence")}</Typography>
+                <Button
+                  sx={{ width: "fit-content" }}
+                  onClick={() => {
+                    Object.entries(getAddressNames(0) ?? {})?.map(([key, name]) => {
+                      setValue((getActualAddressNames(0) as any)[key], getValues(name as any));
+                    });
+                  }}
+                >
+                  {t("Copy the place of residence")}
+                </Button>
+              </Box>
 
-          <Address form={form} names={getActualAddressNames(0)} />
-        </>
-      )}
+              <Address form={form} names={getActualAddressNames(0)} />
+            </>
+          )}
 
-      <Typography variant="h5">{t("Contacts")}</Typography>
-      <Contact form={form} names={getContactNames(0)} />
+          <Typography variant="h5">{t("Contacts")}</Typography>
+          <Contact form={form} names={getContactNames(0)} />
 
-      <Typography variant="h5">{t("Files to upload")}</Typography>
-      <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={0} />
+          <Typography variant="h5">{t("Files to upload")}</Typography>
+          <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={0} />
+        </Box>
+      </ExpandingFields>
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (

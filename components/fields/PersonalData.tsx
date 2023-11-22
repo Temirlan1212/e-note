@@ -96,6 +96,7 @@ export interface IPersonalDataProps {
   onPinReset?: MouseEventHandler<HTMLButtonElement>;
   loading?: boolean;
   disableFields?: boolean;
+  isTundukRequested?: boolean;
 }
 
 export default function PersonalData({
@@ -107,6 +108,7 @@ export default function PersonalData({
   onPinReset,
   loading,
   disableFields,
+  isTundukRequested,
 }: IPersonalDataProps) {
   const t = useTranslations();
 
@@ -364,7 +366,7 @@ export default function PersonalData({
                   </Button>
                 )}
 
-                {disableFields && onPinReset && (
+                {isTundukRequested && onPinReset && (
                   <Button
                     buttonType="danger"
                     disabled={isEditableCopy}

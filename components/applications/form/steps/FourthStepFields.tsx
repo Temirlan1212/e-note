@@ -17,6 +17,7 @@ import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
+import ExpandingFields from "@/components/fields/ExpandingFields";
 
 interface IBaseEntityFields {
   id?: number;
@@ -72,29 +73,33 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
               }}
             />
 
-            {partnerType != 1 && (
-              <>
-                <Typography variant="h5">{t("Identity document")}</Typography>
-                <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
-              </>
-            )}
+            <ExpandingFields title="Additional information">
+              <Box display="flex" gap="20px" flexDirection="column">
+                {partnerType != 1 && (
+                  <>
+                    <Typography variant="h5">{t("Identity document")}</Typography>
+                    <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
+                  </>
+                )}
 
-            <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
-            <Address form={form} names={getAddressNames(index)} />
+                <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
+                <Address form={form} names={getAddressNames(index)} />
 
-            {partnerType != 1 && (
-              <>
-                <Typography variant="h5">{t("Actual place of residence")}</Typography>
-                <Address form={form} names={getActualAddressNames(index)} />
-              </>
-            )}
+                {partnerType != 1 && (
+                  <>
+                    <Typography variant="h5">{t("Actual place of residence")}</Typography>
+                    <Address form={form} names={getActualAddressNames(index)} />
+                  </>
+                )}
 
-            <Typography variant="h5">{t("Contacts")}</Typography>
-            <Contact form={form} names={getContactNames(index)} />
+                <Typography variant="h5">{t("Contacts")}</Typography>
+                <Contact form={form} names={getContactNames(index)} />
 
-            <Typography variant="h5">{t("Files to upload")}</Typography>
+                <Typography variant="h5">{t("Files to upload")}</Typography>
 
-            <AttachedFiles form={form} ref={attachedFilesRef} name="members" index={index} />
+                <AttachedFiles form={form} ref={attachedFilesRef} name="members" index={index} />
+              </Box>
+            </ExpandingFields>
           </Box>
         );
       },
