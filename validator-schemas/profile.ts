@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { userAddressSchema } from "./user";
+import { addressSchema } from "./address";
 
 export type IUserProfileSchema = yup.InferType<typeof userProfileSchema>;
 
@@ -29,7 +29,7 @@ export const userProfileSchema = yup.object().shape({
       .trim()
       .required("required")
       .matches(/^\d+(\.\d+)?$/, "onlyNumbers"),
-    address: userAddressSchema,
+    address: addressSchema,
     notaryDistrict: yup.object({
       id: yup.number().integer().positive(),
     }),

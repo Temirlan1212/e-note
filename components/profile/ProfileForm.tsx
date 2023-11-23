@@ -142,6 +142,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     trigger,
     watch,
     resetField,
+    getValues,
   } = form;
 
   const city = watch("activeCompany.address.city");
@@ -242,6 +243,28 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const handleDeleteClick = () => {
     setSelectedImage(null);
     setImagePreview(null);
+  };
+
+  const resetFields = () => {
+    const allFields = {
+      ...addressNames,
+      ...coordinateNames,
+      ...licenseNames,
+      ...contactNames,
+    };
+
+    for (const key in allFields) {
+      const name = (allFields as Record<string, any>)?.[key];
+      const value = getValues(name as any);
+      const isBoolean = typeof value === "boolean";
+      const isString = typeof value === "string";
+
+      if (isBoolean) {
+        resetField(name as any, { defaultValue: false });
+      } else if (isString) {
+        resetField(name as any, { defaultValue: "" });
+      }
+    }
   };
 
   return userDataLoading ? (
@@ -629,6 +652,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               },
             }}
             loading={isDataLoading}
+            onClick={resetFields}
           >
             {t("Cancel")}
           </Button>
