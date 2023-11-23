@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
@@ -30,7 +30,6 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   const { trigger, control, getValues, setValue, watch } = form;
 
   const productId = watch("product.id");
-  const selectTemplateFromMade = watch("selectTemplateFromMade");
 
   const [loading, setLoading] = useState(false);
   const [selectedInput, setSelectedInput] = useState<"my" | "system" | null>(null);
@@ -103,13 +102,6 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
     }
   };
 
-  const handleStepByStepClick = () => {
-    if (onNext != null) {
-      setValue("selectTemplateFromMade", false);
-      onNext({ step: undefined, isStepByStep: true });
-    }
-  };
-
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
@@ -122,24 +114,69 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
       </Box>
 
       <Box display="flex" gap="50px" alignItems="end">
-        <Box width="100%" gap="20px" display={selectTemplateFromMade ? "flex" : "none"}>
-          <Controller
-            control={control}
-            name="product"
-            defaultValue={null}
-            render={({ field, fieldState }) => (
+        <Controller
+          control={control}
+          name="product"
+          defaultValue={null}
+          render={({ field, fieldState }) => (
+            <Box width="100%" display="flex" flexDirection="column" gap="10px">
+              <InputLabel>{t("Select a notarial act by name")}</InputLabel>
+              <Autocomplete
+                labelField={locale !== "en" ? "$t:name" : "name"}
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={selectedInput !== "system" && selectedInput !== null}
+                options={systemDocuments?.status === 0 ? (systemDocuments?.data as Record<string, any>[]) ?? [] : []}
+                loading={systemDocumentsLoading}
+                value={
+                  field.value != null
+                    ? (systemDocuments?.data ?? []).find((item: Record<string, any>) => item.id == field.value?.id) ??
+                      null
+                    : null
+                }
+                onBlur={field.onBlur}
+                onChange={(event, value) => {
+                  field.onChange(
+                    value?.id != null
+                      ? {
+                          id: value.id,
+                          oneSideAction: value.hasOwnProperty("oneSideAction")
+                            ? typeof value.oneSideAction === "boolean"
+                              ? value.oneSideAction
+                              : false
+                            : false,
+                          isProductCancelled: value.hasOwnProperty("isProductCancelled")
+                            ? typeof value.isProductCancelled === "boolean"
+                              ? value.isProductCancelled
+                              : false
+                            : false,
+                        }
+                      : null
+                  );
+                  trigger(field.name);
+                }}
+              />
+            </Box>
+          )}
+        />
+        <Controller
+          control={control}
+          name="product"
+          defaultValue={null}
+          render={({ field, fieldState }) => {
+            return (
               <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                <InputLabel>{t("Select a notarial act by name")}</InputLabel>
+                <InputLabel>{t("Select document from my templates")}</InputLabel>
                 <Autocomplete
-                  labelField={locale !== "en" ? "$t:name" : "name"}
+                  labelField="name"
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={selectedInput !== "system" && selectedInput !== null}
-                  options={systemDocuments?.status === 0 ? (systemDocuments?.data as Record<string, any>[]) ?? [] : []}
-                  loading={systemDocumentsLoading}
+                  disabled={selectedInput !== "my" && selectedInput !== null}
+                  options={myDocuments?.status === 0 ? (myDocuments?.data as Record<string, any>[]) ?? [] : []}
+                  loading={myDocumentsLoading}
                   value={
                     field.value != null
-                      ? (systemDocuments?.data ?? []).find((item: Record<string, any>) => item.id == field.value?.id) ??
+                      ? (myDocuments?.data ?? []).find((item: Record<string, any>) => item.id == field.value?.id) ??
                         null
                       : null
                   }
@@ -166,83 +203,9 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                   }}
                 />
               </Box>
-            )}
-          />
-          <Controller
-            control={control}
-            name="product"
-            defaultValue={null}
-            render={({ field, fieldState }) => {
-              return (
-                <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                  <InputLabel>{t("Select document from my templates")}</InputLabel>
-                  <Autocomplete
-                    labelField="name"
-                    type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                    disabled={selectedInput !== "my" && selectedInput !== null}
-                    options={myDocuments?.status === 0 ? (myDocuments?.data as Record<string, any>[]) ?? [] : []}
-                    loading={myDocumentsLoading}
-                    value={
-                      field.value != null
-                        ? (myDocuments?.data ?? []).find((item: Record<string, any>) => item.id == field.value?.id) ??
-                          null
-                        : null
-                    }
-                    onBlur={field.onBlur}
-                    onChange={(event, value) => {
-                      field.onChange(
-                        value?.id != null
-                          ? {
-                              id: value.id,
-                              oneSideAction: value.hasOwnProperty("oneSideAction")
-                                ? typeof value.oneSideAction === "boolean"
-                                  ? value.oneSideAction
-                                  : false
-                                : false,
-                              isProductCancelled: value.hasOwnProperty("isProductCancelled")
-                                ? typeof value.isProductCancelled === "boolean"
-                                  ? value.isProductCancelled
-                                  : false
-                                : false,
-                            }
-                          : null
-                      );
-                      trigger(field.name);
-                    }}
-                  />
-                </Box>
-              );
-            }}
-          />
-        </Box>
-
-        {!selectTemplateFromMade && (
-          <Box
-            display="flex"
-            gap="10px"
-            height="auto"
-            alignItems="center"
-            flexDirection={{ xs: "column", md: "row" }}
-            width="100%"
-          >
-            <Button
-              onClick={() => setValue("selectTemplateFromMade", true)}
-              buttonType="secondary"
-              sx={{ maxWidth: "400px", height: "100px" }}
-            >
-              {t("Select from the list")}
-            </Button>
-
-            <Typography variant="h5" color="secondary">
-              {t("Or").toUpperCase()}
-            </Typography>
-
-            <Button onClick={handleStepByStepClick} buttonType="secondary" sx={{ maxWidth: "400px", height: "100px" }}>
-              {t("Select by questionnaire")}
-            </Button>
-          </Box>
-        )}
+            );
+          }}
+        />
       </Box>
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
@@ -251,25 +214,15 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
             {t("Prev")}
           </Button>
         )}
-        {onNext != null && selectTemplateFromMade && (
-          <>
-            <Button
-              loading={loading}
-              onClick={() => handleNextClick()}
-              endIcon={<ArrowForwardIcon />}
-              sx={{ width: "auto" }}
-            >
-              {t("Next")}
-            </Button>
-            <Button
-              onClick={handleStepByStepClick}
-              endIcon={<ArrowForwardIcon />}
-              buttonType="secondary"
-              sx={{ width: "auto" }}
-            >
-              {t("Select by questionnaire")}
-            </Button>
-          </>
+        {onNext != null && (
+          <Button
+            loading={loading}
+            onClick={() => handleNextClick()}
+            endIcon={<ArrowForwardIcon />}
+            sx={{ width: "auto" }}
+          >
+            {t("Next")}
+          </Button>
         )}
       </Box>
     </Box>
