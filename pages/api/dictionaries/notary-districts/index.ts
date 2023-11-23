@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { cityId } = req.query;
+  const { districtId, cityId } = req.query;
 
   if (req.method !== "GET") {
     return res.status(400).json(null);
@@ -15,6 +15,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       operator: "=",
       value: !Number.isNaN(parseInt(cityId)) ? parseInt(cityId) : 0,
     });
+  }
+
+  if (districtId != null && typeof cityId === "string") {
+    if (typeof districtId === "string") {
+      criteria.push({
+        fieldName: "district.id",
+        operator: "=",
+        value: !Number.isNaN(parseInt(districtId)) ? parseInt(districtId) : 0,
+      });
+    }
   }
 
   const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/search/com.axelor.apps.notary.db.NotaryDistrict", {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
@@ -17,6 +17,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import useNotariesStore from "@/stores/notaries";
 import { useProfileStore } from "@/stores/profile";
+import ExpandingFields from "@/components/fields/ExpandingFields";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -40,10 +41,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
   const [loading, setLoading] = useState(false);
 
-  const { data: notaryDistrictDictionary, loading: notaryDistrictDictionaryLoading } = useFetch(
-    city != null ? `/api/dictionaries/notary-districts?cityId=${city.id}` : "",
-    "GET"
-  );
+  const { data: notaryDistrictDictionary, loading: notaryDistrictDictionaryLoading, update } = useFetch("", "GET");
+
   const { data: companyDictionary, loading: companyDictionaryLoading } = useFetch(
     `/api/companies?notaryDistrictId=${notaryDistrict?.id ?? ""}&regionId=${region?.id ?? ""}&districtId=${
       district?.id ?? ""
@@ -53,6 +52,14 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
   const { update: applicationCreate } = useFetch("", "POST");
   const { update: applicationUpdate } = useFetch("", "PUT");
+
+  useEffect(() => {
+    update(
+      `/api/dictionaries/notary-districts${district ? `?districtId=${district?.id}` : ""}${
+        district ? `&cityId=${city?.id}` : city ? `?cityId=${city?.id}` : ""
+      }`
+    );
+  }, [city, district]);
 
   useEffectOnce(() => {
     resetField("notaryDistrict", { defaultValue: null });
@@ -126,73 +133,85 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         <Hint type="hint">{t("Form first step hint text")}</Hint>
       </Box>
 
-      <Area form={form} names={{ region: "region", district: "district", city: "city" }} />
+      <Controller
+        control={control}
+        name="company"
+        defaultValue={null}
+        render={({ field, fieldState }) => (
+          <Box display="flex" flexDirection="column" width="100%">
+            <InputLabel>{t("Notary")}</InputLabel>
+            <Autocomplete
+              labelField={getLabelField(companyDictionary)}
+              type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+              helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+              disabled={loading}
+              options={companyDictionary?.status === 0 ? (companyDictionary?.data as ICompany[]) ?? [] : []}
+              loading={companyDictionaryLoading}
+              value={
+                field.value != null
+                  ? (companyDictionary?.data ?? []).find((item: ICompany) => item.id == field.value?.id) ?? null
+                  : null
+              }
+              onBlur={field.onBlur}
+              onChange={(event, value) => {
+                field.onChange(value?.id != null ? { id: value.id } : null);
+                trigger(field.name);
+              }}
+            />
+          </Box>
+        )}
+      />
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        <Controller
-          control={control}
-          name="notaryDistrict"
-          defaultValue={null}
-          render={({ field, fieldState }) => (
-            <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Notary district")}</InputLabel>
-              <Autocomplete
-                labelField={getLabelField(notaryDistrictDictionary)}
-                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!city}
-                options={
-                  notaryDistrictDictionary?.status === 0
-                    ? (notaryDistrictDictionary?.data as INotaryDistrict[]) ?? []
-                    : []
-                }
-                loading={notaryDistrictDictionaryLoading}
-                value={
-                  field.value != null
-                    ? (notaryDistrictDictionary?.data ?? []).find(
-                        (item: INotaryDistrict) => item.id == field.value?.id
-                      ) ?? null
-                    : null
-                }
-                onBlur={field.onBlur}
-                onChange={(event, value) => {
-                  field.onChange(value?.id != null ? { id: value.id } : null);
-                  trigger(field.name);
-                  resetField("company", { defaultValue: null });
-                }}
-              />
-            </Box>
-          )}
-        />
-        <Controller
-          control={control}
-          name="company"
-          defaultValue={null}
-          render={({ field, fieldState }) => (
-            <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Notary")}</InputLabel>
-              <Autocomplete
-                labelField={getLabelField(companyDictionary)}
-                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={loading}
-                options={companyDictionary?.status === 0 ? (companyDictionary?.data as ICompany[]) ?? [] : []}
-                loading={companyDictionaryLoading}
-                value={
-                  field.value != null
-                    ? (companyDictionary?.data ?? []).find((item: ICompany) => item.id == field.value?.id) ?? null
-                    : null
-                }
-                onBlur={field.onBlur}
-                onChange={(event, value) => {
-                  field.onChange(value?.id != null ? { id: value.id } : null);
-                  trigger(field.name);
-                }}
-              />
-            </Box>
-          )}
-        />
-      </Box>
+      <ExpandingFields title="Additional information">
+        <Box display="flex" flexDirection="column" gap="30px">
+          <Area
+            placeholders={{
+              region: t("All regions"),
+              district: t("All districts"),
+              city: t("All cities and villages"),
+            }}
+            withoutFieldBinding={true}
+            form={form}
+            names={{ region: "region", district: "district", city: "city" }}
+          />
+
+          <Controller
+            control={control}
+            name="notaryDistrict"
+            defaultValue={null}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel>{t("Notary district")}</InputLabel>
+                <Autocomplete
+                  labelField={getLabelField(notaryDistrictDictionary)}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  options={
+                    notaryDistrictDictionary?.status === 0
+                      ? (notaryDistrictDictionary?.data as INotaryDistrict[]) ?? []
+                      : []
+                  }
+                  textFieldPlaceholder={t("All notary districts")}
+                  loading={notaryDistrictDictionaryLoading}
+                  value={
+                    field.value != null
+                      ? (notaryDistrictDictionary?.data ?? []).find(
+                          (item: INotaryDistrict) => item.id == field.value?.id
+                        ) ?? null
+                      : null
+                  }
+                  onBlur={field.onBlur}
+                  onChange={(event, value) => {
+                    field.onChange(value?.id != null ? { id: value.id } : null);
+                    trigger(field.name);
+                    resetField("company", { defaultValue: null });
+                  }}
+                />
+              </Box>
+            )}
+          />
+        </Box>
+      </ExpandingFields>
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
