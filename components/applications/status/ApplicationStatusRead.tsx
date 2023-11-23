@@ -166,7 +166,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                         color: "#687C9B",
                       }}
                     >
-                      {member?.lastName} {member?.name} {member?.middleName}
+                      {member?.lastName} {member?.firstName} {member?.middleName}
                     </Typography>
                     <Typography
                       sx={{
