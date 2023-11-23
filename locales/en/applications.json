@@ -5,8 +5,8 @@
   "Edit notarial action": "Edit notarial action",
   "Choose notary": "Choose notary",
   "Choose requester": "Choose requester",
-  "Choose object": "Choose object",
-  "Choose document": "Choose document",
+  "Filter by document": "Filter by document",
+  "Filter by object": "Filter by object",
   "Choose notarial action": "Choose notarial action",
   "Form first step hint text": "You can also go directly to the “Notary” search form if you know a specific notary, ignoring the previous fields.",
   "Type of action": "Type of action",
@@ -103,5 +103,6 @@
   "not assigned": "not assigned",
   "Select from the list of templates": "Select from the list of templates",
   "Select by questionnaire": "Select by questionnaire",
-  "Select from the list": "Select from the list"
+  "Select from the list": "Select from the list",
+  "Additional filters": "Additional filters"
 }

@@ -24,29 +24,24 @@ export const applicationSchema = object()
     object: number()
       .integer()
       .transform((value) => (isNaN(value) ? null : value))
-      .nullable()
-      .test("nullable-required", "required", (v) => v != null),
+      .nullable(),
     objectType: number()
       .integer()
       .transform((value) => (isNaN(value) ? null : value))
-      .nullable()
-      .test("nullable-required", "required", (v) => v != null),
+      .nullable(),
     notarialAction: number()
       .integer()
       .transform((value) => (isNaN(value) ? null : value))
-      .nullable()
-      .test("nullable-required", "required", (v) => v != null),
+      .nullable(),
     typeNotarialAction: number()
       .integer()
       .transform((value) => (isNaN(value) ? null : value))
-      .nullable()
-      .test("nullable-required", "required", (v) => v != null),
+      .nullable(),
     isToPrintLineSubTotal: boolean().nullable(),
     action: number()
       .integer()
       .transform((value) => (isNaN(value) ? null : value))
-      .nullable()
-      .test("nullable-required", "required", (v) => v != null),
+      .nullable(),
     product: object({
       id: number().integer().positive(),
       oneSideAction: boolean(),
