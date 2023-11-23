@@ -5,8 +5,8 @@
   "Edit notarial action": "Редактировать нотариальное действие",
   "Choose notary": "Выберите нотариуса",
   "Choose requester": "Выбор заявителя",
-  "Choose object": "Выбор объекта",
-  "Choose document": "Выбор документа",
+  "Filter by document": "Фильтр по документу",
+  "Filter by object": "Фильтр по объекту",
   "Choose notarial action": "Выбор нотариального действия",
   "Form first step hint text": "Вы также можете сразу перейти к поисковой форме “Нотариус” если знаете конкретного нотариуса, игнорируя предшествующие поля.",
   "Type of action": "Вид действия",
@@ -103,5 +103,6 @@
   "not assigned": "не присвоен",
   "Select from the list of templates": "Выбрать из списка шаблонов",
   "Select by questionnaire": "Выбрать путем опросника",
-  "Select from the list": "Выбрать из списка"
+  "Select from the list": "Выбрать из списка",
+  "Additional filters": "Дополнительные фильтры"
 }

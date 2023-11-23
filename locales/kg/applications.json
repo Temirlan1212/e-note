@@ -5,8 +5,8 @@
   "Edit notarial action": "Нотариалдык иш-аракетти өзгөртүү",
   "Choose notary": "Нотариус тандоо",
   "Choose requester": "Өтүнүүчүнү тандоо",
-  "Choose object": "Объектти тандоо",
-  "Choose document": "Документти тандоо",
+  "Filter by document": "Документ боюнча тандоо",
+  "Filter by object": "Объект боюнча тандоо",
   "Choose notarial action": "Нотариалдык иш-аракетти тандоо",
   "Form first step hint text": "Мурунку талааларды эске албай, белгилүү бир нотариусту билсеңиз, “Нотариус“ издөө формасына түз өтсөңүз болот.",
   "Type of action": "Иш-аракеттердин түрү",
@@ -103,5 +103,6 @@
   "not assigned": "дайындалган эмес",
   "Select from the list of templates": "Шаблон тизмесинен тандоо",
   "Select by questionnaire": "Анкета боюнча тандоо",
-  "Select from the list": "Тизмеден тандаңыз"
+  "Select from the list": "Тизмеден тандаңыз",
+  "Additional filters": "Кошумча фильтирлер"
 }
