@@ -222,7 +222,18 @@ export default function PersonalData({
             defaultValue={defaultValues?.subjectRole ?? ""}
             render={({ field, fieldState }) => (
               <Box display="flex" flexDirection="column" width="100%" mt="20px">
-                <InputLabel>{t("Subject role")}</InputLabel>
+                <InputLabel
+                  required
+                  sx={{
+                    ".MuiFormLabel-asterisk": {
+                      color: "error.main",
+                      fontSize: "2em",
+                      verticalAlign: "middle",
+                    },
+                  }}
+                >
+                  {t("Subject role")}
+                </InputLabel>
                 <Select
                   labelField={
                     subjectRoleDictionary?.data?.length > 0 && subjectRoleDictionary?.data[0][`title_${locale}`]
@@ -277,7 +288,18 @@ export default function PersonalData({
               defaultValue={defaultValues?.pin ?? ""}
               render={({ field, fieldState }) => (
                 <Box display="flex" flexDirection="column" justifyContent="center" width="100%">
-                  <InputLabel>{type != 1 ? t("PIN") : t("TIN")}</InputLabel>
+                  <InputLabel
+                    required
+                    sx={{
+                      ".MuiFormLabel-asterisk": {
+                        color: "error.main",
+                        fontSize: "2em",
+                        verticalAlign: "middle",
+                      },
+                    }}
+                  >
+                    {type != 1 ? t("PIN") : t("TIN")}
+                  </InputLabel>
                   <Input
                     inputProps={{ maxLength: foreigner ? undefined : 14 }}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -387,7 +409,16 @@ export default function PersonalData({
                 defaultValue={defaultValues?.lastName ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel required sx={{ ".MuiFormLabel-asterisk": { color: "error.main" } }}>
+                    <InputLabel
+                      required
+                      sx={{
+                        ".MuiFormLabel-asterisk": {
+                          color: "error.main",
+                          fontSize: "2em",
+                          verticalAlign: "middle",
+                        },
+                      }}
+                    >
                       {t("Last name")}
                     </InputLabel>
                     <Input
@@ -408,7 +439,16 @@ export default function PersonalData({
                 defaultValue={defaultValues?.firstName ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel required sx={{ ".MuiFormLabel-asterisk": { color: "error.main" } }}>
+                    <InputLabel
+                      required
+                      sx={{
+                        ".MuiFormLabel-asterisk": {
+                          color: "error.main",
+                          fontSize: "2em",
+                          verticalAlign: "middle",
+                        },
+                      }}
+                    >
                       {t("First name")}
                     </InputLabel>
                     <Input
