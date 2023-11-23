@@ -267,6 +267,9 @@ export default function ApplicationList() {
             headerName: "Unique number",
             width: 200,
             sortable: isSearchedData ? false : true,
+            valueGetter: (params: GridValueGetterParams) => {
+              return params.row?.notaryUniqNumber || t("not assigned");
+            },
           },
           {
             field: "requester.fullName",
