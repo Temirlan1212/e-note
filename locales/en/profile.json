@@ -10,6 +10,9 @@
   "Old password": "Old password",
   "Change password": "Change password",
   "Full name is required!": "Full name is required!",
+  "First name is required!": "First name is required!",
+  "Middle name is required!": "Middle name is required!",
+  "Last name is required!": "Last name is required!",
   "Login is required!": "Login is required!",
   "E-mail is required!": "E-mail is required!",
   "Please enter valid number": "Please enter a valid number.",
@@ -18,5 +21,9 @@
   "New Password is required": "New Password is required",
   "Password length should be more than 4 characters": "Password length should be more than 4 characters",
   "Confirm Password is required": "Confirm Password is required",
-  "Passwords do not match": "Passwords do not match"
+  "Passwords do not match": "Passwords do not match",
+  "Specify coordinates to display them on the map": "Specify coordinates to display them on the map",
+  "Coordinates on the map": "Coordinates on the map",
+  "Latitude": "Latitude",
+  "Longitude": "Longitude"
 }

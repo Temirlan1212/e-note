@@ -10,6 +10,9 @@
   "Old password": "Старый пароль",
   "Change password": "Сменить пароль",
   "Full name is required!": "ФИО обязательно!",
+  "First name is required!": "Имя обязательно!",
+  "Middle name is required!": "Фамилия обязательно!",
+  "Last name is required!": "Отчество обязательно!",
   "Login is required!": "Логин обязателен!",
   "E-mail is required!": "E-mail обязателен!",
   "Please enter valid number": "Пожалуйста, введите корректный номер.",
@@ -18,5 +21,9 @@
   "New Password is required": "Новый пароль обязателен",
   "Password length should be more than 4 characters": "Длина пароля должна быть больше 4 символов",
   "Confirm Password is required": "Требуется подтвердить пароль",
-  "Passwords do not match": "Пароли не совпадают"
+  "Passwords do not match": "Пароли не совпадают",
+  "Specify coordinates to display them on the map": "Укажите координаты чтобы отобразить их на карте",
+  "Coordinates on the map": "Координаты на карте",
+  "Latitude": "Широта",
+  "Longitude": "Долгота"
 }

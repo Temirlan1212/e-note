@@ -1,17 +1,30 @@
 import * as yup from "yup";
+import { userAddressSchema } from "./user";
 
 export type IUserProfileSchema = yup.InferType<typeof userProfileSchema>;
 
 export const userProfileSchema = yup.object().shape({
-  fullName: yup.string().required("Full name is required!"),
+  firstName: yup.string().required("First name is required!"),
+  middleName: yup.string().required("Middle name is required!"),
+  lastName: yup.string().required("Last name is required!"),
   login: yup.string().required("Login is required!"),
   email: yup.string().email().required("E-mail is required!"),
-  partner: yup.object({
-    mobilePhone: yup
-      .string()
-      .trim()
-      .required("Mobile is required!")
-      .matches(/^[0-9\+\-\s]*$/, { message: "Please enter valid number", excludeEmptyString: false }),
+  mobilePhone: yup
+    .string()
+    .trim()
+    .required("Mobile is required!")
+    .matches(/^[0-9\+\-\s]*$/, { message: "Please enter valid number", excludeEmptyString: false }),
+  activeCompany: yup.object({
+    licenseNo: yup.string(),
+    licenseStatus: yup.string(),
+    licenseTermFrom: yup.string(),
+    licenseTermUntil: yup.string(),
+    longitude: yup.string().required("required"),
+    latitude: yup.string().required("required"),
+    address: userAddressSchema,
+    notaryDistrict: yup.object({
+      id: yup.number().integer().positive(),
+    }),
   }),
 });
 

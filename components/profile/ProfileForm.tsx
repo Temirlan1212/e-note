@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useTranslations } from "next-intl";
 import { PermIdentity } from "@mui/icons-material";
@@ -16,12 +16,11 @@ import { IEmail, IUserData } from "@/models/user";
 
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
-import { Controller } from "react-hook-form";
-import dynamic from "next/dynamic";
-
-const UserTelInput = dynamic(() => import("@/components/ui/TelInput"), {
-  ssr: false,
-});
+import Address from "@/components/fields/Address";
+import License from "@/components/fields/License";
+import Hint from "@/components/ui/Hint";
+import Contact from "@/components/fields/Contact";
+import Coordinates from "@/components/fields/Coordinates";
 
 interface IProfileFormProps {}
 
@@ -30,26 +29,57 @@ interface IExtendedUserData extends IUserData {
   "partner.emailAddress"?: IEmail;
 }
 
+interface IAppQueryParams {
+  userRole: string | null;
+}
+
 async function blobToFile(blob: Blob, fileName: string): Promise<File> {
   return new File([blob], fileName, { type: blob?.type });
 }
 
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
+  const t = useTranslations();
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const profile = useProfileStore<IProfileState>((state) => state);
-  const userData: IExtendedUserData | null = profile.getUserData();
+  const profileData: IExtendedUserData | null = profile.getUserData();
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [userData, setUserData] = useState<FetchResponseBody | null>();
+
+  const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
+    userRole: "notary",
+  });
 
   const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
     returnResponse: true,
   });
 
   const {
+    data: userdata,
+    update: getUserData,
+    loading: userDataLoading,
+  } = useFetch<FetchResponseBody | null>(
+    profileData?.id != null ? "/api/profile/user/" + profileData?.id : "",
+    "POST",
+    {
+      body: appQueryParams,
+    }
+  );
+
+  useEffect(() => {
+    if (userdata?.data?.length > 0) {
+      setUserData(userdata);
+    }
+  }, [userdata]);
+
+  const {
     data: imageData,
     loading: isImageLoading,
     update: getImage,
-  } = useFetch<Response>(userData?.id != null ? "/api/profile/download-image/" + userData?.id : "", "GET", {
+  } = useFetch<Response>(profileData?.id != null ? "/api/profile/download-image/" + profileData?.id : "", "GET", {
     returnResponse: true,
   });
 
@@ -65,17 +95,32 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const form = useForm<IUserProfileSchema>({
     resolver: yupResolver(userProfileSchema),
-    defaultValues: {
-      fullName: userData?.name,
-      login: userData?.code,
-      email: userData?.email,
-      partner: {
-        mobilePhone: userData?.["partner.mobilePhone"],
+    values: {
+      firstName: userData?.data?.[0]?.partner?.firstName,
+      middleName: userData?.data?.[0]?.partner?.middleName,
+      lastName: userData?.data?.[0]?.partner?.lastName,
+      login: userData?.data?.[0]?.code,
+      email: userData?.data?.[0]?.partner?.emailAddress?.address,
+      mobilePhone: userData?.data?.[0]?.partner?.mobilePhone,
+      activeCompany: {
+        licenseNo: userData?.data?.[0]?.activeCompany?.licenseNo ?? t("absent"),
+        licenseStatus: userData?.data?.[0]?.activeCompany?.licenseStatus ?? t("absent"),
+        licenseTermFrom: userData?.data?.[0]?.activeCompany?.licenseTermFrom ?? t("absent"),
+        licenseTermUntil: userData?.data?.[0]?.activeCompany?.licenseTermUntil ?? t("absent"),
+        longitude: userData?.data?.[0]?.activeCompany?.longitude ?? "00.000000",
+        latitude: userData?.data?.[0]?.activeCompany?.latitude ?? "00.000000",
+        address: {
+          region: { id: userData?.data?.[0]?.activeCompany?.address?.region?.id },
+          city: { id: userData?.data?.[0]?.activeCompany?.address?.city?.id },
+          district: { id: userData?.data?.[0]?.activeCompany?.address?.district?.id },
+          addressL2: userData?.data?.[0]?.activeCompany?.address?.addressL2,
+          addressL3: userData?.data?.[0]?.activeCompany?.address?.addressL3,
+          addressL4: userData?.data?.[0]?.activeCompany?.address?.addressL4,
+        },
+        notaryDistrict: { id: userData?.data?.[0]?.activeCompany?.address?.notaryDistrict?.id },
       },
     },
   });
-
-  const t = useTranslations();
 
   const {
     formState: { errors },
@@ -83,7 +128,31 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     reset,
   } = form;
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const addressNames = {
+    region: "activeCompany.address.region",
+    district: "activeCompany.address.district",
+    city: "activeCompany.address.city",
+    street: "activeCompany.address.addressL4",
+    house: "activeCompany.address.addressL3",
+    apartment: "activeCompany.address.addressL2",
+  };
+
+  const licenseNames = {
+    licenseNo: "activeCompany.licenseNo",
+    licenseStatus: "activeCompany.licenseStatus",
+    licenseTermFrom: "activeCompany.licenseTermFrom",
+    licenseTermUntil: "activeCompany.licenseTermUntil",
+  };
+
+  const coordinateNames = {
+    latitude: "activeCompany.latitude",
+    longitude: "activeCompany.longitude",
+  };
+
+  const contactNames = {
+    phone: "mobilePhone",
+    email: "email",
+  };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
@@ -99,26 +168,18 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     if (selectedImage) {
       const reader = new FileReader();
       reader.onload = async () => {
-        if (userData?.id != null && reader.result) {
-          await update("/api/profile/update/" + userData?.id, {
-            id: userData?.id,
-            version: userData?.version,
-            name: data.fullName,
+        if (profileData?.id != null && reader.result) {
+          const params = {
+            userData: userData,
+            submitData: data,
             image: reader.result.toString(),
-            partner: {
-              id: userData?.partner?.id,
-              version: userData?.partner?.$version,
-              mobilePhone: data?.partner?.mobilePhone,
-              emailAddress: {
-                id: userData?.["partner.emailAddress"]?.id,
-                version: userData?.["partner.emailAddress"]?.$version,
-                address: data.email,
-              },
-            },
+          };
+          await update("/api/profile/update/" + profileData?.id, {
+            body: params,
           }).then((res) => {
             if (res && res.ok) {
               profile.loadUserData({
-                username: userData.code,
+                username: userData?.data?.[0]?.code,
               });
               getImage();
             }
@@ -128,26 +189,18 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
       reader.readAsDataURL(selectedImage);
     }
     if (!imagePreview) {
-      if (userData?.id != null) {
-        await update("/api/profile/update/" + userData?.id, {
-          id: userData?.id,
-          version: userData?.version,
-          name: data.fullName,
+      if (profileData?.id != null) {
+        const params = {
+          userData: userData,
+          submitData: data,
           image: null,
-          partner: {
-            id: userData?.partner?.id,
-            version: userData?.partner?.$version,
-            mobilePhone: data?.partner?.mobilePhone,
-            emailAddress: {
-              id: userData?.["partner.emailAddress"]?.id,
-              version: userData?.["partner.emailAddress"]?.$version,
-              address: data.email,
-            },
-          },
+        };
+        await update("/api/profile/update/" + profileData?.id, {
+          body: params,
         }).then((res) => {
           if (res && res.ok) {
             profile.loadUserData({
-              username: userData.code,
+              username: userData?.data?.[0]?.code,
             });
             getImage();
           }
@@ -167,7 +220,11 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     setImagePreview(null);
   };
 
-  return (
+  return userDataLoading ? (
+    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <CircularProgress />
+    </Box>
+  ) : (
     <Box display="flex" flexDirection="column" gap="30px">
       <Box
         display="flex"
@@ -256,15 +313,17 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           </Typography>
           <Box
             display="flex"
+            flexWrap="wrap"
             gap="20px"
             sx={{
               flexDirection: {
                 xs: "column",
                 sm: "row",
               },
+              justifyContent: "space-between",
             }}
           >
-            <FormControl sx={{ width: "100%" }}>
+            <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
               <InputLabel
                 sx={{
                   color: "#24334B",
@@ -276,17 +335,61 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 }}
                 shrink
               >
-                {t("Fullname")}
+                {t("Last name")}
               </InputLabel>
               <Input
                 fullWidth
-                error={!!errors.fullName?.message ?? false}
-                helperText={errors.fullName?.message ? t(errors.fullName?.message) : ""}
+                error={!!errors.lastName?.message ?? false}
+                helperText={errors.lastName?.message ? t(errors.lastName?.message) : ""}
                 register={form.register}
-                name="fullName"
+                name="lastName"
               />
             </FormControl>
-            <FormControl sx={{ width: "100%" }}>
+            <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
+              <InputLabel
+                sx={{
+                  color: "#24334B",
+                  fontSize: "18px",
+                  top: "10px",
+                  left: "-14px",
+                  fontWeight: "500",
+                  position: "inherit",
+                }}
+                shrink
+              >
+                {t("First name")}
+              </InputLabel>
+              <Input
+                fullWidth
+                error={!!errors.firstName?.message ?? false}
+                helperText={errors.firstName?.message ? t(errors.firstName?.message) : ""}
+                register={form.register}
+                name="firstName"
+              />
+            </FormControl>
+            <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
+              <InputLabel
+                sx={{
+                  color: "#24334B",
+                  fontSize: "18px",
+                  top: "10px",
+                  left: "-14px",
+                  fontWeight: "500",
+                  position: "inherit",
+                }}
+                shrink
+              >
+                {t("Middle name")}
+              </InputLabel>
+              <Input
+                fullWidth
+                error={!!errors.middleName?.message ?? false}
+                helperText={errors.middleName?.message ? t(errors.middleName?.message) : ""}
+                register={form.register}
+                name="middleName"
+              />
+            </FormControl>
+            <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
               <InputLabel
                 sx={{
                   color: "#24334B",
@@ -304,6 +407,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             </FormControl>
           </Box>
         </Box>
+
         <Box
           sx={{
             display: "flex",
@@ -330,57 +434,114 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               },
             }}
           >
-            <FormControl sx={{ width: "100%" }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                E-mail
-              </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.email?.message ?? false}
-                helperText={errors.email?.message ? t(errors.email?.message) : ""}
-                register={form.register}
-                name="email"
-                type="email"
-              />
-            </FormControl>
-            <FormControl sx={{ width: "100%" }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Phone number")}
-              </InputLabel>
-              <Controller
-                name="partner.mobilePhone"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <UserTelInput
-                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                    {...field}
-                  />
-                )}
-              />
-            </FormControl>
+            <Contact form={form} names={contactNames} boxSx={{ width: "100%" }} />
           </Box>
         </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "15px",
+          }}
+        >
+          <Typography
+            sx={{
+              color: "#687C9B",
+              fontSize: "16px",
+              fontWeight: "600",
+            }}
+          >
+            {t("Address")}
+          </Typography>
+          <Box
+            display="flex"
+            gap="20px"
+            sx={{
+              flexDirection: {
+                xs: "column",
+                sm: "row",
+              },
+              justifyContent: "space-between",
+            }}
+          >
+            <Address form={form} names={addressNames} boxSx={{ width: "100%" }} />
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "15px",
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography
+              sx={{
+                color: "#687C9B",
+                fontSize: "16px",
+                fontWeight: "600",
+              }}
+            >
+              {t("Coordinates on the map")}
+            </Typography>
+            <Hint type="hint" defaultActive={false}>
+              {t("Specify coordinates to display them on the map")}
+            </Hint>
+          </Box>
+          <Box
+            display="flex"
+            gap="20px"
+            sx={{
+              flexDirection: {
+                xs: "column",
+                sm: "row",
+              },
+              justifyContent: "space-between",
+            }}
+          >
+            <Coordinates form={form} names={coordinateNames} boxSx={{ width: "100%" }} />
+          </Box>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "15px",
+          }}
+        >
+          <Typography
+            sx={{
+              color: "#687C9B",
+              fontSize: "16px",
+              fontWeight: "600",
+            }}
+          >
+            {t("License information")}
+          </Typography>
+          <Box
+            display="flex"
+            flexWrap="wrap"
+            gap="20px"
+            sx={{
+              flexDirection: {
+                xs: "column",
+                sm: "row",
+              },
+            }}
+          >
+            <License form={form} names={licenseNames} disableFields={true} />
+          </Box>
+        </Box>
+
         <Box
           display="flex"
           gap="30px"
