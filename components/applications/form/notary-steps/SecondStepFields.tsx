@@ -129,7 +129,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
             defaultValue={null}
             render={({ field, fieldState }) => (
               <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                <InputLabel>{t("Select document from system templates")}</InputLabel>
+                <InputLabel>{t("Select a notarial act by name")}</InputLabel>
                 <Autocomplete
                   labelField={locale !== "en" ? "$t:name" : "name"}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
