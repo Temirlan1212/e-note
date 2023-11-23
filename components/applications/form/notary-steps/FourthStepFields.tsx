@@ -213,6 +213,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     organNumber: `members.${index}.authorityNumber`,
     issueDate: `members.${index}.dateOfIssue`,
     familyStatus: `members.${index}.familyStatus`,
+    passportStatus: `members.${index}.passportStatus`,
   });
 
   const getAddressNames = (index: number) => ({

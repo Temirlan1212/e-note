@@ -158,6 +158,7 @@ export const personSchema = object()
       .required("required"),
     nationality: string(),
     familyStatus: boolean(),
+    passportStatus: boolean(),
     maritalStatus: string(),
     disabled: boolean(),
     subjectRole: string().required("required"),

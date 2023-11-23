@@ -18,6 +18,7 @@ export interface IIdentityDocumentProps {
     organNumber: string;
     issueDate: string;
     familyStatus?: string;
+    passportStatus?: string;
   };
   defaultValues?: {
     documentType?: number | null;
@@ -27,6 +28,7 @@ export interface IIdentityDocumentProps {
     organNumber?: number | null;
     issueDate?: Date;
     familyStatus?: boolean | null;
+    passportStatus?: boolean | null;
   };
   disableFields?: boolean;
 }
@@ -190,11 +192,11 @@ export default function IdentityDocument({ form, names, defaultValues, disableFi
           )}
         />
 
-        {Boolean(names?.familyStatus) && (
+        {Boolean(names?.passportStatus) && (
           <Controller
             control={control}
-            name={names.familyStatus ?? ""}
-            defaultValue={defaultValues?.familyStatus ?? false}
+            name={names.passportStatus ?? ""}
+            defaultValue={defaultValues?.passportStatus ?? false}
             render={({ field, fieldState }) => (
               <Box display="flex" flexDirection="column" justifyContent="center">
                 <InputLabel>{t("Validity status")}</InputLabel>
