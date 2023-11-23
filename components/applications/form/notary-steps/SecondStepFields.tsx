@@ -117,7 +117,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        <StepperContentStep step={2} title={t("Choose document from templates")} sx={{ flex: "1 1 100%" }} />
+        <StepperContentStep step={2} title={t("Choose notarial action")} sx={{ flex: "1 1 100%" }} />
         <Hint type="hint">{t("Notary form first step hint text")}</Hint>
       </Box>
 
