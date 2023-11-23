@@ -118,7 +118,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
     <Box display="flex" gap="20px" flexDirection="column">
       <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <StepperContentStep step={2} title={t("Choose notarial action")} sx={{ flex: "1 1 100%" }} />
-        <Hint type="hint">{t("Notary form first step hint text")}</Hint>
+        {/*<Hint type="hint">{t("Notary form first step hint text")}</Hint>*/}
       </Box>
 
       <Box display="flex" gap="50px" alignItems="end">
@@ -231,7 +231,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
               buttonType="secondary"
               sx={{ maxWidth: "400px", height: "100px" }}
             >
-              {t("Select from the list of templates")}
+              {t("Select from the list")}
             </Button>
 
             <Typography variant="h5" color="secondary">
@@ -239,7 +239,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
             </Typography>
 
             <Button onClick={handleStepByStepClick} buttonType="secondary" sx={{ maxWidth: "400px", height: "100px" }}>
-              {t("Choose from the template tree")}
+              {t("Select by questionnaire")}
             </Button>
           </Box>
         )}
@@ -267,7 +267,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
               buttonType="secondary"
               sx={{ width: "auto" }}
             >
-              {t("Choose from the template tree")}
+              {t("Select by questionnaire")}
             </Button>
           </>
         )}
