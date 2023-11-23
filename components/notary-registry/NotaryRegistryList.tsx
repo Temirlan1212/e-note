@@ -49,7 +49,7 @@ const NotaryRegistryList: FC<INotaryListProps> = ({ loading, data, notariesQuery
                   <Grid item key={notary?.id} xs={12} sm={12} md={3}>
                     <NotariesCard
                       id={notary?.id}
-                      userId={notary["partner.user.id"]}
+                      userId={notary["partner.linkedUser.id"]}
                       fullName={notary["partner.fullName"]}
                       region={notary["address.region"]}
                       area={notary["address.district"]}

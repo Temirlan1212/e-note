@@ -13,7 +13,7 @@ export interface INotary {
   id: number;
   "partner.simpleFullName": string;
   "partner.fullName": string;
-  "partner.user.id": number;
+  "partner.linkedUser.id": number;
   name: string;
 }
 

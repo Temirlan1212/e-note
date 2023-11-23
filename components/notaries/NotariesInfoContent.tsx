@@ -65,7 +65,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const notaryData = data?.data || [];
 
-  const userId = notaryData[0]?.partner?.user?.id;
+  const userId = notaryData[0]?.partner?.linkedUser?.id;
 
   const workDaysAreaData = workDaysArea?.data || [];
 
