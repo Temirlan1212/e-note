@@ -19,6 +19,7 @@ import { IFetchByIdData, IFetchNotaryChat } from "@/models/chat";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Input from "@/components/ui/Input";
 import { useRouter } from "next/router";
+import { format } from "date-fns";
 
 export const ApplicationListActions = ({
   params,
@@ -62,11 +63,13 @@ export const ApplicationListActions = ({
     const blob = await response?.blob();
     if (blob == null) return;
 
+    const formattedDate = format(new Date(), "yyyy-MM-dd HH:mm:ss");
+    const formattedFileName = `${fileName} ${formattedDate}`;
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.style.display = "none";
     a.href = url;
-    a.download = fileName || "document.pdf";
+    a.download = formattedFileName || "document.pdf";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
