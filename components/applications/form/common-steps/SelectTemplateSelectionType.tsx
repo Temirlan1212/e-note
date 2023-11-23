@@ -24,9 +24,7 @@ export default function SelectTemplateSelectionType({
 }: IStepFieldsProps) {
   const t = useTranslations();
 
-  const { trigger, control, getValues, setValue, watch } = form;
-
-  const selectTemplateFromMade = watch("selectTemplateFromMade");
+  const { setValue } = form;
 
   const handlePrevClick = () => {
     if (onPrev != null) onPrev();
