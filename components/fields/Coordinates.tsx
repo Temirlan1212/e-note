@@ -14,10 +14,18 @@ export interface ICoordinatesProps {
     longitude?: string;
   };
   disableFields?: boolean;
+  maxLength?: number;
   boxSx?: SxProps<Theme> | undefined;
 }
 
-export default function Coordinates({ form, names, defaultValues, disableFields, boxSx }: ICoordinatesProps) {
+export default function Coordinates({
+  form,
+  names,
+  defaultValues,
+  disableFields,
+  maxLength,
+  boxSx,
+}: ICoordinatesProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
@@ -34,6 +42,7 @@ export default function Coordinates({ form, names, defaultValues, disableFields,
               <InputLabel>{t("Latitude")}</InputLabel>
               <Input
                 disabled={disableFields}
+                inputProps={{ maxLength: maxLength || undefined }}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 {...field}
@@ -50,6 +59,7 @@ export default function Coordinates({ form, names, defaultValues, disableFields,
               <InputLabel>{t("Longitude")}</InputLabel>
               <Input
                 disabled={disableFields}
+                inputProps={{ maxLength: maxLength || undefined }}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 {...field}

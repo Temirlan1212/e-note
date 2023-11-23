@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { PermIdentity } from "@mui/icons-material";
 import { Avatar, Box, CircularProgress, Divider, FormControl, InputLabel, Typography } from "@mui/material";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -21,6 +21,8 @@ import License from "@/components/fields/License";
 import Hint from "@/components/ui/Hint";
 import Contact from "@/components/fields/Contact";
 import Coordinates from "@/components/fields/Coordinates";
+import Autocomplete from "../ui/Autocomplete";
+import { INotaryDistrict } from "@/models/notary-district";
 
 interface IProfileFormProps {}
 
@@ -37,8 +39,18 @@ async function blobToFile(blob: Blob, fileName: string): Promise<File> {
   return new File([blob], fileName, { type: blob?.type });
 }
 
+const getLabelField = (data: FetchResponseBody | null, locale: string) => {
+  if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
+    const item = data.data.find((item) => item);
+    if (item.hasOwnProperty("title")) return item?.[`title_${locale}`] != null ? `title_${locale}` : "title";
+    if (item.hasOwnProperty("$t:name")) return item != null ? "$t:name" : "name";
+  }
+  return "name";
+};
+
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const t = useTranslations();
+  const locale = useLocale();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -126,7 +138,18 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     formState: { errors },
     setError,
     reset,
+    control,
+    trigger,
+    watch,
+    resetField,
   } = form;
+
+  const city = watch("activeCompany.address.city");
+
+  const { data: notaryDistrictDictionary, loading: notaryDistrictDictionaryLoading } = useFetch(
+    city != null ? `/api/dictionaries/notary-districts?cityId=${city.id}` : "",
+    "GET"
+  );
 
   const addressNames = {
     region: "activeCompany.address.region",
@@ -135,6 +158,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     street: "activeCompany.address.addressL4",
     house: "activeCompany.address.addressL3",
     apartment: "activeCompany.address.addressL2",
+    notaryDistrict: "activeCompany.notaryDistrict",
   };
 
   const licenseNames = {
@@ -467,6 +491,40 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           >
             <Address form={form} names={addressNames} boxSx={{ width: "100%" }} />
           </Box>
+          <Controller
+            control={control}
+            name={"activeCompany.notaryDistrict"}
+            defaultValue={userData?.data?.[0]?.activeCompany?.notaryDistrict?.id}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel>{t("Notary district")}</InputLabel>
+                <Autocomplete
+                  labelField={getLabelField(notaryDistrictDictionary, locale)}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  disabled={!city}
+                  options={
+                    notaryDistrictDictionary?.status === 0
+                      ? (notaryDistrictDictionary?.data as INotaryDistrict[]) ?? []
+                      : []
+                  }
+                  loading={notaryDistrictDictionaryLoading}
+                  value={
+                    field.value != null
+                      ? (notaryDistrictDictionary?.data ?? []).find(
+                          (item: INotaryDistrict) => item.id == field.value?.id
+                        ) ?? null
+                      : null
+                  }
+                  onBlur={field.onBlur}
+                  onChange={(event, value) => {
+                    field.onChange(value?.id != null ? { id: value.id } : null);
+                    trigger(field.name);
+                  }}
+                />
+              </Box>
+            )}
+          />
         </Box>
 
         <Box
@@ -507,7 +565,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               justifyContent: "space-between",
             }}
           >
-            <Coordinates form={form} names={coordinateNames} boxSx={{ width: "100%" }} />
+            <Coordinates form={form} names={coordinateNames} maxLength={9} boxSx={{ width: "100%" }} />
           </Box>
         </Box>
 

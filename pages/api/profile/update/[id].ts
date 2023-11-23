@@ -56,10 +56,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             addressL3: submitData?.activeCompany?.address?.addressL3,
             addressL2: submitData?.activeCompany?.address?.addressL2,
           },
-          notaryDistrict: {
-            // id: data?.activeCompany?.notaryDistrict?.id,
-            id: 14,
-          },
         },
       },
     }),

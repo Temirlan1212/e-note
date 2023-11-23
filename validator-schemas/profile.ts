@@ -19,8 +19,16 @@ export const userProfileSchema = yup.object().shape({
     licenseStatus: yup.string(),
     licenseTermFrom: yup.string(),
     licenseTermUntil: yup.string(),
-    longitude: yup.string().required("required"),
-    latitude: yup.string().required("required"),
+    longitude: yup
+      .string()
+      .trim()
+      .required("required")
+      .matches(/^\d+(\.\d+)?$/, "onlyNumbers"),
+    latitude: yup
+      .string()
+      .trim()
+      .required("required")
+      .matches(/^\d+(\.\d+)?$/, "onlyNumbers"),
     address: userAddressSchema,
     notaryDistrict: yup.object({
       id: yup.number().integer().positive(),
