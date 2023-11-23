@@ -30,6 +30,7 @@ import DynamicIcon from "./DynamicIcon";
 import ProfileDropdownButton from "./ProfileDropdownButton";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PopupNotifications from "./PopupNotifications";
+import ScrollToTopFab from "./ScrollToTopFab";
 
 const DrawerListItems = ({
   routes,
@@ -296,6 +297,8 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
       >
         {children}
       </Box>
+
+      <ScrollToTopFab />
     </Box>
   );
 }
