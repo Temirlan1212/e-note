@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
-import useEffectOnce from "@/hooks/useEffectOnce";
 import { InputLabel, Box } from "@mui/material";
 import Autocomplete from "../ui/Autocomplete";
 
@@ -19,9 +18,10 @@ export interface IAreaProps {
     city?: { id: number } | null;
   };
   disableFields?: boolean;
+  isFirstStepFields?: boolean;
 }
 
-export default function Area({ form, names, defaultValues, disableFields }: IAreaProps) {
+export default function Area({ form, names, defaultValues, disableFields, isFirstStepFields = false }: IAreaProps) {
   const t = useTranslations();
   const locale = useLocale();
 
@@ -32,14 +32,26 @@ export default function Area({ form, names, defaultValues, disableFields }: IAre
   const isRegionalSignificance = region != null && district == null;
 
   const { data: regionDictionary, loading: regionDictionaryLoading } = useFetch("/api/dictionaries/regions", "GET");
-  const { data: districtDictionary, loading: districtDictionaryLoading } = useFetch(
-    region != null ? `/api/dictionaries/districts?regionId=${region.id}` : "",
+  const {
+    data: districtDictionary,
+    loading: districtDictionaryLoading,
+    update,
+  } = useFetch(
+    isFirstStepFields ? (region != null ? `/api/dictionaries/districts?regionId=${region.id}` : "") : "",
     "GET"
   );
   const { data: cityDictionary, loading: cityDictionaryLoading } = useFetch(
-    region != null ? `/api/dictionaries/cities?regionId=${region.id}&districtId=${district?.id ?? ""}` : "",
+    isFirstStepFields
+      ? region != null
+        ? `/api/dictionaries/cities?regionId=${region.id}&districtId=${district?.id ?? ""}`
+        : ""
+      : `/api/dictionaries/cities?regionId=${region?.id ?? ""}&districtId=${district?.id ?? ""}`,
     "GET"
   );
+
+  useEffect(() => {
+    update(`/api/dictionaries/districts${region ? `?regionId=${region?.id}` : ""}`);
+  }, [region]);
 
   const getLabelField = (data: FetchResponseBody | null) => {
     if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
@@ -66,6 +78,7 @@ export default function Area({ form, names, defaultValues, disableFields }: IAre
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 options={regionDictionary?.status === 0 ? (regionDictionary?.data as Record<string, any>[]) ?? [] : []}
                 loading={regionDictionaryLoading}
+                textFieldPlaceholder={isFirstStepFields ? t("All regions") : ""}
                 value={
                   field.value != null
                     ? (regionDictionary?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ??
@@ -93,10 +106,11 @@ export default function Area({ form, names, defaultValues, disableFields }: IAre
                 labelField={getLabelField(districtDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!region || disableFields}
+                disabled={isFirstStepFields ? disableFields : !region || disableFields}
                 options={
                   districtDictionary?.status === 0 ? (districtDictionary?.data as Record<string, any>[]) ?? [] : []
                 }
+                textFieldPlaceholder={isFirstStepFields ? t("All districts") : ""}
                 loading={districtDictionaryLoading}
                 value={
                   field.value != null
@@ -130,8 +144,9 @@ export default function Area({ form, names, defaultValues, disableFields }: IAre
                   labelField={getLabelField(cityDictionary)}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!region || disableFields}
+                  disabled={isFirstStepFields ? disableFields : !region || disableFields}
                   options={options ?? []}
+                  textFieldPlaceholder={isFirstStepFields ? t("All cities and villages") : ""}
                   loading={cityDictionaryLoading}
                   value={field.value != null ? (options ?? []).find((item) => item.id == field.value.id) ?? null : null}
                   onBlur={field.onBlur}

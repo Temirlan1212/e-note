@@ -424,7 +424,7 @@ export default function PersonalData({
                     <Input
                       disabled={disableFields || disable}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 2 }) : ""}
                       {...field}
                     />
                   </Box>
@@ -454,7 +454,7 @@ export default function PersonalData({
                     <Input
                       disabled={disableFields || disable}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 2 }) : ""}
                       {...field}
                     />
                   </Box>
