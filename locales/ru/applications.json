@@ -3,7 +3,7 @@
   "Create notarial action": "Создать нотариальное действие",
   "Edit application": "Редактировать заявку",
   "Edit notarial action": "Редактировать нотариальное действие",
-  "Choose notary": "Выбор нотариуса",
+  "Choose notary": "Выберите нотариуса",
   "Choose requester": "Выбор заявителя",
   "Choose object": "Выбор объекта",
   "Choose document": "Выбор документа",
@@ -100,7 +100,8 @@
   "Enter a template name": "Введите название шаблона",
   "Video recorded": "Видео было записано",
   "Record a video": "Записать видео",
-  "Choose from the template tree": "Выбрать из дерева шаблонов",
   "not assigned": "не присвоен",
-  "Select from the list of templates": "Выбрать из списка шаблонов"
+  "Select from the list of templates": "Выбрать из списка шаблонов",
+  "Select by questionnaire": "Выбрать путем опросника",
+  "Select from the list": "Выбрать из списка"
 }
