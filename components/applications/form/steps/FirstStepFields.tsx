@@ -164,7 +164,16 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
       <ExpandingFields title="Additional information">
         <Box display="flex" flexDirection="column" gap="30px">
-          <Area isFirstStepFields={true} form={form} names={{ region: "region", district: "district", city: "city" }} />
+          <Area
+            placeholders={{
+              region: t("All regions"),
+              district: t("All districts"),
+              city: t("All cities and villages"),
+            }}
+            withoutFieldBinding={true}
+            form={form}
+            names={{ region: "region", district: "district", city: "city" }}
+          />
 
           <Controller
             control={control}
