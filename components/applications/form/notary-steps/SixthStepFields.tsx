@@ -180,6 +180,19 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
           {!isSigned && base64Doc != null && (
             <SignModal signLoading={loading} base64Doc={base64Doc} onSign={(sign) => handleSign(sign, setIsSigned)} />
           )}
+          {!isSigned && token && (application?.data?.[0]?.documentInfo?.editUrl || prepare?.data?.editUrl != null) && (
+            <Link
+              href={`${
+                application?.data[0]?.documentInfo?.editUrl ?? prepare?.data?.editUrl
+              }?AuthorizationBasic=${token.replace(/Basic /, "")}`}
+              target="_blank"
+              onClick={() => setIsBackdropOpen(true)}
+            >
+              <Button startIcon={<EditIcon />} sx={{ flexGrow: "1" }}>
+                {t("Edit")}
+              </Button>
+            </Link>
+          )}
           <IconButton
             aria-label="more"
             id="long-button"
@@ -219,22 +232,6 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
                     {t("Rebuild the document")}
                   </Button>
                 </ConfirmationModal>
-
-                {!isSigned &&
-                  token &&
-                  (application?.data?.[0]?.documentInfo?.editUrl || prepare?.data?.editUrl != null) && (
-                    <Link
-                      href={`${
-                        application?.data[0]?.documentInfo?.editUrl ?? prepare?.data?.editUrl
-                      }?AuthorizationBasic=${token.replace(/Basic /, "")}`}
-                      target="_blank"
-                      onClick={() => setIsBackdropOpen(true)}
-                    >
-                      <Button startIcon={<EditIcon />} sx={{ flexGrow: "1" }}>
-                        {t("Edit")}
-                      </Button>
-                    </Link>
-                  )}
 
                 {!isDeclSigned && base64Doc != null && (
                   <SignModal
