@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { IActionType } from "@/models/action-type";
 import { IStatus } from "@/models/application-status";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Typography, useMediaQuery } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import Button from "@/components/ui/Button";
@@ -44,6 +44,7 @@ interface ISearchedDataItem {
 }
 
 export default function ApplicationList() {
+  const isMobileMedia = useMediaQuery("(max-width:800px)");
   const t = useTranslations();
   const { locale } = useRouter();
   const [searchValue, setSearchValue] = useState("");
@@ -256,6 +257,15 @@ export default function ApplicationList() {
       <GridTable
         columns={[
           {
+            field: "actions",
+            headerName: "Actions",
+            width: isMobileMedia ? 50 : 275,
+            sortable: false,
+            type: isMobileMedia ? "actions" : "string",
+            cellClassName: isMobileMedia ? "actions-pinnable" : "",
+            renderCell: (params) => <ApplicationListActions params={params} onDelete={handleDelete} />,
+          },
+          {
             field: "QR",
             headerName: "QR",
             width: 70,
@@ -387,15 +397,6 @@ export default function ApplicationList() {
             valueGetter: (params: GridValueGetterParams) => {
               return isSearchedData ? params.row?.createdBy?.fullName : params.row?.["createdBy.partner.fullName"];
             },
-          },
-          {
-            field: "actions",
-            headerName: "",
-            width: 275,
-            sortable: false,
-            type: "actions",
-            cellClassName: "actions-pinnable",
-            renderCell: (params) => <ApplicationListActions params={params} onDelete={handleDelete} />,
           },
         ]}
         rows={filteredData ?? []}

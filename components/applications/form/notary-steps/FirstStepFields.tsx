@@ -495,6 +495,10 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         const fieldLastItem = fieldPath[fieldPath.length - 1];
         const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
         const value = partner[tundukField ?? fieldLastItem] ?? partner?.mainAddress?.[tundukField ?? fieldLastItem];
+        if (fieldLastItem === "passportStatus" && partner?.voidStatus != null) {
+          setValue(field, partner.voidStatus);
+          return;
+        }
         if (value != null && fieldLastItem !== "partnerTypeSelect") {
           setValue(field, value);
         }
