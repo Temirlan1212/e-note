@@ -6,6 +6,7 @@ import Head from "next/head";
 import SearchForm from "@/components/search-for-heirs/HeirSearchForm";
 import HeirNotFoundData from "@/components/search-for-heirs/HeirNotFoundData";
 import HeirFoundedData from "@/components/search-for-heirs/HeirFoundedData";
+import InProcess from "@/components/in-process/InProcess";
 
 type ISearchForHeirsProps = {};
 
@@ -21,7 +22,7 @@ const SearchForHeirs = (props: ISearchForHeirsProps) => {
       </Head>
 
       <Container sx={{ padding: "80px 15px" }}>
-        <Typography
+        {/* <Typography
           sx={{
             fontSize: {
               md: 36,
@@ -32,9 +33,10 @@ const SearchForHeirs = (props: ISearchForHeirsProps) => {
           }}
         >
           {t("Search for heirs")}
-        </Typography>
-        <SearchForm />
-        {data.length ? <HeirFoundedData /> : <HeirNotFoundData />}
+        </Typography> 
+         <SearchForm />
+        {data.length ? <HeirFoundedData /> : <HeirNotFoundData />} */}
+        <InProcess />
       </Container>
     </>
   );
@@ -48,6 +50,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       messages: {
         ...(await import(`locales/${context.locale}/common.json`)).default,
         ...(await import(`locales/${context.locale}/search-for-heirs.json`)).default,
+        ...(await import(`locales/${context.locale}/404.json`)).default,
       },
     },
   };

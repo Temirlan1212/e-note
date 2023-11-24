@@ -69,7 +69,7 @@ const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProp
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={adapterLocale} localeText={localeText}>
         <MUIDatePicker
           views={["day", "month", "year"]}
-          format="dd.MM.yy"
+          format="dd.MM.yyyy"
           {...restProps}
           slots={{
             openPickerIcon: CalendarMonthIcon,

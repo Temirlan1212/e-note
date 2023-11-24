@@ -65,7 +65,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const notaryData = data?.data || [];
 
-  const userId = notaryData[0]?.partner?.user?.id;
+  const userId = notaryData[0]?.partner?.linkedUser?.id;
 
   const workDaysAreaData = workDaysArea?.data || [];
 
@@ -237,7 +237,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
               ) : (
                 <Box>
                   <Box display="flex" gap="8px">
-                    <Rating value={ratingData?.data?.count || 0} readOnly />
+                    <Rating value={Number(ratingData?.data?.average) || 0} readOnly />
                     {ratingData?.data?.count ? (
                       <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
                         {ratingData?.data?.average != null ? Number(ratingData?.data?.average).toFixed(1) : "0"}

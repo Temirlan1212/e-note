@@ -7,7 +7,7 @@ enum criteriaFieldNames {
   objectType = "notaryObjectType",
   notarialAction = "notaryAction",
   typeNotarialAction = "notaryActionType",
-  action = "notaryRequestAction",
+  notaryAction = "notaryRequestAction",
 }
 
 interface Criteria {
@@ -67,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      fields: ["name", "fullName", "$t:name", "$t:fullName", ...Object.values(criteriaFieldNames)],
+      fields: ["name", "fullName", "$t:name", "$t:fullName", ...Object.keys(criteriaFieldNames)],
       offset: page,
       limit: pageSize,
       sortBy: req.body["sortBy"] ?? [],

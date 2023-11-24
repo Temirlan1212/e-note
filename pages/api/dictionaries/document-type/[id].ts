@@ -1,26 +1,26 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
+export enum criteriaFieldNames {
+  isSystem = "isSystem",
+  createdBy = "createdBy.id",
+  action = "notaryAction.id",
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
+  const { id } = req.query;
+  if (req.method !== "POST" || id == null) {
     return res.status(400).json(null);
   }
 
-  const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
-  const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
-  const searchValue = req.body["searchValue"];
-
-  const response = await fetch(process.env.BACKEND_API_URL + "/ws/files/full-text-search", {
+  const response = await fetch(process.env.BACKEND_API_URL + `/ws/rest/com.axelor.apps.base.db.Product/${id}/fetch`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      data: {
-        offset: page,
-        limit: pageSize,
-        content: searchValue,
-      },
+      fields: ["object", "objectType", "typeNotarialAction", "notarialAction", "notaryAction"],
+      translate: true,
     }),
   });
 

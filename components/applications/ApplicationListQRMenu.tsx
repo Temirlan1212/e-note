@@ -46,14 +46,10 @@ export const ApplicationListQRMenu = ({
 
   const onPopupOpen = async () => {
     if (!Boolean(qrUrl) && params?.row?.["barCode.id"] != null) {
-      const filesRes = await getDocument("/api/files/dms-from-meta/" + params.row["barCode.id"]);
-      const fileId = filesRes?.data?.[0]?.id;
-      if (fileId != null) {
-        const res = await downloadUpdate(`/api/files/download/${fileId ?? 0}`);
-        const blobData = await res.blob();
-        const blobURL = URL.createObjectURL(blobData);
-        setQrUrl(blobURL);
-      }
+      const res = await downloadUpdate(`/api/files/download/${params.row["barCode.id"] ?? 0}`);
+      const blobData = await res.blob();
+      const blobURL = URL.createObjectURL(blobData);
+      setQrUrl(blobURL);
     }
   };
 

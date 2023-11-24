@@ -73,7 +73,7 @@ const HeroSection: React.FC = () => {
           </Typography>
         </Typography>
 
-        {user == null && (
+        {user == null ? (
           <Box component="form" onSubmit={form.handleSubmit(onSubmit)}>
             <Box display="flex" flexDirection="column" gap="20px">
               <Typography variant="h6" component="span" fontWeight={600} color="text.primary">
@@ -160,6 +160,21 @@ const HeroSection: React.FC = () => {
             >
               {t("Forgot your password?")}
             </Link>
+          </Box>
+        ) : (
+          <Box onClick={() => router.push("/profile")} display="flex" flexDirection="column" gap="20px">
+            <Button
+              sx={{
+                padding: "15px 0",
+                width: { xs: "100%", md: 400 },
+                display: "flex",
+                gap: "30px",
+              }}
+              fullWidth
+              color="success"
+            >
+              {t("Go to your personal account")}
+            </Button>
           </Box>
         )}
       </Box>

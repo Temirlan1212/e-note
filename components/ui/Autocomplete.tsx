@@ -21,10 +21,19 @@ export interface IAutocompleteProps<T = any>
   labelField?: string;
   helperText?: string;
   type?: keyof typeof types;
+  textFieldPlaceholder?: string;
 }
 
 export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocomplete(
-  { type = "secondary", labelField = "label", helperText, renderInput, options, ...rest }: IAutocompleteProps,
+  {
+    type = "secondary",
+    labelField = "label",
+    helperText,
+    renderInput,
+    textFieldPlaceholder,
+    options,
+    ...rest
+  }: IAutocompleteProps,
   ref
 ) {
   const styles = {
@@ -53,7 +62,7 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
       ? renderInput
       : (params: AutocompleteRenderInputParams) => (
           <Box>
-            <TextField {...params} error={type === "error"} />
+            <TextField {...params} placeholder={textFieldPlaceholder} error={type === "error"} />
             {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
           </Box>
         );

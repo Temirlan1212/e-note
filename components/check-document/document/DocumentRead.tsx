@@ -46,7 +46,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
     { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
     {
       title: "Date of action",
-      value: data?.creationDate ? format(new Date(data?.creationDate!), "dd.MM.yyyy HH:mm:ss") : "",
+      value: data?.creationDate ? format(new Date(data?.creationDate!), "dd.MM.yyyy") : "",
     },
     { title: "Full name of the notary", value: data?.company?.partner?.fullName },
     { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },

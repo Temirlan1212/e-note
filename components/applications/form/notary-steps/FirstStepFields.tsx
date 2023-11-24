@@ -20,6 +20,7 @@ import PersonalData from "@/components/fields/PersonalData";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 import { IPersonSchema } from "@/validator-schemas/person";
+import ExpandingFields from "@/components/fields/ExpandingFields";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -32,7 +33,13 @@ interface IBaseEntityFields {
 }
 
 export interface ITabListItem {
-  getElement: (index: number, loading?: boolean, isEditableCopy?: boolean) => JSX.Element;
+  getElement: (
+    index: number,
+    loading?: boolean,
+    isEditableCopy?: boolean,
+    isTundukFieldsOpen?: boolean,
+    expand?: boolean
+  ) => JSX.Element;
 }
 
 export interface IStepFieldsProps {
@@ -64,10 +71,17 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
   const [loading, setLoading] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [expandAdditionalFields, setExpandAdditionalFields] = useState(false);
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
-      getElement(index: number, loading?: boolean, isEditableCopy?: boolean) {
+      getElement(
+        index: number,
+        loading?: boolean,
+        isEditableCopy?: boolean,
+        isTundukFieldsOpen?: boolean,
+        expand?: boolean
+      ) {
         const partnerType = watch(`requester.${index}.partnerTypeSelect`);
 
         return (
@@ -80,7 +94,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                 ...getPersonalDataNames(index),
                 ...getTundukParamsFields(index),
               }}
-              disableFields={watch(`requester.${index}.disabled`)}
+              disableFields={isTundukFieldsOpen}
+              isTundukRequested={watch(`requester.${index}.disabled`)}
               fields={{
                 nationality: true,
                 maritalStatus: true,
@@ -89,58 +104,61 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
               onPinCheck={() => handlePinCheck(index)}
               onPinReset={() => handlePinReset(index)}
             />
+            <ExpandingFields title="Additional information" permanentExpand={expand}>
+              <Box display="flex" gap="20px" flexDirection="column">
+                {partnerType != 1 && (
+                  <>
+                    <Typography variant="h5">{t("Identity document")}</Typography>
+                    <IdentityDocument
+                      disableFields={isTundukFieldsOpen || isEditableCopy}
+                      form={form}
+                      names={getIdentityDocumentNames(index)}
+                    />
+                  </>
+                )}
 
-            {partnerType != 1 && (
-              <>
-                <Typography variant="h5">{t("Identity document")}</Typography>
-                <IdentityDocument
-                  disableFields={isEditableCopy || watch(`requester.${index}.disabled`)}
+                <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
+                <Address
                   form={form}
-                  names={getIdentityDocumentNames(index)}
+                  names={getAddressNames(index)}
+                  disableFields={isTundukFieldsOpen || isEditableCopy}
                 />
-              </>
-            )}
 
-            <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
-            <Address
-              form={form}
-              names={getAddressNames(index)}
-              disableFields={isEditableCopy || watch(`requester.${index}.disabled`)}
-            />
+                {partnerType != 1 && (
+                  <>
+                    <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap="10px">
+                      <Typography variant="h5">{t("Actual place of residence")}</Typography>
+                      <Button
+                        disabled={isEditableCopy}
+                        sx={{ width: "fit-content" }}
+                        onClick={() => {
+                          Object.entries(getAddressNames(index) ?? {})?.map(([key, name]) => {
+                            setValue((getActualAddressNames(index) as any)[key], getValues(name as any));
+                          });
+                        }}
+                      >
+                        {t("Copy the place of residence")}
+                      </Button>
+                    </Box>
 
-            {partnerType != 1 && (
-              <>
-                <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap="10px">
-                  <Typography variant="h5">{t("Actual place of residence")}</Typography>
-                  <Button
-                    disabled={isEditableCopy}
-                    sx={{ width: "fit-content" }}
-                    onClick={() => {
-                      Object.entries(getAddressNames(index) ?? {})?.map(([key, name]) => {
-                        setValue((getActualAddressNames(index) as any)[key], getValues(name as any));
-                      });
-                    }}
-                  >
-                    {t("Copy the place of residence")}
-                  </Button>
-                </Box>
+                    <Address form={form} names={getActualAddressNames(index)} disableFields={isEditableCopy} />
+                  </>
+                )}
 
-                <Address form={form} names={getActualAddressNames(index)} disableFields={isEditableCopy} />
-              </>
-            )}
+                <Typography variant="h5">{t("Contacts")}</Typography>
+                <Contact form={form} names={getContactNames(index)} disableFields={isEditableCopy} />
 
-            <Typography variant="h5">{t("Contacts")}</Typography>
-            <Contact form={form} names={getContactNames(index)} disableFields={isEditableCopy} />
+                <Typography variant="h5">{t("Files to upload")}</Typography>
 
-            <Typography variant="h5">{t("Files to upload")}</Typography>
-
-            <AttachedFiles
-              disabled={isEditableCopy}
-              form={form}
-              ref={attachedFilesRef}
-              name="requester"
-              index={index}
-            />
+                <AttachedFiles
+                  disabled={isEditableCopy}
+                  form={form}
+                  ref={attachedFilesRef}
+                  name="requester"
+                  index={index}
+                />
+              </Box>
+            </ExpandingFields>
           </Box>
         );
       },
@@ -153,6 +171,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const { update: tundukPersonalDataFetch, loading: tundukPersonalDataLoading } = useFetch("", "POST");
 
   const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
+  const isFieldsOpen = watch("openFields") as boolean;
 
   const getTundukParamsFields = (index: number) =>
     ({
@@ -193,6 +212,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     organNumber: `requester.${index}.authorityNumber`,
     issueDate: `requester.${index}.dateOfIssue`,
     familyStatus: `requester.${index}.familyStatus`,
+    passportStatus: `requester.${index}.passportStatus`,
   });
 
   const getAddressNames = (index: number) => ({
@@ -462,6 +482,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         skip: ["partnerTypeSelect", "tundukPassportNumber", "tundukPassportSeries", "personalNumber", "subjectRole"],
       });
       setValue(`requester.${index}.disabled`, true);
+      setExpandAdditionalFields(true);
 
       const baseFields = [
         ...Object.values(getPersonalDataNames(index)),
@@ -500,7 +521,14 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
           return {
             tabErrorsCount: tabsErrorsCounts[index] ?? 0,
             tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: getElement(index, tundukPersonalDataLoading, isEditableCopy) ?? <></>,
+            tabPanelContent: getElement(
+              index,
+              tundukPersonalDataLoading,
+              isEditableCopy,
+              isFieldsOpen,
+              expandAdditionalFields
+              // || watch(`requester.${index}.disabled`)
+            ) ?? <></>,
           };
         })}
         actionsContent={

@@ -96,6 +96,7 @@ export interface IPersonalDataProps {
   onPinReset?: MouseEventHandler<HTMLButtonElement>;
   loading?: boolean;
   disableFields?: boolean;
+  isTundukRequested?: boolean;
 }
 
 export default function PersonalData({
@@ -107,6 +108,7 @@ export default function PersonalData({
   onPinReset,
   loading,
   disableFields,
+  isTundukRequested,
 }: IPersonalDataProps) {
   const t = useTranslations();
 
@@ -129,15 +131,10 @@ export default function PersonalData({
   });
 
   useEffectOnce(async () => {
-    if (imageData == null || imageData.body == null || imageData.blob == null) return;
-
-    const blob = await imageData.blob();
-
-    const imageLink = URL.createObjectURL(blob);
-    setImageURL(imageLink);
-    return () => {
-      URL.revokeObjectURL(imageLink);
-    };
+    const base64String = await imageData?.text();
+    if (base64String) {
+      setImageURL(`data:image/jpeg;base64,${base64String}`);
+    }
   }, [imageData]);
 
   const { data: citizenshipDictionary, loading: citizenshipDictionaryLoading } = useFetch(
@@ -225,7 +222,18 @@ export default function PersonalData({
             defaultValue={defaultValues?.subjectRole ?? ""}
             render={({ field, fieldState }) => (
               <Box display="flex" flexDirection="column" width="100%" mt="20px">
-                <InputLabel>{t("Subject role")}</InputLabel>
+                <InputLabel
+                  required
+                  sx={{
+                    ".MuiFormLabel-asterisk": {
+                      color: "error.main",
+                      fontSize: "2em",
+                      verticalAlign: "middle",
+                    },
+                  }}
+                >
+                  {t("Subject role")}
+                </InputLabel>
                 <Select
                   labelField={
                     subjectRoleDictionary?.data?.length > 0 && subjectRoleDictionary?.data[0][`title_${locale}`]
@@ -280,7 +288,18 @@ export default function PersonalData({
               defaultValue={defaultValues?.pin ?? ""}
               render={({ field, fieldState }) => (
                 <Box display="flex" flexDirection="column" justifyContent="center" width="100%">
-                  <InputLabel>{type != 1 ? t("PIN") : t("TIN")}</InputLabel>
+                  <InputLabel
+                    required
+                    sx={{
+                      ".MuiFormLabel-asterisk": {
+                        color: "error.main",
+                        fontSize: "2em",
+                        verticalAlign: "middle",
+                      },
+                    }}
+                  >
+                    {type != 1 ? t("PIN") : t("TIN")}
+                  </InputLabel>
                   <Input
                     inputProps={{ maxLength: foreigner ? undefined : 14 }}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -364,7 +383,7 @@ export default function PersonalData({
                   </Button>
                 )}
 
-                {disableFields && onPinReset && (
+                {isTundukRequested && onPinReset && (
                   <Button
                     buttonType="danger"
                     disabled={isEditableCopy}
@@ -390,13 +409,22 @@ export default function PersonalData({
                 defaultValue={defaultValues?.lastName ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel required sx={{ ".MuiFormLabel-asterisk": { color: "error.main" } }}>
+                    <InputLabel
+                      required
+                      sx={{
+                        ".MuiFormLabel-asterisk": {
+                          color: "error.main",
+                          fontSize: "2em",
+                          verticalAlign: "middle",
+                        },
+                      }}
+                    >
                       {t("Last name")}
                     </InputLabel>
                     <Input
                       disabled={disableFields || disable}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 2 }) : ""}
                       {...field}
                     />
                   </Box>
@@ -411,13 +439,22 @@ export default function PersonalData({
                 defaultValue={defaultValues?.firstName ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel required sx={{ ".MuiFormLabel-asterisk": { color: "error.main" } }}>
+                    <InputLabel
+                      required
+                      sx={{
+                        ".MuiFormLabel-asterisk": {
+                          color: "error.main",
+                          fontSize: "2em",
+                          verticalAlign: "middle",
+                        },
+                      }}
+                    >
                       {t("First name")}
                     </InputLabel>
                     <Input
                       disabled={disableFields || disable}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 2 }) : ""}
                       {...field}
                     />
                   </Box>

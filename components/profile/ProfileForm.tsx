@@ -133,13 +133,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     getValues,
   } = form;
 
-  const city = watch("activeCompany.address.city");
-
-  const { data: notaryDistrictDictionary, loading: notaryDistrictDictionaryLoading } = useFetch(
-    city != null ? `/api/dictionaries/notary-districts?cityId=${city.id}` : "",
-    "GET"
-  );
-
   const addressNames = {
     region: "activeCompany.address.region",
     district: "activeCompany.address.district",
@@ -500,7 +493,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               justifyContent: "space-between",
             }}
           >
-            <Address form={form} names={addressNames} getNotaryDistrict={true} boxSx={{ width: "100%" }} />
+            <Address form={form} names={addressNames} withNotaryDistrict={true} boxSx={{ width: "100%" }} />
           </Box>
         </Box>
 

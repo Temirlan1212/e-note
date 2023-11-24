@@ -26,6 +26,7 @@ import NotarySixthStepFields from "./notary-steps/SixthStepFields";
 import NotarySuccessStepFields from "./notary-steps/SuccessStepFields";
 import { useRouter } from "next/router";
 import useNavigationConfirmation from "@/hooks/useNavigationConfirmation";
+import SelectTemplateSelectionType from "./common-steps/SelectTemplateSelectionType";
 
 export interface IApplicationFormProps {
   id?: number | null;
@@ -50,6 +51,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   } = useFetch("", "POST");
 
   const { update: getDocumentTemplateData, loading: documentTemplateDataLoading } = useFetch("", "GET");
+  const { update: getNotaryApp } = useFetch("", "POST");
 
   const form = useForm<IApplicationSchema>({
     mode: "onTouched",
@@ -78,6 +80,12 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
       if (status === 1) router.push("/applications");
     }
     setLoading(false);
+
+    const res = await getNotaryApp("/api/app-notary");
+    if (Array.isArray(res?.data) && res?.data.length > 0) {
+      const item = res.data[0];
+      form.setValue("openFields", !!item?.openFields);
+    }
   });
 
   const getDynamicFormAppData = async () => {
@@ -128,6 +136,8 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     if (step > stepProgress.current) stepProgress.current = step;
   }, [step]);
 
+  const selectTemplateFromMade = form.watch("selectTemplateFromMade");
+
   const steps =
     userData?.group?.id === 4
       ? [
@@ -142,37 +152,51 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             }
             handleStepNextClick={handleStepNextClick}
           />,
-          <NotarySecondStepFields
+          <SelectTemplateSelectionType
             key={1}
             form={form}
             onPrev={() => setStep(step - 1)}
-            onNext={({ step, isStepByStep }) => {
-              if (!isStepByStep) getDynamicFormAppData();
-              const oneSideAction = form.getValues("product.oneSideAction");
+            onNext={() => {
               setStep((prev) => {
-                if (oneSideAction && !isStepByStep) return prev + 3;
-                if (step != null) return step;
-                if (!isStepByStep) return prev + 2;
                 return prev + 1;
               });
             }}
             handleStepNextClick={handleStepNextClick}
           />,
-          <NotaryThirdStepFields
-            key={2}
-            form={form}
-            onPrev={() => setStep(step - 1)}
-            onNext={({ step }) => {
-              const oneSideAction = form.getValues("product.oneSideAction");
-              getDynamicFormAppData();
-              setStep((prev) => {
-                if (oneSideAction) return prev + 2;
-                if (step != null) return step;
-                return prev + 1;
-              });
-            }}
-            handleStepNextClick={handleStepNextClick}
-          />,
+          selectTemplateFromMade ? (
+            <NotarySecondStepFields
+              key={2}
+              form={form}
+              onPrev={() => setStep(step - 1)}
+              onNext={({ step, isStepByStep }) => {
+                if (!isStepByStep) getDynamicFormAppData();
+                const oneSideAction = form.getValues("product.oneSideAction");
+                setStep((prev) => {
+                  if (oneSideAction && !isStepByStep) return prev + 2;
+                  if (step != null) return step;
+                  return prev + 1;
+                });
+              }}
+              handleStepNextClick={handleStepNextClick}
+            />
+          ) : (
+            <NotaryThirdStepFields
+              key={2}
+              form={form}
+              onPrev={() => setStep(step - 1)}
+              onNext={({ step }) => {
+                const oneSideAction = form.getValues("product.oneSideAction");
+                getDynamicFormAppData();
+                setStep((prev) => {
+                  if (oneSideAction) return prev + 2;
+                  if (step != null) return step;
+                  return prev + 1;
+                });
+              }}
+              handleStepNextClick={handleStepNextClick}
+            />
+          ),
+
           <NotaryFourthStepFields
             key={3}
             form={form}
@@ -185,7 +209,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             }
             handleStepNextClick={handleStepNextClick}
           />,
-
           <NotaryFifthStepFields
             key={4}
             dynamicForm={dynamicForm}
@@ -193,7 +216,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             form={form}
             onPrev={() => {
               const oneSideAction = form.getValues("product.oneSideAction");
-              oneSideAction ? setStep(step - 3) : setStep(step - 1);
+              oneSideAction ? setStep(step - 2) : setStep(step - 1);
             }}
             onNext={({ step }) =>
               setStep((prev) => {
@@ -229,35 +252,72 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             }
             handleStepNextClick={handleStepNextClick}
           />,
-          <SecondStepFields
+          <SelectTemplateSelectionType
             key={1}
             form={form}
             onPrev={() => setStep(step - 1)}
+            onNext={() => {
+              setStep((prev) => {
+                return prev + 1;
+              });
+            }}
+            handleStepNextClick={handleStepNextClick}
+          />,
+          selectTemplateFromMade ? (
+            <NotarySecondStepFields
+              key={2}
+              form={form}
+              onPrev={() => setStep(step - 1)}
+              onNext={({ step, isStepByStep }) => {
+                if (!isStepByStep) getDynamicFormAppData();
+                const oneSideAction = form.getValues("product.oneSideAction");
+                setStep((prev) => {
+                  if (oneSideAction) return prev + 2;
+                  if (step != null) return step;
+                  return prev + 1;
+                });
+              }}
+              handleStepNextClick={handleStepNextClick}
+            />
+          ) : (
+            <SecondStepFields
+              key={2}
+              form={form}
+              onPrev={() => setStep(step - 1)}
+              onNext={({ step }) => {
+                const oneSideAction = form.getValues("product.oneSideAction");
+                getDynamicFormAppData();
+                setStep((prev) => {
+                  if (oneSideAction) return prev + 2;
+                  if (step != null) return step;
+                  return prev + 1;
+                });
+              }}
+              handleStepNextClick={handleStepNextClick}
+            />
+          ),
+          <ThirdStepFields
+            key={3}
+            form={form}
+            onPrev={() => setStep(step - 1)}
             onNext={({ step }) => {
+              const oneSideAction = form.getValues("product.oneSideAction");
               getDynamicFormAppData();
               setStep((prev) => {
+                if (oneSideAction) return prev + 2;
                 if (step != null) return step;
                 return prev + 1;
               });
             }}
             handleStepNextClick={handleStepNextClick}
           />,
-          <ThirdStepFields
-            key={2}
-            form={form}
-            onPrev={() => setStep(step - 1)}
-            onNext={({ step }) =>
-              setStep((prev) => {
-                if (step != null) return step;
-                return prev + 1;
-              })
-            }
-            handleStepNextClick={handleStepNextClick}
-          />,
           <FourthStepFields
-            key={3}
+            key={4}
             form={form}
-            onPrev={() => setStep(step - 1)}
+            onPrev={() => {
+              const oneSideAction = form.getValues("product.oneSideAction");
+              oneSideAction ? setStep(step - 2) : setStep(step - 1);
+            }}
             onNext={({ step }) =>
               setStep((prev) => {
                 if (step != null) return step;
@@ -267,7 +327,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             handleStepNextClick={handleStepNextClick}
           />,
           <FifthStepFields
-            key={4}
+            key={5}
             dynamicForm={dynamicForm}
             tundukParamsFieldsForm={tundukParamsFieldsForm}
             form={form}
@@ -281,7 +341,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             handleStepNextClick={handleStepNextClick}
           />,
           <SixthStepFields
-            key={5}
+            key={6}
             form={form}
             onPrev={() => setStep(step - 1)}
             onNext={({ step }) =>

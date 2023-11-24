@@ -5,9 +5,9 @@
   "Edit notarial action": "Нотариалдык иш-аракетти өзгөртүү",
   "Choose notary": "Нотариус тандоо",
   "Choose requester": "Өтүнүүчүнү тандоо",
-  "Choose object": "Объектти тандоо",
-  "Choose document": "Документти тандоо",
-  "Choose document from templates": "Документти үлгүлөрдөн тандоо",
+  "Filter by document": "Документ боюнча тандоо",
+  "Filter by object": "Объект боюнча тандоо",
+  "Choose notarial action": "Нотариалдык иш-аракетти тандоо",
   "Form first step hint text": "Мурунку талааларды эске албай, белгилүү бир нотариусту билсеңиз, “Нотариус“ издөө формасына түз өтсөңүз болот.",
   "Type of action": "Иш-аракеттердин түрү",
   "Type of document": "Документтин түрү",
@@ -37,7 +37,7 @@
   "Edit document": "Документти өзгөртүү",
   "Choose step by step": "Кийинки кадам аркылуу тандаңыз",
   "Select document from my templates": "Документти «Менин үлгүлөрүм» тандаңыз",
-  "Select document from system templates": "Документти «Системдик үлгүлөр» тандаңыз",
+  "Select a notarial act by name": "Аты боюнча нотариалдык аракетти тандаңыз",
   "To enter a document into the registry and assign a unique document number, you need confirmation of your Face ID and your EDS": "Документти реестрге киргизүү жана документтин уникалдуу номерин ыйгаруу үчүн сиздин Face ID жана ЭСКны тастыктоо керек",
   "Entry into the register": "Реестрге киргизүү",
   "Assign a unique number and enter it in the registry": "Уникалдуу номер ыйгаруу жана реестрге киргизүү",
@@ -99,5 +99,10 @@
   "Do you really want to add to the My Templates section?": "\"Менин калыптарым\" бөлүмүнө чын эле кошкуңуз келеби?",
   "Enter a template name": "Үлгү атын киргизиңиз",
   "Video recorded": "Видео жазылган",
-  "Record a video": "Видео тартуу"
+  "Record a video": "Видео тартуу",
+  "not assigned": "дайындалган эмес",
+  "Select from the list of templates": "Шаблон тизмесинен тандоо",
+  "Select by questionnaire": "Анкета боюнча тандоо",
+  "Select from the list": "Тизмеден тандаңыз",
+  "Additional filters": "Кошумча фильтирлер"
 }

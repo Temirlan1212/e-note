@@ -92,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         "latitude",
         "longitude",
         "name",
-        "partner.user.id",
+        "partner.linkedUser.id",
       ],
       data: {
         operator: "and",

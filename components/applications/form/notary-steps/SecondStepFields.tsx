@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { useProfileStore } from "@/stores/profile";
-import { Box, InputLabel } from "@mui/material";
+import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
 import Hint from "@/components/ui/Hint";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -102,12 +102,6 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
     }
   };
 
-  const handleStepByStepClick = () => {
-    if (onNext != null) {
-      onNext({ step: undefined, isStepByStep: true });
-    }
-  };
-
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
@@ -115,18 +109,18 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        <StepperContentStep step={2} title={t("Choose document from templates")} sx={{ flex: "1 1 100%" }} />
-        <Hint type="hint">{t("Notary form first step hint text")}</Hint>
+        <StepperContentStep step={2} title={t("Choose notarial action")} sx={{ flex: "1 1 100%" }} />
+        {/*<Hint type="hint">{t("Notary form first step hint text")}</Hint>*/}
       </Box>
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+      <Box display="flex" gap="50px" alignItems="end">
         <Controller
           control={control}
           name="product"
           defaultValue={null}
           render={({ field, fieldState }) => (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Select document from system templates")}</InputLabel>
+              <InputLabel>{t("Select a notarial act by name")}</InputLabel>
               <Autocomplete
                 labelField={locale !== "en" ? "$t:name" : "name"}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -230,14 +224,6 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
             {t("Next")}
           </Button>
         )}
-        <Button
-          onClick={handleStepByStepClick}
-          endIcon={<ArrowForwardIcon />}
-          buttonType="secondary"
-          sx={{ width: "auto" }}
-        >
-          {t("Choose step by step")}
-        </Button>
       </Box>
     </Box>
   );

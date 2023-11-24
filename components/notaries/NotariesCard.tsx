@@ -87,7 +87,7 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, 
       )}
       <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: { xs: "start", md: "center" } }}>
         <Box sx={{ display: "flex" }} gap="8px">
-          <Rating value={ratingData?.data?.count || 0} readOnly />
+          <Rating value={Number(ratingData?.data?.average) || 0} readOnly />
           {ratingData?.data?.count ? (
             <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
               {ratingData?.data?.average != null ? Number(ratingData?.data?.average).toFixed(1) : "0"}
