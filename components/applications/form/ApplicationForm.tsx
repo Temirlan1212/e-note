@@ -27,6 +27,7 @@ import NotarySuccessStepFields from "./notary-steps/SuccessStepFields";
 import { useRouter } from "next/router";
 import useNavigationConfirmation from "@/hooks/useNavigationConfirmation";
 import SelectTemplateSelectionType from "./common-steps/SelectTemplateSelectionType";
+import SecondStepFieldsSystemDocument from "./steps/SecondStepFieldsSystemDocument";
 
 export interface IApplicationFormProps {
   id?: number | null;
@@ -264,7 +265,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             handleStepNextClick={handleStepNextClick}
           />,
           selectTemplateFromMade ? (
-            <NotarySecondStepFields
+            <SecondStepFieldsSystemDocument
               key={2}
               form={form}
               onPrev={() => setStep(step - 1)}
