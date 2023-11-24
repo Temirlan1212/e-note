@@ -120,7 +120,6 @@ export default function PersonalData({
 
   const foreigner = watch(names.foreigner);
   const type = watch(names.type);
-  console.log(type);
   const picture = watch(names?.picture!);
   const pin = watch(names?.pin);
   const lastName = watch(names?.lastName);
