@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { PermIdentity } from "@mui/icons-material";
 import { Avatar, Box, CircularProgress, Divider, FormControl, InputLabel, Typography } from "@mui/material";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -30,10 +30,6 @@ interface IExtendedUserData extends IUserData {
   "partner.emailAddress"?: IEmail;
 }
 
-async function blobToFile(blob: Blob, fileName: string): Promise<File> {
-  return new File([blob], fileName, { type: blob?.type });
-}
-
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const t = useTranslations();
 
@@ -43,6 +39,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const profileData: IExtendedUserData | null = profile.getUserData();
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [userData, setUserData] = useState<FetchResponseBody | null>();
   const [base64Image, setBase64Image] = useState<string | null>(null);
   const [userIsNotary, setUserIsNotary] = useState(false);
@@ -86,13 +83,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const {
     formState: { errors },
-    setError,
     reset,
-    control,
-    trigger,
-    watch,
-    resetField,
-    getValues,
   } = form;
 
   const addressNames = {
@@ -126,9 +117,9 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     const file = event.target.files?.[0] || null;
     setSelectedImage(file);
     if (file) {
-      setBase64Image(URL.createObjectURL(file));
+      setImagePreview(URL.createObjectURL(file));
     } else {
-      setBase64Image(null);
+      setImagePreview(null);
     }
   };
 
@@ -157,13 +148,13 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
       };
       reader.readAsDataURL(selectedImage);
     }
-    if (!base64Image) {
+    if (!imagePreview) {
       if (profileData?.id != null) {
         const params = {
           userRole: profileData?.activeCompany ? "notary" : "declarant",
           userData: userData,
           submitData: data,
-          imageBase64: null,
+          imageBase64: base64Image,
         };
         await update("/api/profile/update/" + profileData?.id, {
           body: params,
@@ -188,28 +179,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const handleDeleteClick = () => {
     setSelectedImage(null);
     setBase64Image(null);
-  };
-
-  const resetFields = () => {
-    const allFields = {
-      ...addressNames,
-      ...coordinateNames,
-      ...licenseNames,
-      ...contactNames,
-    };
-
-    for (const key in allFields) {
-      const name = (allFields as Record<string, any>)?.[key];
-      const value = getValues(name as any);
-      const isBoolean = typeof value === "boolean";
-      const isString = typeof value === "string";
-
-      if (isBoolean) {
-        resetField(name as any, { defaultValue: false });
-      } else if (isString) {
-        resetField(name as any, { defaultValue: "" });
-      }
-    }
+    setImagePreview(null);
   };
 
   return userDataLoading ? (
@@ -230,19 +200,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
       >
         {isImageLoading ? (
           <CircularProgress color="inherit" style={{ width: "28px", height: "28px" }} />
-        ) : base64Image ? (
-          <Avatar
-            sizes="100"
-            src={base64Image}
-            sx={{
-              width: "100px",
-              height: "100px",
-            }}
-            aria-label="recipe"
-          />
         ) : (
           <Avatar
             sizes="100"
+            src={imagePreview || base64Image || undefined}
             sx={{
               bgcolor: "success.main",
               width: "100px",
@@ -569,7 +530,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               },
             }}
             loading={isDataLoading}
-            onClick={resetFields}
+            onClick={() => reset()}
           >
             {t("Cancel")}
           </Button>
