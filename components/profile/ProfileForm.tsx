@@ -43,8 +43,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const profileData: IExtendedUserData | null = profile.getUserData();
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [userData, setUserData] = useState<FetchResponseBody | null>();
+  const [base64Image, setBase64Image] = useState<string | null>(null);
   const [userIsNotary, setUserIsNotary] = useState(false);
 
   const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
@@ -73,13 +73,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   });
 
   useEffectOnce(async () => {
-    const image: any = await imageData?.blob();
-
-    const convertedFile = await blobToFile(image, "avatar-image.png");
-    const url = URL.createObjectURL(convertedFile);
-
-    setImagePreview(url);
-    setSelectedImage(convertedFile);
+    const base64String = await imageData?.text();
+    if (base64String) {
+      setBase64Image(base64String);
+    }
   }, [imageData]);
 
   const form = useForm<IUserProfileSchema>({
@@ -129,9 +126,9 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     const file = event.target.files?.[0] || null;
     setSelectedImage(file);
     if (file) {
-      setImagePreview(URL.createObjectURL(file));
+      setBase64Image(URL.createObjectURL(file));
     } else {
-      setImagePreview(null);
+      setBase64Image(null);
     }
   };
 
@@ -144,7 +141,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             userRole: profileData?.activeCompany ? "notary" : "declarant",
             userData: userData,
             submitData: data,
-            image: reader.result.toString(),
+            imageBase64: reader.result.toString(),
           };
           await update("/api/profile/update/" + profileData?.id, {
             body: params,
@@ -160,13 +157,13 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
       };
       reader.readAsDataURL(selectedImage);
     }
-    if (!imagePreview) {
+    if (!base64Image) {
       if (profileData?.id != null) {
         const params = {
           userRole: profileData?.activeCompany ? "notary" : "declarant",
           userData: userData,
           submitData: data,
-          image: null,
+          imageBase64: null,
         };
         await update("/api/profile/update/" + profileData?.id, {
           body: params,
@@ -190,7 +187,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const handleDeleteClick = () => {
     setSelectedImage(null);
-    setImagePreview(null);
+    setBase64Image(null);
   };
 
   const resetFields = () => {
@@ -231,10 +228,12 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           },
         }}
       >
-        {imagePreview ? (
+        {isImageLoading ? (
+          <CircularProgress color="inherit" style={{ width: "28px", height: "28px" }} />
+        ) : base64Image ? (
           <Avatar
             sizes="100"
-            src={imagePreview}
+            src={base64Image}
             sx={{
               width: "100px",
               height: "100px",
@@ -251,18 +250,15 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             }}
             aria-label="recipe"
           >
-            {isImageLoading ? (
-              <CircularProgress color="inherit" style={{ width: "28px", height: "28px" }} />
-            ) : (
-              <PermIdentity
-                sx={{
-                  width: "50px",
-                  height: "50px",
-                }}
-              />
-            )}
+            <PermIdentity
+              sx={{
+                width: "50px",
+                height: "50px",
+              }}
+            />
           </Avatar>
         )}
+
         <Box display="flex" gap="20px" alignItems="center">
           <input ref={inputRef} accept="image/*" type="file" onChange={handleImageChange} style={{ display: "none" }} />
           <Button color="success" sx={{ width: "150px", boxShadow: "0" }} onClick={handleButtonClick}>
