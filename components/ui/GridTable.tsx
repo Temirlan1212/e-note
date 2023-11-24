@@ -145,6 +145,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
     },
     ".actions-pinnable": {
       position: "sticky",
+      left: "5px",
       right: 0,
     },
     border: "none",
