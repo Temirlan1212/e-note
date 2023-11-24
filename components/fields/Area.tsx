@@ -4,6 +4,7 @@ import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { InputLabel, Box } from "@mui/material";
 import Autocomplete from "../ui/Autocomplete";
+import { INotaryDistrict } from "@/models/notary-district";
 
 export interface IAreaProps {
   form: UseFormReturn<any>;
@@ -11,6 +12,7 @@ export interface IAreaProps {
     region: string;
     district: string;
     city: string;
+    notaryDistrict?: string | null;
   };
   placeholders?: {
     region?: string;
@@ -21,9 +23,11 @@ export interface IAreaProps {
     region?: { id: number } | null;
     district?: { id: number } | null;
     city?: { id: number } | null;
+    notaryDistrict?: { id: number } | null;
   };
   disableFields?: boolean;
   withoutFieldBinding?: boolean;
+  withNotaryDistrict?: boolean;
 }
 
 export default function Area({
@@ -33,6 +37,7 @@ export default function Area({
   defaultValues,
   disableFields,
   withoutFieldBinding = false,
+  withNotaryDistrict = false,
 }: IAreaProps) {
   const t = useTranslations();
   const locale = useLocale();
@@ -41,6 +46,7 @@ export default function Area({
 
   const region = watch(names.region);
   const district = watch(names.district);
+  const city = watch(names.city);
   const isRegionalSignificance = region != null && district == null;
 
   const { data: regionDictionary, loading: regionDictionaryLoading } = useFetch("/api/dictionaries/regions", "GET");
@@ -61,6 +67,10 @@ export default function Area({
     "GET"
   );
 
+  const { data: notaryDistrictDictionary, loading: notaryDistrictDictionaryLoading } = useFetch(
+    city != null ? `/api/dictionaries/notary-districts?cityId=${city.id}` : "",
+    "GET"
+  );
   useEffect(() => {
     update(`/api/dictionaries/districts${region ? `?regionId=${region?.id}` : ""}`);
   }, [region]);
@@ -172,6 +182,42 @@ export default function Area({
           }}
         />
       </Box>
+      {!withNotaryDistrict ? undefined : (
+        <Controller
+          control={control}
+          name={names.notaryDistrict as string}
+          defaultValue={defaultValues?.notaryDistrict ?? null}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Notary district")}</InputLabel>
+              <Autocomplete
+                labelField={getLabelField(notaryDistrictDictionary)}
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={!city || disableFields}
+                options={
+                  notaryDistrictDictionary?.status === 0
+                    ? (notaryDistrictDictionary?.data as INotaryDistrict[]) ?? []
+                    : []
+                }
+                loading={notaryDistrictDictionaryLoading}
+                value={
+                  field.value != null
+                    ? (notaryDistrictDictionary?.data ?? []).find(
+                        (item: INotaryDistrict) => item.id == field.value?.id
+                      ) ?? null
+                    : null
+                }
+                onBlur={field.onBlur}
+                onChange={(event, value) => {
+                  field.onChange(value?.id != null ? { id: value.id } : null);
+                  trigger(field.name);
+                }}
+              />
+            </Box>
+          )}
+        />
+      )}
     </Box>
   );
 }

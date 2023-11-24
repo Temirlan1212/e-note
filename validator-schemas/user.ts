@@ -3,7 +3,7 @@ import { number, object, InferType, string, date, boolean } from "yup";
 export type IUserRegistrySchema = InferType<typeof userRegistrySchema>;
 export type IUserRegistryFiltrationSchema = InferType<typeof userRegistryFiltrationSchema>;
 
-const userAddressSchema = object().shape({
+export const userAddressSchema = object().shape({
   id: number().integer().positive().nullable(),
   version: number().integer().positive().nullable(),
   region: object({

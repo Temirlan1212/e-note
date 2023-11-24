@@ -1,62 +1,41 @@
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
-import { InputLabel, Box, SxProps, Theme } from "@mui/material";
+import { InputLabel, Box } from "@mui/material";
 import Input from "@/components/ui/Input";
 import Area, { IAreaProps } from "./Area";
 
-export interface IAddressProps extends IAreaProps {
+export interface ILicenseProps {
   form: UseFormReturn<any>;
   names: {
-    region: string;
-    district: string;
-    city: string;
-    street: string;
-    house: string;
-    apartment: string;
+    licenseNo: string;
+    licenseStatus: string;
+    licenseTermFrom: string;
+    licenseTermUntil: string;
   };
   defaultValues?: {
-    region?: { id: number } | null;
-    district?: { id: number } | null;
-    city?: { id: number } | null;
-    street?: string;
-    house?: string;
-    apartment?: string;
+    licenseNo: string;
+    licenseStatus: string;
+    licenseTermFrom: string;
+    licenseTermUntil: string;
   };
   disableFields?: boolean;
-  boxSx?: SxProps<Theme> | undefined;
-  withNotaryDistrict?: boolean;
 }
 
-export default function Address({
-  form,
-  names,
-  defaultValues,
-  disableFields,
-  withNotaryDistrict,
-  boxSx,
-}: IAddressProps) {
+export default function Address({ form, names, defaultValues, disableFields }: ILicenseProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
 
   return (
-    <Box sx={boxSx} display="flex" gap="20px" flexDirection="column">
-      <Area
-        form={form}
-        disableFields={disableFields}
-        names={names}
-        defaultValues={defaultValues}
-        withNotaryDistrict={withNotaryDistrict}
-      />
-
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+    <Box display="flex" gap="20px" flexDirection="column" width="100%">
+      <Box display="flex" flexWrap="wrap" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller
           control={control}
-          name={names.street}
-          defaultValue={defaultValues?.street ?? ""}
+          name={names.licenseNo}
+          defaultValue={defaultValues?.licenseNo ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Street")}</InputLabel>
+              <InputLabel>{t("License number")}</InputLabel>
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -68,11 +47,11 @@ export default function Address({
         />
         <Controller
           control={control}
-          name={names.house}
-          defaultValue={defaultValues?.house ?? ""}
+          name={names.licenseStatus}
+          defaultValue={defaultValues?.licenseStatus ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("House")}</InputLabel>
+              <InputLabel>{t("License status")}</InputLabel>
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -84,11 +63,27 @@ export default function Address({
         />
         <Controller
           control={control}
-          name={names.apartment}
-          defaultValue={defaultValues?.apartment ?? ""}
+          name={names.licenseTermFrom}
+          defaultValue={defaultValues?.licenseTermFrom ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Apartment")}</InputLabel>
+              <InputLabel>{t("License start date")}</InputLabel>
+              <Input
+                inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={disableFields}
+                {...field}
+              />
+            </Box>
+          )}
+        />
+        <Controller
+          control={control}
+          name={names.licenseTermUntil}
+          defaultValue={defaultValues?.licenseTermUntil ?? ""}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("License end date")}</InputLabel>
               <Input
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}

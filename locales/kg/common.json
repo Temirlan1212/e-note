@@ -131,6 +131,11 @@
   "Middle name": "Атасынын аты",
   "Birth date": "Туулган күнү",
   "TIN": "ИНН",
+  "License information": "Лицензия маалыматы",
+  "License number": "Лицензиянын номери",
+  "License status": "Лицензиянын статусу",
+  "License start date": "Лицензия башталган датасы",
+  "License end date": "Лицензиянын аяктоо датасы",
   "Street": "Көчө",
   "House": "Үй",
   "Apartment": "Баатир",
@@ -237,5 +242,7 @@
   "Copy": "Көчүрүү",
   "Or": "Же",
   "Scroll to top": "Өйдө жылдыруу",
+  "Additional information": "Кошумча маалымат",
+  "Additional filters": "Кошумча фильтирлер",
   "Actions": "Иш-аракеттер"
 }
