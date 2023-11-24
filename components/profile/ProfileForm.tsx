@@ -45,6 +45,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [userData, setUserData] = useState<FetchResponseBody | null>();
+  const [userIsNotary, setUserIsNotary] = useState(false);
 
   const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
     returnResponse: true,
@@ -53,6 +54,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const { update: getUserData, loading: userDataLoading } = useFetch("", "POST");
 
   useEffectOnce(async () => {
+    setUserIsNotary(Boolean(profileData?.activeCompany));
+
     const res = await getUserData(profileData?.id != null ? "/api/profile/user/" + profileData?.id : "", {
       userRole: profileData?.activeCompany ? "notary" : "declarant",
     });
@@ -138,6 +141,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
       reader.onload = async () => {
         if (profileData?.id != null && reader.result) {
           const params = {
+            userRole: profileData?.activeCompany ? "notary" : "declarant",
             userData: userData,
             submitData: data,
             image: reader.result.toString(),
@@ -159,6 +163,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     if (!imagePreview) {
       if (profileData?.id != null) {
         const params = {
+          userRole: profileData?.activeCompany ? "notary" : "declarant",
           userData: userData,
           submitData: data,
           image: null,
@@ -428,52 +433,14 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           </Box>
         </Box>
 
-        <ExpandingFields title="Additional information" permanentExpand={true}>
-          <Box display="flex" flexDirection="column" gap="30px">
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "15px",
-              }}
-            >
-              <Typography
-                sx={{
-                  color: "#687C9B",
-                  fontSize: "16px",
-                  fontWeight: "600",
-                }}
-              >
-                {t("Address")}
-              </Typography>
-              <Box
-                display="flex"
-                gap="20px"
-                sx={{
-                  flexDirection: {
-                    xs: "column",
-                    sm: "row",
-                  },
-                  justifyContent: "space-between",
-                }}
-              >
-                <Address form={form} names={addressNames} withNotaryDistrict={true} boxSx={{ width: "100%" }} />
-              </Box>
-            </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "15px",
-              }}
-            >
+        {!userIsNotary ? undefined : (
+          <ExpandingFields title="Additional information" permanentExpand={true}>
+            <Box display="flex" flexDirection="column" gap="30px">
               <Box
                 sx={{
                   display: "flex",
-                  flexDirection: { xs: "column", sm: "row" },
-                  justifyContent: "space-between",
-                  gap: "10px",
+                  flexDirection: "column",
+                  gap: "15px",
                 }}
               >
                 <Typography
@@ -483,59 +450,99 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                     fontWeight: "600",
                   }}
                 >
-                  {t("Coordinates on the map")}
+                  {t("Address")}
                 </Typography>
-                <Hint type="hint" defaultActive={false}>
-                  {t("Specify coordinates to display them on the map")}
-                </Hint>
+                <Box
+                  display="flex"
+                  gap="20px"
+                  sx={{
+                    flexDirection: {
+                      xs: "column",
+                      sm: "row",
+                    },
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Address form={form} names={addressNames} withNotaryDistrict={true} boxSx={{ width: "100%" }} />
+                </Box>
               </Box>
-              <Box
-                display="flex"
-                gap="20px"
-                sx={{
-                  flexDirection: {
-                    xs: "column",
-                    sm: "row",
-                  },
-                  justifyContent: "space-between",
-                }}
-              >
-                <Coordinates form={form} names={coordinateNames} maxLength={9} boxSx={{ width: "100%" }} />
-              </Box>
-            </Box>
 
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "15px",
-              }}
-            >
-              <Typography
-                sx={{
-                  color: "#687C9B",
-                  fontSize: "16px",
-                  fontWeight: "600",
-                }}
-              >
-                {t("License information")}
-              </Typography>
               <Box
-                display="flex"
-                flexWrap="wrap"
-                gap="20px"
                 sx={{
-                  flexDirection: {
-                    xs: "column",
-                    sm: "row",
-                  },
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "15px",
                 }}
               >
-                <License form={form} names={licenseNames} disableFields={true} />
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    justifyContent: "space-between",
+                    gap: "10px",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      color: "#687C9B",
+                      fontSize: "16px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {t("Coordinates on the map")}
+                  </Typography>
+                  <Hint type="hint" defaultActive={false}>
+                    {t("Specify coordinates to display them on the map")}
+                  </Hint>
+                </Box>
+                <Box
+                  display="flex"
+                  gap="20px"
+                  sx={{
+                    flexDirection: {
+                      xs: "column",
+                      sm: "row",
+                    },
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Coordinates form={form} names={coordinateNames} maxLength={9} boxSx={{ width: "100%" }} />
+                </Box>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "15px",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "#687C9B",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                  }}
+                >
+                  {t("License information")}
+                </Typography>
+                <Box
+                  display="flex"
+                  flexWrap="wrap"
+                  gap="20px"
+                  sx={{
+                    flexDirection: {
+                      xs: "column",
+                      sm: "row",
+                    },
+                  }}
+                >
+                  <License form={form} names={licenseNames} disableFields={true} />
+                </Box>
               </Box>
             </Box>
-          </Box>
-        </ExpandingFields>
+          </ExpandingFields>
+        )}
 
         <Box
           display="flex"
