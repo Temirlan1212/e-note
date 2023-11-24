@@ -104,5 +104,11 @@
   "Select from the list of templates": "Выбрать из списка шаблонов",
   "Select by questionnaire": "Выбрать путем опросника",
   "Select from the list": "Выбрать из списка",
-  "Additional filters": "Дополнительные фильтры"
+  "Additional filters": "Дополнительные фильтры",
+  "All documents": "Все документы",
+  "All objects of civil rights": "Все объекты гражданских прав",
+  "All types of objects": "Все виды объектов",
+  "All notarial actions": "Все нотариальные действия",
+  "All types of notarial actions": "Все виды нотариальных действий",
+  "All action goals": "Все цели действий"
 }
