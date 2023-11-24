@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
   const filterValues = req.body["filterValues"];
   const searchValue = req.body["searchValue"];
-  const currentUser = req.body["currentUser"];
+  const namePermutations = req.body["namePermutations"];
   const isFilterValueEmty = () => Object.keys(filterValues).length < 1;
 
   const requestBody: {
@@ -51,13 +51,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         criteria: [
           {
             operator: "or",
-            criteria: [
-              {
-                fieldName: "company",
-                operator: "like",
-                value: currentUser,
-              },
-            ],
+            criteria: namePermutations.map((nameCombination: string) => ({
+              fieldName: "company",
+              operator: "like",
+              value: nameCombination,
+            })),
           },
           {
             operator: "or",

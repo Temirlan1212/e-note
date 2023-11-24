@@ -10,9 +10,9 @@ import Pagination from "@/components/ui/Pagination";
 import { ArchiveApplicationListActions } from "@/components/applications-archive/ArchiveApplicationListActions";
 import SearchBar from "@/components/ui/SearchBar";
 import ClearIcon from "@mui/icons-material/Clear";
-import { IApplication } from "@/models/application";
 import { useProfileStore } from "@/stores/profile";
 import { format } from "date-fns";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -20,8 +20,29 @@ interface IAppQueryParams {
   sortBy: string[];
   filterValues?: Record<string, (string | number)[]>;
   searchValue?: string;
-  currentUser?: string;
+  namePermutations?: string[];
 }
+
+const generateNamePermutations = async (fullName: string) => {
+  const names: string[] = fullName.split(" ");
+  const permutations: string[] = [];
+
+  const generatePermutations = async (currentPermutation: string[], remainingNames: string[]) => {
+    if (remainingNames.length === 0) {
+      permutations.push(currentPermutation.join(" "));
+    } else {
+      for (let i = 0; i < remainingNames.length; i++) {
+        const nextName: string = remainingNames[i];
+        const updatedPermutation: string[] = [...currentPermutation, nextName];
+        const updatedRemainingNames: string[] = [...remainingNames.slice(0, i), ...remainingNames.slice(i + 1)];
+        await generatePermutations(updatedPermutation, updatedRemainingNames);
+      }
+    }
+  };
+
+  generatePermutations([], names);
+  return permutations;
+};
 
 export default function ArchiveApplicationList() {
   const t = useTranslations();
@@ -37,11 +58,21 @@ export default function ArchiveApplicationList() {
   const profile = useProfileStore((state) => state);
   const currentUser = profile.getUserData()?.partner?.fullName;
 
+  useEffectOnce(async () => {
+    if (currentUser) {
+      const namePermutations = await generateNamePermutations(currentUser);
+      setAppQueryParams((prevParams) => ({
+        ...prevParams,
+        namePermutations: namePermutations,
+      }));
+    }
+  }, [currentUser]);
+
   const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
     pageSize: 7,
     page: 1,
     sortBy: ["-createdDate"],
-    currentUser: currentUser,
+    namePermutations: [`${currentUser}`],
     filterValues: {},
     searchValue: "",
   });
