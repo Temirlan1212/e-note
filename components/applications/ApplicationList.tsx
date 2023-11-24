@@ -299,32 +299,32 @@ export default function ApplicationList() {
               return isSearchedData ? params.row?.members?.[0]?.fullName : params.row?.["members.fullName"];
             },
           },
-          {
-            field: "typeNotarialAction",
-            headerName: "Type of action",
-            width: 200,
-            editable: false,
-            sortable: false,
-            filter: isSearchedData
-              ? undefined
-              : {
-                  data: actionTypeData?.data ?? [],
-                  labelField: "title_" + locale,
-                  valueField: "value",
-                  type: "dictionary",
-                  field: "typeNotarialAction",
-                },
-            valueGetter: (params: GridValueGetterParams) => {
-              if (actionTypeData?.data != null) {
-                const matchedItem = actionTypeData?.data.find(
-                  (item: IActionType) => item.value == (isSearchedData ? params.row.typeNotarialAction : params.value)
-                );
-                const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
-                return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
-              }
-              return params.value;
-            },
-          },
+          // {
+          //   field: "typeNotarialAction",
+          //   headerName: "Type of action",
+          //   width: 200,
+          //   editable: false,
+          //   sortable: false,
+          //   filter: isSearchedData
+          //     ? undefined
+          //     : {
+          //         data: actionTypeData?.data ?? [],
+          //         labelField: "title_" + locale,
+          //         valueField: "value",
+          //         type: "dictionary",
+          //         field: "typeNotarialAction",
+          //       },
+          //   valueGetter: (params: GridValueGetterParams) => {
+          //     if (actionTypeData?.data != null) {
+          //       const matchedItem = actionTypeData?.data.find(
+          //         (item: IActionType) => item.value == (isSearchedData ? params.row.typeNotarialAction : params.value)
+          //       );
+          //       const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
+          //       return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
+          //     }
+          //     return params.value;
+          //   },
+          // },
           {
             field: locale !== "en" ? "$t:product.name" : "product.name",
             headerName: "Type of document",

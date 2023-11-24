@@ -9,17 +9,22 @@ import { useTheme } from "@mui/material/styles";
 import useFetch from "@/hooks/useFetch";
 import { IApplication } from "@/models/application";
 import { useRouter } from "next/router";
+import useEffectOnce from "@/hooks/useEffectOnce";
+import { INotarialAction } from "@/models/notarial-action";
 
 interface IDocumentReadProps {
   data: IApplication;
   loading: boolean;
 }
 
+const capitalize = (str: string) => str?.[0].toUpperCase() + str?.slice(1);
+
 const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
   const theme = useTheme();
   const { locale } = useRouter();
   const t = useTranslations();
 
+  const { data: notarialActionStatus, update } = useFetch("", "POST");
   const { data: statusData, loading: statusDataLoading } = useFetch(
     "/api/check-document/dictionaries/reliability-status",
     "GET"
@@ -33,6 +38,10 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
     "GET"
   );
 
+  useEffectOnce(() => {
+    data?.typeNotarialAction && update("/api/dictionaries/notarial-action/status/" + data?.typeNotarialAction);
+  }, [data]);
+
   const translatedStatusTitle = (data: Record<string, any>[], value?: number) => {
     const matchedStatus = data?.find((item) => item.value == value);
     const translatedTitle = matchedStatus?.[("title_" + locale) as keyof IActionType];
@@ -41,7 +50,10 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
 
   const titles = [
     { title: "Name", value: locale !== "en" ? data?.product?.["$t:name"] || data?.product?.name : data?.product?.name },
-    { title: "Type of notarial action", value: translatedStatusTitle(actionTypeData?.data, data?.typeNotarialAction) },
+    {
+      title: "Type of notarial action",
+      value: notarialActionStatus?.data[0][("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction],
+    },
     { title: "Status", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
     { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
     {

@@ -102,5 +102,12 @@
   "not assigned": "дайындалган эмес",
   "Select from the list of templates": "Шаблон тизмесинен тандоо",
   "Select by questionnaire": "Анкета боюнча тандоо",
-  "Select from the list": "Тизмеден тандаңыз"
+  "Select from the list": "Тизмеден тандаңыз",
+  "Additional filters": "Кошумча фильтирлер",
+  "All documents": "Бардык документтер",
+  "All objects of civil rights": "Жарандык укуктардын бардык объектилери",
+  "All types of objects": "Объекттердин бардык түрлөрү",
+  "All notarial actions": "Бардык нотариалдык аракеттер",
+  "All types of notarial actions": "Нотариалдык иш-аракеттердин бардык түрлөрү",
+  "All action goals": "Иш-аракеттердин бардык максаттары"
 }

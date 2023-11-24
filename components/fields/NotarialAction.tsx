@@ -122,6 +122,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
           <Box width="100%" display="flex" flexDirection="column" gap="10px">
             <InputLabel>{t("Document")}</InputLabel>
             <Autocomplete
+              textFieldPlaceholder={t("All documents")}
               disabled={disable}
               labelField={locale !== "en" ? "$t:name" : "name"}
               type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -169,6 +170,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
 
                   <Select
                     fullWidth
+                    placeholder={t("All objects of civil rights")}
                     disabled={disable}
                     selectType={errorMessage ? "error" : field.value ? "success" : "secondary"}
                     data={objectList ?? []}
@@ -203,6 +205,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                   <InputLabel>{t("Object type")}</InputLabel>
                   <Select
                     disabled={!objectVal || disable}
+                    placeholder={t("All types of objects")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     data={objectTypeList ?? []}
                     labelField={"nameIn" + locale?.[0].toUpperCase() + locale?.slice(1)}
@@ -241,6 +244,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                   <InputLabel>{t("Notarial action")}</InputLabel>
                   <Select
                     disabled={!objectTypeVal || disable}
+                    placeholder={t("All notarial actions")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     data={notarialActionList ?? []}
                     labelField={"nameIn" + locale?.[0].toUpperCase() + locale?.slice(1)}
@@ -275,6 +279,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                   <InputLabel>{t("Type of notarial action")}</InputLabel>
                   <Select
                     disabled={!notarialActionVal || disable}
+                    placeholder={t("All types of notarial actions")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     data={typeNotarialActionList ?? []}
                     labelField={"nameIn" + locale?.[0].toUpperCase() + locale?.slice(1)}
@@ -307,6 +312,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                   <InputLabel>{t("Purpose of action")}</InputLabel>
                   <Select
                     disabled={!typeNotarialActionVal || disable}
+                    placeholder={t("All action goals")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     data={actionList ?? []}
                     labelField={"nameIn" + locale?.[0].toUpperCase() + locale?.slice(1)}

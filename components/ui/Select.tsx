@@ -1,5 +1,6 @@
 import React, { forwardRef } from "react";
 import {
+  Box,
   FormControl,
   FormHelperText,
   LinearProgress,
@@ -75,12 +76,19 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
         {...(register && name && register(name))}
         {...props}
         defaultValue={defaultValue ?? ""}
+        displayEmpty
+        renderValue={(value) => {
+          const item = data.find((item) => item?.[valueField] === value);
+          if (value === "") return <Box color="#B4B9C1">{props?.placeholder ? props.placeholder : "----"}</Box>;
+          return item?.[labelField] != null ? item[labelField] : "";
+        }}
         {...props}
       >
         {loading && <LinearProgress color={selectType === "secondary" ? "secondary" : "success"} />}
         <MenuItem
           value=""
           sx={{
+            color: "#B4B9C1",
             "&.Mui-selected": {
               backgroundColor: "transparent",
               "&:hover": {
@@ -89,7 +97,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
             },
           }}
         >
-          ---
+          <em>{props?.placeholder ? props.placeholder : "----"}</em>
         </MenuItem>
         {data?.map((item) => (
           <MenuItem

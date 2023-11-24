@@ -7,11 +7,15 @@ import { IActionType } from "@/models/action-type";
 import { format } from "date-fns";
 import { useTheme } from "@mui/material/styles";
 import { IApplication } from "@/models/application";
+import useEffectOnce from "@/hooks/useEffectOnce";
+import { INotarialAction } from "@/models/notarial-action";
 
 interface IApplicationStatusReadProps {
   data: IApplication;
   loading: boolean;
 }
+
+const capitalize = (str: string) => str?.[0].toUpperCase() + str?.slice(1);
 
 const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
   const { data, loading } = props;
@@ -19,12 +23,17 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
   const locale = useLocale();
   const t = useTranslations();
 
+  const { data: notarialActionStatus, update } = useFetch("", "POST");
   const { data: statusData, loading: statusDataLoading } = useFetch("/api/dictionaries/application-status", "POST");
   const { data: actionTypeData, loading: actionTypeDataLoading } = useFetch("/api/dictionaries/action-type", "POST");
   const { data: signatureStatusData, loading: signatureStatusDataLoading } = useFetch(
     "/api/dictionaries/notary-signature-status",
     "POST"
   );
+
+  useEffectOnce(() => {
+    data?.typeNotarialAction && update("/api/dictionaries/notarial-action/status/" + data?.typeNotarialAction);
+  }, [data]);
 
   const translatedStatusTitle = (data: Record<string, any>[], value?: number) => {
     const matchedStatus = data?.find((item) => item.value == value);
@@ -34,7 +43,10 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
 
   const titles = [
     { title: "Name", value: locale !== "en" ? data?.product?.["$t:name"] || data?.product?.name : data?.product?.name },
-    { title: "Type of notarial action", value: translatedStatusTitle(actionTypeData?.data, data?.typeNotarialAction) },
+    {
+      title: "Type of notarial action",
+      value: notarialActionStatus?.data[0][("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction],
+    },
     { title: "StatusApplication", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
     { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
     {
