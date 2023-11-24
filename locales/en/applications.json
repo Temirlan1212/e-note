@@ -60,7 +60,6 @@
   "Make a new application": "Make a new application",
   "Go to applications": "Go to applications",
   "Participant": "Participant",
-  "Additional information": "Additional information",
   "Scan the QR code": "Scan the QR code",
   "Organ number": "Organ number",
   "Write a message": "Write a message",
@@ -103,6 +102,5 @@
   "not assigned": "not assigned",
   "Select from the list of templates": "Select from the list of templates",
   "Select by questionnaire": "Select by questionnaire",
-  "Select from the list": "Select from the list",
-  "Additional filters": "Additional filters"
+  "Select from the list": "Select from the list"
 }

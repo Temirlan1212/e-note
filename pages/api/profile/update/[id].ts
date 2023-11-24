@@ -25,14 +25,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         partner: {
           id: userData?.data?.[0]?.partner?.id,
           version: userData?.data?.[0]?.partner?.version,
-          firstName: submitData?.firstName,
-          lastName: submitData?.lastName,
-          middleName: submitData?.middleName,
-          mobilePhone: submitData?.mobilePhone,
+          firstName: submitData?.partner?.firstName,
+          lastName: submitData?.partner?.lastName,
+          middleName: submitData?.partner?.middleName,
+          mobilePhone: submitData?.partner?.mobilePhone,
           emailAddress: {
             id: userData?.data?.[0]?.partner?.emailAddress?.id,
             version: userData?.data?.[0]?.partner?.emailAddress?.$version,
-            address: submitData?.email,
+            address: submitData?.partner?.emailAddress.address,
           },
         },
         activeCompany: {
@@ -55,6 +55,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             addressL4: submitData?.activeCompany?.address?.addressL4,
             addressL3: submitData?.activeCompany?.address?.addressL3,
             addressL2: submitData?.activeCompany?.address?.addressL2,
+          },
+          notaryDistrict: {
+            id: submitData?.activeCompany?.notaryDistrict?.id,
           },
         },
       },

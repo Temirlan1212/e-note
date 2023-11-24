@@ -4,21 +4,25 @@ import { addressSchema } from "./address";
 export type IUserProfileSchema = yup.InferType<typeof userProfileSchema>;
 
 export const userProfileSchema = yup.object().shape({
-  firstName: yup.string().required("First name is required!"),
-  middleName: yup.string().required("Middle name is required!"),
-  lastName: yup.string().required("Last name is required!"),
-  login: yup.string().required("Login is required!"),
-  email: yup.string().email().required("E-mail is required!"),
-  mobilePhone: yup
-    .string()
-    .trim()
-    .required("Mobile is required!")
-    .matches(/^[0-9\+\-\s]*$/, { message: "Please enter valid number", excludeEmptyString: false }),
+  code: yup.string().required("Login is required!"),
+  partner: yup.object({
+    firstName: yup.string().required("First name is required!"),
+    middleName: yup.string().required("Middle name is required!"),
+    lastName: yup.string().required("Last name is required!"),
+    emailAddress: yup.object({
+      address: yup.string().email().required("E-mail is required!"),
+    }),
+    mobilePhone: yup
+      .string()
+      .trim()
+      .required("Mobile is required!")
+      .matches(/^[0-9\+\-\s]*$/, { message: "Please enter valid number", excludeEmptyString: false }),
+  }),
   activeCompany: yup.object({
-    licenseNo: yup.string(),
-    licenseStatus: yup.string(),
-    licenseTermFrom: yup.string(),
-    licenseTermUntil: yup.string(),
+    licenseNo: yup.string().trim().nullable(),
+    licenseStatus: yup.string().trim().nullable(),
+    licenseTermFrom: yup.string().trim().nullable(),
+    licenseTermUntil: yup.string().trim().nullable(),
     longitude: yup
       .string()
       .trim()

@@ -21,16 +21,13 @@ import License from "@/components/fields/License";
 import Hint from "@/components/ui/Hint";
 import Contact from "@/components/fields/Contact";
 import Coordinates from "@/components/fields/Coordinates";
+import ExpandingFields from "../fields/ExpandingFields";
 
 interface IProfileFormProps {}
 
 interface IExtendedUserData extends IUserData {
   "partner.mobilePhone"?: string;
   "partner.emailAddress"?: IEmail;
-}
-
-interface IAppQueryParams {
-  userRole: string | null;
 }
 
 async function blobToFile(blob: Blob, fileName: string): Promise<File> {
@@ -49,31 +46,20 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [userData, setUserData] = useState<FetchResponseBody | null>();
 
-  const [appQueryParams, setAppQueryParams] = useState<IAppQueryParams>({
-    userRole: "notary",
-  });
-
   const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
     returnResponse: true,
   });
 
-  const {
-    data: userdata,
-    update: getUserData,
-    loading: userDataLoading,
-  } = useFetch<FetchResponseBody | null>(
-    profileData?.id != null ? "/api/profile/user/" + profileData?.id : "",
-    "POST",
-    {
-      body: appQueryParams,
-    }
-  );
+  const { update: getUserData, loading: userDataLoading } = useFetch("", "POST");
 
-  useEffect(() => {
-    if (userdata?.data?.length > 0) {
-      setUserData(userdata);
+  useEffectOnce(async () => {
+    const res = await getUserData(profileData?.id != null ? "/api/profile/user/" + profileData?.id : "", {
+      userRole: profileData?.activeCompany ? "notary" : "declarant",
+    });
+    if (Array.isArray(res?.data) && res?.data.length > 0) {
+      setUserData(res);
     }
-  }, [userdata]);
+  });
 
   const {
     data: imageData,
@@ -95,31 +81,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const form = useForm<IUserProfileSchema>({
     resolver: yupResolver(userProfileSchema),
-    values: {
-      firstName: userData?.data?.[0]?.partner?.firstName,
-      middleName: userData?.data?.[0]?.partner?.middleName,
-      lastName: userData?.data?.[0]?.partner?.lastName,
-      login: userData?.data?.[0]?.code,
-      email: userData?.data?.[0]?.partner?.emailAddress?.address,
-      mobilePhone: userData?.data?.[0]?.partner?.mobilePhone,
-      activeCompany: {
-        licenseNo: userData?.data?.[0]?.activeCompany?.licenseNo ?? t("absent"),
-        licenseStatus: userData?.data?.[0]?.activeCompany?.licenseStatus ?? t("absent"),
-        licenseTermFrom: userData?.data?.[0]?.activeCompany?.licenseTermFrom ?? t("absent"),
-        licenseTermUntil: userData?.data?.[0]?.activeCompany?.licenseTermUntil ?? t("absent"),
-        longitude: userData?.data?.[0]?.activeCompany?.longitude ?? "00.000000",
-        latitude: userData?.data?.[0]?.activeCompany?.latitude ?? "00.000000",
-        address: {
-          region: { id: userData?.data?.[0]?.activeCompany?.address?.region?.id },
-          city: { id: userData?.data?.[0]?.activeCompany?.address?.city?.id },
-          district: { id: userData?.data?.[0]?.activeCompany?.address?.district?.id },
-          addressL2: userData?.data?.[0]?.activeCompany?.address?.addressL2,
-          addressL3: userData?.data?.[0]?.activeCompany?.address?.addressL3,
-          addressL4: userData?.data?.[0]?.activeCompany?.address?.addressL4,
-        },
-        notaryDistrict: { id: userData?.data?.[0]?.activeCompany?.address?.notaryDistrict?.id },
-      },
-    },
+    values: userData?.data?.[0] != null ? userData?.data?.[0] : null,
   });
 
   const {
@@ -156,8 +118,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   };
 
   const contactNames = {
-    phone: "mobilePhone",
-    email: "email",
+    phone: "partner.mobilePhone",
+    email: "partner.emailAddress.address",
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -367,10 +329,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               </InputLabel>
               <Input
                 fullWidth
-                error={!!errors.lastName?.message ?? false}
-                helperText={errors.lastName?.message ? t(errors.lastName?.message) : ""}
+                error={!!errors.partner?.lastName?.message ?? false}
+                helperText={errors.partner?.lastName?.message ? t(errors.partner?.lastName?.message) : ""}
                 register={form.register}
-                name="lastName"
+                name="partner.lastName"
               />
             </FormControl>
             <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
@@ -389,10 +351,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               </InputLabel>
               <Input
                 fullWidth
-                error={!!errors.firstName?.message ?? false}
-                helperText={errors.firstName?.message ? t(errors.firstName?.message) : ""}
+                error={!!errors.partner?.firstName?.message ?? false}
+                helperText={errors.partner?.firstName?.message ? t(errors.partner?.firstName?.message) : ""}
                 register={form.register}
-                name="firstName"
+                name="partner.firstName"
               />
             </FormControl>
             <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
@@ -411,10 +373,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               </InputLabel>
               <Input
                 fullWidth
-                error={!!errors.middleName?.message ?? false}
-                helperText={errors.middleName?.message ? t(errors.middleName?.message) : ""}
+                error={!!errors.partner?.middleName?.message ?? false}
+                helperText={errors.partner?.middleName?.message ? t(errors.partner?.middleName?.message) : ""}
                 register={form.register}
-                name="middleName"
+                name="partner.middleName"
               />
             </FormControl>
             <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
@@ -431,7 +393,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               >
                 {t("Username")}
               </InputLabel>
-              <Input fullWidth register={form.register} name="login" disabled />
+              <Input fullWidth register={form.register} name="code" disabled />
             </FormControl>
           </Box>
         </Box>
@@ -466,110 +428,114 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           </Box>
         </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "15px",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "#687C9B",
-              fontSize: "16px",
-              fontWeight: "600",
-            }}
-          >
-            {t("Address")}
-          </Typography>
-          <Box
-            display="flex"
-            gap="20px"
-            sx={{
-              flexDirection: {
-                xs: "column",
-                sm: "row",
-              },
-              justifyContent: "space-between",
-            }}
-          >
-            <Address form={form} names={addressNames} withNotaryDistrict={true} boxSx={{ width: "100%" }} />
-          </Box>
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "15px",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", sm: "row" },
-              justifyContent: "space-between",
-              gap: "10px",
-            }}
-          >
-            <Typography
+        <ExpandingFields title="Additional information" permanentExpand={true}>
+          <Box display="flex" flexDirection="column" gap="30px">
+            <Box
               sx={{
-                color: "#687C9B",
-                fontSize: "16px",
-                fontWeight: "600",
+                display: "flex",
+                flexDirection: "column",
+                gap: "15px",
               }}
             >
-              {t("Coordinates on the map")}
-            </Typography>
-            <Hint type="hint" defaultActive={false}>
-              {t("Specify coordinates to display them on the map")}
-            </Hint>
-          </Box>
-          <Box
-            display="flex"
-            gap="20px"
-            sx={{
-              flexDirection: {
-                xs: "column",
-                sm: "row",
-              },
-              justifyContent: "space-between",
-            }}
-          >
-            <Coordinates form={form} names={coordinateNames} maxLength={9} boxSx={{ width: "100%" }} />
-          </Box>
-        </Box>
+              <Typography
+                sx={{
+                  color: "#687C9B",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                }}
+              >
+                {t("Address")}
+              </Typography>
+              <Box
+                display="flex"
+                gap="20px"
+                sx={{
+                  flexDirection: {
+                    xs: "column",
+                    sm: "row",
+                  },
+                  justifyContent: "space-between",
+                }}
+              >
+                <Address form={form} names={addressNames} withNotaryDistrict={true} boxSx={{ width: "100%" }} />
+              </Box>
+            </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "15px",
-          }}
-        >
-          <Typography
-            sx={{
-              color: "#687C9B",
-              fontSize: "16px",
-              fontWeight: "600",
-            }}
-          >
-            {t("License information")}
-          </Typography>
-          <Box
-            display="flex"
-            flexWrap="wrap"
-            gap="20px"
-            sx={{
-              flexDirection: {
-                xs: "column",
-                sm: "row",
-              },
-            }}
-          >
-            <License form={form} names={licenseNames} disableFields={true} />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "15px",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
+                  justifyContent: "space-between",
+                  gap: "10px",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "#687C9B",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                  }}
+                >
+                  {t("Coordinates on the map")}
+                </Typography>
+                <Hint type="hint" defaultActive={false}>
+                  {t("Specify coordinates to display them on the map")}
+                </Hint>
+              </Box>
+              <Box
+                display="flex"
+                gap="20px"
+                sx={{
+                  flexDirection: {
+                    xs: "column",
+                    sm: "row",
+                  },
+                  justifyContent: "space-between",
+                }}
+              >
+                <Coordinates form={form} names={coordinateNames} maxLength={9} boxSx={{ width: "100%" }} />
+              </Box>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "15px",
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#687C9B",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                }}
+              >
+                {t("License information")}
+              </Typography>
+              <Box
+                display="flex"
+                flexWrap="wrap"
+                gap="20px"
+                sx={{
+                  flexDirection: {
+                    xs: "column",
+                    sm: "row",
+                  },
+                }}
+              >
+                <License form={form} names={licenseNames} disableFields={true} />
+              </Box>
+            </Box>
           </Box>
-        </Box>
+        </ExpandingFields>
 
         <Box
           display="flex"

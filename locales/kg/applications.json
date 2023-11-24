@@ -60,7 +60,6 @@
   "Make a new application": "Жаңы арыз түзүү",
   "Go to applications": "Арыз баракчасына өтүү",
   "Participant": "Катышуучу",
-  "Additional information": "Кошумча маалымат",
   "Scan the QR code": "QR кодду сканерлөө",
   "Organ number": "Орган номери",
   "Write a message": "Билдирүүнү жазуу",
@@ -103,6 +102,5 @@
   "not assigned": "дайындалган эмес",
   "Select from the list of templates": "Шаблон тизмесинен тандоо",
   "Select by questionnaire": "Анкета боюнча тандоо",
-  "Select from the list": "Тизмеден тандаңыз",
-  "Additional filters": "Кошумча фильтирлер"
+  "Select from the list": "Тизмеден тандаңыз"
 }
