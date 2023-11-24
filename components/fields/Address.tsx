@@ -24,16 +24,30 @@ export interface IAddressProps extends IAreaProps {
   };
   disableFields?: boolean;
   boxSx?: SxProps<Theme> | undefined;
+  getNotaryDistrict?: boolean;
 }
 
-export default function Address({ form, names, defaultValues, disableFields, boxSx }: IAddressProps) {
+export default function Address({
+  form,
+  names,
+  defaultValues,
+  disableFields,
+  getNotaryDistrict,
+  boxSx,
+}: IAddressProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
 
   return (
     <Box sx={boxSx} display="flex" gap="20px" flexDirection="column">
-      <Area form={form} disableFields={disableFields} names={names} defaultValues={defaultValues} />
+      <Area
+        form={form}
+        disableFields={disableFields}
+        names={names}
+        defaultValues={defaultValues}
+        getNotaryDistrict={getNotaryDistrict}
+      />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller

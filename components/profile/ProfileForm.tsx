@@ -21,8 +21,6 @@ import License from "@/components/fields/License";
 import Hint from "@/components/ui/Hint";
 import Contact from "@/components/fields/Contact";
 import Coordinates from "@/components/fields/Coordinates";
-import Autocomplete from "../ui/Autocomplete";
-import { INotaryDistrict } from "@/models/notary-district";
 
 interface IProfileFormProps {}
 
@@ -39,18 +37,8 @@ async function blobToFile(blob: Blob, fileName: string): Promise<File> {
   return new File([blob], fileName, { type: blob?.type });
 }
 
-const getLabelField = (data: FetchResponseBody | null, locale: string) => {
-  if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
-    const item = data.data.find((item) => item);
-    if (item.hasOwnProperty("title")) return item?.[`title_${locale}`] != null ? `title_${locale}` : "title";
-    if (item.hasOwnProperty("$t:name")) return item != null ? "$t:name" : "name";
-  }
-  return "name";
-};
-
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const t = useTranslations();
-  const locale = useLocale();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -512,42 +500,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               justifyContent: "space-between",
             }}
           >
-            <Address form={form} names={addressNames} boxSx={{ width: "100%" }} />
+            <Address form={form} names={addressNames} getNotaryDistrict={true} boxSx={{ width: "100%" }} />
           </Box>
-          <Controller
-            control={control}
-            name={"activeCompany.notaryDistrict"}
-            defaultValue={userData?.data?.[0]?.activeCompany?.notaryDistrict?.id}
-            render={({ field, fieldState }) => (
-              <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Notary district")}</InputLabel>
-                <Autocomplete
-                  labelField={getLabelField(notaryDistrictDictionary, locale)}
-                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={!city}
-                  options={
-                    notaryDistrictDictionary?.status === 0
-                      ? (notaryDistrictDictionary?.data as INotaryDistrict[]) ?? []
-                      : []
-                  }
-                  loading={notaryDistrictDictionaryLoading}
-                  value={
-                    field.value != null
-                      ? (notaryDistrictDictionary?.data ?? []).find(
-                          (item: INotaryDistrict) => item.id == field.value?.id
-                        ) ?? null
-                      : null
-                  }
-                  onBlur={field.onBlur}
-                  onChange={(event, value) => {
-                    field.onChange(value?.id != null ? { id: value.id } : null);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            )}
-          />
         </Box>
 
         <Box
@@ -560,8 +514,9 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           <Box
             sx={{
               display: "flex",
-              flexDirection: "row",
+              flexDirection: { xs: "column", sm: "row" },
               justifyContent: "space-between",
+              gap: "10px",
             }}
           >
             <Typography
