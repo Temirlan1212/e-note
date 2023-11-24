@@ -10,7 +10,7 @@ interface IExpandingFields extends Partial<AccordionProps> {
 export default function ExpandingFields({
   title = "",
   children,
-  permanentExpand,
+  permanentExpand = true,
 }: PropsWithChildren<IExpandingFields>) {
   const [expanded, setExpanded] = React.useState<boolean>(false);
 
