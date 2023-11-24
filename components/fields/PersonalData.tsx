@@ -120,10 +120,12 @@ export default function PersonalData({
 
   const foreigner = watch(names.foreigner);
   const type = watch(names.type);
+  console.log(type);
   const picture = watch(names?.picture!);
   const pin = watch(names?.pin);
   const lastName = watch(names?.lastName);
   const firstName = watch(names?.firstName);
+  const name = watch(names?.nameOfCompanyGov);
   const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
 
   const { data: imageData, update } = useFetch<Response>("", "GET", {
@@ -161,6 +163,10 @@ export default function PersonalData({
   useEffect(() => {
     if (firstName && names?.name) form.setValue(names?.name, firstName);
   }, [firstName]);
+
+  useEffect(() => {
+    if (name) form.setValue(names?.name, name);
+  }, [name]);
 
   useEffect(() => {
     if (isEditableCopy) {

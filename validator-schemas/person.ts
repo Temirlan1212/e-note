@@ -16,29 +16,17 @@ export const personSchema = object()
     foreigner: boolean(),
     lastName: string()
       .trim()
-      .min(2, "minLettersLow")
       .when("partnerTypeSelect", {
         is: 2,
-        then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
-      })
-      .when("partnerTypeSelect", {
-        is: 3,
-        then: (schema) => schema.required("required"),
+        then: (schema) => schema.required("required").min(2, "minLettersLow"),
         otherwise: (schema) => schema.nullable(),
       })
       .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
     firstName: string()
       .trim()
-      .min(2, "minLettersLow")
       .when("partnerTypeSelect", {
         is: 2,
-        then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
-      })
-      .when("partnerTypeSelect", {
-        is: 3,
-        then: (schema) => schema.required("required"),
+        then: (schema) => schema.required("required").min(2, "minLettersLow"),
         otherwise: (schema) => schema.nullable(),
       })
       .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
