@@ -74,7 +74,7 @@ export const personSchema = object()
     authority: string().trim(),
     authorityNumber: string()
       .trim()
-      .matches(/^[0-9]*$/, "onlyNumbers"),
+      .matches(/^[0-9\s]*$/, "onlyNumbers"),
     dateOfIssue: date().nullable(),
     mainAddress: addressSchema,
     actualResidenceAddress: addressSchema,
