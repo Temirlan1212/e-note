@@ -32,9 +32,11 @@ export const userProfileSchema = yup.object().shape({
       .trim()
       .matches(/^\d+(\.\d+)?$/, "onlyNumbers"),
     address: addressSchema,
-    notaryDistrict: yup.object({
-      id: yup.number().integer().positive(),
-    }),
+    notaryDistrict: yup
+      .object({
+        id: yup.number().integer().positive(),
+      })
+      .required("required"),
   }),
 });
 

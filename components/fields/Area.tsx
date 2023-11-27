@@ -18,6 +18,7 @@ export interface IAreaProps {
     region?: string;
     district?: string;
     city?: string;
+    notaryDistrict?: string;
   };
   defaultValues?: {
     region?: { id: number } | null;
@@ -28,6 +29,7 @@ export interface IAreaProps {
   disableFields?: boolean;
   withoutFieldBinding?: boolean;
   withNotaryDistrict?: boolean;
+  getAllNotaryDistricts?: boolean;
 }
 
 export default function Area({
@@ -38,6 +40,7 @@ export default function Area({
   disableFields,
   withoutFieldBinding = false,
   withNotaryDistrict = false,
+  getAllNotaryDistricts = false,
 }: IAreaProps) {
   const t = useTranslations();
   const locale = useLocale();
@@ -58,6 +61,7 @@ export default function Area({
     withoutFieldBinding ? (region != null ? `/api/dictionaries/districts?regionId=${region.id}` : "") : "",
     "GET"
   );
+
   const { data: cityDictionary, loading: cityDictionaryLoading } = useFetch(
     withoutFieldBinding
       ? `/api/dictionaries/cities?regionId=${region?.id ?? ""}&districtId=${district?.id ?? ""}`
@@ -68,9 +72,16 @@ export default function Area({
   );
 
   const { data: notaryDistrictDictionary, loading: notaryDistrictDictionaryLoading } = useFetch(
-    city != null ? `/api/dictionaries/notary-districts?cityId=${city.id}` : "",
+    `/api/dictionaries/notary-districts${
+      getAllNotaryDistricts
+        ? ""
+        : `${district ? `?districtId=${district?.id}` : ""}${
+            district ? `&cityId=${city?.id}` : city ? `?cityId=${city?.id}` : ""
+          }`
+    }`,
     "GET"
   );
+
   useEffect(() => {
     update(`/api/dictionaries/districts${region ? `?regionId=${region?.id}` : ""}`);
   }, [region]);
@@ -100,7 +111,7 @@ export default function Area({
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 options={regionDictionary?.status === 0 ? (regionDictionary?.data as Record<string, any>[]) ?? [] : []}
                 loading={regionDictionaryLoading}
-                textFieldPlaceholder={placeholders?.region ?? ""}
+                textFieldPlaceholder={placeholders?.region ?? "---"}
                 value={
                   field.value != null
                     ? (regionDictionary?.data ?? []).find((item: Record<string, any>) => item.id == field.value.id) ??
@@ -132,7 +143,7 @@ export default function Area({
                 options={
                   districtDictionary?.status === 0 ? (districtDictionary?.data as Record<string, any>[]) ?? [] : []
                 }
-                textFieldPlaceholder={placeholders?.district ?? ""}
+                textFieldPlaceholder={placeholders?.district ?? "---"}
                 loading={districtDictionaryLoading}
                 value={
                   field.value != null
@@ -168,7 +179,7 @@ export default function Area({
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={withoutFieldBinding ? disableFields : !region || disableFields}
                   options={options ?? []}
-                  textFieldPlaceholder={placeholders?.city ?? ""}
+                  textFieldPlaceholder={placeholders?.city ?? "---"}
                   loading={cityDictionaryLoading}
                   value={field.value != null ? (options ?? []).find((item) => item.id == field.value.id) ?? null : null}
                   onBlur={field.onBlur}
@@ -194,12 +205,15 @@ export default function Area({
                 labelField={getLabelField(notaryDistrictDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!city || disableFields}
+                disabled={
+                  withoutFieldBinding || getAllNotaryDistricts ? disableFields : !district || !city || disableFields
+                }
                 options={
                   notaryDistrictDictionary?.status === 0
                     ? (notaryDistrictDictionary?.data as INotaryDistrict[]) ?? []
                     : []
                 }
+                textFieldPlaceholder={placeholders?.notaryDistrict ?? "---"}
                 loading={notaryDistrictDictionaryLoading}
                 value={
                   field.value != null
