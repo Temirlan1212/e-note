@@ -420,7 +420,19 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Address form={form} names={addressNames} withNotaryDistrict={true} boxSx={{ width: "100%" }} />
+                  <Address
+                    form={form}
+                    names={addressNames}
+                    withNotaryDistrict={true}
+                    getAllNotaryDistricts={true}
+                    placeholders={{
+                      region: "---",
+                      district: "---",
+                      city: "---",
+                      notaryDistrict: "---",
+                    }}
+                    boxSx={{ width: "100%" }}
+                  />
                 </Box>
               </Box>
 
