@@ -9,10 +9,11 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { useRouter } from "next/router";
 import Button from "@/components/ui/Button";
 
-export default function DeclVideoRecordModal(props: Partial<PropsWithChildren<IConfirmationModal>>) {
+export default function DeclVideoRecordModal(
+  props: Partial<PropsWithChildren<IConfirmationModal>> & { applicationId: number }
+) {
+  const { applicationId } = props;
   const t = useTranslations();
-  const router = useRouter();
-  const { id: applicationId } = router.query as { id: string | null };
   const { update, loading } = useFetch("", "POST");
   const [users, setUsers] = useState<Record<string, any>[]>([]);
   const [userId, setUserId] = useState<number | null>(null);
@@ -147,7 +148,7 @@ const VideoUpload = ({
   applicationId,
   onUpload,
 }: {
-  applicationId: string;
+  applicationId: number;
   userId: number;
   fileId: number | null;
   onUpload: () => Promise<void>;

@@ -245,7 +245,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
                   </SignModal>
                 )}
 
-                <DeclVideoRecordModal>
+                <DeclVideoRecordModal applicationId={id as number}>
                   <Button startIcon={<VideocamIcon />} sx={{ flexGrow: "1" }}>
                     {t("Record a video")}
                   </Button>
