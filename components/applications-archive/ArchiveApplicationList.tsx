@@ -23,7 +23,7 @@ interface IAppQueryParams {
   namePermutations?: string[];
 }
 
-const generateNamePermutations = async (fullName: string) => {
+export const generateNamePermutations = async (fullName: string) => {
   const names: string[] = fullName.split(" ");
   const permutations: string[] = [];
 
@@ -40,7 +40,7 @@ const generateNamePermutations = async (fullName: string) => {
     }
   };
 
-  generatePermutations([], names);
+  await generatePermutations([], names);
   return permutations;
 };
 
