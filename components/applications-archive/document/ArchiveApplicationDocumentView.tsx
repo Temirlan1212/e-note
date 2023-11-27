@@ -1,7 +1,7 @@
 import { FC } from "react";
 
 import { useTranslations } from "next-intl";
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 
 import { FetchResponseBody } from "@/hooks/useFetch";
 
@@ -18,7 +18,10 @@ const ArchiveApplicationDocumentView: FC<IArchiveApplicationDocumentViewProps> =
     return { __html: data };
   };
 
-  return <Box dangerouslySetInnerHTML={createHtml(data?.data?.[0]?.reportContent)} />;
+  const content = data?.data?.[0]?.reportContent;
+  const contentIsNotEmpty = content != null && content !== '<p><br data-mce-bogus="1"></p>';
+
+  return contentIsNotEmpty ? <Box dangerouslySetInnerHTML={createHtml(content)} /> : t("No data");
 };
 
 export default ArchiveApplicationDocumentView;

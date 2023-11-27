@@ -10,6 +10,7 @@ import ArchiveApplicationDocumentView from "./ArchiveApplicationDocumentView";
 import useFetch from "@/hooks/useFetch";
 import { useProfileStore } from "@/stores/profile";
 import useEffectOnce from "@/hooks/useEffectOnce";
+import { generateNamePermutations } from "@/components/applications-archive/ArchiveApplicationList";
 
 interface IApplicationStatusInfoContentProps {
   id?: number;
@@ -26,11 +27,13 @@ const ArchiveApplicationDocumentInfoContent: FC<IApplicationStatusInfoContentPro
   const profile = useProfileStore((state) => state);
 
   useEffectOnce(() => {
-    update(id != null ? `/api/applications-archive/${id}` : "", { fields: ["company"] }).then((res) => {
+    update(id != null ? `/api/applications-archive/${id}` : "", { fields: ["company"] }).then(async (res) => {
       if (res?.data?.[0] != null) {
         const currentUser = profile.getUserData()?.partner?.fullName;
+        const namePermutations = await generateNamePermutations(currentUser ?? "");
+        const companyName = res?.data?.[0]?.company;
 
-        if (currentUser === res?.data?.[0]?.company) {
+        if (namePermutations.includes(companyName)) {
           update(`/api/applications-archive/${id}`);
           setAccessToView(true);
         }
