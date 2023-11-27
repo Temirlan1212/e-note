@@ -17,10 +17,12 @@ export interface IIdentityDocumentProps {
     organType: string;
     organNumber: string;
     issueDate: string;
+    foreigner: string;
     familyStatus?: string;
     passportStatus?: string;
   };
   defaultValues?: {
+    foreigner?: boolean | null;
     documentType?: number | null;
     documentSeries?: number | null;
     documentNumber?: number | null;
@@ -40,6 +42,7 @@ export default function IdentityDocument({ form, names, defaultValues, disableFi
   const { trigger, control, watch, resetField } = form;
 
   const documentType = watch(names.documentType);
+  const foreigner = watch(names.foreigner);
 
   const { data: identityDocumentDictionary, loading: identityDocumentDictionaryLoading } = useFetch(
     `/api/dictionaries/identity-document`,
@@ -99,24 +102,33 @@ export default function IdentityDocument({ form, names, defaultValues, disableFi
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Series")}</InputLabel>
-              <Select
-                labelField={
-                  identityDocumentSeriesDictionary?.data?.length > 0 &&
-                  identityDocumentSeriesDictionary?.data[0][`title_${locale}`]
-                    ? `title_${locale}`
-                    : "title"
-                }
-                valueField="value"
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!documentType || disableFields}
-                data={
-                  identityDocumentSeriesDictionary?.status === 0 ? identityDocumentSeriesDictionary?.data ?? [] : []
-                }
-                loading={identityDocumentSeriesDictionaryLoading}
-                {...field}
-                value={field.value != null ? field.value : ""}
-              />
+              {foreigner ? (
+                <Input
+                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  disabled={!documentType || disableFields}
+                  {...field}
+                />
+              ) : (
+                <Select
+                  labelField={
+                    identityDocumentSeriesDictionary?.data?.length > 0 &&
+                    identityDocumentSeriesDictionary?.data[0][`title_${locale}`]
+                      ? `title_${locale}`
+                      : "title"
+                  }
+                  valueField="value"
+                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  disabled={!documentType || disableFields}
+                  data={
+                    identityDocumentSeriesDictionary?.status === 0 ? identityDocumentSeriesDictionary?.data ?? [] : []
+                  }
+                  loading={identityDocumentSeriesDictionaryLoading}
+                  {...field}
+                  value={field.value != null ? field.value : ""}
+                />
+              )}
             </Box>
           )}
         />
