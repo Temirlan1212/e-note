@@ -72,7 +72,7 @@ export const userRegistrySchema = object()
     authority: string().trim().required("required"),
     authorityNumber: string()
       .trim()
-      .matches(/^[0-9]*$/, "onlyNumbers")
+      .matches(/^[0-9\s]*$/, "onlyNumbers")
       .required("required"),
     dateOfIssue: date().required("required"),
     foreigner: boolean(),
