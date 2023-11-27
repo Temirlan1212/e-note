@@ -13,6 +13,7 @@ export default function Document(props: DocumentProps) {
         <Script
           id="GoogleTags"
           strategy="afterInteractive"
+          async
           src="https://www.googletagmanager.com/gtag/js?id=G-X1QJ741YKE"
         />
         <Script id="GoogleAnalytics" strategy="afterInteractive">
