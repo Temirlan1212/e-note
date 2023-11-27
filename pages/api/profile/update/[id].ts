@@ -28,28 +28,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     },
   };
 
+  const filteredAddress: any = {
+    id: userData?.data?.[0]?.activeCompany?.address?.id,
+    version: userData?.data?.[0]?.activeCompany?.address?.$version,
+    region:
+      submitData?.activeCompany?.address?.region?.id != null
+        ? { id: submitData?.activeCompany?.address?.region?.id }
+        : null,
+    city:
+      submitData?.activeCompany?.address?.city?.id != null
+        ? { id: submitData?.activeCompany?.address?.city?.id }
+        : null,
+    district:
+      submitData?.activeCompany?.address?.district?.id != null
+        ? { id: submitData?.activeCompany?.address?.district?.id }
+        : null,
+    addressL4: submitData?.activeCompany?.address?.addressL4,
+    addressL3: submitData?.activeCompany?.address?.addressL3,
+    addressL2: submitData?.activeCompany?.address?.addressL2,
+  };
+
   if (userRole === "notary") {
     requestBody.activeCompany = {
       id: userData?.data?.[0]?.activeCompany?.id,
       version: userData?.data?.[0]?.activeCompany?.version,
       longitude: submitData?.activeCompany?.longitude,
       latitude: submitData?.activeCompany?.latitude,
-      address: {
-        id: userData?.data?.[0]?.activeCompany?.address?.id,
-        version: userData?.data?.[0]?.activeCompany?.address?.$version,
-        region: {
-          id: submitData?.activeCompany?.address?.region?.id,
-        },
-        city: {
-          id: submitData?.activeCompany?.address?.city?.id,
-        },
-        district: {
-          id: submitData?.activeCompany?.address?.district?.id,
-        },
-        addressL4: submitData?.activeCompany?.address?.addressL4,
-        addressL3: submitData?.activeCompany?.address?.addressL3,
-        addressL2: submitData?.activeCompany?.address?.addressL2,
-      },
+      address: filteredAddress,
       notaryDistrict: {
         id: submitData?.activeCompany?.notaryDistrict?.id,
       },
