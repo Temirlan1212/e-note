@@ -77,6 +77,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
     documentNumber: `requester.${index}.passportNumber`,
     organType: `requester.${index}.authority`,
     organNumber: `requester.${index}.authorityNumber`,
+    foreigner: `requester.${index}.foreigner`,
     issueDate: `requester.${index}.dateOfIssue`,
   });
 

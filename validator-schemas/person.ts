@@ -21,7 +21,7 @@ export const personSchema = object()
         then: (schema) => schema.required("required").min(2, "minLettersLow"),
         otherwise: (schema) => schema.nullable(),
       })
-      .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
+      .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s]*$/, "onlyLetters"),
     firstName: string()
       .trim()
       .when("partnerTypeSelect", {
@@ -29,10 +29,10 @@ export const personSchema = object()
         then: (schema) => schema.required("required").min(2, "minLettersLow"),
         otherwise: (schema) => schema.nullable(),
       })
-      .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
+      .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s]*$/, "onlyLetters"),
     middleName: string()
       .trim()
-      .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
+      .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s]*$/, "onlyLetters"),
     personalNumber: string()
       .trim()
       .when("foreigner", {
@@ -66,7 +66,11 @@ export const personSchema = object()
       .transform((value) => (isNaN(value) ? null : value)),
     passportNumber: string()
       .trim()
-      .matches(/^[0-9]*$/, "onlyNumbers"),
+      .when("foreigner", {
+        is: true,
+        then: (schema) => schema.trim(),
+        otherwise: (schema) => schema.matches(/^[0-9]*$/, "onlyNumbers"),
+      }),
     authority: string().trim(),
     authorityNumber: string()
       .trim()
