@@ -26,12 +26,6 @@ export interface IAddressProps extends IAreaProps {
   boxSx?: SxProps<Theme> | undefined;
   withNotaryDistrict?: boolean;
   getAllNotaryDistricts?: boolean;
-  placeholders?: {
-    region?: string;
-    district?: string;
-    city?: string;
-    notaryDistrict?: string;
-  };
 }
 
 export default function Address({
@@ -41,7 +35,6 @@ export default function Address({
   disableFields,
   withNotaryDistrict,
   getAllNotaryDistricts,
-  placeholders,
   boxSx,
 }: IAddressProps) {
   const t = useTranslations();
@@ -57,7 +50,6 @@ export default function Address({
         defaultValues={defaultValues}
         withNotaryDistrict={withNotaryDistrict}
         getAllNotaryDistricts={getAllNotaryDistricts}
-        placeholders={placeholders}
       />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>

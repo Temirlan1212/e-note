@@ -425,12 +425,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                     names={addressNames}
                     withNotaryDistrict={true}
                     getAllNotaryDistricts={true}
-                    placeholders={{
-                      region: "---",
-                      district: "---",
-                      city: "---",
-                      notaryDistrict: "---",
-                    }}
                     boxSx={{ width: "100%" }}
                   />
                 </Box>
