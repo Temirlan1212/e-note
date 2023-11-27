@@ -10,15 +10,17 @@ export default function Document(props: DocumentProps) {
         <Main />
         <NextScript />
 
+        <Script
+          id="GoogleTags"
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-X1QJ741YKE"
+        />
         <Script id="GoogleAnalytics" strategy="afterInteractive">
           {`
-            <script async src="https://www.googletagmanager.com/gtag/js?id=G-X1QJ741YKE"></script>
-            <script>
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', 'G-X1QJ741YKE');
-            </script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-X1QJ741YKE');
           `}
         </Script>
 
