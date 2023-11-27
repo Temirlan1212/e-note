@@ -43,14 +43,14 @@ export const userRegistrySchema = object()
     lastName: string()
       .trim()
       .required("required")
-      .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
+      .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s]*$/, "onlyLetters"),
     firstName: string()
       .trim()
       .required("required")
-      .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
+      .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s]*$/, "onlyLetters"),
     middleName: string()
       .trim()
-      .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
+      .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s]*$/, "onlyLetters"),
     personalNumber: string()
       .trim()
       .when("foreigner", {
