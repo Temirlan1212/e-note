@@ -34,7 +34,7 @@ export default function TemplateList() {
     filterValues: {},
     searchValue: "",
     isSystem: false,
-    createdById: profile?.group.id,
+    createdById: profile?.id,
   });
   const [searchValue, setSearchValue] = useState<string>("");
 
