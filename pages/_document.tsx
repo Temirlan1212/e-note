@@ -13,15 +13,14 @@ export default function Document(props: DocumentProps) {
         <Script
           id="GoogleTags"
           strategy="afterInteractive"
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-X1QJ741YKE"
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_KEY}`}
         />
         <Script id="GoogleAnalytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-X1QJ741YKE');
+            gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_KEY}');
           `}
         </Script>
 
