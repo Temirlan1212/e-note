@@ -71,6 +71,7 @@ const UserCreateContent: FC = () => {
     documentNumber: "passportNumber",
     organType: "authority",
     organNumber: "authorityNumber",
+    foreigner: `foreigner`,
     issueDate: "dateOfIssue",
   };
 

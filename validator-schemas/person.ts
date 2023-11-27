@@ -66,7 +66,11 @@ export const personSchema = object()
       .transform((value) => (isNaN(value) ? null : value)),
     passportNumber: string()
       .trim()
-      .matches(/^[0-9]*$/, "onlyNumbers"),
+      .when("foreigner", {
+        is: true,
+        then: (schema) => schema.trim(),
+        otherwise: (schema) => schema.matches(/^[0-9]*$/, "onlyNumbers"),
+      }),
     authority: string().trim(),
     authorityNumber: string()
       .trim()
