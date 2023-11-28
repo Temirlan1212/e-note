@@ -51,7 +51,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "createdBy.id",
         "createdBy.partner.fullName",
         "statusSelect",
-        "creationDate",
+        "createdOn",
         "createdBy",
         "company.name",
         "uniqueQrCode",

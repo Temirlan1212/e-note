@@ -213,6 +213,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     organNumber: `members.${index}.authorityNumber`,
     foreigner: `members.${index}.foreigner`,
     issueDate: `members.${index}.dateOfIssue`,
+    subjectRole: `members.${index}.subjectRole`,
     familyStatus: `members.${index}.familyStatus`,
     passportStatus: `members.${index}.passportStatus`,
   });

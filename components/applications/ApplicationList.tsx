@@ -20,6 +20,7 @@ import { IApplication } from "@/models/application";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IKeywordSchema, keywordSchema } from "@/validator-schemas/keyword";
+import { format } from "date-fns";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -287,7 +288,9 @@ export default function ApplicationList() {
             width: 200,
             sortable: isSearchedData ? false : true,
             valueGetter: (params: GridValueGetterParams) => {
-              return isSearchedData ? params.row?.requester?.[0]?.fullName : params.row?.["requester.fullName"];
+              return isSearchedData
+                ? params.row?.requester?.[0]?.fullName
+                : params.row?.["requester.fullName"] || t("not assigned");
             },
           },
           {
@@ -296,7 +299,9 @@ export default function ApplicationList() {
             width: 200,
             sortable: isSearchedData ? false : true,
             valueGetter: (params: GridValueGetterParams) => {
-              return isSearchedData ? params.row?.members?.[0]?.fullName : params.row?.["members.fullName"];
+              return isSearchedData
+                ? params.row?.members?.[0]?.fullName
+                : params.row?.["members.fullName"] || t("not assigned");
             },
           },
           // {
@@ -345,7 +350,7 @@ export default function ApplicationList() {
               const fullNameKey = locale !== "en" ? "$t:fullName" : "fullName";
               return isSearchedData
                 ? params.row?.product?.[fullNameKey]
-                : params.row?.[nameKey] || params.row?.["product.name"];
+                : params.row?.[nameKey] || params.row?.["product.name"] || t("not assigned");
             },
           },
           {
@@ -374,10 +379,13 @@ export default function ApplicationList() {
             },
           },
           {
-            field: "creationDate",
+            field: "createdOn",
             headerName: "Date",
             width: 170,
             sortable: isSearchedData ? false : true,
+            valueGetter: (params: GridValueGetterParams) => {
+              return format(new Date(params.value), "dd.MM.yyyy HH:mm");
+            },
           },
           {
             field: "createdBy.partner.fullName",

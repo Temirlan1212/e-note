@@ -36,6 +36,13 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
   }: IAutocompleteProps,
   ref
 ) {
+  const placeholderStyles = {
+    "& input::placeholder": {
+      color: "#000",
+      fontWeight: 500,
+    },
+  };
+
   const styles = {
     color: "text.primary",
     width: "100%",
@@ -62,7 +69,7 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
       ? renderInput
       : (params: AutocompleteRenderInputParams) => (
           <Box>
-            <TextField {...params} placeholder={textFieldPlaceholder} error={type === "error"} />
+            <TextField sx={placeholderStyles} {...params} placeholder={textFieldPlaceholder} error={type === "error"} />
             {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
           </Box>
         );

@@ -18,6 +18,7 @@ export interface IIdentityDocumentProps {
     organNumber: string;
     issueDate: string;
     foreigner: string;
+    subjectRole?: string;
     familyStatus?: string;
     passportStatus?: string;
   };
@@ -29,6 +30,7 @@ export interface IIdentityDocumentProps {
     organType?: string;
     organNumber?: number | null;
     issueDate?: Date;
+    subjectRole?: string | null;
     familyStatus?: boolean | null;
     passportStatus?: boolean | null;
   };
@@ -41,8 +43,12 @@ export default function IdentityDocument({ form, names, defaultValues, disableFi
 
   const { trigger, control, watch, resetField } = form;
 
+  const subjectRole = watch(names.subjectRole as string);
+  const isAnAdult = subjectRole === "notAnAdult";
   const documentType = watch(names.documentType);
   const foreigner = watch(names.foreigner);
+
+  console.log(subjectRole);
 
   const { data: identityDocumentDictionary, loading: identityDocumentDictionaryLoading } = useFetch(
     `/api/dictionaries/identity-document`,
@@ -102,7 +108,7 @@ export default function IdentityDocument({ form, names, defaultValues, disableFi
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Series")}</InputLabel>
-              {foreigner ? (
+              {foreigner || isAnAdult ? (
                 <Input
                   inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
