@@ -72,12 +72,13 @@ export default function FifthStepFields({
 
     if (validated && onNext) {
       const values = getValues();
+      const applicationId = values.id;
       const paramsValues = Object.entries(tundukParamsFieldsForm.getValues()).filter(([_, v]) => v != null);
 
       let versions = { version: null, id: null };
 
       const updateSaleOrder = async (values: Record<string, any>, id?: number | null, version?: number | null) => {
-        const result = await applicationUpdate(`/api/applications/update/${values.id}`, { ...values, id, version });
+        const result = await applicationUpdate(`/api/applications/update/${applicationId}`, { ...values, id, version });
         if (result != null && result.data != null && result.data[0]?.id != null) {
           return { version: result.data[0].version, id: result.data[0].id };
         }
