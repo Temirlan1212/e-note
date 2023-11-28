@@ -48,8 +48,6 @@ export default function IdentityDocument({ form, names, defaultValues, disableFi
   const documentType = watch(names.documentType);
   const foreigner = watch(names.foreigner);
 
-  console.log(subjectRole);
-
   const { data: identityDocumentDictionary, loading: identityDocumentDictionaryLoading } = useFetch(
     `/api/dictionaries/identity-document`,
     "GET"
