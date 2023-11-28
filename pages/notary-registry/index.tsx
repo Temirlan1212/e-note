@@ -3,11 +3,11 @@ import dynamic from "next/dynamic";
 import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import NotariesContent from "@/components/notaries/NotariesContent";
 import useFetch from "@/hooks/useFetch";
 import { useState } from "react";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IMarker } from "@/components/ui/LeafletMap";
+import NotaryRegistry from "@/components/notary-registry/NotaryRegistry";
 
 export default function Notaries() {
   const t = useTranslations();
@@ -52,16 +52,10 @@ export default function Notaries() {
         <title>{t("Notaries")}</title>
       </Head>
 
-      <Container>
-        <NotariesContent />
+      <Container maxWidth="xl" sx={{ py: "30px" }}>
+        <NotaryRegistry />
         <Box paddingBottom="80px" display="flex" flexDirection="column" gap="50px">
-          <Typography
-            component="h1"
-            sx={{
-              fontSize: "36px",
-              fontWeight: 600,
-            }}
-          >
+          <Typography variant="h4" color="success.main">
             {t("Search for a notary on the map")}
           </Typography>
           {!notaryDataLoading && notaryData ? (

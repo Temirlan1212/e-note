@@ -48,12 +48,14 @@ export default function NotariesFilterForm({ form, onFormSubmit, onFormReset }: 
       label: t("Type of notary"),
       name: "typeOfNotary",
       data: notaryTypesData,
+      placeholder: t("Choose type of notary"),
     },
     {
       id: 2,
       label: t("Working days"),
       name: "workingDay",
       data: workDaysAreaData,
+      placeholder: t("Choose working days"),
     },
   ] as const;
 
@@ -68,7 +70,15 @@ export default function NotariesFilterForm({ form, onFormSubmit, onFormReset }: 
       onSubmit={onFormSubmit && form.handleSubmit(onFormSubmit)}
     >
       <Box display="flex" gap="20px" flexDirection="column" width="100%">
-        <Area form={form} names={{ region: "region", district: "district", city: "city" }} />
+        <Area
+          placeholders={{
+            region: t("All regions"),
+            district: t("All districts"),
+            city: t("All cities and villages"),
+          }}
+          form={form}
+          names={{ region: "region", district: "district", city: "city" }}
+        />
 
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
           {fields.map((item) => (
@@ -85,6 +95,7 @@ export default function NotariesFilterForm({ form, onFormSubmit, onFormReset }: 
                     type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                     options={item.data?.status === 0 ? (item.data?.data as Record<string, any>[]) ?? [] : []}
+                    textFieldPlaceholder={item.placeholder}
                     value={
                       field.value != null
                         ? (item.data?.data ?? []).find(
@@ -114,6 +125,7 @@ export default function NotariesFilterForm({ form, onFormSubmit, onFormReset }: 
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={!city}
+                  textFieldPlaceholder={t("All notary districts")}
                   options={
                     notaryDistrictDictionary?.status === 0
                       ? (notaryDistrictDictionary?.data as INotaryDistrict[]) ?? []

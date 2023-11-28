@@ -214,6 +214,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     issueDate: `requester.${index}.dateOfIssue`,
     familyStatus: `requester.${index}.familyStatus`,
     passportStatus: `requester.${index}.passportStatus`,
+    subjectRole: `requester.${index}.subjectRole`,
   });
 
   const getAddressNames = (index: number) => ({
