@@ -41,6 +41,7 @@ export default function SecondStepFieldsSystemDocument({
 
   const { data: systemDocuments, loading: systemDocumentsLoading, update: getSystemDocuments } = useFetch("", "POST");
   const { update: applicationUpdate } = useFetch("", "PUT");
+  const { update: updateSearchedDocTree } = useFetch("", "POST");
 
   useEffectOnce(async () => {
     const sysDocs = await getSystemDocuments("/api/dictionaries/document-type", { formValues: { isSystem: true } });
@@ -97,6 +98,15 @@ export default function SecondStepFieldsSystemDocument({
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
+
+  useEffectOnce(async () => {
+    if (productId == null) return;
+    const res = await updateSearchedDocTree(`/api/dictionaries/document-type/${productId}`);
+    const data = res?.data?.[0];
+    if (Object.values(data ?? {}).length < 1) return;
+    const value = data?.["typeNotarialAction"]?.id || null;
+    if (value != null) setValue("typeNotarialAction", value);
+  }, [productId]);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
