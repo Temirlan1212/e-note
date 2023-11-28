@@ -21,6 +21,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IKeywordSchema, keywordSchema } from "@/validator-schemas/keyword";
 import { format } from "date-fns";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -83,6 +84,8 @@ export default function ApplicationList() {
     searchValue: null,
   });
 
+  const { update: getProduct } = useFetch("", "POST");
+
   const { data, loading, update } = useFetch<FetchResponseBody | null>("/api/applications", "POST", {
     body: appQueryParams,
   });
@@ -90,6 +93,22 @@ export default function ApplicationList() {
   useEffect(() => {
     setFilteredData(data?.data);
   }, [data?.data]);
+
+  useEffectOnce(async () => {
+    if (data?.data && data.data.length > 0) {
+      const promises = data.data.map(async (item: { id: string }) => {
+        const res = await getProduct("/api/applications/product/" + item?.id);
+        if (res?.data?.length > 0) {
+          const product = res.data[0].product;
+          return { ...item, productName: product };
+        }
+        return item;
+      });
+
+      const updatedFilteredData = await Promise.all(promises);
+      setFilteredData(updatedFilteredData as []);
+    }
+  }, [data]);
 
   const {
     data: searchedData,
@@ -283,25 +302,25 @@ export default function ApplicationList() {
             },
           },
           {
-            field: "requester.fullName",
+            field: "requester",
             headerName: "Member-1",
             width: 200,
             sortable: isSearchedData ? false : true,
             valueGetter: (params: GridValueGetterParams) => {
               return isSearchedData
                 ? params.row?.requester?.[0]?.fullName
-                : params.row?.["requester.fullName"] || t("not assigned");
+                : params.value[0]?.fullName || t("not assigned");
             },
           },
           {
-            field: "members.fullName",
+            field: "members",
             headerName: "Member-2",
             width: 200,
             sortable: isSearchedData ? false : true,
             valueGetter: (params: GridValueGetterParams) => {
               return isSearchedData
                 ? params.row?.members?.[0]?.fullName
-                : params.row?.["members.fullName"] || t("not assigned");
+                : params.value[0]?.fullName || t("not assigned");
             },
           },
           // {
@@ -331,7 +350,7 @@ export default function ApplicationList() {
           //   },
           // },
           {
-            field: locale !== "en" ? "$t:product.name" : "product.name",
+            field: "productName",
             headerName: "Type of document",
             width: 250,
             editable: false,
@@ -346,11 +365,11 @@ export default function ApplicationList() {
                   field: "product.id",
                 },
             valueGetter: (params: GridValueGetterParams) => {
-              const nameKey = locale !== "en" ? "$t:product.name" : "product.name";
+              const nameKey = locale !== "en" ? "$t:name" : "name";
               const fullNameKey = locale !== "en" ? "$t:fullName" : "fullName";
               return isSearchedData
                 ? params.row?.product?.[fullNameKey]
-                : params.row?.[nameKey] || params.row?.["product.name"] || t("not assigned");
+                : params.value?.[nameKey] || params.value?.["name"] || t("not assigned");
             },
           },
           {
@@ -385,25 +404,6 @@ export default function ApplicationList() {
             sortable: isSearchedData ? false : true,
             valueGetter: (params: GridValueGetterParams) => {
               return format(new Date(params.value), "dd.MM.yyyy HH:mm");
-            },
-          },
-          {
-            field: "createdBy.partner.fullName",
-            headerName: "Executor",
-            width: 200,
-            sortable: false,
-            filter: isSearchedData
-              ? undefined
-              : {
-                  data: executorData?.data ?? [],
-                  labelField: locale === "ru" || locale === "kg" ? "title_ru" : "title",
-                  valueField: "value",
-                  type: "dictionary",
-                  field: "createdBy.partner.fullName",
-                },
-            cellClassName: "executorColumn",
-            valueGetter: (params: GridValueGetterParams) => {
-              return isSearchedData ? params.row?.createdBy?.fullName : params.row?.["createdBy.partner.fullName"];
             },
           },
         ]}

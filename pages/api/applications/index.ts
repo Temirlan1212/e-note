@@ -42,26 +42,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     body: JSON.stringify({
       offset: page,
       limit: pageSize,
-      fields: [
-        "qr",
-        "typeNotarialAction",
-        "product.fullName",
-        "product.id",
-        "product.name",
-        "createdBy.id",
-        "createdBy.partner.fullName",
-        "statusSelect",
-        "createdOn",
-        "createdBy",
-        "company.name",
-        "uniqueQrCode",
-        "notaryUniqNumber",
-        "members.fullName",
-        "requester.fullName",
-        "barCode.id",
-        "product.isProductCancelled",
-        "isProductCancelled",
-      ],
       sortBy: req.body["sortBy"] ?? [],
       data: {
         criteria: [
