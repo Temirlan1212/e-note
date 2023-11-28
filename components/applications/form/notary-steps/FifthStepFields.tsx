@@ -72,19 +72,25 @@ export default function FifthStepFields({
 
     if (validated && onNext) {
       const values = getValues();
+      const paramsValues = Object.entries(tundukParamsFieldsForm.getValues()).filter(([_, v]) => v != null);
 
-      const data: Partial<IApplicationSchema> = {
-        ...dynamicForm.getValues(),
-        id: values.id,
-        version: values.version,
+      let versions = { version: null, id: null };
+
+      const updateSaleOrder = async (values: Record<string, any>, id?: number | null, version?: number | null) => {
+        const result = await applicationUpdate(`/api/applications/update/${values.id}`, { ...values, id, version });
+        if (result != null && result.data != null && result.data[0]?.id != null) {
+          return { version: result.data[0].version, id: result.data[0].id };
+        }
+        return { version: null, id: null };
       };
 
-      const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
-      if (result != null && result.data != null && result.data[0]?.id != null) {
-        setValue("id", result.data[0].id);
-        setValue("version", result.data[0].version);
-        onNext({ step: targetStep });
-      }
+      versions = await updateSaleOrder(dynamicForm.getValues(), values?.id, values?.version);
+      if (versions.version == null || versions.id == null) return;
+      const { version, id } = await updateSaleOrder(Object.fromEntries(paramsValues), versions.id, versions.version);
+      if (version != null && id != null) versions = { version, id };
+      setValue("id", versions.id);
+      setValue("version", versions.version);
+      onNext({ step: targetStep });
     }
   };
 

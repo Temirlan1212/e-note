@@ -66,7 +66,11 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
       dynamicFormAppData?.status === 0 && dynamicFormAppData?.data[0] != null ? dynamicFormAppData.data[0] : undefined,
   });
 
-  const tundukParamsFieldsForm = useForm();
+  const tundukParamsFieldsForm = useForm({
+    mode: "onTouched",
+    values:
+      dynamicFormAppData?.status === 0 && dynamicFormAppData?.data[0] != null ? dynamicFormAppData.data[0] : undefined,
+  });
 
   useNavigationConfirmation(form.formState.isDirty);
 
@@ -101,12 +105,15 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
       const responseFieldsProps = fieldsProps
         .filter((item: Record<string, any>) => item?.responseFields?.length > 0)
         .map((item) => item?.responseFields);
+      const paramsFieldsProps = fieldsProps
+        .filter((item: Record<string, any>) => item?.fields?.length > 0)
+        .map((item) => item?.fields);
 
       let related: Record<string, string[]> = {};
       let fields: string[] = [];
       const regex = /\[(.*?)\]/;
 
-      fieldsProps.concat(...responseFieldsProps).map((fieldProps: Record<string, any>) => {
+      fieldsProps.concat(...responseFieldsProps, ...paramsFieldsProps).map((fieldProps: Record<string, any>) => {
         const fieldName = fieldProps?.fieldName ?? "";
         const match = regex.exec(fieldProps?.path)?.[1];
 
