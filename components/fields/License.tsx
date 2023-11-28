@@ -2,7 +2,6 @@ import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { InputLabel, Box } from "@mui/material";
 import Input from "@/components/ui/Input";
-import Area, { IAreaProps } from "./Area";
 
 export interface ILicenseProps {
   form: UseFormReturn<any>;
@@ -21,7 +20,7 @@ export interface ILicenseProps {
   disableFields?: boolean;
 }
 
-export default function Address({ form, names, defaultValues, disableFields }: ILicenseProps) {
+export default function License({ form, names, defaultValues, disableFields }: ILicenseProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
