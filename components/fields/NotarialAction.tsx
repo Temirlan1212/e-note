@@ -72,7 +72,9 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
       });
     }
     if (!isValuesSelected || !actionVal) {
-      updateSearchedDoc("/api/dictionaries/document-type");
+      updateSearchedDoc("/api/dictionaries/document-type", {
+        formValues: { isSystem: true },
+      });
     }
     if (isValuesSelected) {
       setIsAdditionalFieldsOpen(isValuesSelected);
