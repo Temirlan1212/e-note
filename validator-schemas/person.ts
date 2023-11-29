@@ -16,19 +16,31 @@ export const personSchema = object()
     foreigner: boolean(),
     lastName: string()
       .trim()
-      .when("partnerTypeSelect", {
-        is: 2,
-        then: (schema) => schema.required("required").min(2, "minLettersLow"),
-        otherwise: (schema) => schema.nullable(),
+      .when("foreigner", {
+        is: true,
+        then: (schema) => schema.nullable(),
+        otherwise: (schema) =>
+          schema.when("partnerTypeSelect", {
+            is: 2,
+            then: (schema) => schema.required("required").min(2, "minLettersLow"),
+            otherwise: (schema) => schema.nullable(),
+          }),
       })
+
       .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s\-]*$/, "onlyLetters"),
     firstName: string()
       .trim()
-      .when("partnerTypeSelect", {
-        is: 2,
-        then: (schema) => schema.required("required").min(2, "minLettersLow"),
-        otherwise: (schema) => schema.nullable(),
+      .when("foreigner", {
+        is: true,
+        then: (schema) => schema.nullable(),
+        otherwise: (schema) =>
+          schema.when("partnerTypeSelect", {
+            is: 2,
+            then: (schema) => schema.required("required").min(2, "minLettersLow"),
+            otherwise: (schema) => schema.nullable(),
+          }),
       })
+
       .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s\-]*$/, "onlyLetters"),
     middleName: string()
       .trim()
@@ -155,6 +167,10 @@ export const personSchema = object()
     passportStatus: boolean(),
     maritalStatus: string(),
     disabled: boolean(),
-    subjectRole: string().required("required"),
+    subjectRole: string().when("foreigner", {
+      is: true,
+      then: (schema) => schema.nullable(),
+      otherwise: (schema) => schema.required("required"),
+    }),
   })
   .concat(filesSchema.pick(["files"]));
