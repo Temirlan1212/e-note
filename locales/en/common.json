@@ -246,5 +246,13 @@
   "Scroll to top": "Scroll to top",
   "Additional information": "Additional information",
   "Additional filters": "Additional filters",
-  "Actions": "Actions"
+  "Actions": "Actions",
+  "Download SVG": "Download SVG",
+  "Download PNG": "Download PNG",
+  "Download CSV": "Download CSV",
+  "Selection": "Selection",
+  "Selection Zoom": "Selection Zoom",
+  "Zoom In": "Zoom In",
+  "Zoom Out": "Zoom Out",
+  "Panning": "Panning"
 }
