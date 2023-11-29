@@ -14,13 +14,14 @@ const ReactApexChart = dynamic(
 );
 
 const ApexChart = (props: Props) => {
-  const { locale } = useRouter();
+  const router = useRouter();
   const ref = useRef<{ retry: () => void }>(null);
   const t = useTranslations();
+  const locale = router.locale ?? "ru";
 
   const locales = [
     {
-      name: locale ?? "ru",
+      name: locale,
       options: {
         toolbar: {
           exportToSVG: t("Download SVG"),
@@ -41,7 +42,7 @@ const ApexChart = (props: Props) => {
       ...(props?.options ?? {}),
       chart: {
         ...(props.options?.chart ?? {}),
-        defaultLocale: locale ?? "ru",
+        defaultLocale: locale,
         locales,
       },
     },
