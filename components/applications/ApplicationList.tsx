@@ -305,7 +305,7 @@ export default function ApplicationList() {
             field: "requester",
             headerName: "Member-1",
             width: 200,
-            sortable: isSearchedData ? false : true,
+            sortable: false,
             valueGetter: (params: GridValueGetterParams) => {
               return isSearchedData
                 ? params.row?.requester?.[0]?.fullName
@@ -316,7 +316,7 @@ export default function ApplicationList() {
             field: "members",
             headerName: "Member-2",
             width: 200,
-            sortable: isSearchedData ? false : true,
+            sortable: false,
             valueGetter: (params: GridValueGetterParams) => {
               return isSearchedData
                 ? params.row?.members?.[0]?.fullName
