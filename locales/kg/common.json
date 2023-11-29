@@ -246,5 +246,12 @@
   "Scroll to top": "Өйдө жылдыруу",
   "Additional information": "Кошумча маалымат",
   "Additional filters": "Кошумча фильтирлер",
-  "Actions": "Иш-аракеттер"
+  "Actions": "Иш-аракеттер",
+  "Download SVG": "SVG форматында жүктөө",
+  "Download PNG": "PNG форматында жүктөө",
+  "Selection": "Тандоо",
+  "Selection Zoom": "Масштабты тандоо",
+  "Zoom In": "Жакындатуу",
+  "Zoom Out": "Алыстатуу",
+  "Panning": "Жылдыруу"
 }

@@ -246,5 +246,12 @@
   "Scroll to top": "Прокрутить вверх",
   "Additional information": "Дополнительные данные",
   "Additional filters": "Дополнительные фильтры",
-  "Actions": "Действия"
+  "Actions": "Действия",
+  "Download SVG": "Скачать SVG",
+  "Download PNG": "Скачать PNG",
+  "Selection": "Выбор",
+  "Selection Zoom": "Выбор масштаба",
+  "Zoom In": "Увеличить",
+  "Zoom Out": "Уменьшить",
+  "Panning": "Перемещение"
 }
