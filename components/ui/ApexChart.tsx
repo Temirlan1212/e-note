@@ -26,6 +26,7 @@ const ApexChart = (props: Props) => {
         toolbar: {
           exportToSVG: t("Download SVG"),
           exportToPNG: t("Download PNG"),
+          exportToCSV: t("Download CSV"),
           selection: t("Selection"),
           selectionZoom: t("Selection Zoom"),
           zoomIn: t("Zoom In"),
