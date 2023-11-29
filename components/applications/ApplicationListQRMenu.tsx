@@ -45,8 +45,8 @@ export const ApplicationListQRMenu = ({
   };
 
   const onPopupOpen = async () => {
-    if (!Boolean(qrUrl) && params?.row?.["barCode.id"] != null) {
-      const res = await downloadUpdate(`/api/files/download/${params.row["barCode.id"] ?? 0}`);
+    if (!Boolean(qrUrl) && params?.row?.barCode.id != null) {
+      const res = await downloadUpdate(`/api/files/download/${params.row.barCode.id ?? 0}`);
       const blobData = await res.blob();
       const blobURL = URL.createObjectURL(blobData);
       setQrUrl(blobURL);
