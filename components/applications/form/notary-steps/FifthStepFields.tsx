@@ -48,8 +48,8 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     loading: documentTemplateLoading,
   } = useFetch("", "GET");
 
-  const triggerFields = async () => {
-    return await dynamicForm.trigger();
+  const triggerFields = async (names: string[]) => {
+    return await dynamicForm.trigger(names);
   };
 
   useEffectOnce(async () => {
@@ -58,28 +58,44 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     }
   }, [productId]);
 
+  const getNames = (data: any[]) => {
+    const names: string[] = [];
+    data.map((group) => {
+      group.fields.map((item: Record<string, any>) => {
+        if (String(item?.fieldType).toLocaleLowerCase() === "request") {
+          item?.responseFields?.map((field: Record<string, any>) => {
+            const name = getTemplateDocName(item?.path ?? field?.path, field?.fieldName);
+            if (!!name) names.push(name);
+          });
+        }
+        const name = getTemplateDocName(item?.path, item?.fieldName);
+        if (!!name) names.push(name);
+      });
+    });
+
+    return names;
+  };
+
   const handleNextClick = async (targetStep?: number) => {
-    const validated = await triggerFields();
+    const names = getNames(documentTemplateData?.data ?? []);
+    const validated = await triggerFields(names);
     const { setValue, getValues } = form;
 
     if (validated && onNext) {
       const values = getValues();
-      const applicationId = values.id;
-      let versions = { version: null, id: null };
 
-      const updateSaleOrder = async (values: Record<string, any>, id?: number | null, version?: number | null) => {
-        const result = await applicationUpdate(`/api/applications/update/${applicationId}`, { ...values, id, version });
-        if (result != null && result.data != null && result.data[0]?.id != null) {
-          return { version: result.data[0].version, id: result.data[0].id };
-        }
-        return { version: null, id: null };
+      const data: Partial<IApplicationSchema> = {
+        ...dynamicForm.getValues(),
+        id: values.id,
+        version: values.version,
       };
 
-      versions = await updateSaleOrder(dynamicForm.getValues(), values?.id, values?.version);
-      if (versions.version == null || versions.id == null) return;
-      setValue("id", versions.id);
-      setValue("version", versions.version);
-      onNext({ step: targetStep });
+      const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
+      if (result != null && result.data != null && result.data[0]?.id != null) {
+        setValue("id", result.data[0].id);
+        setValue("version", result.data[0].version);
+        onNext({ step: targetStep });
+      }
     }
   };
 
