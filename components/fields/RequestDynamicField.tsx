@@ -5,7 +5,6 @@ import DynamicFormElement, { IDynamicFormElementProps, TConditions } from "@/com
 
 export interface IRequestDynamicFieldProps {
   form: UseFormReturn<any>;
-  paramsForm: UseFormReturn<any>;
   fields?: IDynamicFormElementProps[];
   responseFields?: IDynamicFormElementProps[];
   path?: string;
@@ -21,7 +20,6 @@ export interface IRequestDynamicFieldProps {
 
 export default function RequestDynamicField({
   form,
-  paramsForm,
   fields,
   responseFields,
   loading,
@@ -52,7 +50,7 @@ export default function RequestDynamicField({
                 conditions={Object.values(item?.conditions ?? {}).length > 0 ? item?.conditions : rest?.conditions}
                 path={rest?.path || item?.path}
                 type={item?.fieldType}
-                form={paramsForm}
+                form={form}
                 label={item?.fieldLabels?.[locale ?? ""] ?? ""}
                 title={item?.fieldTitles?.[locale ?? ""] ?? ""}
                 defaultValue={item?.defaultValue}
@@ -60,11 +58,11 @@ export default function RequestDynamicField({
                 selectionName={item?.selection ?? ""}
                 objectName={item?.object ?? ""}
                 options={item?.options}
-                observableForms={[form, paramsForm]}
+                observableForms={[form]}
                 loading={item?.actionType?.toLowerCase() === "reset" ? false : loading}
                 color={item?.color}
                 onClick={() => {
-                  if (item?.actionType?.toLowerCase() === "confirm" && onPinCheck) onPinCheck(paramsForm);
+                  if (item?.actionType?.toLowerCase() === "confirm" && onPinCheck) onPinCheck(form);
                   if (item?.actionType?.toLowerCase() === "reset" && onPinReset) onPinReset();
                 }}
                 props={{ box: { mb: "10px" } }}

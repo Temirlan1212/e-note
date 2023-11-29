@@ -17,7 +17,6 @@ import { useProfileStore } from "@/stores/profile";
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
   dynamicForm: UseFormReturn<any>;
-  tundukParamsFieldsForm: UseFormReturn<any>;
   onPrev?: Function;
   onNext?: (arg: { step: number | undefined }) => void;
   handleStepNextClick?: Function;
@@ -30,14 +29,7 @@ const getTemplateDocGroupName = (group: Record<string, any>, locale: string | un
   return groupNameLocale ? groupNameLocale : groupName;
 };
 
-export default function FifthStepFields({
-  form,
-  dynamicForm,
-  onPrev,
-  onNext,
-  tundukParamsFieldsForm,
-  handleStepNextClick,
-}: IStepFieldsProps) {
+export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
@@ -53,8 +45,8 @@ export default function FifthStepFields({
     loading: documentTemplateLoading,
   } = useFetch("", "GET");
 
-  const triggerFields = async () => {
-    return await dynamicForm.trigger();
+  const triggerFields = async (names: string[]) => {
+    return await dynamicForm.trigger(names);
   };
 
   useEffectOnce(async () => {
@@ -63,8 +55,27 @@ export default function FifthStepFields({
     }
   }, [productId]);
 
+  const getNames = (data: any[]) => {
+    const names: string[] = [];
+    data.map((group) => {
+      group.fields.map((item: Record<string, any>) => {
+        if (String(item?.fieldType).toLocaleLowerCase() === "request") {
+          item?.responseFields?.map((field: Record<string, any>) => {
+            const name = getTemplateDocName(item?.path ?? field?.path, field?.fieldName);
+            if (!!name) names.push(name);
+          });
+        }
+        const name = getTemplateDocName(item?.path, item?.fieldName);
+        if (!!name) names.push(name);
+      });
+    });
+
+    return names;
+  };
+
   const handleNextClick = async (targetStep?: number) => {
-    const validated = await triggerFields();
+    const names = getNames(documentTemplateData?.data ?? []);
+    const validated = await triggerFields(names);
     const { setValue, getValues } = form;
 
     if (validated && onNext) {
@@ -133,7 +144,6 @@ export default function FifthStepFields({
       }
     });
 
-    tundukParamsFieldsForm.reset();
     handleDisabled(fields, false);
   };
 
@@ -189,24 +199,30 @@ export default function FifthStepFields({
                           conditions={item?.conditions}
                           loading={tundukVehicleDataLoading}
                           form={dynamicForm}
-                          paramsForm={tundukParamsFieldsForm}
                           fields={item?.fields}
                           responseFields={item?.responseFields}
                           onPinReset={() => {
-                            handlePinReset(item?.responseFields);
+                            handlePinReset([...(item?.responseFields ?? {}), ...(item?.fields ?? {})]);
                           }}
-                          onPinCheck={async (paramsForm) => {
-                            const validated = await paramsForm.trigger();
+                          onPinCheck={async ({ getValues }) => {
                             let values = {};
+                            const names: string[] = [];
                             item?.fields?.map((field: Record<string, any>) => {
-                              values = {
-                                ...values,
-                                [getTemplateDocName(undefined, field?.fieldName)]: paramsForm.getValues(
-                                  getTemplateDocName(item?.path ?? field?.path, field?.fieldName)
-                                ),
-                              };
+                              const name = getTemplateDocName(item?.path ?? field?.path, field?.fieldName);
+                              const key = getTemplateDocName(undefined, field?.fieldName);
+                              const value = getValues(getTemplateDocName(item?.path ?? field?.path, field?.fieldName));
+
+                              if (!!name) names.push(name);
+
+                              if (!!key) {
+                                values = {
+                                  ...values,
+                                  [key]: value,
+                                };
+                              }
                             });
 
+                            const validated = await dynamicForm.trigger(names);
                             if (validated) handlePinCheck(item?.url, values, item?.responseFields);
                           }}
                         />
