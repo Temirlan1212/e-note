@@ -82,7 +82,6 @@ export default function AnalyticsContent() {
   };
 
   const handleDateChange = (value: string) => {
-    console.log(value);
     const date = new Date(value).toISOString();
     setSelectedDate(formatDate(date));
   };
@@ -109,13 +108,6 @@ export default function AnalyticsContent() {
       click: () => setSelectedTab(4),
     },
   ];
-
-  // const Tabs: Record<number, ReactNode> = {
-  //   1: <ApexChart height={600} options={options} series={[{ data: companyValues }]} type={"bar"} />,
-  //   2: <ApexChart height={600} options={options} series={[{ data: regionValues }]} type={"bar"} />,
-  //   3: <ApexChart height={600} options={options} series={[{ data: companyValues }]} type={"bar"} />,
-  //   4: <Box>Table</Box>,
-  // };
 
   return (
     <Box
