@@ -164,7 +164,10 @@ export default function PersonalData({
   }, [firstName]);
 
   useEffect(() => {
-    if (name) form.setValue(names?.name, name);
+    if (name) {
+      form.setValue(names?.name, name);
+      form.setValue(names?.firstName, name);
+    }
   }, [name]);
 
   useEffect(() => {
