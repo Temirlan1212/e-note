@@ -124,7 +124,7 @@ export default function PersonalData({
   const pin = watch(names?.pin);
   const lastName = watch(names?.lastName);
   const firstName = watch(names?.firstName);
-  const name = watch(names?.nameOfCompanyGov);
+  const name = watch(names?.nameOfCompanyOfficial);
   const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
 
   const { data: imageData, update } = useFetch<Response>("", "GET", {
