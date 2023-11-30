@@ -7,7 +7,7 @@ export const userProfileSchema = yup.object().shape({
   code: yup.string().required("Login is required!"),
   partner: yup.object({
     firstName: yup.string().required("First name is required!"),
-    middleName: yup.string().required("Middle name is required!"),
+    middleName: yup.string(),
     lastName: yup.string().required("Last name is required!"),
     emailAddress: yup.object({
       address: yup.string().email().required("E-mail is required!"),
