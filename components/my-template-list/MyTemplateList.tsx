@@ -1,17 +1,21 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, Dispatch, SetStateAction, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 import { ValueOf } from "next/dist/shared/lib/constants";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import Pagination from "@/components/ui/Pagination";
 import SearchBar from "@/components/ui/SearchBar";
-import Button from "@/components/ui/Button";
 import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import ClearIcon from "@mui/icons-material/Clear";
 import { INotarialAction, INotarialActionData } from "@/models/notarial-action";
 import { useProfileStore } from "@/stores/profile";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import PostAddIcon from "@mui/icons-material/PostAdd";
+import Link from "next/link";
 
 interface ITempQueryParams {
   pageSize: number;
@@ -23,7 +27,81 @@ interface ITempQueryParams {
   createdById?: number;
 }
 
+interface IMyTemplateData {
+  templateInfo: {
+    editUrl: string;
+    token: string;
+  };
+}
+
 const capitalize = (str: string) => str?.[0].toUpperCase() + str?.slice(1);
+
+function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onDelete: Function }) {
+  const t = useTranslations();
+
+  const { data, update: editTemplate } = useFetch<FetchResponseBody<IMyTemplateData[]>>("", "POST");
+  const { update: deleteTemplate } = useFetch("", "POST");
+
+  const handleDeleteClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
+    if (row.id != null) {
+      await deleteTemplate("/api/templates/delete", {
+        id: row.id,
+        version: row.version,
+      });
+      callback(false);
+      onDelete();
+    }
+  };
+
+  const handleEditClick = async () => {
+    if (row.id != null) {
+      await editTemplate("/api/templates/edit/" + row.id);
+    }
+  };
+
+  useEffect(() => {
+    if (Array.isArray(data?.data)) {
+      const link = data?.data[0];
+      if (link?.templateInfo?.editUrl && link?.templateInfo.token) {
+        const href = `${link.templateInfo.editUrl}?AuthorizationBasic=${link.templateInfo.token.replace(
+          /Basic /,
+          ""
+        )}` as string;
+        window.open(href, "_blank");
+      }
+    }
+  }, [data?.data]);
+
+  return (
+    <Box sx={{ display: "flex" }}>
+      <Link href="/applications/create">
+        <Tooltip title={t("New application")}>
+          <IconButton>
+            <PostAddIcon />
+          </IconButton>
+        </Tooltip>
+      </Link>
+
+      <Tooltip title={t("Edit")} arrow onClick={handleEditClick}>
+        <IconButton>
+          <ModeEditIcon />
+        </IconButton>
+      </Tooltip>
+
+      <ConfirmationModal
+        hintTitle="Do you really want to remove the template from the platform?"
+        title="Deleting a template"
+        onConfirm={(callback) => handleDeleteClick(callback)}
+      >
+        <Tooltip title={t("Delete")} arrow>
+          <IconButton>
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+      </ConfirmationModal>
+    </Box>
+  );
+}
 
 export default function TemplateList() {
   const profile = useProfileStore((state) => state.getUserData());
@@ -41,7 +119,7 @@ export default function TemplateList() {
   const t = useTranslations();
   const { locale } = useRouter();
 
-  const { data, loading } = useFetch("/api/templates", "POST", {
+  const { data, loading, update } = useFetch("/api/templates", "POST", {
     body: tempQueryParams,
   });
 
@@ -293,15 +371,9 @@ export default function TemplateList() {
             field: "actions",
             type: "actions",
             sortable: false,
-            width: 200,
+            width: 150,
             cellClassName: "actions-pinnable",
-            renderCell: () => (
-              <Button href="/applications/create" variant="contained">
-                <Typography fontSize={14} fontWeight={600}>
-                  {t("New application")}
-                </Typography>
-              </Button>
-            ),
+            renderCell: ({ row }) => <GridTableActionsCell row={row} onDelete={update} />,
           },
         ]}
         rows={data?.data ?? []}
