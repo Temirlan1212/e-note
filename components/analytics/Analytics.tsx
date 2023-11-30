@@ -19,7 +19,7 @@ export default function AnalyticsContent() {
   const t = useTranslations();
   const isMobileMedia = useMediaQuery("(max-width:800px)");
   const [selectedDate, setSelectedDate] = useState<string | Date>(formatDate(initialDate.toISOString()));
-  const [selectedTab, setSelectedTab] = useState<number>(1);
+  const [selectedTab, setSelectedTab] = useState<keyof typeof tabsContent>(1);
 
   const { data, loading } = useFetch<FetchResponseBody<IAnalyticsData>>(
     `/api/analytics/${selectedTab === 3 ? formatDate(currentDate.toISOString()) : selectedDate}`,
@@ -86,28 +86,41 @@ export default function AnalyticsContent() {
     setSelectedDate(formatDate(date));
   };
 
-  const tabs = [
+  const tabs: { id: keyof typeof tabsContent; text: string }[] = [
     {
       id: 1,
       text: "Statistics on notaries",
-      click: () => setSelectedTab(1),
     },
     {
       id: 2,
       text: "Statistics by region",
-      click: () => setSelectedTab(2),
     },
     {
       id: 3,
       text: "Statistics for today",
-      click: () => setSelectedTab(3),
     },
     {
       id: 4,
       text: "Tabular view",
-      click: () => setSelectedTab(4),
     },
   ];
+
+  const tabsContent = {
+    1: (
+      <Box maxHeight="500px" sx={{ overflowY: "auto", overflowX: "hidden", padding: "0 10px" }}>
+        <ApexChart options={options} series={series} type={"bar"} height={(companyValues?.length ?? 10) * 30} />
+      </Box>
+    ),
+    2: <ApexChart height={600} options={options} series={series} type={"bar"} />,
+    3: (
+      <Box maxHeight="500px" sx={{ overflowY: "auto", overflowX: "hidden", padding: "0 10px" }}>
+        <ApexChart options={options} series={series} type={"bar"} height={(companyValues?.length ?? 10) * 30} />
+      </Box>
+    ),
+    4: <></>,
+  };
+
+  if (!companyValues) return <></>;
 
   return (
     <Box
@@ -150,7 +163,7 @@ export default function AnalyticsContent() {
                     color: "#EFEFEF",
                   },
                 }}
-                onClick={tab.click}
+                onClick={() => setSelectedTab(tab.id)}
               >
                 {t(tab.text)}
               </Button>
@@ -159,14 +172,12 @@ export default function AnalyticsContent() {
         </Box>
         {selectedTab !== 3 && <DatePicker sx={{ maxWidth: "320px" }} value={initialDate} onChange={handleDateChange} />}
         <Box>
-          {selectedTab === 4 ? (
-            <Box>Table</Box>
-          ) : loading ? (
+          {loading ? (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "600px" }}>
               <CircularProgress />
             </Box>
           ) : (
-            <ApexChart height={600} options={options} series={series} type={"bar"} />
+            tabsContent[selectedTab]
           )}
         </Box>
       </Box>
