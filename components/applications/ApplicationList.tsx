@@ -303,24 +303,28 @@ export default function ApplicationList() {
           },
           {
             field: "requester",
-            headerName: "Member-1",
+            headerName: "Side-1",
             width: 200,
             sortable: false,
             valueGetter: (params: GridValueGetterParams) => {
-              return isSearchedData
-                ? params.row?.requester?.[0]?.fullName
-                : params.value[0]?.fullName || t("not assigned");
+              const requesters =
+                params.value.length > 1
+                  ? `${params.value[0]?.fullName} + ${params.value.length - 1}`
+                  : params.value[0]?.fullName;
+              return isSearchedData ? params.row?.requester?.[0]?.fullName : requesters || t("not assigned");
             },
           },
           {
             field: "members",
-            headerName: "Member-2",
+            headerName: "Side-2",
             width: 200,
             sortable: false,
             valueGetter: (params: GridValueGetterParams) => {
-              return isSearchedData
-                ? params.row?.members?.[0]?.fullName
-                : params.value[0]?.fullName || t("not assigned");
+              const members =
+                params.value.length > 1
+                  ? `${params.value[0]?.fullName} + ${params.value.length - 1}`
+                  : params.value[0]?.fullName;
+              return isSearchedData ? params.row?.members?.[0]?.fullName : members || t("not assigned");
             },
           },
           // {
