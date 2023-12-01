@@ -6,7 +6,7 @@ import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { Alert, Box, Collapse, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
-import Tabs from "@/components/ui/Tabs";
+import Tabs, { ITabsRef } from "@/components/ui/Tabs";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import AddIcon from "@mui/icons-material/Add";
@@ -50,6 +50,7 @@ export interface IStepFieldsProps {
 export default function FourthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
+  const tabsRef = useRef<ITabsRef>(null);
 
   const {
     control,
@@ -286,8 +287,23 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     if (onPrev != null) onPrev();
   };
 
+  const focusToFieldOnError = async () => {
+    const entity = "members" as const;
+    if (errors != null && Array.isArray(errors?.[entity])) {
+      for (var i = 0; i < errors[entity].length; i++) {
+        const name = Object.keys(errors[entity][i] ?? {})[0];
+        if (!!name) {
+          await tabsRef.current?.handleTabChange(i);
+          form.setFocus(`${entity}.${i}.${name}` as any);
+          break;
+        }
+      }
+    }
+  };
+
   const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
+    if (!validated) focusToFieldOnError();
 
     if (validated) {
       setLoading(true);
@@ -538,6 +554,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
           )
         }
         onTabChange={(index) => attachedFilesRef.current?.tabChange(index)}
+        ref={tabsRef}
       />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>

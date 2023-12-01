@@ -70,7 +70,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
 
   const combineStyles = { ...props.sx, ...inputStyles };
   return (
-    <FormControl sx={boxSx} error={selectType === "error"} ref={ref}>
+    <FormControl sx={boxSx} error={selectType === "error"}>
       <MUISelect
         sx={combineStyles}
         {...(register && name && register(name))}
@@ -82,7 +82,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
           if (value === "") return <Box color="#B4B9C1">{props?.placeholder ? props.placeholder : "----"}</Box>;
           return item?.[labelField] != null ? item[labelField] : "";
         }}
-        {...props}
+        inputRef={ref}
       >
         {loading && <LinearProgress color={selectType === "secondary" ? "secondary" : "success"} />}
         <MenuItem

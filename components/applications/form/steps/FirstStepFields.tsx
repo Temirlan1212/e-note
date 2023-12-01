@@ -26,13 +26,23 @@ export interface IStepFieldsProps {
   handleStepNextClick?: Function;
 }
 
+const fields = ["region", "district", "city", "notaryDistrict", "company"] as const;
+
 export default function FirstStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const [notaryData, setNotaryData] = useNotariesStore((state) => [state.notaryData, state.setNotaryData]);
   const profile = useProfileStore.getState();
   const t = useTranslations();
   const locale = useLocale();
 
-  const { trigger, control, watch, resetField, getValues, setValue } = form;
+  const {
+    trigger,
+    control,
+    watch,
+    resetField,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = form;
 
   const city = watch("city");
   const notaryDistrict = watch("notaryDistrict");
@@ -65,8 +75,17 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     resetField("notaryDistrict", { defaultValue: null });
   }, [city]);
 
+  const focusToFieldOnError = () => {
+    for (let i = 0; i < fields.length; i++) {
+      if (errors != null && errors?.[fields[i]]) {
+        form.setFocus(fields[i]);
+        break;
+      }
+    }
+  };
+
   const triggerFields = async () => {
-    return await trigger(["region", "district", "city", "notaryDistrict", "company"]);
+    return await trigger(fields);
   };
 
   const handlePrevClick = () => {
@@ -75,6 +94,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
   const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
+    if (!validated) focusToFieldOnError();
 
     if (validated) {
       setLoading(true);
@@ -157,6 +177,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                 field.onChange(value?.id != null ? { id: value.id } : null);
                 trigger(field.name);
               }}
+              ref={field.ref}
             />
           </Box>
         )}
@@ -206,6 +227,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                     trigger(field.name);
                     resetField("company", { defaultValue: null });
                   }}
+                  ref={field.ref}
                 />
               </Box>
             )}

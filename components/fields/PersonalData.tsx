@@ -508,6 +508,7 @@ export default function PersonalData({
                         field.onChange(...event);
                         trigger(field.name);
                       }}
+                      ref={field.ref}
                     />
                   </Box>
                 )}
@@ -545,6 +546,7 @@ export default function PersonalData({
                         field.onChange(value?.id != null ? { id: value.id } : null);
                         trigger(field.name);
                       }}
+                      ref={field.ref}
                     />
                   </Box>
                 )}

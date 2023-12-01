@@ -68,10 +68,10 @@ const TimePicker: React.ForwardRefRenderFunction<HTMLDivElement, ITimePickerProp
         <MUITimePicker
           ampm={ampm}
           sx={mergedStyles}
-          ref={ref}
           value={value ?? null}
           onChange={(val) => (onChange ? onChange(val) : null)}
           {...rest}
+          inputRef={ref as any}
         />
         {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
       </LocalizationProvider>
