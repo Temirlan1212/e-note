@@ -36,12 +36,14 @@ export const personSchema = object()
         otherwise: (schema) =>
           schema.when("partnerTypeSelect", {
             is: 2,
-            then: (schema) => schema.required("required").min(2, "minLettersLow"),
+            then: (schema) =>
+              schema
+                .required("required")
+                .min(2, "minLettersLow")
+                .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s\-]*$/, "onlyLetters"),
             otherwise: (schema) => schema.nullable(),
           }),
-      })
-
-      .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s\-]*$/, "onlyLetters"),
+      }),
     middleName: string()
       .trim()
       .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s\-]*$/, "onlyLetters"),
