@@ -69,7 +69,13 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
       ? renderInput
       : (params: AutocompleteRenderInputParams) => (
           <Box>
-            <TextField sx={placeholderStyles} {...params} placeholder={textFieldPlaceholder} error={type === "error"} />
+            <TextField
+              sx={placeholderStyles}
+              {...params}
+              placeholder={textFieldPlaceholder}
+              error={type === "error"}
+              inputRef={ref}
+            />
             {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
           </Box>
         );
@@ -79,7 +85,6 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
       options={options ?? []}
       getOptionLabel={(option) => option[labelField]}
       sx={combineStyles}
-      ref={ref}
       {...rest}
       renderInput={defaultRenderInput}
     />

@@ -65,7 +65,7 @@ const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProp
   const mergedStyles = { ...inputStyles, ...props.sx };
 
   return (
-    <FormControl error={type === "error"} sx={boxSx} ref={ref}>
+    <FormControl error={type === "error"} sx={boxSx}>
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={adapterLocale} localeText={localeText}>
         <MUIDatePicker
           views={["day", "month", "year"]}
@@ -78,6 +78,7 @@ const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProp
           value={value ?? null}
           onChange={(val) => (onChange ? onChange(val) : null)}
           slotProps={{ textField: { placeholder } }}
+          inputRef={ref as any}
         />
         {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
       </LocalizationProvider>

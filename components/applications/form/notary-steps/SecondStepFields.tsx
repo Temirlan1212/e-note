@@ -21,13 +21,22 @@ export interface IStepFieldsProps {
   handleStepNextClick?: Function;
 }
 
+const fields = ["product"] as const;
+
 export default function SecondStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const profile = useProfileStore.getState();
   const t = useTranslations();
 
   const locale = useLocale();
 
-  const { trigger, control, getValues, setValue, watch } = form;
+  const {
+    trigger,
+    control,
+    getValues,
+    setValue,
+    watch,
+    formState: { errors },
+  } = form;
 
   const productId = watch("product.id");
 
@@ -66,7 +75,16 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   }, [productId, profile]);
 
   const triggerFields = async () => {
-    return await trigger(["product"]);
+    return await trigger(fields);
+  };
+
+  const focusToFieldOnError = () => {
+    for (let i = 0; i < fields.length; i++) {
+      if (errors != null && errors?.[fields[i]]) {
+        form.setFocus(fields[i]);
+        break;
+      }
+    }
   };
 
   const handlePrevClick = () => {
@@ -75,6 +93,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
 
   const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
+    if (!validated) focusToFieldOnError();
 
     if (validated) {
       setLoading(true);
@@ -165,6 +184,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                   );
                   trigger(field.name);
                 }}
+                ref={field.ref}
               />
             </Box>
           )}
@@ -211,6 +231,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
                     );
                     trigger(field.name);
                   }}
+                  ref={field.ref}
                 />
               </Box>
             );

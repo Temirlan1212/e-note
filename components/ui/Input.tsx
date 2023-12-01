@@ -64,7 +64,6 @@ const Input: React.ForwardRefRenderFunction<HTMLDivElement, IInputProps> = (
       color={color}
       sx={combineStyles}
       helperText={helperText}
-      ref={ref}
       {...(register && register(name))}
       type={showPassword ? "text" : type}
       InputProps={
@@ -81,6 +80,7 @@ const Input: React.ForwardRefRenderFunction<HTMLDivElement, IInputProps> = (
           : {}
       }
       {...props}
+      inputRef={ref}
     />
   );
 };

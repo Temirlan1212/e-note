@@ -64,7 +64,7 @@ const Radio: React.ForwardRefRenderFunction<HTMLDivElement, IRadioProps> = (
   };
 
   return (
-    <FormControl error={type === "error"} ref={ref}>
+    <FormControl error={type === "error"}>
       <RadioGroup
         row={row}
         defaultValue={defaultValue}
@@ -78,7 +78,7 @@ const Radio: React.ForwardRefRenderFunction<HTMLDivElement, IRadioProps> = (
               <FormControlLabel
                 key={item[valueField]}
                 {...(register && name && register(name))}
-                control={<MUIRadio sx={combineStyles} {...rest} />}
+                control={<MUIRadio sx={combineStyles} {...rest} inputRef={ref} />}
                 value={item[valueField]}
                 label={item[labelField]}
               />

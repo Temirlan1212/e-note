@@ -27,7 +27,7 @@ const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, ICheckboxProps>
   const combineStyles = { ...styles, ...rest.sx };
 
   return (
-    <FormControl error={type === "error"} ref={ref}>
+    <FormControl error={type === "error"}>
       <FormControlLabel
         sx={{
           ".MuiFormControlLabel-label": {
@@ -36,6 +36,7 @@ const Checkbox: React.ForwardRefRenderFunction<HTMLInputElement, ICheckboxProps>
         }}
         control={<MUICheckbox {...rest} {...(register && name && register(name))} sx={combineStyles} />}
         label={label}
+        inputRef={ref}
       />
       {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
     </FormControl>

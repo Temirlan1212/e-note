@@ -203,6 +203,7 @@ export default function IdentityDocument({ form, names, defaultValues, disableFi
                   field.onChange(...event);
                   trigger(field.name);
                 }}
+                ref={field.ref}
               />
             </Box>
           )}

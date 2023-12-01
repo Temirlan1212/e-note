@@ -124,6 +124,7 @@ export default function Area({
                   trigger(field.name);
                   [names.district, names.city].map((item) => resetField(item, { defaultValue: null }));
                 }}
+                ref={field.ref}
               />
             </Box>
           )}
@@ -157,6 +158,7 @@ export default function Area({
                   trigger(field.name);
                   [names.city].map((item) => resetField(item, { defaultValue: null }));
                 }}
+                ref={field.ref}
               />
             </Box>
           )}
@@ -187,6 +189,7 @@ export default function Area({
                     field.onChange(value?.id != null ? { id: value.id } : null);
                     trigger(field.name);
                   }}
+                  ref={field.ref}
                 />
               </Box>
             );
@@ -227,6 +230,7 @@ export default function Area({
                   field.onChange(value?.id != null ? { id: value.id } : null);
                   trigger(field.name);
                 }}
+                ref={field.ref}
               />
             </Box>
           )}

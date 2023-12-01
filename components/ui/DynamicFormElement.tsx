@@ -125,6 +125,7 @@ const getField = (
         value={getValue("String", field.value)}
         onChange={(e) => field.onChange(String(e.target.value))}
         disabled={disabled}
+        ref={field.ref}
       />
     ),
     Float: (
@@ -137,6 +138,7 @@ const getField = (
         value={getValue("Float", field.value)}
         onChange={(e) => field.onChange(parseInt(e.target.value))}
         disabled={disabled}
+        ref={field.ref}
       />
     ),
     Decimal: (
@@ -149,6 +151,7 @@ const getField = (
         value={getValue("Decimal", field.value)}
         onChange={(e) => field.onChange(parseInt(e.target.value))}
         disabled={disabled}
+        ref={field.ref}
       />
     ),
     Integer: (
@@ -161,6 +164,7 @@ const getField = (
         value={getValue("Integer", field.value)}
         onChange={(e) => field.onChange(parseInt(e.target.value))}
         disabled={disabled}
+        ref={field.ref}
       />
     ),
     Selection: (
@@ -179,6 +183,7 @@ const getField = (
           trigger(field.name);
         }}
         disabled={disabled}
+        ref={field.ref}
       />
     ),
     Date: (
@@ -192,6 +197,7 @@ const getField = (
           trigger(field.name);
         }}
         disabled={disabled}
+        ref={field.ref}
       />
     ),
     Boolean: <Checkbox label={label} checked={!!field.value} disabled={disabled} {...field} />,
@@ -206,6 +212,7 @@ const getField = (
           trigger(field.name);
         }}
         disabled={disabled}
+        ref={field.ref}
       />
     ),
     DateTime: (
@@ -219,6 +226,7 @@ const getField = (
           trigger(field.name);
         }}
         disabled={disabled}
+        ref={field.ref}
       />
     ),
     Radio: (
@@ -232,6 +240,7 @@ const getField = (
         disabled={disabled}
         {...field}
         value={getValue("Radio", field.value)}
+        ref={field.ref}
       />
     ),
     Object: (
@@ -258,6 +267,7 @@ const getField = (
           );
           trigger(field.name);
         }}
+        ref={field.ref}
       />
     ),
     Button: (

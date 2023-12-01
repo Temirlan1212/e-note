@@ -35,7 +35,13 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
   const profile = useProfileStore((state) => state);
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
 
-  const { trigger, watch, getValues, setValue } = form;
+  const {
+    trigger,
+    watch,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = form;
 
   const requesterId = watch("requester.0.id");
   const partnerType = watch("requester.0.partnerTypeSelect");
@@ -121,8 +127,22 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
     if (onPrev != null) onPrev();
   };
 
+  const focusToFieldOnError = () => {
+    const entity = "requester" as const;
+    if (errors != null && Array.isArray(errors?.[entity])) {
+      for (var i = 0; i < errors[entity].length; i++) {
+        const name = Object.keys(errors[entity][i] ?? {})[0];
+        if (!!name) {
+          form.setFocus(`${entity}.${i}.${name}` as any);
+          break;
+        }
+      }
+    }
+  };
+
   const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
+    if (!validated) focusToFieldOnError();
 
     if (validated) {
       setLoading(true);

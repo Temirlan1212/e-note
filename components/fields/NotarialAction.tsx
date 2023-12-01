@@ -143,6 +143,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                 field.onChange(value?.id != null ? { id: value.id } : null);
                 trigger(field.name);
               }}
+              ref={field.ref}
             />
           </Box>
         )}
@@ -189,6 +190,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                         resetField(item, { defaultValue: null })
                       );
                     }}
+                    ref={field.ref}
                   />
                 </Box>
               );
@@ -223,6 +225,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                         resetField(item, { defaultValue: null })
                       );
                     }}
+                    ref={field.ref}
                   />
                 </Box>
               );
@@ -262,6 +265,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                         resetField(item, { defaultValue: null })
                       );
                     }}
+                    ref={field.ref}
                   />
                 </Box>
               );
@@ -295,6 +299,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                       trigger(field.name);
                       ["action", "product"].map((item: any) => resetField(item, { defaultValue: null }));
                     }}
+                    ref={field.ref}
                   />
                 </Box>
               );
@@ -328,6 +333,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                       trigger(field.name);
                       resetField("product", { defaultValue: null });
                     }}
+                    ref={field.ref}
                   />
                 </Box>
               );

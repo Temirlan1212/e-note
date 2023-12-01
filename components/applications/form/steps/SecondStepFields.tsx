@@ -17,17 +17,33 @@ export interface IStepFieldsProps {
   handleStepNextClick?: Function;
 }
 
+const fields = ["object", "objectType", "notarialAction", "typeNotarialAction", "action", "product"] as const;
+
 export default function SecondStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
 
-  const { trigger, getValues, setValue } = form;
+  const {
+    trigger,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = form;
 
   const [loading, setLoading] = useState(false);
 
   const { update: applicationUpdate } = useFetch("", "PUT");
 
   const triggerFields = async () => {
-    return await trigger(["object", "objectType", "notarialAction", "typeNotarialAction", "action", "product"]);
+    return await trigger(fields);
+  };
+
+  const focusToFieldOnError = () => {
+    for (let i = 0; i < fields.length; i++) {
+      if (errors != null && errors?.[fields[i]]) {
+        form.setFocus(fields[i]);
+        break;
+      }
+    }
   };
 
   const handlePrevClick = () => {
@@ -36,6 +52,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
 
   const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
+    if (!validated) focusToFieldOnError();
 
     if (validated) {
       setLoading(true);

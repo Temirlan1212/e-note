@@ -76,9 +76,19 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     return names;
   };
 
+  const focusToFieldOnError = (fields: string[]) => {
+    for (let i = 0; i < fields.length; i++) {
+      if (dynamicForm.formState.errors != null && dynamicForm.formState.errors?.[fields[i]]) {
+        dynamicForm.setFocus(fields[i]);
+        break;
+      }
+    }
+  };
+
   const handleNextClick = async (targetStep?: number) => {
     const names = getNames(documentTemplateData?.data ?? []);
     const validated = await triggerFields(names);
+    if (!validated) focusToFieldOnError(names);
     const { setValue, getValues } = form;
 
     if (validated && onNext) {

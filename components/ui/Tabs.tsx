@@ -1,4 +1,4 @@
-import { ReactNode, SyntheticEvent, useEffect, useState } from "react";
+import { ReactNode, Ref, forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Badge, Box, Tabs as MuiTabs, Tab, TabsProps } from "@mui/material";
 
 enum colors {
@@ -16,7 +16,14 @@ export interface ITabsProps extends TabsProps {
   data: { tabErrorsCount: number; tabLabel: string; tabPanelContent: ReactNode }[];
 }
 
-export default function Tabs({ color = "primary", actionsContent = <></>, data, ...rest }: ITabsProps) {
+export interface ITabsRef {
+  handleTabChange: (value: number, responseTime?: number) => Promise<any>;
+}
+
+export default forwardRef(function Tabs(
+  { color = "primary", actionsContent = <></>, data, ...rest }: ITabsProps,
+  ref: Ref<ITabsRef>
+) {
   const [tab, setTab] = useState(0);
 
   useEffect(() => {
@@ -25,9 +32,10 @@ export default function Tabs({ color = "primary", actionsContent = <></>, data, 
     }
   }, [data]);
 
-  const handleTabChange = (event: SyntheticEvent, value: number) => {
+  const handleTabChange = (value: number, responseTime?: number) => {
     setTab(value);
     rest.onTabChange && rest.onTabChange(value);
+    return new Promise((resolve) => setTimeout(resolve, responseTime ?? 500, value));
   };
 
   const styles = {
@@ -48,12 +56,16 @@ export default function Tabs({ color = "primary", actionsContent = <></>, data, 
 
   const combineStyles = { ...styles, ...rest.sx };
 
+  useImperativeHandle(ref, () => ({
+    handleTabChange,
+  }));
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box display="flex" flexDirection={{ xs: "column", md: "row" }} gap={1}>
         <MuiTabs
           value={tab}
-          onChange={handleTabChange}
+          onChange={(e, v) => handleTabChange(v)}
           variant="scrollable"
           scrollButtons="auto"
           allowScrollButtonsMobile
@@ -86,4 +98,4 @@ export default function Tabs({ color = "primary", actionsContent = <></>, data, 
       ))}
     </Box>
   );
-}
+});

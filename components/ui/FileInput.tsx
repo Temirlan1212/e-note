@@ -50,13 +50,14 @@ export default forwardRef<HTMLDivElement, IFileInputProps>(function FileInput(
   };
 
   return (
-    <FormControl error={inputType === "error"} ref={ref}>
+    <FormControl error={inputType === "error"}>
       <MuiFileInput
         disabled={disabled}
         sx={mergedStyles}
         value={value ?? file}
         onChange={onChange ?? handleOnChange}
         {...rest}
+        inputRef={ref}
       />
       {helperText && <FormHelperText error={inputType === "error"}>{helperText}</FormHelperText>}
     </FormControl>
