@@ -185,13 +185,13 @@ export default function ArchiveApplicationList() {
         columns={[
           {
             field: "applicant1",
-            headerName: "Member-1",
+            headerName: "Side-1",
             width: 300,
             sortable: true,
           },
           {
             field: "applicant2",
-            headerName: "Member-2",
+            headerName: "Side-2",
             width: 200,
             sortable: true,
           },
