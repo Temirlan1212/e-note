@@ -309,7 +309,7 @@ export default function ApplicationList() {
             valueGetter: (params: GridValueGetterParams) => {
               const requesters =
                 params.value.length > 1
-                  ? `${params.value[0]?.fullName} + ${params.value.length - 1}`
+                  ? `${params.value[0]?.fullName} + ${params.value.length - 1} ${t("member shrinked")}.`
                   : params.value[0]?.fullName;
               return isSearchedData ? params.row?.requester?.[0]?.fullName : requesters || t("not assigned");
             },
@@ -322,7 +322,7 @@ export default function ApplicationList() {
             valueGetter: (params: GridValueGetterParams) => {
               const members =
                 params.value.length > 1
-                  ? `${params.value[0]?.fullName} + ${params.value.length - 1}`
+                  ? `${params.value[0]?.fullName} + ${params.value.length - 1} ${t("member shrinked")}.`
                   : params.value[0]?.fullName;
               return isSearchedData ? params.row?.members?.[0]?.fullName : members || t("not assigned");
             },
