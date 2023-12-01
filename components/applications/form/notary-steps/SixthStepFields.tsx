@@ -20,6 +20,7 @@ import DeclVideoRecordModal from "@/components/decl-video-record/DeclVideoRecord
 import KeyIcon from "@mui/icons-material/Key";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useProfileStore } from "@/stores/profile";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -31,7 +32,7 @@ export interface IStepFieldsProps {
 export default function SixthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const convert = useConvert();
-
+  const profile = useProfileStore((state) => state.getUserData());
   const { trigger, control, watch, setValue } = form;
 
   const id = watch("id");
@@ -151,6 +152,8 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     };
   });
 
+  const showSign = profile?.roles.some((role) => role.name === "Trainee" || role.name === "Assistant notary");
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Backdrop open={isBackdropOpen} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
@@ -177,7 +180,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
         />
 
         <Box display="flex" gap="10px" justifyContent="flex-end" padding="10px" flexWrap="wrap">
-          {!isSigned && base64Doc != null && (
+          {!isSigned && base64Doc != null && !showSign && (
             <SignModal signLoading={loading} base64Doc={base64Doc} onSign={(sign) => handleSign(sign, setIsSigned)} />
           )}
           {!isSigned && token && (application?.data?.[0]?.documentInfo?.editUrl || prepare?.data?.editUrl != null) && (
@@ -233,7 +236,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
                   </Button>
                 </ConfirmationModal>
 
-                {!isDeclSigned && base64Doc != null && (
+                {!isDeclSigned && base64Doc != null && !showSign && (
                   <SignModal
                     base64Doc={base64Doc}
                     signLoading={loading}
@@ -245,11 +248,13 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
                   </SignModal>
                 )}
 
-                <DeclVideoRecordModal applicationId={id as number}>
-                  <Button startIcon={<VideocamIcon />} sx={{ flexGrow: "1" }}>
-                    {t("Record a video")}
-                  </Button>
-                </DeclVideoRecordModal>
+                {!showSign && (
+                  <DeclVideoRecordModal applicationId={id as number}>
+                    <Button startIcon={<VideocamIcon />} sx={{ flexGrow: "1" }}>
+                      {t("Record a video")}
+                    </Button>
+                  </DeclVideoRecordModal>
+                )}
               </Box>
             )}
           </Menu>
