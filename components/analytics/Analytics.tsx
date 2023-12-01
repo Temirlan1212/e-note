@@ -19,6 +19,7 @@ export default function AnalyticsContent() {
   const t = useTranslations();
   const isMobileMedia = useMediaQuery("(max-width:800px)");
   const [selectedDate, setSelectedDate] = useState<string | Date>(formatDate(initialDate.toISOString()));
+  const [formattedDate, setFormattedDate] = useState<string | Date>();
   const [selectedTab, setSelectedTab] = useState<keyof typeof tabsContent>(1);
 
   const { data, loading } = useFetch<FetchResponseBody<IAnalyticsData>>(
@@ -48,6 +49,7 @@ export default function AnalyticsContent() {
     },
     labels: selectedTab === 2 ? regionLabels ?? [] : companyLabels ?? [],
     tooltip: {
+      followCursor: true,
       shared: true,
       intersect: false,
       x: {
@@ -81,9 +83,15 @@ export default function AnalyticsContent() {
     },
   };
 
-  const handleDateChange = (value: string) => {
+  const handleDateChange = (value: string): void => {
     const date = new Date(value).toISOString();
-    setSelectedDate(formatDate(date));
+    setFormattedDate(formatDate(date));
+  };
+
+  const handleDateSubmit = (): void => {
+    if (formattedDate) {
+      setSelectedDate(formattedDate as string);
+    }
   };
 
   const tabs: { id: keyof typeof tabsContent; text: string }[] = [
@@ -107,14 +115,14 @@ export default function AnalyticsContent() {
 
   const tabsContent = {
     1: (
-      <Box maxHeight="500px" sx={{ overflowY: "auto", overflowX: "hidden", padding: "0 10px" }}>
-        <ApexChart options={options} series={series} type={"bar"} height={(companyValues?.length ?? 10) * 30} />
+      <Box maxHeight="600px" sx={{ overflowY: "auto", overflowX: "hidden", padding: "0 10px" }}>
+        <ApexChart options={options} series={series} type="bar" height={(companyValues?.length ?? 10) * 30} />
       </Box>
     ),
     2: <ApexChart height={600} options={options} series={series} type={"bar"} />,
     3: (
-      <Box maxHeight="500px" sx={{ overflowY: "auto", overflowX: "hidden", padding: "0 10px" }}>
-        <ApexChart options={options} series={series} type={"bar"} height={(companyValues?.length ?? 10) * 30} />
+      <Box maxHeight="600px" sx={{ overflowY: "auto", overflowX: "hidden", padding: "0 10px" }}>
+        <ApexChart options={options} series={series} type="bar" height={(companyValues?.length ?? 10) * 30} />
       </Box>
     ),
     4: <></>,
@@ -170,16 +178,21 @@ export default function AnalyticsContent() {
             );
           })}
         </Box>
-        {selectedTab !== 3 && <DatePicker sx={{ maxWidth: "320px" }} value={initialDate} onChange={handleDateChange} />}
-        <Box>
-          {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "600px" }}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            tabsContent[selectedTab]
-          )}
-        </Box>
+        {selectedTab !== 3 && (
+          <DatePicker
+            sx={{ maxWidth: "320px" }}
+            value={initialDate}
+            onClose={handleDateSubmit}
+            onChange={handleDateChange}
+          />
+        )}
+        {loading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "600px" }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          tabsContent[selectedTab]
+        )}
       </Box>
     </Box>
   );
