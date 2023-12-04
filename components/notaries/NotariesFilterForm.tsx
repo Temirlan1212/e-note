@@ -17,7 +17,7 @@ export interface INotariesFilterForm {
   onFormReset?: () => void;
 }
 
-const getLabelField = (data: FetchResponseBody | null, locale: string) => {
+export const getLabelField = (data: FetchResponseBody | null, locale: string) => {
   if ((locale === "ru" || locale === "kg") && data?.status === 0 && Array.isArray(data?.data)) {
     const item = data.data.find((item) => item);
     if (item.hasOwnProperty("title")) return item?.[`title_${locale}`] != null ? `title_${locale}` : "title";

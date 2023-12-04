@@ -15,6 +15,7 @@ export interface IConfirmationModal extends Omit<ModalProps, "slots"> {
   hintText: string;
   type: "warning" | "error" | "hint";
   title: string;
+  confirmButtonType: "primary" | "secondary" | "danger" | "warning";
   isCloseIconShown: boolean;
   slots?: {
     button?: (callback: Dispatch<SetStateAction<boolean>>) => React.ReactNode;
@@ -27,6 +28,7 @@ export const ConfirmationModal = ({
   slots,
   children,
   isPermanentOpen,
+  confirmButtonType,
   isHintShown = true,
   hintTitle = "Do you really want to delete this record?",
   hintText = "",
@@ -91,7 +93,10 @@ export const ConfirmationModal = ({
                 slots.button(setOpen)
               ) : (
                 <>
-                  <Button buttonType={type === "warning" ? "warning" : "danger"} onClick={handleConfirm}>
+                  <Button
+                    buttonType={confirmButtonType ? confirmButtonType : type === "warning" ? "warning" : "danger"}
+                    onClick={handleConfirm}
+                  >
                     {t("Yes")}
                   </Button>
                   <Button buttonType="secondary" onClick={handleToggle}>
