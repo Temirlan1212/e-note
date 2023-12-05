@@ -138,6 +138,11 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     if (step > stepProgress.current) stepProgress.current = step;
   }, [step]);
 
+  useEffectOnce(() => {
+    const step = router.query?.step;
+    if (!!step) setStep(Number(step));
+  }, []);
+
   const selectTemplateFromMade = form.watch("selectTemplateFromMade");
 
   const steps =

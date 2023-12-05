@@ -58,18 +58,22 @@ export const ConfirmationModal = ({
 
       <Modal open={isPermanentOpen ?? open} onClose={handleToggle} {...rest}>
         <Box display="flex" flexDirection="column" gap="20px">
-          <Box component="header" display="flex" alignItems="center" justifyContent="space-between">
-            <Typography variant="h6" fontWeight={600}>
-              {t(title)}
-            </Typography>
-            {isCloseIconShown && (
-              <IconButton onClick={handleToggle}>
-                <CloseIcon />
-              </IconButton>
-            )}
-          </Box>
+          {(!!title || !!isCloseIconShown) && (
+            <Box component="header" display="flex" alignItems="center" justifyContent="space-between">
+              {!!title && (
+                <Typography variant="h6" fontWeight={600}>
+                  {t(title)}
+                </Typography>
+              )}
+              {isCloseIconShown && (
+                <IconButton onClick={handleToggle}>
+                  <CloseIcon />
+                </IconButton>
+              )}
+            </Box>
+          )}
 
-          <Box>
+          <Box display="flex" flexDirection="column" gap="10px">
             {isHintShown && (
               <Hint type={type} sx={{ mb: "20px", display: "flex", gap: "10px" }}>
                 {hintTitle && (
