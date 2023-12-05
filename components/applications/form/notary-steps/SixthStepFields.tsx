@@ -272,7 +272,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
           )}
           {onNext != null && (
             <Button onClick={() => handleNextClick()} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
-              {t("Next")}
+              {isSigned ? t("Next") : t("Save to draft")}
             </Button>
           )}
         </Box>
