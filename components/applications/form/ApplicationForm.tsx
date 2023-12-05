@@ -16,14 +16,12 @@ import ThirdStepFields from "./steps/ThirdStepFields";
 import FourthStepFields from "./steps/FourthStepFields";
 import FifthStepFields from "./steps/FifthStepFields";
 import SixthStepFields from "./steps/SixthStepFields";
-import SuccessStepFields from "./steps/SuccessStepFields";
 import NotaryFirstStepFields from "./notary-steps/FirstStepFields";
 import NotarySecondStepFields from "./notary-steps/SecondStepFields";
 import NotaryThirdStepFields from "./notary-steps/ThirdStepFields";
 import NotaryFourthStepFields from "./notary-steps/FourthStepFields";
 import NotaryFifthStepFields from "./notary-steps/FifthStepFields";
 import NotarySixthStepFields from "./notary-steps/SixthStepFields";
-import NotarySuccessStepFields from "./notary-steps/SuccessStepFields";
 import { useRouter } from "next/router";
 import useNavigationConfirmation from "@/hooks/useNavigationConfirmation";
 import SelectTemplateSelectionType from "./common-steps/SelectTemplateSelectionType";
@@ -236,15 +234,9 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             key={5}
             form={form}
             onPrev={() => setStep(step - 1)}
-            onNext={({ step }) =>
-              setStep((prev) => {
-                if (step != null) return step;
-                return prev + 1;
-              })
-            }
+            onNext={() => router.push("/applications")}
             handleStepNextClick={handleStepNextClick}
           />,
-          <NotarySuccessStepFields key={7} form={form} onNext={() => setStep(step + 1)} />,
         ]
       : [
           <FirstStepFields
@@ -349,15 +341,9 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             key={6}
             form={form}
             onPrev={() => setStep(step - 1)}
-            onNext={({ step }) =>
-              setStep((prev) => {
-                if (step != null) return step;
-                return prev + 1;
-              })
-            }
+            onNext={() => router.push("/applications")}
             handleStepNextClick={handleStepNextClick}
           />,
-          <SuccessStepFields key={7} form={form} onPrev={() => setStep(step - 1)} onNext={() => setStep(step + 1)} />,
         ];
 
   const onSubmit = async (data: IApplicationSchema) => {};
