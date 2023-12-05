@@ -111,6 +111,10 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                     <IdentityDocument
                       disableFields={isTundukFieldsOpen || isEditableCopy}
                       form={form}
+                      fields={{
+                        maritalStatus: true,
+                        nationality: true,
+                      }}
                       names={getIdentityDocumentNames(index)}
                     />
                   </>

@@ -108,6 +108,10 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                     <IdentityDocument
                       disableFields={isTundukFieldsOpen || isEditableCopy}
                       form={form}
+                      fields={{
+                        nationality: true,
+                        maritalStatus: true,
+                      }}
                       names={getIdentityDocumentNames(index)}
                     />
                   </>
