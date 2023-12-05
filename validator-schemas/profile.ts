@@ -2,6 +2,7 @@ import * as yup from "yup";
 import { addressSchema } from "./address";
 
 export type IUserProfileSchema = yup.InferType<typeof userProfileSchema>;
+export type IWorkingDaysSchema = yup.InferType<typeof workingDaysSchema>;
 
 export const userProfileSchema = yup.object().shape({
   code: yup.string().required("Login is required!"),
@@ -51,4 +52,15 @@ export const userProfilePasswordSchema = yup.object().shape({
     .required("Confirm Password is required")
     .min(4, "Password length should be more than 4 characters")
     .oneOf([yup.ref("newPassword")], "Passwords do not match"),
+});
+
+const workingDaySchema = yup.object().shape({
+  weekDayNumber: yup.number().integer().required("required"),
+  startWorkingDay: yup.date().required("required").typeError("invalid format"),
+  endWorkingDay: yup.date().required("required").typeError("invalid format"),
+});
+
+export const workingDaysSchema = yup.object().shape({
+  workingDays: yup.array().of(workingDaySchema),
+  newWorkingDay: workingDaySchema.nullable(),
 });

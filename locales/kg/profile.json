@@ -25,5 +25,13 @@
   "Specify coordinates to display them on the map": "Картада көрсөтүү үчүн координаттарды көрсөтүңүз",
   "Coordinates on the map": "Картадагы координаттар",
   "Latitude": "Кендик",
-  "Longitude": "Узундук"
+  "Longitude": "Узундук",
+  "Actions": "Иш-аракеттер",
+  "Day of the week": "Жуманын күнү",
+  "startWorkingDay": "Жумуш күнүнүн башталышы",
+  "endWorkingDay": "Жумуш күнүнүн аягы",
+  "Add a working day": "Жумуш күндү кошуу",
+  "Edit a working day": "Жумуш күндү өзгөртүү",
+  "Deleting a working day": "Жумуш күндү өчүрүү",
+  "Do you really want to remove the working day?": "Сиз чын эле жумуш күнүңүздү өчүрүп салгыңыз келеби?"
 }

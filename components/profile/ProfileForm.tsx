@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useTranslations } from "next-intl";
 import { PermIdentity } from "@mui/icons-material";
@@ -22,6 +22,7 @@ import Hint from "@/components/ui/Hint";
 import Contact from "@/components/fields/Contact";
 import Coordinates from "@/components/fields/Coordinates";
 import ExpandingFields from "../fields/ExpandingFields";
+import ProfileWorkingDays from "./ProfileWorkingDays";
 import { format } from "date-fns";
 
 interface IProfileFormProps {}
@@ -51,15 +52,20 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const { update: getUserData, loading: userDataLoading } = useFetch("", "POST");
 
-  useEffectOnce(async () => {
-    setUserIsNotary(Boolean(profileData?.activeCompany));
-
+  const refreshUserData = async () => {
     const res = await getUserData(profileData?.id != null ? "/api/profile/user/" + profileData?.id : "", {
       userRole: profileData?.activeCompany ? "notary" : "declarant",
     });
+
     if (Array.isArray(res?.data) && res?.data.length > 0) {
       setUserData(res);
     }
+  };
+
+  useEffectOnce(async () => {
+    setUserIsNotary(Boolean(profileData?.activeCompany));
+
+    const res: any = await refreshUserData();
   });
 
   const {
@@ -85,8 +91,11 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const {
     formState: { errors },
     reset,
+    control,
+    trigger,
     getValues,
     setValue,
+    resetField,
   } = form;
 
   const addressNames = {
@@ -527,6 +536,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                   <License form={form} names={licenseNames} disableFields={true} />
                 </Box>
               </Box>
+
+              <ProfileWorkingDays data={userData} onRefresh={refreshUserData} />
             </Box>
           </ExpandingFields>
         )}
