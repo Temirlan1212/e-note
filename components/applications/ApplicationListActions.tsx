@@ -1,4 +1,4 @@
-import { Box, IconButton, InputLabel, TextField, Tooltip, Typography } from "@mui/material";
+import { Box, CircularProgress, IconButton, InputLabel, Modal, TextField, Tooltip, Typography } from "@mui/material";
 import { GridRenderCellParams, GridTreeNodeWithRender } from "@mui/x-data-grid";
 import Link from "@/components/ui/Link";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
@@ -17,6 +17,7 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import Button from "@/components/ui/Button";
 import { IFetchByIdData, IFetchNotaryChat } from "@/models/chat";
 import CancelIcon from "@mui/icons-material/Cancel";
+import KeyIcon from "@mui/icons-material/Key";
 import Input from "@/components/ui/Input";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
@@ -31,6 +32,7 @@ export const ApplicationListActions = ({
   const router = useRouter();
   const t = useTranslations();
   const [openModal, setOpenModal] = useState(false);
+  const [signModal, setSignModal] = useState(false);
   const [inputValue, setInputValue] = useState<string | null>(null);
   const [inputError, setInputError] = useState<boolean>(false);
   const [userData, setUserData] = useState<IUserData | null>();
@@ -46,6 +48,7 @@ export const ApplicationListActions = ({
   const { update: cancelUpdate } = useFetch<FetchResponseBody | null>("", "PUT");
   const { update: getCopy } = useFetch<IFetchByIdData>("", "GET");
   const { data: copyData, update: updateCopyData } = useFetch<IFetchByIdData>("", "POST");
+  const { update: getApplication, loading: applicationLoading } = useFetch("", "POST");
 
   const handleDownloadClick = async () => {
     const pdfResponse = await downloadUpdate(`/api/applications/download/${params.row.id}`);
@@ -150,16 +153,30 @@ export const ApplicationListActions = ({
     }
   }, [copyData?.data[0]?.id]);
 
+  const hanldeSignAction = async (id: number, e: Event) => {
+    e.stopPropagation();
+    const res = await getApplication(`/api/applications/${id}`);
+    const pdfLink = res?.data?.[0]?.documentInfo?.pdfLink;
+
+    if (!!pdfLink) {
+      router.push({ pathname: `/applications/edit/${id}`, query: { step: 5 } });
+    } else {
+      setSignModal(true);
+    }
+  };
+
+  const isNotary = userData?.group.id === 4;
+
   return (
     <Box display="flex" alignItems="center">
-      {userData?.group.id === 4 && (
+      {isNotary && (
         <Tooltip title={t("Copy")} arrow>
           <IconButton onClick={handleCopy}>
             <FileCopyIcon />
           </IconButton>
         </Tooltip>
       )}
-      {userData?.group.id === 4 && (
+      {isNotary && (
         <ConfirmationModal
           title="Write a message"
           isHintShown={false}
@@ -238,6 +255,31 @@ export const ApplicationListActions = ({
               </IconButton>
             </Tooltip>
           </ConfirmationModal>
+          {isNotary && (
+            <ConfirmationModal
+              isPermanentOpen={signModal}
+              onClose={() => setSignModal(false)}
+              isHintShown={false}
+              title=""
+              onConfirm={(callback) => handleDeleteClick(callback)}
+              slots={{
+                button: () => <Button onClick={() => setSignModal(false)}>{t("Close")}</Button>,
+                body: () => <>{t("The notarial action has not been prepared for signing")}</>,
+              }}
+            >
+              <Box onClick={(e: any) => hanldeSignAction(params.row.id, e)}>
+                <Tooltip title={t("Sign")} arrow>
+                  <IconButton>
+                    {applicationLoading ? (
+                      <CircularProgress sx={{ height: "20px !important", width: "20px !important" }} />
+                    ) : (
+                      <KeyIcon />
+                    )}
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            </ConfirmationModal>
+          )}
         </>
       )}
 
