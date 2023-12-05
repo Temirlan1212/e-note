@@ -185,15 +185,26 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
       }
     };
 
+    const updateMembersPhoto = (memberIndex: number) => {
+      const pin = getValues(`members.${memberIndex}.personalNumber`);
+      const tundukDocumentSeries = getValues(`members.${memberIndex}.passportSeries`);
+      const tundukDocumentNumber = getValues(`members.${memberIndex}.passportNumber`);
+
+      if (pin != null && tundukDocumentSeries != null && tundukDocumentNumber != null) {
+        handlePinCheck(memberIndex);
+      }
+    };
+
     for (let i = 0; i < (members?.length as number) ?? 0; i++) {
       updateSubjectRole(i);
+      updateMembersPhoto(i);
     }
   }, [items]);
 
   const getTundukParamsFields = (index: number) =>
     ({
-      tundukDocumentSeries: `members.${index}.tundukPassportSeries`,
-      tundukDocumentNumber: `members.${index}.tundukPassportNumber`,
+      tundukDocumentSeries: `members.${index}.passportSeries`,
+      tundukDocumentNumber: `members.${index}.passportNumber`,
     }) as const;
 
   const getPersonalDataNames = (index: number) => ({
@@ -467,8 +478,8 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
 
     if (values[entity] != null) {
       const pin = values[entity][index].personalNumber;
-      const series = values[entity][index].tundukPassportSeries;
-      const number = values[entity][index].tundukPassportNumber;
+      const series = values[entity][index].passportSeries;
+      const number = values[entity][index].passportNumber;
 
       let url = `person/${pin}`;
       if (!!series && !!number) url = `individual?pin=${pin}&series=${series}&number=${number}`;

@@ -184,15 +184,26 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       }
     };
 
+    const updateRequesterPhoto = (requesterIndex: number) => {
+      const pin = getValues(`requester.${requesterIndex}.personalNumber`);
+      const tundukDocumentSeries = getValues(`requester.${requesterIndex}.passportSeries`);
+      const tundukDocumentNumber = getValues(`requester.${requesterIndex}.passportNumber`);
+
+      if (pin != null && tundukDocumentSeries != null && tundukDocumentNumber != null) {
+        handlePinCheck(requesterIndex);
+      }
+    };
+
     for (let i = 0; i < (requesters?.length as number) ?? 0; i++) {
       updateSubjectRole(i);
+      updateRequesterPhoto(i);
     }
   }, [items]);
 
   const getTundukParamsFields = (index: number) =>
     ({
-      tundukDocumentSeries: `requester.${index}.tundukPassportSeries`,
-      tundukDocumentNumber: `requester.${index}.tundukPassportNumber`,
+      tundukDocumentSeries: `requester.${index}.passportSeries`,
+      tundukDocumentNumber: `requester.${index}.passportNumber`,
     }) as const;
 
   const getPersonalDataNames = (index: number) => ({
@@ -488,8 +499,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
     if (values[entity] != null) {
       const pin = values[entity][index].personalNumber;
-      const series = values[entity][index].tundukPassportSeries;
-      const number = values[entity][index].tundukPassportNumber;
+      const series = values[entity][index].passportSeries;
+      const number = values[entity][index].passportNumber;
 
       const url = isJuridicalPerson ? `company/${pin}` : `individual?pin=${pin}&series=${series}&number=${number}`;
 

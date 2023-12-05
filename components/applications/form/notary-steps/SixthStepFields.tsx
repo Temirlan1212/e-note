@@ -263,20 +263,18 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
       {docUrl && <PDFViewer fileUrl={docUrl} />}
 
-      {!applicationLoading && !prepareLoading && !pdfLoading && !syncLoading && (
-        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-          {!isSigned && onPrev != null && (
-            <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
-              {t("Prev")}
-            </Button>
-          )}
-          {onNext != null && (
-            <Button onClick={() => handleNextClick()} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
-              {isSigned ? t("Next") : t("Save to draft")}
-            </Button>
-          )}
-        </Box>
-      )}
+      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+        {!isSigned && onPrev != null && (
+          <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
+            {t("Prev")}
+          </Button>
+        )}
+        {onNext != null && (
+          <Button onClick={() => handleNextClick()} endIcon={<ArrowForwardIcon />} sx={{ width: "auto" }}>
+            {isSigned ? t("Next") : t("Save to draft")}
+          </Button>
+        )}
+      </Box>
     </Box>
   );
 }
