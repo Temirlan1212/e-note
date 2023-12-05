@@ -7,6 +7,7 @@ import Select from "@/components/ui/Select";
 import Input from "@/components/ui/Input";
 import DatePicker from "@/components/ui/DatePicker";
 import Checkbox from "@/components/ui/Checkbox";
+import Autocomplete from "@/components/ui/Autocomplete";
 
 export interface IIdentityDocumentProps {
   form: UseFormReturn<any>;
@@ -18,12 +19,20 @@ export interface IIdentityDocumentProps {
     organNumber: string;
     issueDate: string;
     foreigner: string;
+    birthDate: string;
+    citizenship: string;
+    nationality?: string;
+    maritalStatus?: string;
     subjectRole?: string;
     familyStatus?: string;
     passportStatus?: string;
   };
   defaultValues?: {
     foreigner?: boolean | null;
+    birthDate?: Date;
+    citizenship?: number | null;
+    nationality?: string | null;
+    maritalStatus?: string;
     documentType?: number | null;
     documentSeries?: number | null;
     documentNumber?: number | null;
@@ -34,10 +43,20 @@ export interface IIdentityDocumentProps {
     familyStatus?: boolean | null;
     passportStatus?: boolean | null;
   };
+  fields?: {
+    nationality?: boolean;
+    maritalStatus?: boolean;
+  };
   disableFields?: boolean;
 }
 
-export default function IdentityDocument({ form, names, defaultValues, disableFields }: IIdentityDocumentProps) {
+export default function IdentityDocument({
+  form,
+  names,
+  fields,
+  defaultValues,
+  disableFields,
+}: IIdentityDocumentProps) {
   const t = useTranslations();
   const locale = useLocale();
 
@@ -45,9 +64,14 @@ export default function IdentityDocument({ form, names, defaultValues, disableFi
 
   const subjectRole = watch(names.subjectRole as string);
   const isAnAdult = subjectRole === "notAnAdult";
+  const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
   const documentType = watch(names.documentType);
   const foreigner = watch(names.foreigner);
 
+  const { data: citizenshipDictionary, loading: citizenshipDictionaryLoading } = useFetch(
+    `/api/dictionaries/citizenship`,
+    "GET"
+  );
   const { data: identityDocumentDictionary, loading: identityDocumentDictionaryLoading } = useFetch(
     `/api/dictionaries/identity-document`,
     "GET"
@@ -59,6 +83,104 @@ export default function IdentityDocument({ form, names, defaultValues, disableFi
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
+      <Box display="flex" gap="20px" alignItems="center" flexDirection={{ xs: "column", md: "row" }}>
+        <Controller
+          control={control}
+          name={names.birthDate}
+          defaultValue={defaultValues?.birthDate ?? null}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Birth date")}</InputLabel>
+              <DatePicker
+                disabled={disableFields || isEditableCopy}
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                value={field.value != null ? new Date(field.value) : null}
+                onChange={(...event: any[]) => {
+                  field.onChange(...event);
+                  trigger(field.name);
+                }}
+                ref={field.ref}
+              />
+            </Box>
+          )}
+        />
+
+        <Controller
+          control={control}
+          name={names.citizenship}
+          defaultValue={defaultValues?.citizenship ?? null}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel>{t("Citizenship")}</InputLabel>
+              <Autocomplete
+                disabled={disableFields || isEditableCopy}
+                labelField={locale === "ru" || locale === "kg" ? "$t:name" : "name"}
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                options={
+                  citizenshipDictionary?.status === 0
+                    ? (citizenshipDictionary?.data as Record<string, any>[]) ?? []
+                    : []
+                }
+                loading={citizenshipDictionaryLoading}
+                value={
+                  field.value != null
+                    ? (citizenshipDictionary?.data ?? []).find(
+                        (item: Record<string, any>) => item.id == field.value.id
+                      ) ?? null
+                    : null
+                }
+                onBlur={field.onBlur}
+                onChange={(event, value) => {
+                  field.onChange(value?.id != null ? { id: value.id } : null);
+                  trigger(field.name);
+                }}
+                ref={field.ref}
+              />
+            </Box>
+          )}
+        />
+
+        {Boolean(fields?.nationality) && Boolean(names?.nationality) && (
+          <Controller
+            control={control}
+            name={names.nationality ?? ""}
+            defaultValue={defaultValues?.nationality ?? ""}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel>{t("Nationality")}</InputLabel>
+                <Input
+                  disabled={disableFields || isEditableCopy}
+                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  {...field}
+                />
+              </Box>
+            )}
+          />
+        )}
+
+        {Boolean(fields?.maritalStatus) && Boolean(names?.maritalStatus) && (
+          <Controller
+            control={control}
+            name={names.maritalStatus ?? ""}
+            defaultValue={defaultValues?.maritalStatus ?? ""}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel>{t("Marital status")}</InputLabel>
+                <Input
+                  disabled={disableFields || isEditableCopy}
+                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  {...field}
+                />
+              </Box>
+            )}
+          />
+        )}
+      </Box>
+
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller
           control={control}

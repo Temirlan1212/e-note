@@ -24,8 +24,6 @@ export interface IPersonalDataProps {
     name: string;
     middleName: string;
     pin: string;
-    birthDate: string;
-    citizenship: string;
     nameOfCompanyOfficial: string;
     nameOfCompanyGov: string;
     representativesName: string;
@@ -39,8 +37,6 @@ export interface IPersonalDataProps {
     picture?: string;
     tundukDocumentSeries?: string;
     tundukDocumentNumber?: string;
-    nationality?: string;
-    maritalStatus?: string;
   };
   defaultValues?: {
     type?: number | null;
@@ -51,8 +47,6 @@ export interface IPersonalDataProps {
     firstName?: string;
     middleName?: string;
     pin?: number;
-    birthDate?: Date;
-    citizenship?: number | null;
     nameOfCompanyOfficial?: string;
     nameOfCompanyGov?: string;
     representativesName?: string;
@@ -64,8 +58,6 @@ export interface IPersonalDataProps {
     notaryDateOfOrder?: Date;
     tundukDocumentSeries?: number | null;
     tundukDocumentNumber?: number | null;
-    nationality?: string | null;
-    maritalStatus?: string;
   };
   fields?: {
     type?: boolean;
@@ -76,8 +68,6 @@ export interface IPersonalDataProps {
     firstName?: boolean;
     middleName?: boolean;
     pin?: boolean;
-    birthDate?: boolean;
-    citizenship?: boolean;
     nameOfCompanyOfficial?: boolean;
     nameOfCompanyGov?: boolean;
     representativesName?: boolean;
@@ -87,8 +77,6 @@ export interface IPersonalDataProps {
     notaryLegalParticipantsQty?: boolean;
     notaryTotalParticipantsQty?: boolean;
     notaryDateOfOrder?: boolean;
-    nationality?: boolean;
-    maritalStatus?: boolean;
     tundukDocumentSeries?: boolean;
     tundukDocumentNumber?: boolean;
   };
@@ -287,7 +275,16 @@ export default function PersonalData({
         />
       )}
 
-      <Box display="flex" gap="20px" alignItems="self-start" flexDirection={{ xs: "column", md: "row" }}>
+      <Box
+        display="flex"
+        gap="20px"
+        alignItems="self-start"
+        flexDirection={{ xs: "column", md: "row" }}
+        sx={{
+          boxShadow: "0px 0px 8px 0px rgba(73, 73, 73, 0.5)",
+          padding: "10px",
+        }}
+      >
         {(fields?.pin == null || !!fields?.pin) && watch(names?.subjectRole ?? "") != "notAnAdult" && (
           <>
             <Controller
@@ -478,108 +475,6 @@ export default function PersonalData({
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
                     <InputLabel>{t("Middle name")}</InputLabel>
-                    <Input
-                      disabled={disableFields || isEditableCopy}
-                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                      {...field}
-                    />
-                  </Box>
-                )}
-              />
-            )}
-          </Box>
-
-          <Box display="flex" gap="20px" alignItems="center" flexDirection={{ xs: "column", md: "row" }}>
-            {(fields?.birthDate == null || !!fields?.birthDate) && (
-              <Controller
-                control={control}
-                name={names.birthDate}
-                defaultValue={defaultValues?.birthDate ?? null}
-                render={({ field, fieldState }) => (
-                  <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Birth date")}</InputLabel>
-                    <DatePicker
-                      disabled={disableFields || isEditableCopy}
-                      type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                      value={field.value != null ? new Date(field.value) : null}
-                      onChange={(...event: any[]) => {
-                        field.onChange(...event);
-                        trigger(field.name);
-                      }}
-                      ref={field.ref}
-                    />
-                  </Box>
-                )}
-              />
-            )}
-
-            {(fields?.citizenship == null || !!fields?.citizenship) && (
-              <Controller
-                control={control}
-                name={names.citizenship}
-                defaultValue={defaultValues?.citizenship ?? null}
-                render={({ field, fieldState }) => (
-                  <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Citizenship")}</InputLabel>
-                    <Autocomplete
-                      disabled={disableFields || isEditableCopy}
-                      labelField={locale === "ru" || locale === "kg" ? "$t:name" : "name"}
-                      type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                      options={
-                        citizenshipDictionary?.status === 0
-                          ? (citizenshipDictionary?.data as Record<string, any>[]) ?? []
-                          : []
-                      }
-                      loading={citizenshipDictionaryLoading}
-                      value={
-                        field.value != null
-                          ? (citizenshipDictionary?.data ?? []).find(
-                              (item: Record<string, any>) => item.id == field.value.id
-                            ) ?? null
-                          : null
-                      }
-                      onBlur={field.onBlur}
-                      onChange={(event, value) => {
-                        field.onChange(value?.id != null ? { id: value.id } : null);
-                        trigger(field.name);
-                      }}
-                      ref={field.ref}
-                    />
-                  </Box>
-                )}
-              />
-            )}
-
-            {Boolean(fields?.nationality) && Boolean(names?.nationality) && (
-              <Controller
-                control={control}
-                name={names.nationality ?? ""}
-                defaultValue={defaultValues?.nationality ?? ""}
-                render={({ field, fieldState }) => (
-                  <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Nationality")}</InputLabel>
-                    <Input
-                      disabled={disableFields || isEditableCopy}
-                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                      {...field}
-                    />
-                  </Box>
-                )}
-              />
-            )}
-
-            {Boolean(fields?.maritalStatus) && Boolean(names?.maritalStatus) && (
-              <Controller
-                control={control}
-                name={names.maritalStatus ?? ""}
-                defaultValue={defaultValues?.maritalStatus ?? ""}
-                render={({ field, fieldState }) => (
-                  <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Marital status")}</InputLabel>
                     <Input
                       disabled={disableFields || isEditableCopy}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}

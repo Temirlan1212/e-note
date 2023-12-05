@@ -94,8 +94,6 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
               }}
               disableFields={isTundukFieldsOpen}
               fields={{
-                nationality: true,
-                maritalStatus: true,
                 subjectRole: true,
               }}
               onPinCheck={() => handlePinCheck(index)}
@@ -205,8 +203,6 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     name: `members.${index}.name`,
     middleName: `members.${index}.middleName`,
     pin: `members.${index}.personalNumber`,
-    birthDate: `members.${index}.birthDate`,
-    citizenship: `members.${index}.citizenship`,
     nameOfCompanyOfficial: `members.${index}.nameOfCompanyOfficial`,
     nameOfCompanyGov: `members.${index}.nameOfCompanyGov`,
     representativesName: `members.${index}.representativesName`,
@@ -216,8 +212,6 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     notaryLegalParticipantsQty: `members.${index}.notaryLegalParticipantsQty`,
     notaryTotalParticipantsQty: `members.${index}.notaryTotalParticipantsQty`,
     notaryDateOfOrder: `members.${index}.notaryDateOfOrder`,
-    nationality: `members.${index}.nationality`,
-    maritalStatus: `members.${index}.maritalStatus`,
     subjectRole: `members.${index}.subjectRole`,
   });
 
@@ -228,6 +222,10 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     organType: `members.${index}.authority`,
     organNumber: `members.${index}.authorityNumber`,
     foreigner: `members.${index}.foreigner`,
+    birthDate: `members.${index}.birthDate`,
+    citizenship: `members.${index}.citizenship`,
+    nationality: `members.${index}.nationality`,
+    maritalStatus: `members.${index}.maritalStatus`,
     issueDate: `members.${index}.dateOfIssue`,
     subjectRole: `members.${index}.subjectRole`,
     familyStatus: `members.${index}.familyStatus`,
