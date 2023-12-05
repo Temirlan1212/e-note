@@ -175,6 +175,21 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
   const isFieldsOpen = watch("openFields") as boolean;
 
+  useEffectOnce(() => {
+    const members = getValues("members");
+
+    const updateSubjectRole = (memberIndex: number) => {
+      const subjectRole = getValues(`members.${memberIndex}.subjectRole`);
+      if (subjectRole === "") {
+        setValue(`members.${memberIndex}.subjectRole`, "member");
+      }
+    };
+
+    for (let i = 0; i < (members?.length as number) ?? 0; i++) {
+      updateSubjectRole(i);
+    }
+  }, [items]);
+
   const getTundukParamsFields = (index: number) =>
     ({
       tundukDocumentSeries: `members.${index}.tundukPassportSeries`,
@@ -480,7 +495,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         skip: ["partnerTypeSelect", "tundukPassportNumber", "tundukPassportSeries", "personalNumber", "subjectRole"],
       });
       setValue(`members.${index}.disabled`, true);
-      setExpandAdditionalFields(true);
+      setExpandAdditionalFields(false);
 
       const baseFields = [
         ...Object.values(getPersonalDataNames(index)),

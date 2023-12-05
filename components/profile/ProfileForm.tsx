@@ -23,6 +23,7 @@ import Contact from "@/components/fields/Contact";
 import Coordinates from "@/components/fields/Coordinates";
 import ExpandingFields from "../fields/ExpandingFields";
 import ProfileWorkingDays from "./ProfileWorkingDays";
+import { format } from "date-fns";
 
 interface IProfileFormProps {}
 
@@ -192,6 +193,27 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     setBase64Image(null);
     setImagePreview(null);
   };
+
+  const formatLicenseDate = () => {
+    const formValues = getValues("activeCompany");
+    if (formValues) {
+      const { licenseTermFrom, licenseTermUntil } = formValues;
+      const formattedLicenseTermFrom = licenseTermFrom ? format(new Date(licenseTermFrom), "dd.MM.yyyy") : null;
+      const formattedLicenseTermUntil = licenseTermUntil ? format(new Date(licenseTermUntil), "dd.MM.yyyy") : null;
+
+      setValue("activeCompany.licenseTermFrom", formattedLicenseTermFrom);
+      setValue("activeCompany.licenseTermUntil", formattedLicenseTermUntil);
+    }
+  };
+
+  const handleFormReset = () => {
+    reset();
+    formatLicenseDate();
+  };
+
+  useEffectOnce(() => {
+    formatLicenseDate();
+  }, [userData]);
 
   return userDataLoading ? (
     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -549,7 +571,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               },
             }}
             loading={isDataLoading}
-            onClick={() => reset()}
+            onClick={handleFormReset}
           >
             {t("Cancel")}
           </Button>
