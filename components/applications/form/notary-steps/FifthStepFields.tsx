@@ -174,6 +174,14 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     dynamicForm.setValue("isActiveCompanyId", !!activeCompanyId);
   }, [activeCompanyId]);
 
+  useEffectOnce(() => {
+    const relationshipType = dynamicForm.getValues("notaryRelationships.0.relationshipType");
+
+    if (relationshipType === "") {
+      dynamicForm.setValue("notaryRelationships.0.relationshipType", "Other individuals");
+    }
+  }, [documentTemplateData]);
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <StepperContentStep step={5} title={t("Additional information")} loading={documentTemplateLoading} />
