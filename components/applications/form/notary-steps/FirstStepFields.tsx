@@ -98,8 +98,6 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
               disableFields={isTundukFieldsOpen}
               isTundukRequested={watch(`requester.${index}.disabled`)}
               fields={{
-                nationality: true,
-                maritalStatus: true,
                 subjectRole: true,
               }}
               onPinCheck={() => handlePinCheck(index)}
@@ -113,6 +111,10 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                     <IdentityDocument
                       disableFields={isTundukFieldsOpen || isEditableCopy}
                       form={form}
+                      fields={{
+                        maritalStatus: true,
+                        nationality: true,
+                      }}
                       names={getIdentityDocumentNames(index)}
                     />
                   </>
@@ -238,6 +240,10 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     organType: `requester.${index}.authority`,
     organNumber: `requester.${index}.authorityNumber`,
     foreigner: `requester.${index}.foreigner`,
+    birthDate: `requester.${index}.birthDate`,
+    citizenship: `requester.${index}.citizenship`,
+    nationality: `requester.${index}.nationality`,
+    maritalStatus: `requester.${index}.maritalStatus`,
     issueDate: `requester.${index}.dateOfIssue`,
     familyStatus: `requester.${index}.familyStatus`,
     passportStatus: `requester.${index}.passportStatus`,

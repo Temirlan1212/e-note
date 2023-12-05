@@ -118,8 +118,6 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     name: `members.${index}.name`,
     middleName: `members.${index}.middleName`,
     pin: `members.${index}.personalNumber`,
-    birthDate: `members.${index}.birthDate`,
-    citizenship: `members.${index}.citizenship`,
     nameOfCompanyOfficial: `members.${index}.nameOfCompanyOfficial`,
     nameOfCompanyGov: `members.${index}.nameOfCompanyGov`,
     representativesName: `members.${index}.representativesName`,
@@ -138,6 +136,8 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     organType: `members.${index}.authority`,
     organNumber: `members.${index}.authorityNumber`,
     foreigner: `members.${index}.foreigner`,
+    birthDate: `members.${index}.birthDate`,
+    citizenship: `members.${index}.citizenship`,
     issueDate: `members.${index}.dateOfIssue`,
   });
 

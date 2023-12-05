@@ -64,8 +64,6 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
     name: `requester.${index}.name`,
     middleName: `requester.${index}.middleName`,
     pin: `requester.${index}.personalNumber`,
-    birthDate: `requester.${index}.birthDate`,
-    citizenship: `requester.${index}.citizenship`,
     nameOfCompanyOfficial: `requester.${index}.nameOfCompanyOfficial`,
     nameOfCompanyGov: `requester.${index}.nameOfCompanyGov`,
     representativesName: `requester.${index}.representativesName`,
@@ -84,6 +82,8 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
     organType: `requester.${index}.authority`,
     organNumber: `requester.${index}.authorityNumber`,
     foreigner: `requester.${index}.foreigner`,
+    birthDate: `requester.${index}.birthDate`,
+    citizenship: `requester.${index}.citizenship`,
     issueDate: `requester.${index}.dateOfIssue`,
   });
 

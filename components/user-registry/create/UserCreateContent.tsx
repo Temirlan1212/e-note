@@ -52,8 +52,6 @@ const UserCreateContent: FC = () => {
     name: "name",
     middleName: "middleName",
     pin: "personalNumber",
-    birthDate: "birthDate",
-    citizenship: "citizenship",
     nameOfCompanyOfficial: "nameOfCompanyOfficial",
     nameOfCompanyGov: "nameOfCompanyGov",
     representativesName: "representativesName",
@@ -72,6 +70,8 @@ const UserCreateContent: FC = () => {
     organType: "authority",
     organNumber: "authorityNumber",
     foreigner: `foreigner`,
+    birthDate: "birthDate",
+    citizenship: "citizenship",
     issueDate: "dateOfIssue",
   };
 
@@ -260,7 +260,7 @@ const UserCreateContent: FC = () => {
           tundukDocumentSeries: "tundukPassportSeries",
           tundukDocumentNumber: "tundukPassportNumber",
         }}
-        fields={{ birthDate: false, citizenship: false, type: false, notaryDateOfOrder: false }}
+        fields={{ type: false, notaryDateOfOrder: false }}
         onPinCheck={handlePinCheck}
       />
 
