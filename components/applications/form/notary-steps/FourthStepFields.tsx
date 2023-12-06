@@ -124,8 +124,8 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                   disableFields={
                     isEditableCopy ||
                     (isTundukFieldsOpen &&
-                      !!watch(`members.${index}.tundukPassportSeries`) &&
-                      !!watch(`members.${index}.tundukPassportNumber`))
+                      !!watch(`members.${index}.passportSeries`) &&
+                      !!watch(`members.${index}.passportNumber`))
                   }
                 />
 
@@ -187,19 +187,8 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
       }
     };
 
-    const updateMembersPhoto = (memberIndex: number) => {
-      const pin = getValues(`members.${memberIndex}.personalNumber`);
-      const tundukDocumentSeries = getValues(`members.${memberIndex}.passportSeries`);
-      const tundukDocumentNumber = getValues(`members.${memberIndex}.passportNumber`);
-
-      if (pin != null && tundukDocumentSeries != null && tundukDocumentNumber != null) {
-        handlePinCheck(memberIndex);
-      }
-    };
-
     for (let i = 0; i < (members?.length as number) ?? 0; i++) {
       updateSubjectRole(i);
-      updateMembersPhoto(i);
     }
   }, [items]);
 
@@ -491,7 +480,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         model: `/ws/tunduk/${url}`,
       });
 
-      if (personalData?.status !== 0 || personalData?.data == null) {
+      if (personalData?.status !== 0 || personalData?.data == null || personalData?.data?.firstName == null) {
         setAlertOpen(true);
         return;
       }
@@ -505,7 +494,16 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
       setAlertOpen(false);
 
       resetFields(index, {
-        skip: ["partnerTypeSelect", "tundukPassportNumber", "tundukPassportSeries", "personalNumber", "subjectRole"],
+        skip: [
+          "partnerTypeSelect",
+          "passportNumber",
+          "passportSeries",
+          "personalNumber",
+          "subjectRole",
+          "firstName",
+          "lastName",
+          "middleName",
+        ],
       });
       setValue(`members.${index}.disabled`, true);
       setExpandAdditionalFields(false);

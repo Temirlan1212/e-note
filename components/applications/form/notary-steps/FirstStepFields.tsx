@@ -186,19 +186,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       }
     };
 
-    const updateRequesterPhoto = (requesterIndex: number) => {
-      const pin = getValues(`requester.${requesterIndex}.personalNumber`);
-      const tundukDocumentSeries = getValues(`requester.${requesterIndex}.passportSeries`);
-      const tundukDocumentNumber = getValues(`requester.${requesterIndex}.passportNumber`);
-
-      if (pin != null && tundukDocumentSeries != null && tundukDocumentNumber != null) {
-        handlePinCheck(requesterIndex);
-      }
-    };
-
     for (let i = 0; i < (requesters?.length as number) ?? 0; i++) {
       updateSubjectRole(i);
-      updateRequesterPhoto(i);
     }
   }, [items]);
 
@@ -514,7 +503,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         model: `/ws/tunduk/${url}`,
       });
 
-      if (personalData?.status !== 0 || personalData?.data == null) {
+      if (personalData?.status !== 0 || personalData?.data == null || personalData?.data?.firstName == null) {
         setAlertOpen(true);
         return;
       }
@@ -529,7 +518,16 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       setAlertOpen(false);
 
       resetFields(index, {
-        skip: ["partnerTypeSelect", "tundukPassportNumber", "tundukPassportSeries", "personalNumber", "subjectRole"],
+        skip: [
+          "partnerTypeSelect",
+          "passportNumber",
+          "passportSeries",
+          "personalNumber",
+          "subjectRole",
+          "firstName",
+          "lastName",
+          "middleName",
+        ],
       });
       setValue(`requester.${index}.disabled`, true);
       setExpandAdditionalFields(false);
