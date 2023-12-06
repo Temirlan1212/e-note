@@ -187,19 +187,8 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
       }
     };
 
-    const updateMembersPhoto = (memberIndex: number) => {
-      const pin = getValues(`members.${memberIndex}.personalNumber`);
-      const tundukDocumentSeries = getValues(`members.${memberIndex}.passportSeries`);
-      const tundukDocumentNumber = getValues(`members.${memberIndex}.passportNumber`);
-
-      if (pin != null && tundukDocumentSeries != null && tundukDocumentNumber != null) {
-        handlePinCheck(memberIndex);
-      }
-    };
-
     for (let i = 0; i < (members?.length as number) ?? 0; i++) {
       updateSubjectRole(i);
-      updateMembersPhoto(i);
     }
   }, [items]);
 

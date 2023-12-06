@@ -186,19 +186,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       }
     };
 
-    const updateRequesterPhoto = (requesterIndex: number) => {
-      const pin = getValues(`requester.${requesterIndex}.personalNumber`);
-      const tundukDocumentSeries = getValues(`requester.${requesterIndex}.passportSeries`);
-      const tundukDocumentNumber = getValues(`requester.${requesterIndex}.passportNumber`);
-
-      if (pin != null && tundukDocumentSeries != null && tundukDocumentNumber != null) {
-        handlePinCheck(requesterIndex);
-      }
-    };
-
     for (let i = 0; i < (requesters?.length as number) ?? 0; i++) {
       updateSubjectRole(i);
-      updateRequesterPhoto(i);
     }
   }, [items]);
 
