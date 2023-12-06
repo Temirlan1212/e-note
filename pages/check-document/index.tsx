@@ -8,11 +8,13 @@ import Button from "@/components/ui/Button";
 import CheckByID from "@/components/check-document/CheckByID";
 import CheckByQR from "@/components/check-document/CheckByQR";
 import CheckByPDF from "@/components/check-document/CheckByPDF";
+import CheckByUniqNumber from "@/components/check-document/CheckByUniqNumber";
 
 const Tabs: Record<number, ReactNode> = {
   1: <CheckByID />,
   2: <CheckByQR />,
   3: <CheckByPDF />,
+  4: <CheckByUniqNumber />,
 };
 
 export default function CheckDocument() {
@@ -39,6 +41,11 @@ export default function CheckDocument() {
       text: "By PDF",
       click: () => handleDocClick(3),
     },
+    {
+      id: 4,
+      text: "By Unique number",
+      click: () => handleDocClick(4),
+    },
   ];
 
   return (
@@ -50,7 +57,7 @@ export default function CheckDocument() {
         <Typography align="center" fontSize={{ xs: "24px", sm: "24px", md: "36px" }} fontWeight={600}>
           {t("Check document")}
         </Typography>
-        <Box display="flex" gap="10px">
+        <Box display="flex" gap="10px" flexDirection={{ xs: "column", md: "row" }}>
           {tabs.map((tab) => {
             const isActive = docId === tab.id;
 
