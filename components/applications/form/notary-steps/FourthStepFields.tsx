@@ -124,8 +124,8 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                   disableFields={
                     isEditableCopy ||
                     (isTundukFieldsOpen &&
-                      !!watch(`members.${index}.tundukPassportSeries`) &&
-                      !!watch(`members.${index}.tundukPassportNumber`))
+                      !!watch(`members.${index}.passportSeries`) &&
+                      !!watch(`members.${index}.passportNumber`))
                   }
                 />
 
@@ -494,7 +494,16 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
       setAlertOpen(false);
 
       resetFields(index, {
-        skip: ["partnerTypeSelect", "tundukPassportNumber", "tundukPassportSeries", "personalNumber", "subjectRole"],
+        skip: [
+          "partnerTypeSelect",
+          "passportNumber",
+          "passportSeries",
+          "personalNumber",
+          "subjectRole",
+          "firstName",
+          "lastName",
+          "middleName",
+        ],
       });
       setValue(`members.${index}.disabled`, true);
       setExpandAdditionalFields(false);

@@ -518,7 +518,16 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       setAlertOpen(false);
 
       resetFields(index, {
-        skip: ["partnerTypeSelect", "tundukPassportNumber", "tundukPassportSeries", "personalNumber", "subjectRole"],
+        skip: [
+          "partnerTypeSelect",
+          "passportNumber",
+          "passportSeries",
+          "personalNumber",
+          "subjectRole",
+          "firstName",
+          "lastName",
+          "middleName",
+        ],
       });
       setValue(`requester.${index}.disabled`, true);
       setExpandAdditionalFields(false);
