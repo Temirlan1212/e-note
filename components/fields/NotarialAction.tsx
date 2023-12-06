@@ -107,7 +107,11 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
 
   useEffect(() => {
     if (isEditableCopy && objectVal) setDisable(true);
-    updateSearchedDoc("/api/dictionaries/document-type");
+    updateSearchedDoc("/api/dictionaries/document-type", {
+      formValues: {
+        isSystem: true,
+      },
+    });
     setIsAdditionalFieldsOpen(isValuesSelected);
   }, []);
 
