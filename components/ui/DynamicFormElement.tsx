@@ -70,7 +70,7 @@ export interface IDynamicFormElementProps extends HTMLAttributes<HTMLElement> {
   path?: string;
   hidden?: boolean;
   minLength?: TLengthValidation;
-  maxLength?: TLengthValidation;
+  maxLength?: TLengthValidation & { freeze?: boolean };
   conditions?: Partial<TConditions>;
   options?: Record<string, any>[];
   observableForms?: UseFormReturn<any>[];
@@ -129,11 +129,28 @@ const getField = (
     loading?: boolean;
     label?: string;
     color?: string;
+    minLength?: TLengthValidation;
+    maxLength?: TLengthValidation & { freeze?: boolean };
   }
 ) => {
-  const { field, optionsData, errorMessage, disabled, form, locale, options, loading, label, color } = props;
+  const {
+    field,
+    optionsData,
+    errorMessage,
+    disabled,
+    form,
+    locale,
+    options,
+    loading,
+    label,
+    color,
+    maxLength,
+    minLength,
+  } = props;
   const { trigger } = form;
 
+  let inputProps = {};
+  if (!!maxLength?.freeze) inputProps = { ...inputProps, maxLength: maxLength?.value };
   const types = {
     String: (
       <Input
@@ -145,6 +162,7 @@ const getField = (
         onChange={(e) => field.onChange(String(e.target.value))}
         disabled={disabled}
         ref={field.ref}
+        inputProps={inputProps}
       />
     ),
     Float: (
@@ -158,6 +176,7 @@ const getField = (
         onChange={(e) => field.onChange(parseInt(e.target.value))}
         disabled={disabled}
         ref={field.ref}
+        inputProps={inputProps}
       />
     ),
     Decimal: (
@@ -171,6 +190,7 @@ const getField = (
         onChange={(e) => field.onChange(parseInt(e.target.value))}
         disabled={disabled}
         ref={field.ref}
+        inputProps={inputProps}
       />
     ),
     Integer: (
@@ -184,6 +204,7 @@ const getField = (
         onChange={(e) => field.onChange(parseInt(e.target.value))}
         disabled={disabled}
         ref={field.ref}
+        inputProps={inputProps}
       />
     ),
     Selection: (
@@ -425,7 +446,7 @@ const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
       ...validations,
       maxLength: {
         value: maxLength.value,
-        message: t(maxLengthTranslationKeys[maxLength.type], { min: maxLength.value }),
+        message: t(maxLengthTranslationKeys[maxLength.type], { max: maxLength.value }),
       },
     };
   }
@@ -472,6 +493,8 @@ const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
               form,
               locale,
               loading,
+              maxLength,
+              minLength,
               ...rest,
             })}
           </Box>
