@@ -8,7 +8,7 @@ import { IApplication } from "@/models/application";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import SearchBar from "@/components/ui/SearchBar";
-import { checkDocumentByNumber, ICheckDocumentByNumber } from "@/validator-schemas/check-documnet-byNumber";
+import { checkDocumentByNumber, ICheckDocumentByNumber } from "@/validator-schemas/check-document-by-number";
 
 interface ICheckedDocument extends FetchResponseBody {
   data: IApplication[];
