@@ -146,20 +146,20 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     if (!!step) setStep(Number(step));
   }, []);
 
-  useEffectOnce(() => {
-    const subscription = form.watch((value, { name, type }) => {
-      if (name?.indexOf("personalNumber") != -1) {
-        const value = form.getValues(name as any);
-        if (!Object.values(personalNumbers.current).includes(value ?? "")) {
-          personalNumbers.current = { ...personalNumbers.current, [name as string]: value };
-          setFormState("pin", { unique: true, name, value });
-        } else {
-          setFormState("pin", { unique: false, name, value });
-        }
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [form.watch]);
+  // useEffectOnce(() => {
+  //   const subscription = form.watch((value, { name, type }) => {
+  //     if (name?.indexOf("personalNumber") != -1) {
+  //       const value = form.getValues(name as any);
+  //       if (!Object.values(personalNumbers.current).includes(value ?? "")) {
+  //         personalNumbers.current = { ...personalNumbers.current, [name as string]: value };
+  //         setFormState("pin", { unique: true, name, value });
+  //       } else {
+  //         setFormState("pin", { unique: false, name, value });
+  //       }
+  //     }
+  //   });
+  //   return () => subscription.unsubscribe();
+  // }, [form.watch]);
 
   const selectTemplateFromMade = form.watch("selectTemplateFromMade");
 
