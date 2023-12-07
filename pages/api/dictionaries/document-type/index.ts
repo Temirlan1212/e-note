@@ -3,6 +3,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export enum criteriaFieldNames {
   isSystem = "isSystem",
   createdBy = "createdBy.id",
+  object = "object.id",
+  objectType = "objectType.id",
+  notarialAction = "notarialAction.id",
+  typeNotarialAction = "typeNotarialAction.id",
   action = "notaryAction.id",
 }
 
@@ -12,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const formValues = req.body?.["formValues"];
-  const criteria: Record<string, string | number>[] = [];
+  const criteria: Record<string, string | number | boolean>[] = [];
 
   if (formValues != null) {
     for (let key in criteriaFieldNames) {
@@ -26,6 +30,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         value: value ? value : null,
       });
     }
+  } else if (formValues == null) {
+    criteria.push({
+      fieldName: "isSystem",
+      operator: "=",
+      value: true,
+    });
   }
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Product/search", {

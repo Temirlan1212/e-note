@@ -48,6 +48,8 @@ export default function RequestDynamicField({
                 hidden={item?.hidden != null ? !!item?.hidden : !!rest?.hidden}
                 required={item?.required != null ? !!item?.required : !!rest?.required}
                 conditions={Object.values(item?.conditions ?? {}).length > 0 ? item?.conditions : rest?.conditions}
+                minLength={item?.minLength}
+                maxLength={item?.maxLength}
                 path={rest?.path || item?.path}
                 type={item?.fieldType}
                 form={form}
@@ -95,6 +97,8 @@ export default function RequestDynamicField({
                 }
                 hidden={item?.hidden != null ? !!item?.hidden : !!rest?.hidden}
                 required={item?.required != null ? !!item?.required : !!rest?.required}
+                minLength={item?.minLength}
+                maxLength={item?.maxLength}
                 conditions={Object.values(item?.conditions ?? {}).length > 0 ? item?.conditions : rest?.conditions}
                 type={item?.fieldType}
                 form={form}

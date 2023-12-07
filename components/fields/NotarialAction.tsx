@@ -62,20 +62,20 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
   const isValuesSelected = values.every((item) => !!item);
 
   useEffectOnce(() => {
-    if (actionVal != null) {
-      const { action } = getValues();
+    if (actionVal != null || objectVal != null) {
       updateSearchedDoc("/api/dictionaries/document-type", {
-        formValues: { action, isSystem: true },
+        formValues: {
+          action: actionVal,
+          object: objectVal,
+          objectType: objectTypeVal,
+          notarialAction: notarialActionVal,
+          typeNotarialAction: typeNotarialActionVal,
+          isSystem: true,
+        },
       });
     }
-    if (!isValuesSelected || !actionVal) {
-      updateSearchedDoc("/api/dictionaries/document-type", {
-        formValues: { isSystem: true },
-      });
-    }
-    if (isValuesSelected) {
-      setIsAdditionalFieldsOpen(isValuesSelected);
-    }
+
+    if (isValuesSelected) setIsAdditionalFieldsOpen(isValuesSelected);
   }, values);
 
   useEffectOnce(async () => {
@@ -103,7 +103,11 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
   }, [product]);
 
   useEffect(() => {
-    updateSearchedDoc("/api/dictionaries/document-type");
+    updateSearchedDoc("/api/dictionaries/document-type", {
+      formValues: {
+        isSystem: true,
+      },
+    });
     setIsAdditionalFieldsOpen(isValuesSelected);
   }, []);
 

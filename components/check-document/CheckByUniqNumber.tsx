@@ -6,21 +6,21 @@ import { useRouter } from "next/router";
 import Hint from "@/components/ui/Hint";
 import { IApplication } from "@/models/application";
 import { Controller, useForm } from "react-hook-form";
-import { checkDocumentById, ICheckDocumentById } from "@/validator-schemas/check-document-byId";
 import { yupResolver } from "@hookform/resolvers/yup";
 import SearchBar from "@/components/ui/SearchBar";
+import { checkDocumentByNumber, ICheckDocumentByNumber } from "@/validator-schemas/check-documnet-byNumber";
 
 interface ICheckedDocument extends FetchResponseBody {
   data: IApplication[];
 }
 
-export default function CheckByID() {
+export default function CheckByUniqNumber() {
   const router = useRouter();
   const [alertOpen, setAlertOpen] = useState(false);
   const t = useTranslations();
 
-  const { handleSubmit, formState, control } = useForm<ICheckDocumentById>({
-    resolver: yupResolver<ICheckDocumentById>(checkDocumentById),
+  const { handleSubmit, formState, control } = useForm<ICheckDocumentByNumber>({
+    resolver: yupResolver<ICheckDocumentByNumber>(checkDocumentByNumber),
   });
   const { data, loading, update, error } = useFetch<ICheckedDocument>("", "POST");
 
@@ -29,13 +29,7 @@ export default function CheckByID() {
       return;
     }
     update("/api/check-document", {
-      criteria: [
-        {
-          fieldName: "uniqueQrCode",
-          operator: "=",
-          value: data?.keyword,
-        },
-      ],
+      domainVal: data.keyword,
     });
   };
 
@@ -57,7 +51,7 @@ export default function CheckByID() {
       </Collapse>
       <Box sx={{ display: "flex", flexDirection: "column", width: "100%", gap: "15px" }}>
         <InputLabel htmlFor="search-field" sx={{ whiteSpace: "normal", color: "#687C9B" }}>
-          {t("Enter a unique number (ID) of the document to search:")}
+          {t("Enter a unique number of the document to search:")}
         </InputLabel>
 
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
@@ -89,9 +83,7 @@ export default function CheckByID() {
           alignSelf: "end",
         }}
       >
-        <Typography fontWeight={400}>
-          {t("Each notarial document has its unique number, consisting of n-characters Click on the")}
-        </Typography>
+        <Typography fontWeight={400}>{t("Each signed notarized document has its unique number")}</Typography>
       </Hint>
     </Box>
   );

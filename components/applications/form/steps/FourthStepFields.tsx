@@ -18,6 +18,7 @@ import PersonalData from "@/components/fields/PersonalData";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 import ExpandingFields from "@/components/fields/ExpandingFields";
+import useApplicationsStore from "@/stores/applications";
 
 interface IBaseEntityFields {
   id?: number;
@@ -40,6 +41,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
   const tabsRef = useRef<ITabsRef>(null);
+  const pinFieldState = useApplicationsStore((state) => state.formState.pin);
 
   const {
     control,
@@ -225,9 +227,13 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
 
   const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
-    if (!validated) focusToFieldOnError();
+    if (!pinFieldState?.unique) {
+      form.setError((pinFieldState?.name as any) ?? "", { type: "required", message: t("unique", { pin: t("PIN") }) });
+    }
 
-    if (validated) {
+    if (!validated || !pinFieldState?.unique) focusToFieldOnError();
+
+    if (validated && pinFieldState?.unique) {
       setLoading(true);
 
       const values = getValues();
