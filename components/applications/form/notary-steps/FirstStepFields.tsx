@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -33,13 +33,7 @@ interface IBaseEntityFields {
 }
 
 export interface ITabListItem {
-  getElement: (
-    index: number,
-    loading?: boolean,
-    isEditableCopy?: boolean,
-    isTundukFieldsOpen?: boolean,
-    expand?: boolean
-  ) => JSX.Element;
+  getElement: (index: number, loading?: boolean, isTundukFieldsOpen?: boolean, expand?: boolean) => JSX.Element;
 }
 
 export interface IStepFieldsProps {
@@ -76,13 +70,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
-      getElement(
-        index: number,
-        loading?: boolean,
-        isEditableCopy?: boolean,
-        isTundukFieldsOpen?: boolean,
-        expand?: boolean
-      ) {
+      getElement(index: number, loading?: boolean, isTundukFieldsOpen?: boolean, expand?: boolean) {
         const partnerType = watch(`requester.${index}.partnerTypeSelect`);
 
         return (
@@ -109,7 +97,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                   <>
                     <Typography variant="h5">{t("Identity document")}</Typography>
                     <IdentityDocument
-                      disableFields={isTundukFieldsOpen || isEditableCopy}
+                      disableFields={isTundukFieldsOpen}
                       form={form}
                       fields={{
                         maritalStatus: true,
@@ -121,18 +109,13 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                 )}
 
                 <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
-                <Address
-                  form={form}
-                  names={getAddressNames(index)}
-                  disableFields={isTundukFieldsOpen || isEditableCopy}
-                />
+                <Address form={form} names={getAddressNames(index)} disableFields={isTundukFieldsOpen} />
 
                 {partnerType != 1 && (
                   <>
                     <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap="10px">
                       <Typography variant="h5">{t("Actual place of residence")}</Typography>
                       <Button
-                        disabled={isEditableCopy}
                         sx={{ width: "fit-content" }}
                         onClick={() => {
                           Object.entries(getAddressNames(index) ?? {})?.map(([key, name]) => {
@@ -144,22 +127,16 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                       </Button>
                     </Box>
 
-                    <Address form={form} names={getActualAddressNames(index)} disableFields={isEditableCopy} />
+                    <Address form={form} names={getActualAddressNames(index)} />
                   </>
                 )}
 
                 <Typography variant="h5">{t("Contacts")}</Typography>
-                <Contact form={form} names={getContactNames(index)} disableFields={isEditableCopy} />
+                <Contact form={form} names={getContactNames(index)} />
 
                 <Typography variant="h5">{t("Files to upload")}</Typography>
 
-                <AttachedFiles
-                  disabled={isEditableCopy}
-                  form={form}
-                  ref={attachedFilesRef}
-                  name="requester"
-                  index={index}
-                />
+                <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={index} />
               </Box>
             </ExpandingFields>
           </Box>
@@ -168,6 +145,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     },
   ]);
 
+  const { update: partnerUpdate } = useFetch("", "PUT");
   const { update: applicationCreate } = useFetch("", "POST");
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
@@ -330,12 +308,21 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       setLoading(true);
 
       const values = getValues();
+      let newRequesters: IPersonSchema[] = [];
+      if (isEditableCopy && values.requester) {
+        newRequesters = await Promise.all(
+          values.requester.map(async (value) => {
+            const { id, version, emailAddress, ...rest } = value;
+            return await partnerUpdate("/api/applications/update/partner", rest).then((res) => res.data[0]);
+          })
+        );
+      }
       const data: Partial<IApplicationSchema> & { creationDate: string } = {
         id: values.id,
         version: values.version,
         creationDate: format(new Date(), "yyyy-MM-dd"),
         company: { id: userData?.activeCompany?.id },
-        requester: values.requester,
+        requester: newRequesters.length > 0 ? newRequesters : values.requester,
         statusSelect: 2,
         notarySignatureStatus: 2,
       };
@@ -576,7 +563,6 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
             tabPanelContent: getElement(
               index,
               tundukPersonalDataLoading,
-              isEditableCopy,
               isFieldsOpen,
               expandAdditionalFields
               // || watch(`requester.${index}.disabled`)

@@ -31,13 +31,7 @@ interface IBaseEntityFields {
 }
 
 export interface ITabListItem {
-  getElement: (
-    index: number,
-    loading?: boolean,
-    isEditableCopy?: boolean,
-    isTundukFieldsOpen?: boolean,
-    expand?: boolean
-  ) => JSX.Element;
+  getElement: (index: number, loading?: boolean, isTundukFieldsOpen?: boolean, expand?: boolean) => JSX.Element;
 }
 
 export interface IStepFieldsProps {
@@ -73,13 +67,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
-      getElement(
-        index: number,
-        loading?: boolean,
-        isEditableCopy?: boolean,
-        isTundukFieldsOpen?: boolean,
-        expand?: boolean
-      ) {
+      getElement(index: number, loading?: boolean, isTundukFieldsOpen?: boolean, expand?: boolean) {
         const partnerType = watch(`members.${index}.partnerTypeSelect`);
 
         return (
@@ -106,7 +94,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                   <>
                     <Typography variant="h5">{t("Identity document")}</Typography>
                     <IdentityDocument
-                      disableFields={isTundukFieldsOpen || isEditableCopy}
+                      disableFields={isTundukFieldsOpen}
                       form={form}
                       fields={{
                         nationality: true,
@@ -122,10 +110,9 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                   form={form}
                   names={getAddressNames(index)}
                   disableFields={
-                    isEditableCopy ||
-                    (isTundukFieldsOpen &&
-                      !!watch(`members.${index}.passportSeries`) &&
-                      !!watch(`members.${index}.passportNumber`))
+                    isTundukFieldsOpen &&
+                    !!watch(`members.${index}.passportSeries`) &&
+                    !!watch(`members.${index}.passportNumber`)
                   }
                 />
 
@@ -134,7 +121,6 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                     <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap="10px">
                       <Typography variant="h5">{t("Actual place of residence")}</Typography>
                       <Button
-                        disabled={isEditableCopy}
                         sx={{ width: "fit-content" }}
                         onClick={() => {
                           Object.entries(getAddressNames(index) ?? {})?.map(([key, name]) => {
@@ -146,22 +132,16 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                       </Button>
                     </Box>
 
-                    <Address disableFields={isEditableCopy} form={form} names={getActualAddressNames(index)} />
+                    <Address form={form} names={getActualAddressNames(index)} />
                   </>
                 )}
 
                 <Typography variant="h5">{t("Contacts")}</Typography>
-                <Contact disableFields={isEditableCopy} form={form} names={getContactNames(index)} />
+                <Contact form={form} names={getContactNames(index)} />
 
                 <Typography variant="h5">{t("Files to upload")}</Typography>
 
-                <AttachedFiles
-                  disabled={isEditableCopy}
-                  form={form}
-                  ref={attachedFilesRef}
-                  name="members"
-                  index={index}
-                />
+                <AttachedFiles form={form} ref={attachedFilesRef} name="members" index={index} />
               </Box>
             </ExpandingFields>
           </Box>
@@ -170,6 +150,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     },
   ]);
 
+  const { update: partnerUpdate } = useFetch("", "PUT");
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
   const { update: tundukPersonalDataFetch, loading: tundukPersonalDataLoading } = useFetch("", "POST");
@@ -326,10 +307,19 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
       setLoading(true);
 
       const values = getValues();
+      let newMembers: IPersonSchema[] = [];
+      if (isEditableCopy && values.members) {
+        newMembers = await Promise.all(
+          values.members.map(async (value) => {
+            const { id, version, emailAddress, ...rest } = value;
+            return await partnerUpdate("/api/applications/update/partner", rest).then((res) => res.data[0]);
+          })
+        );
+      }
       const data: Partial<IApplicationSchema> = {
         id: values.id,
         version: values.version,
-        members: values.members,
+        members: newMembers.length > 0 ? newMembers : values.members,
       };
 
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
@@ -552,7 +542,6 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
             tabPanelContent: getElement(
               index,
               tundukPersonalDataLoading,
-              isEditableCopy,
               isFieldsOpen,
               expandAdditionalFields
               // || watch(`requester.${index}.disabled`)
