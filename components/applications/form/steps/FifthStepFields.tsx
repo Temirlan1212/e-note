@@ -252,6 +252,8 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                           selectionName={item?.selection ?? ""}
                           objectName={item?.object ?? ""}
                           options={item?.options}
+                          minLength={item?.minLength}
+                          maxLength={item?.maxLength}
                         />
                       )}
                     </Grid>

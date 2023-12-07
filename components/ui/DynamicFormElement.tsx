@@ -1,4 +1,4 @@
-import { Controller, ControllerRenderProps, FieldPathValue, UseFormReturn } from "react-hook-form";
+import { Controller, ControllerRenderProps, FieldPathValue, RegisterOptions, UseFormReturn } from "react-hook-form";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";
@@ -39,6 +39,23 @@ export type TConditions = {
   show: TCondition;
 };
 
+export type TLengthValidation = {
+  type: "symbols" | "numbers" | "letters";
+  value: number;
+};
+
+enum minLengthTranslationKeys {
+  letters = "minLetters",
+  symbols = "minSymbols",
+  numbers = "minNumbers",
+}
+
+enum maxLengthTranslationKeys {
+  letters = "maxLetters",
+  symbols = "maxSymbols",
+  numbers = "maxNumbers",
+}
+
 export interface IDynamicFormElementProps extends HTMLAttributes<HTMLElement> {
   type: Variant;
   form: UseFormReturn<any>;
@@ -52,6 +69,8 @@ export interface IDynamicFormElementProps extends HTMLAttributes<HTMLElement> {
   objectName?: string;
   path?: string;
   hidden?: boolean;
+  minLength?: TLengthValidation;
+  maxLength?: TLengthValidation;
   conditions?: Partial<TConditions>;
   options?: Record<string, any>[];
   observableForms?: UseFormReturn<any>[];
@@ -340,6 +359,8 @@ const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
     loading,
     title,
     objectName,
+    minLength,
+    maxLength,
     ...rest
   } = props;
 
@@ -395,12 +416,36 @@ const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
     if (data?.data != null) setOptionsData(data?.data);
   }, []);
 
+  let validations: Omit<RegisterOptions<any, any>, "valueAsNumber" | "valueAsDate" | "setValueAs" | "disabled"> = {
+    required: rules.required ? "required" : false,
+  };
+
+  if (!!maxLength?.value && !!maxLength?.type) {
+    validations = {
+      ...validations,
+      maxLength: {
+        value: maxLength.value,
+        message: t(maxLengthTranslationKeys[maxLength.type], { min: maxLength.value }),
+      },
+    };
+  }
+
+  if (!!minLength?.value && !!minLength?.type) {
+    validations = {
+      ...validations,
+      minLength: {
+        value: minLength.value,
+        message: t(minLengthTranslationKeys[minLength.type], { min: minLength.value }),
+      },
+    };
+  }
+
   return (
     <Controller
       control={form.control}
       name={getName(path, fieldName)}
       defaultValue={getValue(type, defaultValue)}
-      rules={{ required: rules.required ? "required" : false }}
+      rules={validations}
       render={({ field, fieldState }) => {
         let errorMessage = fieldState.error?.message ? t(fieldState.error.message) : fieldState.error?.message ?? "";
 
