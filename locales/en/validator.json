@@ -15,5 +15,6 @@
   "lowCase": "Password must contain lower case letters",
   "upperCase": "Password must contain upper case letters",
   "digit": "Password must contain at least one digit",
-  "password": "Password mismatch"
+  "password": "Password mismatch",
+  "unique": "{pin} should be unique"
 }
