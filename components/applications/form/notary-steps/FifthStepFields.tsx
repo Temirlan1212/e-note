@@ -22,6 +22,11 @@ export interface IStepFieldsProps {
   handleStepNextClick?: Function;
 }
 
+enum PartnerType {
+  LegalEntity = 1,
+  Individual = 2,
+}
+
 const getTemplateDocGroupName = (group: Record<string, any>, locale: string | undefined) => {
   const groupName = group?.groupName === "null" ? "" : group?.groupName ?? "";
   const groupNameLocale = group?.["groupName_" + locale];
@@ -36,11 +41,18 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   const isEditableCopy = form.watch("isToPrintLineSubTotal") as boolean;
   const isFieldsOpen = form.watch("openFields") as boolean;
 
+  const notaryRelationships = dynamicForm.getValues("notaryRelationships");
+  const relationshipType = dynamicForm.watch(
+    `notaryRelationships.${Array.isArray(notaryRelationships) ? "0.relationshipType" : "relationshipType"}`
+  );
+  const notaryPowerAttorneyTerm = dynamicForm.watch("notaryPowerAttorneyTerm");
+
   const [alertOpen, setAlertOpen] = useState(false);
   const activeCompanyId = useProfileStore((state) => state.userData?.activeCompany?.id);
 
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
   const { update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
+  const { update: getAmountStateTax } = useFetch("", "POST");
 
   const {
     update: getDocumentTemplateData,
@@ -175,12 +187,61 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   }, [activeCompanyId]);
 
   useEffectOnce(() => {
-    const relationshipType = dynamicForm.getValues("notaryRelationships.0.relationshipType");
-
-    if (relationshipType === "") {
-      dynamicForm.setValue("notaryRelationships.0.relationshipType", "Other individuals");
+    if (Array.isArray(notaryRelationships)) {
+      if (notaryRelationships?.[0]?.relationshipType === "" || notaryRelationships?.[0]?.relationshipType == null) {
+        dynamicForm.setValue("notaryRelationships[0].relationshipType", "Other individuals");
+      }
+    } else if (notaryRelationships?.relationshipType === "" || notaryRelationships?.relationshipType == null) {
+      dynamicForm.setValue("notaryRelationships[0].relationshipType", "Other individuals");
     }
   }, [documentTemplateData]);
+
+  useEffectOnce(async () => {
+    const formValues = form.getValues();
+    const dynamicFormValues = dynamicForm.getValues();
+
+    const { typeNotarialAction, product, requester, members } = formValues;
+    const { notaryPowerAttorneyTerm } = dynamicFormValues;
+
+    let partnerType: PartnerType = PartnerType.Individual;
+
+    const isLegalEntity = (value: string | number) =>
+      value === PartnerType.LegalEntity || value === String(PartnerType.LegalEntity);
+
+    if (typeNotarialAction === 41) {
+      if (requester?.some((requester: any) => isLegalEntity(requester?.partnerTypeSelect))) {
+        partnerType = PartnerType.LegalEntity;
+      }
+    } else if (
+      requester?.some((requester: any) => isLegalEntity(requester?.partnerTypeSelect)) ||
+      members?.some((member: any) => isLegalEntity(member?.partnerTypeSelect))
+    ) {
+      partnerType = PartnerType.LegalEntity;
+    }
+
+    const isValid =
+      product?.id != null &&
+      relationshipType != null &&
+      relationshipType !== "" &&
+      partnerType != null &&
+      notaryPowerAttorneyTerm != null &&
+      notaryPowerAttorneyTerm !== "";
+
+    if (isValid) {
+      const params = {
+        notaryProductId: Number(product.id),
+        relationshipType: relationshipType,
+        partnerType: partnerType,
+        notaryPowerAttorneyTerm: Number(notaryPowerAttorneyTerm),
+      };
+
+      await getAmountStateTax("/api/applications/amount-of-state-tax", {
+        body: params,
+      }).then((res) => dynamicForm.setValue("notaryAmountStateTax", res?.data?.[0]?.reward ?? ""));
+    } else {
+      dynamicForm.setValue("notaryAmountStateTax", "");
+    }
+  }, [relationshipType, notaryPowerAttorneyTerm]);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
@@ -264,8 +325,6 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                           selectionName={item?.selection ?? ""}
                           objectName={item?.object ?? ""}
                           options={item?.options}
-                          minLength={item?.minLength}
-                          maxLength={item?.maxLength}
                         />
                       )}
                     </Grid>
