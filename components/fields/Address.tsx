@@ -3,6 +3,7 @@ import { Controller, UseFormReturn } from "react-hook-form";
 import { InputLabel, Box, SxProps, Theme } from "@mui/material";
 import Input from "@/components/ui/Input";
 import Area, { IAreaProps } from "./Area";
+import { useEffect } from "react";
 
 export interface IAddressProps extends IAreaProps {
   form: UseFormReturn<any>;
@@ -40,6 +41,16 @@ export default function Address({
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
+
+  const street = watch(names.street);
+  const house = watch(names.house);
+  const apartment = watch(names.apartment);
+
+  useEffect(() => {
+    if (street == null) form.setValue(names?.street, "");
+    if (house == null) form.setValue(names?.house, "");
+    if (apartment == null) form.setValue(names?.apartment, "");
+  }, [street, house, apartment]);
 
   return (
     <Box sx={boxSx} display="flex" gap="20px" flexDirection="column">

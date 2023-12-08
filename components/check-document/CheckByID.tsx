@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import Hint from "@/components/ui/Hint";
 import { IApplication } from "@/models/application";
 import { Controller, useForm } from "react-hook-form";
-import { checkDocumentById, ICheckDocumentById } from "@/validator-schemas/check-document-byId";
+import { checkDocumentById, ICheckDocumentById } from "@/validator-schemas/check-document-by-id";
 import { yupResolver } from "@hookform/resolvers/yup";
 import SearchBar from "@/components/ui/SearchBar";
 
