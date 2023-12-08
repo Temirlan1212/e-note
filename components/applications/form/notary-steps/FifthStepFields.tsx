@@ -22,6 +22,11 @@ export interface IStepFieldsProps {
   handleStepNextClick?: Function;
 }
 
+enum PartnerType {
+  LegalEntity = 1,
+  Individual = 2,
+}
+
 const getTemplateDocGroupName = (group: Record<string, any>, locale: string | undefined) => {
   const groupName = group?.groupName === "null" ? "" : group?.groupName ?? "";
   const groupNameLocale = group?.["groupName_" + locale];
@@ -35,11 +40,20 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   const productId = form.watch("product.id");
   const isFieldsOpen = form.watch("openFields") as boolean;
 
+  const notaryPowerAttorneyTerm = dynamicForm.watch("notaryPowerAttorneyTerm");
+  const notaryRelationships = dynamicForm.getValues("notaryRelationships");
+  const relationshipType = dynamicForm.watch(
+    `notaryRelationships.${
+      notaryRelationships?.relationshipType === undefined ? "0.relationshipType" : "relationshipType"
+    }`
+  );
+
   const [alertOpen, setAlertOpen] = useState(false);
   const activeCompanyId = useProfileStore((state) => state.userData?.activeCompany?.id);
 
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
   const { update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
+  const { update: getAmountStateTax } = useFetch("", "POST");
 
   const {
     update: getDocumentTemplateData,
@@ -174,12 +188,54 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   }, [activeCompanyId]);
 
   useEffectOnce(() => {
-    const relationshipType = dynamicForm.getValues("notaryRelationships.0.relationshipType");
-
-    if (relationshipType === "") {
-      dynamicForm.setValue("notaryRelationships.0.relationshipType", "Other individuals");
+    if (notaryRelationships?.relationshipType === null || notaryRelationships?.relationshipType === "") {
+      dynamicForm.setValue("notaryRelationships.relationshipType", "Other individuals");
+    }
+    if (notaryRelationships?.[0]?.relationshipType === null || notaryRelationships?.[0]?.relationshipType === "") {
+      dynamicForm.setValue("notaryRelationships[0].relationshipType", "Other individuals");
     }
   }, [documentTemplateData]);
+
+  useEffectOnce(async () => {
+    const formValues = form.getValues();
+    const dynamicFormValues = dynamicForm.getValues();
+
+    const { typeNotarialAction, product, requester, members } = formValues;
+    const { notaryPowerAttorneyTerm } = dynamicFormValues;
+
+    let partnerType: PartnerType = PartnerType.Individual;
+
+    const isLegalEntity = (value: string | number) =>
+      value === PartnerType.LegalEntity || value === String(PartnerType.LegalEntity);
+
+    if (typeNotarialAction === 41) {
+      if (requester?.some((requester: any) => isLegalEntity(requester?.partnerTypeSelect))) {
+        partnerType = PartnerType.LegalEntity;
+      }
+    } else if (
+      requester?.some((requester: any) => isLegalEntity(requester?.partnerTypeSelect)) ||
+      members?.some((member: any) => isLegalEntity(member?.partnerTypeSelect))
+    ) {
+      partnerType = PartnerType.LegalEntity;
+    }
+
+    const isValid = !!product?.id && !!relationshipType && !!partnerType && !!notaryPowerAttorneyTerm;
+
+    if (isValid) {
+      const params = {
+        notaryProductId: product.id,
+        relationshipType: relationshipType,
+        partnerType: partnerType,
+        notaryPowerAttorneyTerm: String(notaryPowerAttorneyTerm),
+      };
+
+      await getAmountStateTax("/api/applications/amount-of-state-tax", {
+        body: params,
+      }).then((res) => dynamicForm.setValue("notaryAmountStateTax", res?.data?.[0]?.reward ?? ""));
+    } else {
+      dynamicForm.setValue("notaryAmountStateTax", "");
+    }
+  }, [relationshipType, notaryPowerAttorneyTerm]);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
