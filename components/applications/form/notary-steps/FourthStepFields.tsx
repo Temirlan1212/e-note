@@ -313,7 +313,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         newMembers = await Promise.all(
           values.members.map(async (value) => {
             const { id, version, emailAddress, ...rest } = value;
-            return await partnerUpdate("/api/applications/update/partner", rest).then((res) => res.data[0]);
+            return await partnerUpdate("/api/user/partners/create", rest).then((res) => res.data[0]);
           })
         );
       }

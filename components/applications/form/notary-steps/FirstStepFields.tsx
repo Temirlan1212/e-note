@@ -314,7 +314,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         newRequesters = await Promise.all(
           values.requester.map(async (value) => {
             const { id, version, emailAddress, ...rest } = value;
-            return await partnerUpdate("/api/applications/update/partner", rest).then((res) => res.data[0]);
+            return await partnerUpdate("/api/user/partners/create", rest).then((res) => res.data[0]);
           })
         );
       }
