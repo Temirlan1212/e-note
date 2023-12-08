@@ -18,11 +18,10 @@ export interface IUploadFilesProps {
   onUpload?: () => void;
   form?: UseFormReturn<any>;
   name?: null | string;
-  disabled?: boolean;
 }
 
 export default function UploadFiles(props: IUploadFilesProps) {
-  const { onUpload, name, disabled } = props;
+  const { onUpload, name } = props;
   const t = useTranslations();
 
   const form = useForm<IFilesSchema>({
@@ -65,14 +64,12 @@ export default function UploadFiles(props: IUploadFilesProps) {
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("File")}</InputLabel>
                 <FileInput
-                  disabled={disabled}
                   inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   {...field}
                 />
               </Box>
               <Button
-                disabled={disabled}
                 buttonType={isLastField(index) ? "primary" : "secondary"}
                 sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
                 onClick={() => (isLastField(index) ? handleAddClick() : handleRemoveClick(index))}

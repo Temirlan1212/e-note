@@ -10,7 +10,6 @@ export interface IAttachedFilesProps {
   form: UseFormReturn<IApplicationSchema>;
   name: "requester" | "members";
   index: number;
-  disabled?: boolean;
 }
 
 export interface IAttachedFilesMethodsProps {
@@ -19,7 +18,7 @@ export interface IAttachedFilesMethodsProps {
 }
 
 const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, IAttachedFilesProps> = (props, ref) => {
-  const { form, name, index, disabled } = props;
+  const { form, name, index } = props;
   const { setValue, getValues } = form;
   const filesIdRef = useRef<null | number[][]>(null);
   const filesRef = useRef<null | Record<number, any>>(null);
@@ -170,7 +169,7 @@ const AttachedFiles: React.ForwardRefRenderFunction<IAttachedFilesMethodsProps, 
     return <CircularProgress color="success" sx={{ margin: "auto" }} />;
   }
 
-  return <UploadFiles disabled={disabled} form={form} name={`${name}.${index}.files`} />;
+  return <UploadFiles form={form} name={`${name}.${index}.files`} />;
 };
 
 export default forwardRef(AttachedFiles);

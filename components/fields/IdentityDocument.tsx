@@ -64,7 +64,6 @@ export default function IdentityDocument({
 
   const subjectRole = watch(names.subjectRole as string);
   const isAnAdult = subjectRole === "notAnAdult";
-  const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
   const documentType = watch(names.documentType);
   const foreigner = watch(names.foreigner);
 
@@ -92,7 +91,7 @@ export default function IdentityDocument({
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Birth date")}</InputLabel>
               <DatePicker
-                disabled={disableFields || isEditableCopy}
+                disabled={disableFields}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 value={field.value != null ? new Date(field.value) : null}
@@ -114,7 +113,7 @@ export default function IdentityDocument({
             <Box display="flex" flexDirection="column" width="100%">
               <InputLabel>{t("Citizenship")}</InputLabel>
               <Autocomplete
-                disabled={disableFields || isEditableCopy}
+                disabled={disableFields}
                 labelField={locale === "ru" || locale === "kg" ? "$t:name" : "name"}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -151,7 +150,7 @@ export default function IdentityDocument({
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("Nationality")}</InputLabel>
                 <Input
-                  disabled={disableFields || isEditableCopy}
+                  disabled={disableFields}
                   inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   {...field}
@@ -170,7 +169,7 @@ export default function IdentityDocument({
               <Box display="flex" flexDirection="column" width="100%">
                 <InputLabel>{t("Marital status")}</InputLabel>
                 <Input
-                  disabled={disableFields || isEditableCopy}
+                  disabled={disableFields}
                   inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   {...field}

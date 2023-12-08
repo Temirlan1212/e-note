@@ -33,7 +33,6 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
-  const isEditableCopy = form.watch("isToPrintLineSubTotal") as boolean;
   const isFieldsOpen = form.watch("openFields") as boolean;
 
   const [alertOpen, setAlertOpen] = useState(false);
@@ -214,8 +213,8 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                     >
                       {String(item?.fieldType).toLocaleLowerCase() === "request" ? (
                         <RequestDynamicField
-                          disabled={isFieldsOpen || isEditableCopy || item?.readonly}
-                          isPermanentDisabled={isFieldsOpen || isEditableCopy}
+                          disabled={isFieldsOpen || item?.readonly}
+                          isPermanentDisabled={isFieldsOpen}
                           required={item?.required}
                           hidden={item?.hidden}
                           conditions={item?.conditions}
@@ -250,7 +249,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                         />
                       ) : (
                         <DynamicFormElement
-                          disabled={isEditableCopy || item?.readonly}
+                          disabled={item?.readonly}
                           hidden={item?.hidden}
                           required={!!item?.required}
                           conditions={item?.conditions}

@@ -3,6 +3,7 @@ import { Controller, UseFormReturn } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import Input from "@/components/ui/Input";
 import TelInput from "../ui/TelInput";
+import { useEffect } from "react";
 
 export interface IContactProps {
   form: UseFormReturn<any>;
@@ -22,6 +23,12 @@ export default function Contact({ form, names, defaultValues, disableFields, box
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
+
+  const email = watch(names.email);
+
+  useEffect(() => {
+    if (email == null) form.setValue(names.email, "");
+  }, [email]);
 
   return (
     <Box sx={boxSx} display="flex" gap="20px" flexDirection="column">
