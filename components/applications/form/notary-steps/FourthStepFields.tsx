@@ -541,7 +541,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
 
       <Collapse in={alertOpen}>
         <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-          {t("Sorry, such pin not found")}
+          {t("The tunduk service is not responding")}
         </Alert>
       </Collapse>
 
