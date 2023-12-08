@@ -232,7 +232,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
         notaryProductId: Number(product.id),
         relationshipType: relationshipType,
         partnerType: partnerType,
-        notaryPowerAttorneyTerm: Number(notaryPowerAttorneyTerm),
+        notaryPowerAttorneyTerm: String(notaryPowerAttorneyTerm),
       };
 
       await getAmountStateTax("/api/applications/amount-of-state-tax", {
