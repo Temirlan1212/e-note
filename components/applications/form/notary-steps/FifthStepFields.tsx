@@ -41,11 +41,13 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   const isEditableCopy = form.watch("isToPrintLineSubTotal") as boolean;
   const isFieldsOpen = form.watch("openFields") as boolean;
 
+  const notaryPowerAttorneyTerm = dynamicForm.watch("notaryPowerAttorneyTerm");
   const notaryRelationships = dynamicForm.getValues("notaryRelationships");
   const relationshipType = dynamicForm.watch(
-    `notaryRelationships.${Array.isArray(notaryRelationships) ? "0.relationshipType" : "relationshipType"}`
+    `notaryRelationships.${
+      notaryRelationships?.relationshipType === undefined ? "0.relationshipType" : "relationshipType"
+    }`
   );
-  const notaryPowerAttorneyTerm = dynamicForm.watch("notaryPowerAttorneyTerm");
 
   const [alertOpen, setAlertOpen] = useState(false);
   const activeCompanyId = useProfileStore((state) => state.userData?.activeCompany?.id);
@@ -187,11 +189,10 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   }, [activeCompanyId]);
 
   useEffectOnce(() => {
-    if (Array.isArray(notaryRelationships)) {
-      if (notaryRelationships?.[0]?.relationshipType === "" || notaryRelationships?.[0]?.relationshipType == null) {
-        dynamicForm.setValue("notaryRelationships[0].relationshipType", "Other individuals");
-      }
-    } else if (notaryRelationships?.relationshipType === "" || notaryRelationships?.relationshipType == null) {
+    if (notaryRelationships?.relationshipType === null || notaryRelationships?.relationshipType === "") {
+      dynamicForm.setValue("notaryRelationships.relationshipType", "Other individuals");
+    }
+    if (notaryRelationships?.[0]?.relationshipType === null || notaryRelationships?.[0]?.relationshipType === "") {
       dynamicForm.setValue("notaryRelationships[0].relationshipType", "Other individuals");
     }
   }, [documentTemplateData]);
@@ -219,17 +220,11 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
       partnerType = PartnerType.LegalEntity;
     }
 
-    const isValid =
-      product?.id != null &&
-      relationshipType != null &&
-      relationshipType !== "" &&
-      partnerType != null &&
-      notaryPowerAttorneyTerm != null &&
-      notaryPowerAttorneyTerm !== "";
+    const isValid = !!product?.id && !!relationshipType && !!partnerType && !!notaryPowerAttorneyTerm;
 
     if (isValid) {
       const params = {
-        notaryProductId: Number(product.id),
+        notaryProductId: product.id,
         relationshipType: relationshipType,
         partnerType: partnerType,
         notaryPowerAttorneyTerm: String(notaryPowerAttorneyTerm),
