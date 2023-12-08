@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useTranslations } from "next-intl";
 import { ApexOptions } from "apexcharts";
 import { Box, CircularProgress, Typography, useMediaQuery } from "@mui/material";
@@ -8,6 +8,8 @@ import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { subMonths } from "date-fns";
 import { IAnalyticsData } from "@/models/analytics";
 import ApexChart from "../ui/ApexChart";
+import { Table, TableBody, TableRow, TableCell } from "@mui/material";
+import Accordion from "@/components/ui/Accordion";
 
 const currentDate = new Date();
 const initialDate = subMonths(currentDate, 3);
@@ -21,6 +23,15 @@ export default function AnalyticsContent() {
   const [selectedDate, setSelectedDate] = useState<string | Date>(formatDate(initialDate.toISOString()));
   const [formattedDate, setFormattedDate] = useState<string | Date>();
   const [selectedTab, setSelectedTab] = useState<keyof typeof tabsContent>(1);
+  const [expanded, setExpanded] = useState<number | false>(0);
+
+  const handleQAExpanding = (panel: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    if (expanded === panel) {
+      setExpanded(false);
+    } else {
+      setExpanded(panel);
+    }
+  };
 
   const { data, loading } = useFetch<FetchResponseBody<IAnalyticsData>>(
     `/api/analytics/${selectedTab === 3 ? formatDate(currentDate.toISOString()) : selectedDate}`,
@@ -125,7 +136,34 @@ export default function AnalyticsContent() {
         <ApexChart options={options} series={series} type="bar" height={(companyValues?.length ?? 10) * 30} />
       </Box>
     ),
-    4: <></>,
+    4: (
+      <Box>
+        {data?.data?.table.map((notaries, index) => (
+          <Accordion
+            key={index}
+            expanded={expanded === index}
+            title={notaries.regionName + " " + notaries.notaries.length}
+            handleChange={handleQAExpanding(index)}
+            type={notaries.regionName}
+            sx={{
+              marginBottom: "10px",
+              bgcolor: "transparent",
+            }}
+          >
+            <Table key={index}>
+              <TableBody>
+                {notaries.notaries.map((item) => (
+                  <TableRow key={item.name}>
+                    <TableCell sx={{ fontWeight: 500 }}>{item.name}</TableCell>
+                    <TableCell sx={{ fontWeight: 500 }}>{item.actionCounter}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Accordion>
+        ))}
+      </Box>
+    ),
   };
 
   if (!companyValues) return <></>;
