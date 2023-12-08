@@ -16,7 +16,6 @@ import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/A
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { useProfileStore } from "@/stores/profile";
 import ExpandingFields from "@/components/fields/ExpandingFields";
-import useApplicationsStore from "@/stores/applications";
 
 interface IBaseEntityFields {
   id?: number;
@@ -35,7 +34,6 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
   const t = useTranslations();
   const profile = useProfileStore((state) => state);
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
-  const pinFieldState = useApplicationsStore((state) => state.formState.pin);
 
   const {
     trigger,
@@ -144,13 +142,10 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
 
   const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
-    if (!pinFieldState?.unique) {
-      form.setError((pinFieldState?.name as any) ?? "", { type: "required", message: t("unique", { pin: t("PIN") }) });
-    }
 
-    if (!validated || !pinFieldState?.unique) focusToFieldOnError();
+    if (!validated) focusToFieldOnError();
 
-    if (validated && pinFieldState?.unique) {
+    if (validated) {
       setLoading(true);
 
       const values = getValues();

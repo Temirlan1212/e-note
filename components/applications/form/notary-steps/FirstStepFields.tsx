@@ -21,7 +21,6 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 import { IPersonSchema } from "@/validator-schemas/person";
 import ExpandingFields from "@/components/fields/ExpandingFields";
-import useApplicationsStore from "@/stores/applications";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -55,7 +54,6 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
   const tabsRef = useRef<ITabsRef>(null);
-  const pinFieldState = useApplicationsStore((state) => state.formState.pin);
 
   const {
     control,
@@ -326,13 +324,10 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
   const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
-    if (!pinFieldState?.unique) {
-      form.setError((pinFieldState?.name as any) ?? "", { type: "required", message: t("unique", { pin: t("PIN") }) });
-    }
 
-    if (!validated || !pinFieldState?.unique) focusToFieldOnError();
+    if (!validated) focusToFieldOnError();
 
-    if (validated && pinFieldState?.unique) {
+    if (validated) {
       setLoading(true);
 
       const values = getValues();
