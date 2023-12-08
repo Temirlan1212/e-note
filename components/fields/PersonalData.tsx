@@ -13,7 +13,6 @@ import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import { MouseEventHandler, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useEffectOnce from "@/hooks/useEffectOnce";
-import useApplicationsStore from "@/stores/applications";
 
 export interface IPersonalDataProps {
   form: UseFormReturn<any>;
@@ -115,7 +114,6 @@ export default function PersonalData({
   const firstName = watch(names?.firstName);
   const name = watch(names?.nameOfCompanyOfficial);
   const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
-  const pinFieldState = useApplicationsStore((state) => state.formState.pin);
 
   const { data: imageData, update } = useFetch<Response>("", "GET", {
     returnResponse: true,
@@ -309,22 +307,8 @@ export default function PersonalData({
                   </InputLabel>
                   <Input
                     inputProps={{ maxLength: foreigner ? undefined : 14 }}
-                    inputType={
-                      !pinFieldState?.unique && pinFieldState?.name === field.name
-                        ? "error"
-                        : fieldState.error?.message
-                        ? "error"
-                        : field.value
-                        ? "success"
-                        : "secondary"
-                    }
-                    helperText={
-                      !pinFieldState?.unique && pinFieldState?.name === field.name
-                        ? t("unique", { pin: t("PIN") })
-                        : fieldState.error?.message
-                        ? t(fieldState.error?.message, { min: 14, max: 14 })
-                        : ""
-                    }
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 14, max: 14 }) : ""}
                     {...field}
                     disabled={disable}
                     value={field.value != null ? field.value : ""}
