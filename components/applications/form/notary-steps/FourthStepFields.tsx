@@ -481,7 +481,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         model: `/ws/tunduk/${url}`,
       });
 
-      if (personalData?.status !== 0 || personalData?.data == null || personalData?.data?.firstName == null) {
+      if (personalData?.status !== 0 || personalData?.data == null) {
         setAlertOpen(true);
         return;
       }
