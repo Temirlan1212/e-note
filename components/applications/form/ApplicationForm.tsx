@@ -26,7 +26,6 @@ import { useRouter } from "next/router";
 import useNavigationConfirmation from "@/hooks/useNavigationConfirmation";
 import SelectTemplateSelectionType from "./common-steps/SelectTemplateSelectionType";
 import SecondStepFieldsSystemDocument from "./steps/SecondStepFieldsSystemDocument";
-import useApplicationsStore from "@/stores/applications";
 import { useTranslations } from "next-intl";
 
 export interface IApplicationFormProps {
@@ -44,8 +43,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const [userData, setUserData] = useState<IUserData | null>(null);
   const stepNextClickMethod = useRef<(target: number) => Promise<void>>();
   const stepProgress = useRef(0);
-  const personalNumbers = useRef<Record<string, string>>({});
-  const setFormState = useApplicationsStore((state) => state.setFormState);
 
   const { data, update } = useFetch("", "POST");
   const {
@@ -145,21 +142,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     const step = router.query?.step;
     if (!!step) setStep(Number(step));
   }, []);
-
-  useEffectOnce(() => {
-    const subscription = form.watch((value, { name, type }) => {
-      if (name?.indexOf("personalNumber") != -1) {
-        const value = form.getValues(name as any);
-        if (!Object.values(personalNumbers.current).includes(value ?? "")) {
-          personalNumbers.current = { ...personalNumbers.current, [name as string]: value };
-          setFormState("pin", { unique: true, name, value });
-        } else {
-          setFormState("pin", { unique: false, name, value });
-        }
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [form.watch]);
 
   const selectTemplateFromMade = form.watch("selectTemplateFromMade");
 
