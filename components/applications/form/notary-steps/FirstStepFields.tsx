@@ -109,7 +109,15 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                 )}
 
                 <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
-                <Address form={form} names={getAddressNames(index)} disableFields={isTundukFieldsOpen} />
+                <Address
+                  form={form}
+                  names={getAddressNames(index)}
+                  disableFields={isTundukFieldsOpen}
+                  sx={{
+                    labelsSx: { fontWeight: 600 },
+                    inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                  }}
+                />
 
                 {partnerType != 1 && (
                   <>
@@ -127,12 +135,26 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
                       </Button>
                     </Box>
 
-                    <Address form={form} names={getActualAddressNames(index)} />
+                    <Address
+                      form={form}
+                      names={getActualAddressNames(index)}
+                      sx={{
+                        labelsSx: { fontWeight: 600 },
+                        inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                      }}
+                    />
                   </>
                 )}
 
                 <Typography variant="h5">{t("Contacts")}</Typography>
-                <Contact form={form} names={getContactNames(index)} />
+                <Contact
+                  form={form}
+                  names={getContactNames(index)}
+                  sx={{
+                    labelsSx: { fontWeight: 600 },
+                    inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                  }}
+                />
 
                 <Typography variant="h5">{t("Files to upload")}</Typography>
 

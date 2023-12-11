@@ -122,8 +122,9 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
         defaultValue={null}
         render={({ field, fieldState }) => (
           <Box width="100%" display="flex" flexDirection="column" gap="10px">
-            <InputLabel>{t("Document")}</InputLabel>
+            <InputLabel sx={{ fontWeight: 600 }}>{t("Document")}</InputLabel>
             <Autocomplete
+              sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
               textFieldPlaceholder={t("All documents")}
               labelField={locale !== "en" ? "$t:name" : "name"}
               type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -164,13 +165,14 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
               return (
                 <Box width="100%" display="flex" flexDirection="column" gap="10px">
                   <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
-                    <InputLabel>{t("Objects of civil rights")}</InputLabel>
+                    <InputLabel sx={{ fontWeight: 600 }}>{t("Objects of civil rights")}</InputLabel>
                     <Hint type="hint" maxWidth="520px" defaultActive={false}>
                       {t("second-step-hint-title")}
                     </Hint>
                   </Box>
 
                   <Select
+                    sx={{ fontWeight: 500 }}
                     fullWidth
                     placeholder={t("All objects of civil rights")}
                     selectType={errorMessage ? "error" : field.value ? "success" : "secondary"}
@@ -204,8 +206,9 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
               const objectTypeList = objectTypeData?.data;
               return (
                 <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                  <InputLabel>{t("Object type")}</InputLabel>
+                  <InputLabel sx={{ fontWeight: 600 }}>{t("Object type")}</InputLabel>
                   <Select
+                    sx={{ fontWeight: 500 }}
                     disabled={!objectVal}
                     placeholder={t("All types of objects")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -244,8 +247,9 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
 
               return (
                 <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                  <InputLabel>{t("Notarial action")}</InputLabel>
+                  <InputLabel sx={{ fontWeight: 600 }}>{t("Notarial action")}</InputLabel>
                   <Select
+                    sx={{ fontWeight: 500 }}
                     disabled={!objectTypeVal}
                     placeholder={t("All notarial actions")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -280,8 +284,9 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
 
               return (
                 <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                  <InputLabel>{t("Type of notarial action")}</InputLabel>
+                  <InputLabel sx={{ fontWeight: 600 }}>{t("Type of notarial action")}</InputLabel>
                   <Select
+                    sx={{ fontWeight: 500 }}
                     disabled={!notarialActionVal}
                     placeholder={t("All types of notarial actions")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -314,8 +319,9 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
 
               return (
                 <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                  <InputLabel>{t("Purpose of action")}</InputLabel>
+                  <InputLabel sx={{ fontWeight: 600 }}>{t("Purpose of action")}</InputLabel>
                   <Select
+                    sx={{ fontWeight: 500 }}
                     disabled={!typeNotarialActionVal}
                     placeholder={t("All action goals")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}

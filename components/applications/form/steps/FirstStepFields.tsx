@@ -159,8 +159,9 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         defaultValue={null}
         render={({ field, fieldState }) => (
           <Box display="flex" flexDirection="column" width="100%">
-            <InputLabel>{t("Notary")}</InputLabel>
+            <InputLabel sx={{ fontWeight: 600 }}>{t("Notary")}</InputLabel>
             <Autocomplete
+              sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
               labelField={getLabelField(companyDictionary)}
               type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
               helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -191,6 +192,10 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
               district: t("All districts"),
               city: t("All cities and villages"),
             }}
+            sx={{
+              labelsSx: { fontWeight: 600 },
+              inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+            }}
             withoutFieldBinding={true}
             form={form}
             names={{ region: "region", district: "district", city: "city" }}
@@ -202,8 +207,9 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
             defaultValue={null}
             render={({ field, fieldState }) => (
               <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Notary district")}</InputLabel>
+                <InputLabel sx={{ fontWeight: 600 }}>{t("Notary district")}</InputLabel>
                 <Autocomplete
+                  sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                   labelField={getLabelField(notaryDistrictDictionary)}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}

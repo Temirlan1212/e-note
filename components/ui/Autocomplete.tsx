@@ -6,6 +6,8 @@ import {
   AutocompleteRenderInputParams,
   FormHelperText,
   Box,
+  SxProps,
+  Theme,
 } from "@mui/material";
 
 enum types {
@@ -32,6 +34,7 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
     renderInput,
     textFieldPlaceholder,
     options,
+    sx,
     ...rest
   }: IAutocompleteProps,
   ref
@@ -62,7 +65,7 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
     },
   };
 
-  const combineStyles = { ...styles, ...rest.sx };
+  const combineStyles = { ...styles, ...sx };
 
   const defaultRenderInput =
     renderInput != null

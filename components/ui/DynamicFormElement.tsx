@@ -154,6 +154,7 @@ const getField = (
   const types = {
     String: (
       <Input
+        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
         label={label}
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         helperText={errorMessage}
@@ -167,6 +168,7 @@ const getField = (
     ),
     Float: (
       <Input
+        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
         label={label}
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         type="number"
@@ -181,6 +183,7 @@ const getField = (
     ),
     Decimal: (
       <Input
+        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
         label={label}
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         type="number"
@@ -195,6 +198,7 @@ const getField = (
     ),
     Integer: (
       <Input
+        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
         label={label}
         inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
         type="number"
@@ -209,6 +213,7 @@ const getField = (
     ),
     Selection: (
       <Select
+        sx={{ fontWeight: 500 }}
         label={label}
         fullWidth
         selectType={errorMessage ? "error" : field.value ? "success" : "secondary"}
@@ -228,6 +233,7 @@ const getField = (
     ),
     Date: (
       <DatePicker
+        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
         label={label}
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
         value={getValue("Date", field.value)}
@@ -243,6 +249,7 @@ const getField = (
     Boolean: <Checkbox label={label} checked={!!field.value} disabled={disabled} {...field} />,
     Time: (
       <TimePicker
+        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
         label={label}
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
         value={getValue("Time", field.value)}
@@ -257,6 +264,7 @@ const getField = (
     ),
     DateTime: (
       <DateTimePicker
+        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
         label={label}
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
         value={getValue("DateTime", field.value)}
@@ -285,6 +293,7 @@ const getField = (
     ),
     Object: (
       <Autocomplete
+        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
         labelField={locale !== "en" ? "$t:name" : "name"}
         type={errorMessage ? "error" : field.value ? "success" : "secondary"}
         helperText={errorMessage}
@@ -484,7 +493,7 @@ const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
             {...rest?.props?.box}
             {...rest}
           >
-            {!!title ? <Typography>{title}</Typography> : null}
+            {!!title ? <Typography sx={{ fontWeight: 600 }}>{title}</Typography> : null}
             {getField(type, {
               field,
               errorMessage: fieldState.error?.type !== "disabled" ? errorMessage ?? "" : "",

@@ -17,9 +17,13 @@ export interface IContactProps {
   };
   disableFields?: boolean;
   boxSx?: SxProps<Theme> | undefined;
+  sx?: {
+    labelsSx: SxProps<Theme>;
+    inputSx: SxProps<Theme>;
+  };
 }
 
-export default function Contact({ form, names, defaultValues, disableFields, boxSx }: IContactProps) {
+export default function Contact({ form, names, defaultValues, disableFields, boxSx, sx }: IContactProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
@@ -39,8 +43,9 @@ export default function Contact({ form, names, defaultValues, disableFields, box
           defaultValue={defaultValues?.phone ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Phone number")}</InputLabel>
+              <InputLabel sx={sx?.labelsSx}>{t("Phone number")}</InputLabel>
               <TelInput
+                sx={sx?.inputSx}
                 disabled={disableFields}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -55,8 +60,9 @@ export default function Contact({ form, names, defaultValues, disableFields, box
           defaultValue={defaultValues?.email ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("E-mail")}</InputLabel>
+              <InputLabel sx={sx?.labelsSx}>{t("E-mail")}</InputLabel>
               <Input
+                sx={sx?.inputSx}
                 disabled={disableFields}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}

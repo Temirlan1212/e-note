@@ -2,7 +2,7 @@ import { forwardRef, useState } from "react";
 
 import { UseFormRegister } from "react-hook-form";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { IconButton, InputAdornment, TextField, TextFieldProps } from "@mui/material";
+import { BoxProps, IconButton, InputAdornment, SxProps, TextField, TextFieldProps } from "@mui/material";
 
 enum types {
   error = "error.main",
@@ -26,6 +26,7 @@ const Input: React.ForwardRefRenderFunction<HTMLDivElement, IInputProps> = (
     register,
     name = "name",
     inputType = "secondary",
+    sx,
     ...props
   },
   ref
@@ -55,7 +56,7 @@ const Input: React.ForwardRefRenderFunction<HTMLDivElement, IInputProps> = (
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-  const combineStyles = { ...styles, ...props.sx };
+  const combineStyles = { ...styles, ...sx };
 
   return (
     <TextField

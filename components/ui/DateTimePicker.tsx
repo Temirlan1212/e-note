@@ -22,7 +22,7 @@ interface IDateTimeProps<T = Date | null> extends Omit<DateTimePickerProps<T>, "
 }
 
 const DateTime: React.ForwardRefRenderFunction<HTMLDivElement, IDateTimeProps> = (props, ref) => {
-  const { onChange, value, placeholder, helperText, type = "secondary", ...rest } = props;
+  const { onChange, value, placeholder, sx, helperText, type = "secondary", ...rest } = props;
 
   const locale = useLocale();
   const theme = useTheme();
@@ -60,7 +60,7 @@ const DateTime: React.ForwardRefRenderFunction<HTMLDivElement, IDateTimeProps> =
     },
   };
 
-  const mergedStyles = { ...inputStyles, ...props.sx };
+  const mergedStyles = { ...inputStyles, ...sx };
 
   return (
     <FormControl error={type === "error"}>

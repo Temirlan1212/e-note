@@ -141,8 +141,9 @@ export default function SecondStepFieldsSystemDocument({
           defaultValue={null}
           render={({ field, fieldState }) => (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel>{t("Select a notarial act by name")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Select a notarial act by name")}</InputLabel>
               <Autocomplete
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                 labelField={locale !== "en" ? "$t:name" : "name"}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
