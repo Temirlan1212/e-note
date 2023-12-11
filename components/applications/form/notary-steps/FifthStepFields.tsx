@@ -41,12 +41,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   const isFieldsOpen = form.watch("openFields") as boolean;
 
   const notaryPowerAttorneyTerm = dynamicForm.watch("notaryPowerAttorneyTerm");
-  const notaryRelationships = dynamicForm.getValues("notaryRelationships");
-  const relationshipType = dynamicForm.watch(
-    `notaryRelationships.${
-      notaryRelationships?.relationshipType === undefined ? "0.relationshipType" : "relationshipType"
-    }`
-  );
+  const relationshipType = dynamicForm.watch("notaryRelationships.0.relationshipType");
 
   const [alertOpen, setAlertOpen] = useState(false);
   const activeCompanyId = useProfileStore((state) => state.userData?.activeCompany?.id);
@@ -188,11 +183,8 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   }, [activeCompanyId]);
 
   useEffectOnce(() => {
-    if (notaryRelationships?.relationshipType === null || notaryRelationships?.relationshipType === "") {
-      dynamicForm.setValue("notaryRelationships.relationshipType", "Other individuals");
-    }
-    if (notaryRelationships?.[0]?.relationshipType === null || notaryRelationships?.[0]?.relationshipType === "") {
-      dynamicForm.setValue("notaryRelationships[0].relationshipType", "Other individuals");
+    if (!relationshipType) {
+      dynamicForm.setValue("notaryRelationships.0.relationshipType", "Other individuals");
     }
   }, [documentTemplateData]);
 
