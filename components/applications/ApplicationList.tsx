@@ -269,7 +269,7 @@ export default function ApplicationList() {
           }}
           name="keyword"
           error={!!errors.keyword?.message ?? false}
-          helperText={errors.keyword?.message ? t(errors.keyword?.message, { min: 7, max: 30 }) : ""}
+          helperText={errors.keyword?.message ? t(errors.keyword?.message, { min: 2, max: 30 }) : ""}
           register={register}
         />
       </Box>
