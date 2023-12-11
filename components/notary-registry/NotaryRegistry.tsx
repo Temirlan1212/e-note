@@ -68,12 +68,14 @@ const NotaryRegistry: FC<INotariesContentProps> = (props) => {
     const searchValue = form.getValues().keyWord;
     if (searchValue == null) return;
     updateNotariesQueryParams("searchValue", searchValue);
+    updateNotariesQueryParams("page", 1);
   };
 
   const handleSearchReset = () => {
     resetField("keyWord");
     if (notariesQueryParams.searchValue) {
       updateNotariesQueryParams("searchValue", "");
+      updateNotariesQueryParams("page", 1);
     }
   };
 
