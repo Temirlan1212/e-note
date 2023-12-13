@@ -52,7 +52,9 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const { update: getUserData, loading: userDataLoading } = useFetch("", "POST");
 
-  const refreshUserData = async () => {
+  useEffectOnce(async () => {
+    setUserIsNotary(Boolean(profileData?.activeCompany));
+
     const res = await getUserData(profileData?.id != null ? "/api/profile/user/" + profileData?.id : "", {
       userRole: profileData?.activeCompany ? "notary" : "declarant",
     });
@@ -60,12 +62,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     if (Array.isArray(res?.data) && res?.data.length > 0) {
       setUserData(res);
     }
-  };
-
-  useEffectOnce(async () => {
-    setUserIsNotary(Boolean(profileData?.activeCompany));
-
-    const res: any = await refreshUserData();
   });
 
   const {
@@ -537,7 +533,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 </Box>
               </Box>
 
-              <ProfileWorkingDays data={userData} onRefresh={refreshUserData} />
+              <ProfileWorkingDays />
             </Box>
           </ExpandingFields>
         )}
