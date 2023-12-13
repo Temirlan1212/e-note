@@ -32,6 +32,7 @@
   "Searched document": "Searched document",
   "fifth-step-title": "Party 2 (other members)",
   "Notary form first step hint text": "You can choose a document from ready-made templates in “My Templates“ or choose from system templates. If you didn't find what you were looking for, go to the next step. The system will help you find the right document",
+  "Sorry, such pin not found": "Sorry, such pin not found",
   "The tunduk service is not responding": "The tunduk service is not responding",
   "View document": "View document",
   "Edit document": "Edit document",
@@ -111,5 +112,10 @@
   "All types of notarial actions": "All types of notarial actions",
   "All action goals": "All action goals",
   "Save to draft": "Save to draft",
-  "The notarial action has not been prepared for signing": "The notarial action has not been prepared for signing"
+  "The notarial action has not been prepared for signing": "The notarial action has not been prepared for signing",
+  "javaxxmlwsWebServiceException comaxelornotaryintegrationstundukexceptionTundukException No subject found": "Legal entity not found",
+  "NOT FOUND INDIVIDUAL": "Individual not found",
+  "NOT FOUND TRANSPORTS": "Transport not found",
+  "NOT FOUND COMPANY": "Legal entity not found",
+  "NOT FOUND ZAGS INDIVIDUAL": "The civil registration authorities did not find such an individual"
 }
