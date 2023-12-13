@@ -47,7 +47,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   const activeCompanyId = useProfileStore((state) => state.userData?.activeCompany?.id);
 
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
-  const { update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
+  const { data: tundukData, update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
   const { update: getAmountStateTax } = useFetch("", "POST");
 
   const {
@@ -235,7 +235,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
 
       <Collapse in={alertOpen}>
         <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-          {t("Sorry, nothing found")}
+          {t(tundukData?.data?.message || "Something went wrong")}
         </Alert>
       </Collapse>
 

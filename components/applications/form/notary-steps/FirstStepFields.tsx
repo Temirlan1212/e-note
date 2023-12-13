@@ -149,7 +149,11 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const { update: applicationCreate } = useFetch("", "POST");
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
-  const { update: tundukPersonalDataFetch, loading: tundukPersonalDataLoading } = useFetch("", "POST");
+  const {
+    data: tundukData,
+    update: tundukPersonalDataFetch,
+    loading: tundukPersonalDataLoading,
+  } = useFetch("", "POST");
 
   const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
   const isFieldsOpen = watch("openFields") as boolean;
@@ -546,13 +550,15 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
 
+  const translatedError = tundukData?.data.message.replace(/[.:]/g, "");
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <StepperContentStep step={1} title={t("Choose requester")} />
 
       <Collapse in={alertOpen}>
         <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-          {t("The tunduk service is not responding")}
+          {t(translatedError || "Something went wrong")}
         </Alert>
       </Collapse>
 

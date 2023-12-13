@@ -32,6 +32,7 @@
   "Searched document": "Изделген документ",
   "fifth-step-title": "2 тарап (башка мүчөлөрү)",
   "Notary form first step hint text": "Документти “Менин үлгүлөрүм“ даяр үлгүлөрдөн тандай аласыз же системанын үлгүлөрүнөн тандай аласыз. Эгерде сиз издеген нерсеңизди таппасаңыз, кийинки кадамга өтүңүз. Система туура документти табууга жардам берет",
+  "Sorry, such pin not found": "Кечиресиз, мындай ИНН табылган жок",
   "The tunduk service is not responding": "Тундук кызматы жооп бербей жатат",
   "View document": "Документти көрүү",
   "Edit document": "Документти өзгөртүү",
@@ -111,5 +112,10 @@
   "All types of notarial actions": "Нотариалдык иш-аракеттердин бардык түрлөрү",
   "All action goals": "Иш-аракеттердин бардык максаттары",
   "Save to draft": "Сомоого сактоо",
-  "The notarial action has not been prepared for signing": "Нотариалдык иш-аракет кол коюуга даярдалган эмес"
+  "The notarial action has not been prepared for signing": "Нотариалдык иш-аракет кол коюуга даярдалган эмес",
+  "javaxxmlwsWebServiceException comaxelornotaryintegrationstundukexceptionTundukException No subject found": "Юридикалык жак табылган жок",
+  "NOT FOUND INDIVIDUAL": "Жеке адам табылган жок",
+  "NOT FOUND TRANSPORTS": "Транспорт табылган жок",
+  "NOT FOUND COMPANY": "Юридикалык жак табылган жок",
+  "NOT FOUND ZAGS INDIVIDUAL": "Жарандык абалдын актыларын жазуу органдары андай адамды тапкан эмес"
 }

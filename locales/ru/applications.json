@@ -111,5 +111,10 @@
   "All types of notarial actions": "Все виды нотариальных действий",
   "All action goals": "Все цели действий",
   "Save to draft": "Сохранить в черновик",
-  "The notarial action has not been prepared for signing": "Нотариальное действие не подготовлено для подписания"
+  "The notarial action has not been prepared for signing": "Нотариальное действие не подготовлено для подписания",
+  "javaxxmlwsWebServiceException comaxelornotaryintegrationstundukexceptionTundukException No subject found": "Юридическое лицо не найдено",
+  "NOT FOUND INDIVIDUAL": "Физическое лицо не найдено",
+  "NOT FOUND TRANSPORTS": "Транспорт не найден",
+  "NOT FOUND COMPANY": "Юридическое лицо не найдено",
+  "NOT FOUND ZAGS INDIVIDUAL": "Органы записи актов гражданского состояния не нашли такого физического лица"
 }
