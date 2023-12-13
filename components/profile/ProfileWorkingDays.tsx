@@ -31,10 +31,7 @@ interface IWorkingDay {
   id?: number;
 }
 
-interface IProfileWorkingDaysProps {
-  data?: FetchResponseBody | null;
-  onRefresh: () => void;
-}
+interface IProfileWorkingDaysProps {}
 
 function GridTableActionsCell({
   row,
@@ -113,7 +110,7 @@ function GridTableActionsCell({
     startDate.setMinutes(row?.startDate?.slice(3, 5));
     setValue(`workingDays[${workingDayIndex}].startWorkingDay`, startDate);
     setValue(`workingDays[${workingDayIndex}].endWorkingDay`, endDate);
-  }, []);
+  }, [row]);
 
   return (
     <Box
@@ -232,8 +229,6 @@ const ProfileWorkingDays: React.FC<IProfileWorkingDaysProps> = (props) => {
 
   const { locale } = useRouter();
 
-  const { data, onRefresh } = props;
-
   const profile = useProfileStore<IProfileState>((state) => state);
   const profileData: any = profile.getUserData();
 
@@ -249,15 +244,27 @@ const ProfileWorkingDays: React.FC<IProfileWorkingDaysProps> = (props) => {
 
   const { update: createWorkingDay } = useFetch("", "PUT");
 
+  const { data: userData, update: getUserData, loading: userDataLoading } = useFetch("", "POST");
+
+  const refreshData = async () => {
+    await getUserData(profileData?.id != null ? "/api/profile/user/" + profileData?.id : "", {
+      userRole: profileData?.activeCompany ? "notary" : "declarant",
+    });
+  };
+
   useEffectOnce(async () => {
-    if (data) {
-      const workingDaysPromises = data?.data?.[0]?.activeCompany?.workingDay.map((workingDay: IWorkingDay) =>
+    await refreshData();
+  });
+
+  useEffectOnce(async () => {
+    if (userData) {
+      const workingDaysPromises = userData?.data?.[0]?.activeCompany?.workingDay.map((workingDay: IWorkingDay) =>
         getWorkingDay("/api/profile/working-day/" + workingDay.id)
       );
       const workingDaysData = await Promise.all(workingDaysPromises);
       setWorkingDays(workingDaysData.map((day) => day?.data?.[0]));
     }
-  });
+  }, [userData]);
 
   const form = useForm<IWorkingDaysSchema>({
     resolver: yupResolver(workingDaysSchema as any),
@@ -303,7 +310,8 @@ const ProfileWorkingDays: React.FC<IProfileWorkingDaysProps> = (props) => {
           body: params,
         });
         callback(false);
-        onRefresh();
+        setIsModalOpen(false);
+        refreshData();
       }
     }
   };
@@ -398,7 +406,7 @@ const ProfileWorkingDays: React.FC<IProfileWorkingDaysProps> = (props) => {
             width: 100,
             sortable: false,
             renderCell: ({ row }) => (
-              <GridTableActionsCell onRefresh={onRefresh} dictionary={workDaysDictionary} row={row} form={form} />
+              <GridTableActionsCell onRefresh={refreshData} dictionary={workDaysDictionary} row={row} form={form} />
             ),
             cellClassName: "actions-pinnable",
           },
@@ -408,7 +416,7 @@ const ProfileWorkingDays: React.FC<IProfileWorkingDaysProps> = (props) => {
         sx={{
           height: "100%",
         }}
-        loading={workingDaysLoading}
+        loading={workingDaysLoading || userDataLoading}
         rowHeight={65}
       />
 
