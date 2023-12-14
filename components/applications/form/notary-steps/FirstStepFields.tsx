@@ -550,7 +550,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
 
-  const translatedError = tundukData?.data.message.replace(/[.:]/g, "");
+  const translatedError = tundukData?.data?.message?.replace(/[.:]/g, "");
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
