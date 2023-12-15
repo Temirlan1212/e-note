@@ -99,6 +99,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
             onClick={() => handleNextClick()}
             endIcon={<ArrowForwardIcon />}
             sx={{ width: "auto" }}
+            disabled={!!errors?.product?.message}
           >
             {t("Next")}
           </Button>

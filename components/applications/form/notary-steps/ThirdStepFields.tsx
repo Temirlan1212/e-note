@@ -98,6 +98,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
             onClick={() => handleNextClick()}
             endIcon={<ArrowForwardIcon />}
             sx={{ width: "auto" }}
+            disabled={!!errors?.product?.message}
           >
             {t("Next")}
           </Button>
