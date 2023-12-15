@@ -122,7 +122,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
       {docUrl && <PDFViewer fileUrl={docUrl} />}
 
       {!applicationLoading && !prepareLoading && !pdfLoading && (
-        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+        <Box position="sticky" bottom="20px" display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
           {!isSigned && onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
               {t("Prev")}

@@ -87,7 +87,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
     <Box display="flex" gap="20px" flexDirection="column">
       <NotarialAction step={2} form={form} />
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+      <Box position="sticky" bottom="20px" display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         {onPrev != null && (
           <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
