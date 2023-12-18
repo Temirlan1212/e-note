@@ -290,7 +290,14 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
         </Box>
       </ExpandingFields>
 
-      <Box position="sticky" bottom="20px" display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+      <Box
+        width="fit-content"
+        position="sticky"
+        bottom="20px"
+        display="flex"
+        gap="20px"
+        flexDirection={{ xs: "column", md: "row" }}
+      >
         {onPrev != null && (
           <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
