@@ -196,6 +196,7 @@ export default function SecondStepFieldsSystemDocument({
             onClick={() => handleNextClick()}
             endIcon={<ArrowForwardIcon />}
             sx={{ width: "auto" }}
+            disabled={!!errors?.product?.message}
           >
             {t("Next")}
           </Button>

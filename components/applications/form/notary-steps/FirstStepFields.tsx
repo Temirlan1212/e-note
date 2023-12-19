@@ -641,6 +641,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
             onClick={() => handleNextClick()}
             endIcon={<ArrowForwardIcon />}
             sx={{ width: "auto" }}
+            disabled={!!errors?.requester?.length}
           >
             {t("Next")}
           </Button>

@@ -616,6 +616,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
             onClick={() => handleNextClick()}
             endIcon={<ArrowForwardIcon />}
             sx={{ width: "auto" }}
+            disabled={!!errors?.members?.length}
           >
             {t("Next")}
           </Button>
