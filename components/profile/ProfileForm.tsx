@@ -143,13 +143,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
       const blob = new Blob([file], { type: file.type });
       const res = await checkFace("/api/check-face", { image: await convert.blob.toBase64Async(blob) });
 
-      if (res?.data?.message === "Face detected") {
-        setImagePreview(URL.createObjectURL(file));
-      } else {
-        setImagePreview(null);
-        setAlertOpen(true);
-        return;
-      }
+      setImagePreview(res?.data?.message === "Face detected" ? URL.createObjectURL(file) : null);
+      setAlertOpen(res?.data?.message !== "Face detected");
     }
   };
 
@@ -234,10 +229,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   }, [userData]);
 
   const checkFaceErrorMessage = (message: string) => {
-    if (message === "Face detected" || message === "No face detected in the image") {
-      return message;
-    }
-    return "Something went wrong";
+    return ["Face detected", "No face detected in the image"].includes(message) ? message : "Something went wrong";
   };
 
   return userDataLoading ? (
