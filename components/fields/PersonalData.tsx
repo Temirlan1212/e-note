@@ -209,6 +209,7 @@ export default function PersonalData({
                 <InputLabel
                   required
                   sx={{
+                    fontWeight: 600,
                     ".MuiFormLabel-asterisk": {
                       color: "error.main",
                       fontSize: "2em",
@@ -224,6 +225,7 @@ export default function PersonalData({
                       ? `title_${locale}`
                       : "title"
                   }
+                  sx={{ fontWeight: 500 }}
                   valueField="value"
                   selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -283,6 +285,7 @@ export default function PersonalData({
                   <InputLabel
                     required
                     sx={{
+                      fontWeight: 600,
                       ".MuiFormLabel-asterisk": {
                         color: "error.main",
                         fontSize: "2em",
@@ -293,6 +296,7 @@ export default function PersonalData({
                     {type != 1 ? t("PIN") : t("TIN")}
                   </InputLabel>
                   <Input
+                    sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                     inputProps={{ maxLength: foreigner ? undefined : 14 }}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 14, max: 14 }) : ""}
@@ -313,7 +317,7 @@ export default function PersonalData({
                   defaultValue={defaultValues?.tundukDocumentSeries ?? null}
                   render={({ field, fieldState }) => (
                     <Box display="flex" flexDirection="column" width="100%">
-                      <InputLabel>{t("Series")}</InputLabel>
+                      <InputLabel sx={{ fontWeight: 600 }}>{t("Series")}</InputLabel>
                       <Select
                         labelField={
                           identityDocumentSeriesDictionary?.data?.length > 0 &&
@@ -322,6 +326,7 @@ export default function PersonalData({
                             : "title"
                         }
                         valueField="value"
+                        sx={{ fontWeight: 500 }}
                         selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                         helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                         data={
@@ -347,8 +352,9 @@ export default function PersonalData({
                   defaultValue={defaultValues?.tundukDocumentNumber ?? ""}
                   render={({ field, fieldState }) => (
                     <Box display="flex" flexDirection="column" width="100%">
-                      <InputLabel>{t("Number")}</InputLabel>
+                      <InputLabel sx={{ fontWeight: 600 }}>{t("Number")}</InputLabel>
                       <Input
+                        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                         inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                         helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                         {...field}
@@ -399,6 +405,7 @@ export default function PersonalData({
                     <InputLabel
                       required
                       sx={{
+                        fontWeight: 600,
                         ".MuiFormLabel-asterisk": {
                           color: "error.main",
                           fontSize: "2em",
@@ -409,6 +416,7 @@ export default function PersonalData({
                       {t("Last name")}
                     </InputLabel>
                     <Input
+                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                       disabled={disableFields}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 2 }) : ""}
@@ -429,6 +437,7 @@ export default function PersonalData({
                     <InputLabel
                       required
                       sx={{
+                        fontWeight: 600,
                         ".MuiFormLabel-asterisk": {
                           color: "error.main",
                           fontSize: "2em",
@@ -439,6 +448,7 @@ export default function PersonalData({
                       {t("First name")}
                     </InputLabel>
                     <Input
+                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                       disabled={disableFields}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message, { min: 2 }) : ""}
@@ -456,8 +466,9 @@ export default function PersonalData({
                 defaultValue={defaultValues?.middleName ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Middle name")}</InputLabel>
+                    <InputLabel sx={{ fontWeight: 600 }}>{t("Middle name")}</InputLabel>
                     <Input
+                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                       disabled={disableFields}
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -480,8 +491,9 @@ export default function PersonalData({
               defaultValue={defaultValues?.nameOfCompanyOfficial ?? ""}
               render={({ field, fieldState }) => (
                 <Box display="flex" flexDirection="column" width="100%">
-                  <InputLabel>{t("Full name in the official language")}</InputLabel>
+                  <InputLabel sx={{ fontWeight: 600 }}>{t("Full name in the official language")}</InputLabel>
                   <Input
+                    sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                     disabled={disableFields}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -499,8 +511,9 @@ export default function PersonalData({
               defaultValue={defaultValues?.nameOfCompanyGov ?? ""}
               render={({ field, fieldState }) => (
                 <Box display="flex" flexDirection="column" width="100%">
-                  <InputLabel>{t("Full name in the state language")}</InputLabel>
+                  <InputLabel sx={{ fontWeight: 600 }}>{t("Full name in the state language")}</InputLabel>
                   <Input
+                    sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                     disabled={disableFields}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -518,8 +531,9 @@ export default function PersonalData({
               defaultValue={defaultValues?.representativesName ?? ""}
               render={({ field, fieldState }) => (
                 <Box display="flex" flexDirection="column" width="100%">
-                  <InputLabel>{t("Full name of the representative")}</InputLabel>
+                  <InputLabel sx={{ fontWeight: 600 }}>{t("Full name of the representative")}</InputLabel>
                   <Input
+                    sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                     disabled={disableFields}
                     inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -538,8 +552,9 @@ export default function PersonalData({
                 defaultValue={defaultValues?.notaryRegistrationNumber ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Registration number")}</InputLabel>
+                    <InputLabel sx={{ fontWeight: 600 }}>{t("Registration number")}</InputLabel>
                     <Input
+                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                       disabled={disableFields}
                       type="number"
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -558,8 +573,9 @@ export default function PersonalData({
                 defaultValue={defaultValues?.notaryOKPONumber ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("OKPO code")}</InputLabel>
+                    <InputLabel sx={{ fontWeight: 600 }}>{t("OKPO code")}</InputLabel>
                     <Input
+                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                       disabled={disableFields}
                       type="number"
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -580,8 +596,11 @@ export default function PersonalData({
                 defaultValue={defaultValues?.notaryPhysicalParticipantsQty ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Number of founders (participants) of individuals")}</InputLabel>
+                    <InputLabel sx={{ fontWeight: 600 }}>
+                      {t("Number of founders (participants) of individuals")}
+                    </InputLabel>
                     <Input
+                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                       disabled={disableFields}
                       type="number"
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -600,8 +619,11 @@ export default function PersonalData({
                 defaultValue={defaultValues?.notaryLegalParticipantsQty ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Number of founders (participants) of legal entities")}</InputLabel>
+                    <InputLabel sx={{ fontWeight: 600 }}>
+                      {t("Number of founders (participants) of legal entities")}
+                    </InputLabel>
                     <Input
+                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                       disabled={disableFields}
                       type="number"
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -622,8 +644,9 @@ export default function PersonalData({
                 defaultValue={defaultValues?.notaryTotalParticipantsQty ?? ""}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Total number (participants)")}</InputLabel>
+                    <InputLabel sx={{ fontWeight: 600 }}>{t("Total number (participants)")}</InputLabel>
                     <Input
+                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                       disabled={disableFields}
                       type="number"
                       inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -642,8 +665,9 @@ export default function PersonalData({
                 defaultValue={defaultValues?.notaryDateOfOrder ?? null}
                 render={({ field, fieldState }) => (
                   <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel>{t("Order date")}</InputLabel>
+                    <InputLabel sx={{ fontWeight: 600 }}>{t("Order date")}</InputLabel>
                     <DatePicker
+                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                       disabled={disableFields}
                       type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                       helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}

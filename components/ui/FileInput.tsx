@@ -16,7 +16,7 @@ export type IFileInputProps = MuiFileInputProps<boolean | undefined> & {
 };
 
 export default forwardRef<HTMLDivElement, IFileInputProps>(function FileInput(
-  { inputType = "secondary", helperText, value, onChange, disabled, ...rest }: IFileInputProps,
+  { inputType = "secondary", helperText, value, onChange, disabled, sx, ...rest }: IFileInputProps,
   ref
 ) {
   const styles = {
@@ -41,7 +41,7 @@ export default forwardRef<HTMLDivElement, IFileInputProps>(function FileInput(
     },
   };
 
-  const mergedStyles = { ...styles, ...rest.sx };
+  const mergedStyles = { ...styles, ...sx };
 
   const [file, setFile] = useState<File | File[] | null>(null);
 

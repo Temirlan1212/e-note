@@ -77,6 +77,11 @@ const Radio: React.ForwardRefRenderFunction<HTMLDivElement, IRadioProps> = (
             item[valueField] != null && (
               <FormControlLabel
                 key={item[valueField]}
+                sx={{
+                  ".MuiFormControlLabel-label": {
+                    fontWeight: 500,
+                  },
+                }}
                 {...(register && name && register(name))}
                 control={<MUIRadio sx={combineStyles} {...rest} inputRef={ref} />}
                 value={item[valueField]}

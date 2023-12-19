@@ -89,8 +89,9 @@ export default function IdentityDocument({
           defaultValue={defaultValues?.birthDate ?? null}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Birth date")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Birth date")}</InputLabel>
               <DatePicker
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                 disabled={disableFields}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -111,8 +112,9 @@ export default function IdentityDocument({
           defaultValue={defaultValues?.citizenship ?? null}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Citizenship")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Citizenship")}</InputLabel>
               <Autocomplete
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                 disabled={disableFields}
                 labelField={locale === "ru" || locale === "kg" ? "$t:name" : "name"}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -148,8 +150,9 @@ export default function IdentityDocument({
             defaultValue={defaultValues?.nationality ?? ""}
             render={({ field, fieldState }) => (
               <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Nationality")}</InputLabel>
+                <InputLabel sx={{ fontWeight: 600 }}>{t("Nationality")}</InputLabel>
                 <Input
+                  sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                   disabled={disableFields}
                   inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -167,8 +170,9 @@ export default function IdentityDocument({
             defaultValue={defaultValues?.maritalStatus ?? ""}
             render={({ field, fieldState }) => (
               <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Marital status")}</InputLabel>
+                <InputLabel sx={{ fontWeight: 600 }}>{t("Marital status")}</InputLabel>
                 <Input
+                  sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                   disabled={disableFields}
                   inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -188,8 +192,9 @@ export default function IdentityDocument({
           render={({ field, fieldState }) => {
             return (
               <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Document")}</InputLabel>
+                <InputLabel sx={{ fontWeight: 600 }}>{t("Document")}</InputLabel>
                 <Select
+                  sx={{ fontWeight: 500 }}
                   disabled={disableFields}
                   labelField={
                     identityDocumentDictionary?.data?.length > 0 &&
@@ -226,9 +231,10 @@ export default function IdentityDocument({
           defaultValue={defaultValues?.documentSeries ?? null}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Series")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Series")}</InputLabel>
               {foreigner || isAnAdult ? (
                 <Input
+                  sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                   inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={!documentType || disableFields}
@@ -236,6 +242,7 @@ export default function IdentityDocument({
                 />
               ) : (
                 <Select
+                  sx={{ fontWeight: 500 }}
                   labelField={
                     identityDocumentSeriesDictionary?.data?.length > 0 &&
                     identityDocumentSeriesDictionary?.data[0][`title_${locale}`]
@@ -263,8 +270,9 @@ export default function IdentityDocument({
           defaultValue={defaultValues?.documentNumber ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Number")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Number")}</InputLabel>
               <Input
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={!documentType || disableFields}
@@ -282,8 +290,9 @@ export default function IdentityDocument({
           defaultValue={defaultValues?.organType ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Organ")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Organ")}</InputLabel>
               <Input
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={!documentType || disableFields}
@@ -298,8 +307,9 @@ export default function IdentityDocument({
           defaultValue={defaultValues?.organNumber ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Organ number")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Organ number")}</InputLabel>
               <Input
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={!documentType || disableFields}
@@ -314,8 +324,9 @@ export default function IdentityDocument({
           defaultValue={defaultValues?.issueDate ?? null}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Date of issue")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Date of issue")}</InputLabel>
               <DatePicker
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={!documentType || disableFields}
@@ -337,7 +348,7 @@ export default function IdentityDocument({
             defaultValue={defaultValues?.passportStatus ?? false}
             render={({ field, fieldState }) => (
               <Box display="flex" flexDirection="column" justifyContent="center">
-                <InputLabel>{t("Validity status")}</InputLabel>
+                <InputLabel sx={{ fontWeight: 600 }}>{t("Validity status")}</InputLabel>
 
                 <Checkbox
                   label={field.value ? t("Valid") : t("Invalid")}

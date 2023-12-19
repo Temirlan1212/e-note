@@ -16,7 +16,7 @@ export type ITelInputProps = MuiTelInputProps & {
 };
 
 export default forwardRef<HTMLDivElement, ITelInputProps>(function TelInput(
-  { inputType = "secondary", helperText, value, onChange, ...rest }: ITelInputProps,
+  { inputType = "secondary", helperText, value, sx, onChange, ...rest }: ITelInputProps,
   ref
 ) {
   const styles = {
@@ -41,7 +41,7 @@ export default forwardRef<HTMLDivElement, ITelInputProps>(function TelInput(
     },
   };
 
-  const mergedStyles = { ...styles, ...rest.sx };
+  const mergedStyles = { ...styles, ...sx };
 
   const [phone, setPhone] = useState("");
 

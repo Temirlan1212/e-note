@@ -84,17 +84,38 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                 )}
 
                 <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
-                <Address form={form} names={getAddressNames(index)} />
+                <Address
+                  form={form}
+                  names={getAddressNames(index)}
+                  sx={{
+                    labelsSx: { fontWeight: 600 },
+                    inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                  }}
+                />
 
                 {partnerType != 1 && (
                   <>
                     <Typography variant="h5">{t("Actual place of residence")}</Typography>
-                    <Address form={form} names={getActualAddressNames(index)} />
+                    <Address
+                      form={form}
+                      names={getActualAddressNames(index)}
+                      sx={{
+                        labelsSx: { fontWeight: 600 },
+                        inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                      }}
+                    />
                   </>
                 )}
 
                 <Typography variant="h5">{t("Contacts")}</Typography>
-                <Contact form={form} names={getContactNames(index)} />
+                <Contact
+                  form={form}
+                  names={getContactNames(index)}
+                  sx={{
+                    labelsSx: { fontWeight: 600 },
+                    inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                  }}
+                />
 
                 <Typography variant="h5">{t("Files to upload")}</Typography>
 

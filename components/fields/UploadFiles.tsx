@@ -62,8 +62,9 @@ export default function UploadFiles(props: IUploadFilesProps) {
           render={({ field, fieldState }) => (
             <Box display="flex" alignItems="end" gap="20px">
               <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("File")}</InputLabel>
+                <InputLabel sx={{ fontWeight: 600 }}>{t("File")}</InputLabel>
                 <FileInput
+                  sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                   inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   {...field}

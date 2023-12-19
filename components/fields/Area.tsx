@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
-import { InputLabel, Box } from "@mui/material";
+import { InputLabel, Box, SxProps, Theme } from "@mui/material";
 import Autocomplete from "../ui/Autocomplete";
 import { INotaryDistrict } from "@/models/notary-district";
 
@@ -30,6 +30,10 @@ export interface IAreaProps {
   withoutFieldBinding?: boolean;
   withNotaryDistrict?: boolean;
   getAllNotaryDistricts?: boolean;
+  sx?: {
+    labelsSx: SxProps<Theme>;
+    inputSx: SxProps<Theme>;
+  };
 }
 
 export default function Area({
@@ -41,6 +45,7 @@ export default function Area({
   withoutFieldBinding = false,
   withNotaryDistrict = false,
   getAllNotaryDistricts = false,
+  sx,
 }: IAreaProps) {
   const t = useTranslations();
   const locale = useLocale();
@@ -103,8 +108,9 @@ export default function Area({
           defaultValue={defaultValues?.region ?? null}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Region")}</InputLabel>
+              <InputLabel sx={sx?.labelsSx}>{t("Region")}</InputLabel>
               <Autocomplete
+                sx={sx?.inputSx}
                 disabled={disableFields}
                 labelField={getLabelField(regionDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -135,8 +141,9 @@ export default function Area({
           defaultValue={defaultValues?.district ?? null}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("District")}</InputLabel>
+              <InputLabel sx={sx?.labelsSx}>{t("District")}</InputLabel>
               <Autocomplete
+                sx={sx?.inputSx}
                 labelField={getLabelField(districtDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -174,8 +181,9 @@ export default function Area({
 
             return (
               <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("City")}, Село</InputLabel>
+                <InputLabel sx={sx?.labelsSx}>{t("City")}, Село</InputLabel>
                 <Autocomplete
+                  sx={sx?.inputSx}
                   labelField={getLabelField(cityDictionary)}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -203,8 +211,9 @@ export default function Area({
           defaultValue={defaultValues?.notaryDistrict ?? null}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Notary district")}</InputLabel>
+              <InputLabel sx={sx?.labelsSx}>{t("Notary district")}</InputLabel>
               <Autocomplete
+                sx={sx?.inputSx}
                 labelField={getLabelField(notaryDistrictDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}

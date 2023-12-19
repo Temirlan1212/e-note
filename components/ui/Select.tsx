@@ -44,6 +44,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
     helperText,
     loading = false,
     boxSx,
+    sx,
     ...props
   },
   ref
@@ -68,7 +69,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
     borderRadius: 0,
   };
 
-  const combineStyles = { ...props.sx, ...inputStyles };
+  const combineStyles = { ...inputStyles, ...sx };
   return (
     <FormControl sx={boxSx} error={selectType === "error"}>
       <MUISelect
@@ -102,6 +103,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
         {data?.map((item) => (
           <MenuItem
             sx={{
+              ...sx,
               "&.Mui-selected": {
                 backgroundColor: "#EFEFEF",
                 "&:hover": {

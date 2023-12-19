@@ -27,6 +27,10 @@ export interface IAddressProps extends IAreaProps {
   boxSx?: SxProps<Theme> | undefined;
   withNotaryDistrict?: boolean;
   getAllNotaryDistricts?: boolean;
+  sx?: {
+    labelsSx: SxProps<Theme>;
+    inputSx: SxProps<Theme>;
+  };
 }
 
 export default function Address({
@@ -37,6 +41,7 @@ export default function Address({
   withNotaryDistrict,
   getAllNotaryDistricts,
   boxSx,
+  sx,
 }: IAddressProps) {
   const t = useTranslations();
 
@@ -61,6 +66,7 @@ export default function Address({
         defaultValues={defaultValues}
         withNotaryDistrict={withNotaryDistrict}
         getAllNotaryDistricts={getAllNotaryDistricts}
+        sx={sx}
       />
 
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
@@ -70,8 +76,9 @@ export default function Address({
           defaultValue={defaultValues?.street ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Street")}</InputLabel>
+              <InputLabel sx={sx?.labelsSx}>{t("Street")}</InputLabel>
               <Input
+                sx={sx?.inputSx}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={disableFields}
@@ -86,8 +93,9 @@ export default function Address({
           defaultValue={defaultValues?.house ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("House")}</InputLabel>
+              <InputLabel sx={sx?.labelsSx}>{t("House")}</InputLabel>
               <Input
+                sx={sx?.inputSx}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={disableFields}
@@ -102,8 +110,9 @@ export default function Address({
           defaultValue={defaultValues?.apartment ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Apartment")}</InputLabel>
+              <InputLabel sx={sx?.labelsSx}>{t("Apartment")}</InputLabel>
               <Input
+                sx={sx?.inputSx}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={disableFields}

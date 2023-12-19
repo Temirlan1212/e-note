@@ -260,7 +260,14 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
           )}
 
           <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
-          <Address form={form} names={getAddressNames(0)} />
+          <Address
+            form={form}
+            names={getAddressNames(0)}
+            sx={{
+              labelsSx: { fontWeight: 600 },
+              inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+            }}
+          />
 
           {partnerType != 1 && (
             <>
@@ -278,12 +285,26 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
                 </Button>
               </Box>
 
-              <Address form={form} names={getActualAddressNames(0)} />
+              <Address
+                form={form}
+                names={getActualAddressNames(0)}
+                sx={{
+                  labelsSx: { fontWeight: 600 },
+                  inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                }}
+              />
             </>
           )}
 
           <Typography variant="h5">{t("Contacts")}</Typography>
-          <Contact form={form} names={getContactNames(0)} />
+          <Contact
+            sx={{
+              labelsSx: { fontWeight: 600 },
+              inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+            }}
+            form={form}
+            names={getContactNames(0)}
+          />
 
           <Typography variant="h5">{t("Files to upload")}</Typography>
           <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={0} />

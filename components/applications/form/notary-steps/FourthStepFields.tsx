@@ -114,6 +114,10 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                     !!watch(`members.${index}.passportSeries`) &&
                     !!watch(`members.${index}.passportNumber`)
                   }
+                  sx={{
+                    labelsSx: { fontWeight: 600 },
+                    inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                  }}
                 />
 
                 {partnerType != 1 && (
@@ -132,12 +136,26 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                       </Button>
                     </Box>
 
-                    <Address form={form} names={getActualAddressNames(index)} />
+                    <Address
+                      form={form}
+                      names={getActualAddressNames(index)}
+                      sx={{
+                        labelsSx: { fontWeight: 600 },
+                        inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                      }}
+                    />
                   </>
                 )}
 
                 <Typography variant="h5">{t("Contacts")}</Typography>
-                <Contact form={form} names={getContactNames(index)} />
+                <Contact
+                  form={form}
+                  names={getContactNames(index)}
+                  sx={{
+                    labelsSx: { fontWeight: 600 },
+                    inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                  }}
+                />
 
                 <Typography variant="h5">{t("Files to upload")}</Typography>
 
