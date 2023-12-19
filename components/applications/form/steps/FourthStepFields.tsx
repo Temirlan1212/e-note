@@ -74,7 +74,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
               }}
             />
 
-            <ExpandingFields title="Additional information">
+            <ExpandingFields title="Additional information" permanentExpand={false}>
               <Box display="flex" gap="20px" flexDirection="column">
                 {partnerType != 1 && (
                   <>
@@ -381,7 +381,14 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         ref={tabsRef}
       />
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+      <Box
+        width="fit-content"
+        position="sticky"
+        bottom="20px"
+        display="flex"
+        gap="20px"
+        flexDirection={{ xs: "column", md: "row" }}
+      >
         {onPrev != null && (
           <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
