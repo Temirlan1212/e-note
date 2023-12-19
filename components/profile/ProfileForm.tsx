@@ -2,7 +2,17 @@ import React, { useEffect, useRef, useState } from "react";
 
 import { useTranslations } from "next-intl";
 import { PermIdentity } from "@mui/icons-material";
-import { Avatar, Box, CircularProgress, Divider, FormControl, InputLabel, Typography } from "@mui/material";
+import {
+  Alert,
+  Avatar,
+  Box,
+  CircularProgress,
+  Collapse,
+  Divider,
+  FormControl,
+  InputLabel,
+  Typography,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
 
 import Button from "@/components/ui/Button";
@@ -16,6 +26,7 @@ import { IEmail, IUserData } from "@/models/user";
 
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
+import useConvert from "@/hooks/useConvert";
 import Address from "@/components/fields/Address";
 import License from "@/components/fields/License";
 import Hint from "@/components/ui/Hint";
@@ -34,6 +45,7 @@ interface IExtendedUserData extends IUserData {
 
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const t = useTranslations();
+  const convert = useConvert();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -45,12 +57,14 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const [userData, setUserData] = useState<FetchResponseBody | null>();
   const [base64Image, setBase64Image] = useState<string | null>(null);
   const [userIsNotary, setUserIsNotary] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
     returnResponse: true,
   });
 
   const { update: getUserData, loading: userDataLoading } = useFetch("", "POST");
+  const { data: checkFaceData, update: checkFace, loading: checkFaceLoading } = useFetch("", "POST");
 
   useEffectOnce(async () => {
     setUserIsNotary(Boolean(profileData?.activeCompany));
@@ -121,13 +135,21 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     email: "partner.emailAddress.address",
   };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     setSelectedImage(file);
+
     if (file) {
-      setImagePreview(URL.createObjectURL(file));
-    } else {
-      setImagePreview(null);
+      const blob = new Blob([file], { type: file.type });
+      const res = await checkFace("/api/check-face", { image: await convert.blob.toBase64Async(blob) });
+
+      if (res?.data?.message === "Face detected") {
+        setImagePreview(URL.createObjectURL(file));
+      } else {
+        setImagePreview(null);
+        setAlertOpen(true);
+        return;
+      }
     }
   };
 
@@ -211,12 +233,24 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     formatLicenseDate();
   }, [userData]);
 
+  const checkFaceErrorMessage = (message: string) => {
+    if (message === "Face detected" || message === "No face detected in the image") {
+      return message;
+    }
+    return "Something went wrong";
+  };
+
   return userDataLoading ? (
     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
       <CircularProgress />
     </Box>
   ) : (
     <Box display="flex" flexDirection="column" gap="30px">
+      <Collapse in={alertOpen}>
+        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+          {t(checkFaceErrorMessage(checkFaceData?.data?.message))}
+        </Alert>
+      </Collapse>
       <Box
         display="flex"
         gap="30px"
@@ -227,14 +261,14 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           },
         }}
       >
-        {isImageLoading ? (
+        {isImageLoading || checkFaceLoading ? (
           <CircularProgress color="inherit" style={{ width: "28px", height: "28px" }} />
         ) : (
           <Avatar
             sizes="100"
             src={imagePreview || base64Image || undefined}
             sx={{
-              bgcolor: "success.main",
+              bgcolor: imagePreview || base64Image ? "transparent" : "success.main",
               width: "100px",
               height: "100px",
             }}
