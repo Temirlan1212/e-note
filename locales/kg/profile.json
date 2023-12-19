@@ -33,5 +33,7 @@
   "Add a working day": "Жумуш күндү кошуу",
   "Edit a working day": "Жумуш күндү өзгөртүү",
   "Deleting a working day": "Жумуш күндү өчүрүү",
-  "Do you really want to remove the working day?": "Сиз чын эле жумуш күнүңүздү өчүрүп салгыңыз келеби?"
+  "Do you really want to remove the working day?": "Сиз чын эле жумуш күнүңүздү өчүрүп салгыңыз келеби?",
+  "No face detected in the image": "Сүрөттө жүз аныкталган жок",
+  "Face detected": "Жүз аныкталды"
 }
