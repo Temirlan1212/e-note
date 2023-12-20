@@ -283,7 +283,7 @@ export const ApplicationListActions = ({
         </>
       )}
 
-      {params.row.statusSelect === 1 && params.row?.["product.isProductCancelled"] && (
+      {params.row.statusSelect === 1 && (
         <>
           <ConfirmationModal
             hintTitle="Do you really want to cancel the application?"

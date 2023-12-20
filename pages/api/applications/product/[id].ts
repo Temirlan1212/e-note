@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-const fields: string[] = ["product.name"];
+const fields: string[] = ["product.name", "product.isProductCancelled", "company.partner.fullName"];
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
