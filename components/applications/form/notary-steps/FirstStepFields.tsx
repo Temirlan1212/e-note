@@ -21,6 +21,7 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 import { IPersonSchema } from "@/validator-schemas/person";
 import ExpandingFields from "@/components/fields/ExpandingFields";
+import { useRouter } from "next/router";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -46,6 +47,7 @@ export interface IStepFieldsProps {
 export default function FirstStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const userData = useProfileStore((state) => state.userData);
   const t = useTranslations();
+  const router = useRouter();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
   const tabsRef = useRef<ITabsRef>(null);
 
@@ -63,6 +65,24 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     control,
     name: "requester",
   });
+
+  const { data: licenseInfoData, update: getLicenseInfo, loading: licenseInfoLoading } = useFetch("", "POST");
+
+  useEffectOnce(async () => {
+    if (userData?.group?.name === "Notary") {
+      const license = await handleCheckLicenseDate();
+      if (license === false) router.push("/applications");
+    }
+  });
+
+  const handleCheckLicenseDate = async () => {
+    const res = await getLicenseInfo(userData?.id != null ? "/api/applications/license-info/" + userData?.id : "");
+
+    const licenseTermUntil = new Date(res?.data?.[0]?.activeCompany?.licenseTermUntil);
+    const currentDate = new Date();
+
+    return licenseTermUntil > currentDate;
+  };
 
   const [loading, setLoading] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);

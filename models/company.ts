@@ -8,4 +8,5 @@ export interface ICompany {
   code: string;
   "notaryDistrict.id": number;
   partner: Partial<IPartner>;
+  licenseTermUntil: string;
 }
