@@ -1,11 +1,12 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { ValueOf } from "next/dist/shared/lib/constants";
 import { useRouter } from "next/router";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { IActionType } from "@/models/action-type";
 import { IStatus } from "@/models/application-status";
+import { useProfileStore } from "@/stores/profile";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
-import { Box, IconButton, Typography, useMediaQuery } from "@mui/material";
+import { Alert, Box, Collapse, IconButton, Typography, useMediaQuery } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import Button from "@/components/ui/Button";
@@ -47,8 +48,11 @@ interface ISearchedDataItem {
 
 export default function ApplicationList() {
   const isMobileMedia = useMediaQuery("(max-width:800px)");
+  const userData = useProfileStore((state) => state.userData);
   const t = useTranslations();
-  const { locale } = useRouter();
+  const locale = useLocale();
+  const router = useRouter();
+  const [alertOpen, setAlertOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [isSearchedData, setIsSearchedData] = useState(false);
@@ -59,6 +63,7 @@ export default function ApplicationList() {
     "/api/dictionaries/selection/notary.filter.saleorder.by.performer.type.select",
     "POST"
   );
+  const { data: licenseInfoData, update: getLicenseInfo, loading: licenseInfoLoading } = useFetch("", "POST");
 
   const form = useForm<IKeywordSchema>({
     resolver: yupResolver<IKeywordSchema>(keywordSchema),
@@ -231,6 +236,28 @@ export default function ApplicationList() {
     }
   };
 
+  const handleCreate = async () => {
+    if (userData?.group?.name === "Notary") {
+      const license = await handleCheckLicenseDate();
+      if (license === true) {
+        router.push("/applications/create");
+      } else {
+        setAlertOpen(true);
+      }
+    } else {
+      router.push("/applications/create");
+    }
+  };
+
+  const handleCheckLicenseDate = async () => {
+    const res = await getLicenseInfo(userData?.id != null ? "/api/applications/license-info/" + userData?.id : "");
+
+    const licenseTermUntil = new Date(res?.data?.[0]?.activeCompany?.licenseTermUntil);
+    const currentDate = new Date();
+
+    return licenseTermUntil >= currentDate;
+  };
+
   const calculateTotalPages = () => {
     const sourceData = isSearchedData ? searchedData : data;
     return Math.ceil((sourceData?.total || 1) / appQueryParams.pageSize);
@@ -238,15 +265,26 @@ export default function ApplicationList() {
 
   return (
     <Box height={{ xs: "600px", md: "700px" }}>
+      <Collapse in={alertOpen} sx={{ marginBottom: "10px", display: alertOpen ? "block" : "none" }}>
+        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+          {t("License has expired or is invalid")}
+        </Alert>
+      </Collapse>
       <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
         <Typography variant="h4" color="primary">
           {t("Notarial actions")}
         </Typography>
-        <Link href="applications/create">
-          <Button sx={{ py: "10px", px: "20px" }} component="label" startIcon={<PostAddIcon />}>
+        <Box>
+          <Button
+            onClick={handleCreate}
+            loading={licenseInfoLoading}
+            sx={{ py: "10px", px: "20px" }}
+            component="label"
+            startIcon={<PostAddIcon />}
+          >
             {t("Create")}
           </Button>
-        </Link>
+        </Box>
       </Box>
 
       <Box

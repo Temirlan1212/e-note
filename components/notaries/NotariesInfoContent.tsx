@@ -1,4 +1,4 @@
-import { Avatar, Box, CircularProgress, Typography } from "@mui/material";
+import { Alert, Avatar, Box, CircularProgress, Collapse, Typography } from "@mui/material";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
@@ -46,6 +46,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const router = useRouter();
   const { locale } = useRouter();
 
+  const [alertOpen, setAlertOpen] = useState(false);
   const [userData, setUserData] = useState<IUserData | null>(null);
   const [base64Image, setBase64Image] = useState<string | null>(null);
 
@@ -57,6 +58,8 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const { data: workDaysArea } = useFetch("/api/notaries/dictionaries/work-days", "GET");
 
   const { update: contactUpdate, loading: contactLoading, error } = useFetch<IContact>("", "POST");
+
+  const { data: licenseInfoData, update: getLicenseInfo, loading: licenseInfoLoading } = useFetch("", "POST");
 
   const { data: ratingData, loading: ratingLoading } = useFetch(
     router?.query?.id != null ? `/api/rating/${router?.query?.id}` : "",
@@ -170,15 +173,39 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
     setUserData(profile.getUserData());
   }, [profile]);
 
-  const handleCreateAppClick = () => {
+  const handleCreateAppClick = async () => {
     notaryData?.[0] != null && setNotaryData(notaryData[0]);
-    router.push("/applications/create");
+    const license = await handleCheckLicenseDate();
+    if (license === true) {
+      router.push("/applications/create");
+    } else {
+      setAlertOpen(true);
+    }
+  };
+
+  const handleCheckLicenseDate = async () => {
+    const res = await getLicenseInfo(userData?.id != null ? "/api/applications/license-info/" + userData?.id : "");
+
+    const userlicenseTermUntil = new Date(res?.data?.[0]?.activeCompany?.licenseTermUntil);
+    const notaryLicenseTermUntil = new Date(notaryData?.[0]?.licenseTermUntil);
+    const currentDate = new Date();
+
+    if (userData?.group?.name === "Notary") {
+      return userlicenseTermUntil >= currentDate && notaryLicenseTermUntil >= currentDate;
+    } else {
+      return notaryLicenseTermUntil >= currentDate;
+    }
   };
 
   const filteredInfoArray = infoArray.filter((item) => item.text);
 
   return (
     <>
+      <Collapse in={alertOpen} sx={{ display: alertOpen ? "unset" : "none" }}>
+        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+          {t("License has expired or is invalid")}
+        </Alert>
+      </Collapse>
       {!loading ? (
         <Box
           sx={{

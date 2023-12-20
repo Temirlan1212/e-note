@@ -30,6 +30,7 @@ const fields = ["region", "district", "city", "notaryDistrict", "company"] as co
 
 export default function FirstStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const [notaryData, setNotaryData] = useNotariesStore((state) => [state.notaryData, state.setNotaryData]);
+  const [filteredCompanyDictionary, setFilteredCompanyDictionary] = useState<FetchResponseBody | null>(null);
   const profile = useProfileStore.getState();
   const t = useTranslations();
   const locale = useLocale();
@@ -146,6 +147,22 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     }
   }, [notaryData]);
 
+  useEffectOnce(() => {
+    if (companyDictionary) {
+      const currentDay = new Date();
+
+      const filteredCompanies = {
+        ...companyDictionary,
+        data: (companyDictionary.data as any[]).filter((company) => {
+          const licenseTermUntil = new Date(company.licenseTermUntil);
+          return licenseTermUntil > currentDay;
+        }),
+      };
+
+      setFilteredCompanyDictionary(filteredCompanies);
+    }
+  }, [companyDictionary]);
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
@@ -162,11 +179,13 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
             <InputLabel sx={{ fontWeight: 600 }}>{t("Notary")}</InputLabel>
             <Autocomplete
               sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
-              labelField={getLabelField(companyDictionary)}
+              labelField={getLabelField(filteredCompanyDictionary)}
               type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
               helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
               disabled={loading}
-              options={companyDictionary?.status === 0 ? (companyDictionary?.data as ICompany[]) ?? [] : []}
+              options={
+                filteredCompanyDictionary?.status === 0 ? (filteredCompanyDictionary?.data as ICompany[]) ?? [] : []
+              }
               loading={companyDictionaryLoading}
               value={
                 field.value != null
