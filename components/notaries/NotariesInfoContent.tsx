@@ -191,9 +191,9 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
     const currentDate = new Date();
 
     if (userData?.group?.name === "Notary") {
-      return userlicenseTermUntil >= currentDate && notaryLicenseTermUntil >= currentDate;
+      return userlicenseTermUntil > currentDate && notaryLicenseTermUntil > currentDate;
     } else {
-      return notaryLicenseTermUntil >= currentDate;
+      return notaryLicenseTermUntil > currentDate;
     }
   };
 

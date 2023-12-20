@@ -81,7 +81,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     const licenseTermUntil = new Date(res?.data?.[0]?.activeCompany?.licenseTermUntil);
     const currentDate = new Date();
 
-    return licenseTermUntil >= currentDate;
+    return licenseTermUntil > currentDate;
   };
 
   const [loading, setLoading] = useState(false);

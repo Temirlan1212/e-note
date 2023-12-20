@@ -255,7 +255,7 @@ export default function ApplicationList() {
     const licenseTermUntil = new Date(res?.data?.[0]?.activeCompany?.licenseTermUntil);
     const currentDate = new Date();
 
-    return licenseTermUntil >= currentDate;
+    return licenseTermUntil > currentDate;
   };
 
   const calculateTotalPages = () => {
