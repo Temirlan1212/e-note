@@ -99,8 +99,8 @@ export default function ApplicationList() {
       const promises = data.data.map(async (item: { id: string }) => {
         const res = await getProduct("/api/applications/product/" + item?.id);
         if (res?.data?.length > 0) {
-          const product = res.data[0].product;
-          return { ...item, productName: product };
+          const product = res.data[0];
+          return { ...item, productName: product?.product, companyName: product?.company?.partner?.fullName };
         }
         return item;
       });
@@ -279,7 +279,7 @@ export default function ApplicationList() {
           {
             field: "actions",
             headerName: "Actions",
-            width: isMobileMedia ? 50 : 290,
+            width: isMobileMedia ? 50 : 300,
             sortable: false,
             type: isMobileMedia ? "actions" : "string",
             cellClassName: isMobileMedia ? "actions-pinnable" : "",
@@ -408,6 +408,25 @@ export default function ApplicationList() {
             sortable: isSearchedData ? false : true,
             valueGetter: (params: GridValueGetterParams) => {
               return format(new Date(params.value), "dd.MM.yyyy HH:mm");
+            },
+          },
+          {
+            field: "companyName",
+            headerName: "Executor",
+            width: 200,
+            sortable: false,
+            filter: isSearchedData
+              ? undefined
+              : {
+                  data: executorData?.data ?? [],
+                  labelField: locale === "ru" || locale === "kg" ? "title_ru" : "title",
+                  valueField: "value",
+                  type: "dictionary",
+                  field: "createdBy.partner.fullName",
+                },
+            cellClassName: "executorColumn",
+            valueGetter: (params: GridValueGetterParams) => {
+              return isSearchedData ? params.row?.createdBy?.fullName : params.value || t("not assigned");
             },
           },
         ]}
