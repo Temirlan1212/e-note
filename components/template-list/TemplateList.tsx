@@ -42,7 +42,6 @@ function GridTableActionsCell({
   const router = useRouter();
   const profile = useProfileStore((state) => state.getUserData());
 
-  const isNotary = useProfileStore.getState().userData?.activeCompany != null;
   const [inputValue, setInputValue] = useState<string | null>(null);
   const [inputError, setInputError] = useState<boolean>(false);
 
@@ -112,7 +111,7 @@ function GridTableActionsCell({
         </Typography>
       </Button>
 
-      {isNotary && (
+      {profile?.group?.name === "Notary" && (
         <ConfirmationModal
           title={t("To my templates")}
           hintText={t("Do you really want to add to the My Templates section?")}
