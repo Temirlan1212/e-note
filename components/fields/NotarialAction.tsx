@@ -108,7 +108,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
         isSystem: true,
       },
     });
-    setIsAdditionalFieldsOpen(isValuesSelected);
+    setIsAdditionalFieldsOpen(true);
   }, []);
 
   return (
