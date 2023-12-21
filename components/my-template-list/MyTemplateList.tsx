@@ -49,11 +49,7 @@ function GridTableActionsCell({
   const router = useRouter();
   const profile = useProfileStore((state) => state.getUserData());
 
-  const {
-    data: licenseInfoData,
-    update: getLicenseInfo,
-    loading: licenseInfoLoading,
-  } = useFetch<FetchResponseBody | null>("", "POST");
+  const { update: getLicenseInfo } = useFetch<FetchResponseBody | null>("", "POST");
   const { data, update: editTemplate } = useFetch<FetchResponseBody<IMyTemplateData[]>>("", "POST");
   const { update: deleteTemplate } = useFetch("", "POST");
 

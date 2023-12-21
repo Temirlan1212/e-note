@@ -46,11 +46,7 @@ function GridTableActionsCell({
   const [inputError, setInputError] = useState<boolean>(false);
 
   const { data, loading, update } = useFetch<FetchResponseBody<ITemplateData>>("", "POST");
-  const {
-    data: licenseInfoData,
-    update: getLicenseInfo,
-    loading: licenseInfoLoading,
-  } = useFetch<FetchResponseBody | null>("", "POST");
+  const { update: getLicenseInfo, loading: licenseInfoLoading } = useFetch<FetchResponseBody | null>("", "POST");
 
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -105,7 +101,7 @@ function GridTableActionsCell({
 
   return (
     <Box sx={{ display: "flex", gap: "16px" }}>
-      <Button variant="contained" onClick={handleCreateClick}>
+      <Button variant="contained" onClick={handleCreateClick} loading={licenseInfoLoading}>
         <Typography fontSize={14} fontWeight={600}>
           {t("New application")}
         </Typography>
