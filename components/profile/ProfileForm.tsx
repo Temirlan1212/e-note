@@ -524,7 +524,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Coordinates form={form} names={coordinateNames} maxLength={9} boxSx={{ width: "100%" }} />
+                  <Coordinates form={form} names={coordinateNames} boxSx={{ width: "100%" }} />
                 </Box>
               </Box>
 

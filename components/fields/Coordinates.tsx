@@ -43,8 +43,13 @@ export default function Coordinates({
               <Input
                 disabled={disableFields}
                 inputProps={{ maxLength: maxLength || undefined }}
+                placeholder={"0.000000"}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                onInput={(...event: any[]) => {
+                  field.onChange(...event);
+                  trigger(field.name);
+                }}
                 {...field}
               />
             </Box>
@@ -60,8 +65,13 @@ export default function Coordinates({
               <Input
                 disabled={disableFields}
                 inputProps={{ maxLength: maxLength || undefined }}
+                placeholder={"0.000000"}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                onInput={(...event: any[]) => {
+                  field.onChange(...event);
+                  trigger(field.name);
+                }}
                 {...field}
               />
             </Box>
