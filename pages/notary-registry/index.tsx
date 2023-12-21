@@ -61,7 +61,7 @@ export default function Notaries() {
           <Typography variant="h4" color="success.main">
             {t("Search for a notary on the map")}
           </Typography>
-          {!companiesLoading && companies?.data ? (
+          {!companiesLoading && companies ? (
             <LeafletMap
               zoom={12}
               markers={markers}
