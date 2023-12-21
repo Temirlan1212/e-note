@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import useEffectOnce from "@/hooks/useEffectOnce";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { format } from "date-fns";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { useProfileStore } from "@/stores/profile";
@@ -66,7 +66,11 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     name: "requester",
   });
 
-  const { data: licenseInfoData, update: getLicenseInfo, loading: licenseInfoLoading } = useFetch("", "POST");
+  const {
+    data: licenseInfoData,
+    update: getLicenseInfo,
+    loading: licenseInfoLoading,
+  } = useFetch<FetchResponseBody | null>("", "POST");
 
   useEffectOnce(async () => {
     if (userData?.group?.name === "Notary") {

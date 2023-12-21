@@ -19,7 +19,7 @@ import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import LicenseIcon from "@/public/icons/license.svg";
 import ContentPlusIcon from "@/public/icons/content-plus.svg";
 import CloudMessageIcon from "@/public/icons/cloud-message.svg";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { useEffect, useState } from "react";
 import { useProfileStore } from "@/stores/profile";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -59,7 +59,11 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const { update: contactUpdate, loading: contactLoading, error } = useFetch<IContact>("", "POST");
 
-  const { data: licenseInfoData, update: getLicenseInfo, loading: licenseInfoLoading } = useFetch("", "POST");
+  const {
+    data: licenseInfoData,
+    update: getLicenseInfo,
+    loading: licenseInfoLoading,
+  } = useFetch<FetchResponseBody | null>("", "POST");
 
   const { data: ratingData, loading: ratingLoading } = useFetch(
     router?.query?.id != null ? `/api/rating/${router?.query?.id}` : "",

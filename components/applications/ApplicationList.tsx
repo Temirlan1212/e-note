@@ -63,7 +63,7 @@ export default function ApplicationList() {
     "/api/dictionaries/selection/notary.filter.saleorder.by.performer.type.select",
     "POST"
   );
-  const { data: licenseInfoData, update: getLicenseInfo, loading: licenseInfoLoading } = useFetch("", "POST");
+  const { update: getLicenseInfo, loading: licenseInfoLoading } = useFetch<FetchResponseBody | null>("", "POST");
 
   const form = useForm<IKeywordSchema>({
     resolver: yupResolver<IKeywordSchema>(keywordSchema),

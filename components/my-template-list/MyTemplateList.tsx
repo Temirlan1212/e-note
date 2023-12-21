@@ -2,7 +2,7 @@ import { useState, ChangeEvent, Dispatch, SetStateAction, useEffect } from "reac
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 import { ValueOf } from "next/dist/shared/lib/constants";
-import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import { Alert, Box, Collapse, IconButton, Tooltip, Typography } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import Pagination from "@/components/ui/Pagination";
@@ -36,11 +36,44 @@ interface IMyTemplateData {
 
 const capitalize = (str: string) => str?.[0].toUpperCase() + str?.slice(1);
 
-function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onDelete: Function }) {
+function GridTableActionsCell({
+  row,
+  onDelete,
+  setAlertOpen,
+}: {
+  row: Record<string, any>;
+  onDelete: Function;
+  setAlertOpen: Dispatch<SetStateAction<boolean>>;
+}) {
   const t = useTranslations();
+  const router = useRouter();
+  const profile = useProfileStore((state) => state.getUserData());
 
+  const { update: getLicenseInfo } = useFetch<FetchResponseBody | null>("", "POST");
   const { data, update: editTemplate } = useFetch<FetchResponseBody<IMyTemplateData[]>>("", "POST");
   const { update: deleteTemplate } = useFetch("", "POST");
+
+  const handleCheckLicenseDate = async () => {
+    const res = await getLicenseInfo(profile?.id != null ? "/api/applications/license-info/" + profile?.id : "");
+
+    const licenseTermUntil = new Date(res?.data?.[0]?.activeCompany?.licenseTermUntil);
+    const currentDate = new Date();
+
+    return licenseTermUntil > currentDate;
+  };
+
+  const handleCreateClick = async () => {
+    if (profile?.group?.name === "Notary") {
+      const license = await handleCheckLicenseDate();
+      if (license === true) {
+        router.push("/applications/create");
+      } else {
+        setAlertOpen(true);
+      }
+    } else {
+      router.push("/applications/create");
+    }
+  };
 
   const handleDeleteClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
     if (row.id != null) {
@@ -55,7 +88,16 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
 
   const handleEditClick = async () => {
     if (row.id != null) {
-      await editTemplate("/api/templates/edit/" + row.id);
+      if (profile?.group?.name === "Notary") {
+        const license = await handleCheckLicenseDate();
+        if (license === true) {
+          await editTemplate("/api/templates/edit/" + row.id);
+        } else {
+          setAlertOpen(true);
+        }
+      } else {
+        await editTemplate("/api/templates/edit/" + row.id);
+      }
     }
   };
 
@@ -74,13 +116,11 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
 
   return (
     <Box sx={{ display: "flex" }}>
-      <Link href="/applications/create">
-        <Tooltip title={t("New application")}>
-          <IconButton>
-            <PostAddIcon />
-          </IconButton>
-        </Tooltip>
-      </Link>
+      <Tooltip title={t("New application")} onClick={handleCreateClick}>
+        <IconButton>
+          <PostAddIcon />
+        </IconButton>
+      </Tooltip>
 
       <Tooltip title={t("Edit")} arrow onClick={handleEditClick}>
         <IconButton>
@@ -115,6 +155,7 @@ export default function TemplateList() {
     createdById: profile?.id,
   });
   const [searchValue, setSearchValue] = useState<string>("");
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const t = useTranslations();
   const { locale } = useRouter();
@@ -219,183 +260,192 @@ export default function TemplateList() {
   };
 
   return (
-    <Box height={{ xs: "600px", md: "700px" }} sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-      <Typography variant="h4" color="success.main">
-        {t("My templates")}
-      </Typography>
-      <SearchBar
-        value={searchValue}
-        onChange={handleSearchChange}
-        onClick={handleSearchSubmit}
-        InputProps={{
-          endAdornment: (
-            <IconButton onClick={handleReset} sx={{ visibility: searchValue === "" ? "hidden" : "visible" }}>
-              <ClearIcon />
-            </IconButton>
-          ),
-        }}
-      />
+    <>
+      <Collapse in={alertOpen} sx={{ marginBottom: "10px", display: alertOpen ? "block" : "none" }}>
+        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+          {t("License has expired or is invalid")}
+        </Alert>
+      </Collapse>
+      <Box height={{ xs: "600px", md: "700px" }} sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <Typography variant="h4" color="success.main">
+          {t("My templates")}
+        </Typography>
+        <SearchBar
+          value={searchValue}
+          onChange={handleSearchChange}
+          onClick={handleSearchSubmit}
+          InputProps={{
+            endAdornment: (
+              <IconButton onClick={handleReset} sx={{ visibility: searchValue === "" ? "hidden" : "visible" }}>
+                <ClearIcon />
+              </IconButton>
+            ),
+          }}
+        />
 
-      <GridTable
-        columns={[
-          {
-            field: "id",
-            headerName: "Template ID",
-            width: 150,
-          },
-          {
-            field: "name",
-            headerName: "Template name",
-            width: 340,
-            sortable: false,
-            valueGetter: (params: GridValueGetterParams) => {
-              return params.row.name;
+        <GridTable
+          columns={[
+            {
+              field: "id",
+              headerName: "Template ID",
+              width: 150,
             },
-          },
-          {
-            field: "notaryObject",
-            headerName: "Object",
-            width: 320,
-            sortable: false,
-            filter: {
-              data: objectData?.data ?? [],
-              labelField: "nameIn" + capitalize(locale ?? ""),
-              valueField: "id",
-              type: "dictionary",
-              field: "object",
+            {
+              field: "name",
+              headerName: "Template name",
+              width: 340,
+              sortable: false,
+              valueGetter: (params: GridValueGetterParams) => {
+                return params.row.name;
+              },
             },
-            valueGetter: (params: GridValueGetterParams) => {
-              if (objectData?.data != null) {
-                const matchedItem = objectData?.data?.find((item: INotarialAction) => item.id == params.row.object?.id);
-                const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
-                return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
-              }
-              return params.value;
+            {
+              field: "notaryObject",
+              headerName: "Object",
+              width: 320,
+              sortable: false,
+              filter: {
+                data: objectData?.data ?? [],
+                labelField: "nameIn" + capitalize(locale ?? ""),
+                valueField: "id",
+                type: "dictionary",
+                field: "object",
+              },
+              valueGetter: (params: GridValueGetterParams) => {
+                if (objectData?.data != null) {
+                  const matchedItem = objectData?.data?.find(
+                    (item: INotarialAction) => item.id == params.row.object?.id
+                  );
+                  const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
+                  return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
+                }
+                return params.value;
+              },
             },
-          },
-          {
-            field: "notaryObjectType",
-            headerName: "Object type",
-            width: 280,
-            sortable: false,
-            filter: {
-              data: objectTypeData?.data ?? [],
-              labelField: "nameIn" + capitalize(locale ?? ""),
-              valueField: "id",
-              type: "dictionary",
-              field: "objectType",
+            {
+              field: "notaryObjectType",
+              headerName: "Object type",
+              width: 280,
+              sortable: false,
+              filter: {
+                data: objectTypeData?.data ?? [],
+                labelField: "nameIn" + capitalize(locale ?? ""),
+                valueField: "id",
+                type: "dictionary",
+                field: "objectType",
+              },
+              valueGetter: (params: GridValueGetterParams) => {
+                if (objectTypeData?.data != null) {
+                  const matchedItem = objectTypeData?.data?.find(
+                    (item: INotarialAction) => item.id == params.row.objectType?.id
+                  );
+                  const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
+                  return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
+                }
+                return params.value;
+              },
             },
-            valueGetter: (params: GridValueGetterParams) => {
-              if (objectTypeData?.data != null) {
-                const matchedItem = objectTypeData?.data?.find(
-                  (item: INotarialAction) => item.id == params.row.objectType?.id
-                );
-                const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
-                return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
-              }
-              return params.value;
-            },
-          },
-          {
-            field: "notaryAction",
-            headerName: "Notarial action",
-            width: 340,
-            editable: false,
-            sortable: false,
-            filter: {
-              data: notarialActionData?.data ?? [],
-              labelField: "nameIn" + capitalize(locale ?? ""),
-              valueField: "id",
-              type: "dictionary",
-              field: "notarialAction",
-            },
-            valueGetter: (params: GridValueGetterParams) => {
-              if (notarialActionData?.data != null) {
-                const matchedItem = notarialActionData?.data.find(
-                  (item: INotarialAction) => item.id == params.row.notarialAction?.id
-                );
-                const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
-                return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
-              }
-              return params.value;
-            },
-          },
-          {
-            field: "notaryActionType",
-            headerName: "Action type",
-            width: 200,
-            editable: false,
-            sortable: false,
-            filter: {
-              data: typeNotarialActionData?.data ?? [],
-              labelField: "nameIn" + capitalize(locale ?? ""),
-              valueField: "id",
-              type: "dictionary",
-              field: "typeNotarialAction",
-            },
-            valueGetter: (params: GridValueGetterParams) => {
-              if (typeNotarialActionData?.data != null) {
-                const matchedItem = typeNotarialActionData?.data.find(
-                  (item: INotarialAction) => item.id == params.row.typeNotarialAction?.id
-                );
-                const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
-                return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
-              }
-              return params.value;
-            },
-          },
-          {
-            field: "notaryRequestAction",
-            headerName: "Purpose of action",
-            width: 300,
-            sortable: false,
-            filter: {
-              data: actionData?.data ?? [],
-              labelField: "nameIn" + capitalize(locale ?? ""),
-              valueField: "id",
-              type: "dictionary",
+            {
               field: "notaryAction",
+              headerName: "Notarial action",
+              width: 340,
+              editable: false,
+              sortable: false,
+              filter: {
+                data: notarialActionData?.data ?? [],
+                labelField: "nameIn" + capitalize(locale ?? ""),
+                valueField: "id",
+                type: "dictionary",
+                field: "notarialAction",
+              },
+              valueGetter: (params: GridValueGetterParams) => {
+                if (notarialActionData?.data != null) {
+                  const matchedItem = notarialActionData?.data.find(
+                    (item: INotarialAction) => item.id == params.row.notarialAction?.id
+                  );
+                  const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
+                  return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
+                }
+                return params.value;
+              },
             },
-            valueGetter: (params: GridValueGetterParams) => {
-              if (actionData?.data != null) {
-                const matchedItem = actionData?.data?.find(
-                  (item: INotarialAction) => item.id == params.row.notaryAction?.id
-                );
-                const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
-                return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
-              }
-              return params.value;
+            {
+              field: "notaryActionType",
+              headerName: "Action type",
+              width: 200,
+              editable: false,
+              sortable: false,
+              filter: {
+                data: typeNotarialActionData?.data ?? [],
+                labelField: "nameIn" + capitalize(locale ?? ""),
+                valueField: "id",
+                type: "dictionary",
+                field: "typeNotarialAction",
+              },
+              valueGetter: (params: GridValueGetterParams) => {
+                if (typeNotarialActionData?.data != null) {
+                  const matchedItem = typeNotarialActionData?.data.find(
+                    (item: INotarialAction) => item.id == params.row.typeNotarialAction?.id
+                  );
+                  const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
+                  return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
+                }
+                return params.value;
+              },
             },
-          },
-          {
-            field: "actions",
-            type: "actions",
-            sortable: false,
-            width: 150,
-            cellClassName: "actions-pinnable",
-            renderCell: ({ row }) => <GridTableActionsCell row={row} onDelete={update} />,
-          },
-        ]}
-        rows={data?.data ?? []}
-        onFilterSubmit={handleFilterSubmit}
-        onSortModelChange={handleSortByDate}
-        cellMaxHeight="200px"
-        loading={loading}
-        sx={{
-          height: "100%",
-          ".executorColumn": {
-            color: "success.main",
-          },
-        }}
-        rowHeight={65}
-      />
+            {
+              field: "notaryRequestAction",
+              headerName: "Purpose of action",
+              width: 300,
+              sortable: false,
+              filter: {
+                data: actionData?.data ?? [],
+                labelField: "nameIn" + capitalize(locale ?? ""),
+                valueField: "id",
+                type: "dictionary",
+                field: "notaryAction",
+              },
+              valueGetter: (params: GridValueGetterParams) => {
+                if (actionData?.data != null) {
+                  const matchedItem = actionData?.data?.find(
+                    (item: INotarialAction) => item.id == params.row.notaryAction?.id
+                  );
+                  const translatedTitle = matchedItem?.[("nameIn" + capitalize(locale ?? "")) as keyof INotarialAction];
+                  return !!translatedTitle ? translatedTitle : matchedItem?.["name" as keyof INotarialAction] ?? "";
+                }
+                return params.value;
+              },
+            },
+            {
+              field: "actions",
+              type: "actions",
+              sortable: false,
+              width: 150,
+              cellClassName: "actions-pinnable",
+              renderCell: ({ row }) => <GridTableActionsCell row={row} onDelete={update} setAlertOpen={setAlertOpen} />,
+            },
+          ]}
+          rows={data?.data ?? []}
+          onFilterSubmit={handleFilterSubmit}
+          onSortModelChange={handleSortByDate}
+          cellMaxHeight="200px"
+          loading={loading}
+          sx={{
+            height: "100%",
+            ".executorColumn": {
+              color: "success.main",
+            },
+          }}
+          rowHeight={65}
+        />
 
-      <Pagination
-        sx={{ display: "flex", justifyContent: "center" }}
-        currentPage={tempQueryParams.page}
-        totalPages={data?.total ? Math.ceil(data.total / tempQueryParams.pageSize) : 1}
-        onPageChange={handlePageChange}
-      />
-    </Box>
+        <Pagination
+          sx={{ display: "flex", justifyContent: "center" }}
+          currentPage={tempQueryParams.page}
+          totalPages={data?.total ? Math.ceil(data.total / tempQueryParams.pageSize) : 1}
+          onPageChange={handlePageChange}
+        />
+      </Box>
+    </>
   );
 }
