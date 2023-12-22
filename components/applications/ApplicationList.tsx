@@ -341,7 +341,7 @@ export default function ApplicationList() {
           },
           {
             field: "requester",
-            headerName: "Side-1",
+            headerName: "Requested persons-1",
             width: 200,
             sortable: false,
             cellClassName: "requestersColumn",
@@ -352,7 +352,7 @@ export default function ApplicationList() {
           },
           {
             field: "members",
-            headerName: "Side-2",
+            headerName: "Requested persons-2",
             width: 200,
             sortable: false,
             cellClassName: "membersColumn",
