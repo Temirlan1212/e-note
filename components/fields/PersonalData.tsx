@@ -331,7 +331,6 @@ export default function PersonalData({
                             },
                           }}
                         >
-                          {" "}
                           {t("Series")}
                         </InputLabel>
                       ) : (
@@ -340,7 +339,6 @@ export default function PersonalData({
                             fontWeight: 600,
                           }}
                         >
-                          {" "}
                           {t("Series")}
                         </InputLabel>
                       )}
