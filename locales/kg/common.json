@@ -260,5 +260,10 @@
   "Do you really want to remove the template from the platform?": "Шаблонду платформадан чын эле алып салгыңыз келеби?",
   "member shrinked": "кат",
   "Panning": "Жылдыруу",
+  "Register": "Каттоо",
+  "Register an EDS": "ЭЦП катталуу",
+  "EDS list": "ЭЦП тизме",
+  "EDS registration": "ЭЦП каттоо",
+  "You can register an EDS for further use": "Сиз андан ары колдонуу үчүн ЭЦП каттай аласыз",
   "Something went wrong": "Бир жерден ката кетти ..."
 }
