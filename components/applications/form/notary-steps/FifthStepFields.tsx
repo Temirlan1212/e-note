@@ -186,14 +186,22 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     if (!relationshipType) {
       dynamicForm.setValue("notaryRelationships.0.relationshipType", "Other individuals");
     }
+
+    const orderNumber = form.getValues("orderNumber");
+
+    if (!!orderNumber && documentTemplateData) {
+      dynamicForm.setValue("notaryAmountStateTax", "0");
+    }
   }, [documentTemplateData]);
 
   useEffectOnce(async () => {
     const formValues = form.getValues();
     const dynamicFormValues = dynamicForm.getValues();
 
-    const { typeNotarialAction, product, requester, members } = formValues;
+    const { typeNotarialAction, product, requester, members, orderNumber } = formValues;
     const { notaryPowerAttorneyTerm } = dynamicFormValues;
+
+    if (!notaryPowerAttorneyTerm || !relationshipType || !!orderNumber) return;
 
     let partnerType: PartnerType = PartnerType.Individual;
 
