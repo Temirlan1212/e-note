@@ -118,6 +118,7 @@
   "Date of birth": "Дата рождения",
   "Date of death": "Дата смерти",
   "Date of creation": "Дата создания",
+  "Date of signing": "Дата подписания",
   "Collapse filter": "Свернуть фильтр",
   "Expand filter": "Развернуть фильтр",
   "Sorting for": "Сортировка за",
@@ -260,5 +261,6 @@
   "Do you really want to remove the template from the platform?": "Вы действительно хотите удалить шаблон с платформы?",
   "member shrinked": "уч",
   "Panning": "Перемещение",
-  "Something went wrong": "Что-то пошло не так ..."
+  "Something went wrong": "Что-то пошло не так ...",
+  "Description": "Содержание"
 }
