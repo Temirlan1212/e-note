@@ -17,6 +17,9 @@ const fields: string[] = [
   "product.name",
   "product.oneSideAction",
   "cancelReasonStr",
+  "notaryAnnulmentReason",
+  "notaryAnnulmentDate",
+  "orderNumber",
   "notaryCancelledDate",
   "creationDate",
   "statusSelect",
@@ -24,6 +27,7 @@ const fields: string[] = [
   "company.partner.fullName",
   "files",
   "isToPrintLineSubTotal",
+  "orderNumber",
 ];
 
 const related: Record<string, typeof fields> = {

@@ -21,7 +21,7 @@ import { IApplication } from "@/models/application";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IKeywordSchema, keywordSchema } from "@/validator-schemas/keyword";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface IAppQueryParams {
@@ -344,11 +344,9 @@ export default function ApplicationList() {
             headerName: "Side-1",
             width: 200,
             sortable: false,
+            cellClassName: "requestersColumn",
             valueGetter: (params: GridValueGetterParams) => {
-              const requesters =
-                params.value.length > 1
-                  ? `${params.value[0]?.fullName} + ${params.value.length - 1} ${t("member shrinked")}.`
-                  : params.value[0]?.fullName;
+              const requesters = params.value.map((requester: any) => requester.fullName).join(", ");
               return isSearchedData ? params.row?.requester?.[0]?.fullName : requesters || t("not assigned");
             },
           },
@@ -357,12 +355,10 @@ export default function ApplicationList() {
             headerName: "Side-2",
             width: 200,
             sortable: false,
+            cellClassName: "membersColumn",
             valueGetter: (params: GridValueGetterParams) => {
-              const members =
-                params.value.length > 1
-                  ? `${params.value[0]?.fullName} + ${params.value.length - 1} ${t("member shrinked")}.`
-                  : params.value[0]?.fullName;
-              return isSearchedData ? params.row?.members?.[0]?.fullName : members || t("not assigned");
+              const members = params.value.map((member: any) => member.fullName).join(", ");
+              return isSearchedData ? params.row?.member?.[0]?.fullName : members || t("not assigned");
             },
           },
           // {
@@ -441,11 +437,34 @@ export default function ApplicationList() {
           },
           {
             field: "createdOn",
-            headerName: "Date",
-            width: 170,
+            headerName: "Date of creation",
+            width: 190,
             sortable: isSearchedData ? false : true,
             valueGetter: (params: GridValueGetterParams) => {
-              return format(new Date(params.value), "dd.MM.yyyy HH:mm");
+              if (!params.value) return t("absent");
+              const date = new Date(params.value);
+              return isValid(date) ? format(date, "dd.MM.yyyy HH:mm") : t("absent");
+            },
+          },
+          {
+            field: "notaryDocumentSignDate",
+            headerName: "Date of signing",
+            width: 190,
+            sortable: false,
+            valueGetter: (params: GridValueGetterParams) => {
+              if (!params.value) return t("absent");
+              const date = new Date(params.value);
+              return isValid(date) ? format(date, "dd.MM.yyyy HH:mm") : t("absent");
+            },
+          },
+          {
+            field: "description",
+            headerName: "Description",
+            width: 190,
+            sortable: false,
+            cellClassName: "descriptionColumn",
+            valueGetter: (params: GridValueGetterParams) => {
+              return params.value || t("absent");
             },
           },
           {
@@ -478,6 +497,13 @@ export default function ApplicationList() {
           ".executorColumn": {
             color: "success.main",
           },
+          ".descriptionColumn .MuiDataGrid-cellContent, .requestersColumn .MuiDataGrid-cellContent, .membersColumn .MuiDataGrid-cellContent":
+            {
+              display: "-webkit-box !important",
+              WebkitLineClamp: "2",
+              WebkitBoxOrient: "vertical !important",
+              overflow: "hidden !important",
+            },
         }}
         rowHeight={65}
       />

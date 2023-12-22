@@ -9,4 +9,6 @@ export interface ICompany {
   "notaryDistrict.id": number;
   partner: Partial<IPartner>;
   licenseTermUntil: string;
+  longitude: string;
+  latitude: string;
 }

@@ -27,11 +27,11 @@ export const userProfileSchema = yup.object().shape({
     longitude: yup
       .string()
       .trim()
-      .matches(/^\d+(\.\d+)?$/, "onlyNumbers"),
+      .matches(/^[-]?\d*\.?\d{0,6}$/, "invalid format"),
     latitude: yup
       .string()
       .trim()
-      .matches(/^\d+(\.\d+)?$/, "onlyNumbers"),
+      .matches(/^[-]?\d*\.?\d{0,6}$/, "invalid format"),
     address: addressSchema,
     notaryDistrict: yup
       .object({

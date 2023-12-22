@@ -65,5 +65,6 @@ export const applicationSchema = object()
     ),
     openFields: boolean(),
     selectTemplateFromMade: boolean(),
+    orderNumber: mixed().nullable(),
   })
   .concat(addressSchema.pick(["region", "district", "city"]));

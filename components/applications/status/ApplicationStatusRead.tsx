@@ -55,17 +55,24 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
     },
     { title: "Notary's full name", value: data?.company.partner?.fullName },
     { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },
-  ];
-
-  if (data?.notaryCancelledDate) {
-    titles.push(
-      { title: "Cancel reason str", value: data?.cancelReasonStr },
-      {
-        title: "Cancel date",
-        value: format(new Date(data?.notaryCancelledDate!), "dd.MM.yyyy HH:mm:ss"),
-      }
-    );
-  }
+    data?.orderNumber ? { title: "Previous document", value: data?.orderNumber ?? t("not signed") } : null,
+    data?.notaryAnnulmentReason
+      ? { title: "Annul reason str", value: data?.notaryAnnulmentReason ?? t("not signed") }
+      : null,
+    data?.notaryAnnulmentDate
+      ? {
+          title: "Annul date",
+          value: format(new Date(data?.notaryAnnulmentDate), "dd.MM.yyyy HH:mm:ss") ?? t("not signed"),
+        }
+      : null,
+    data?.notaryCancelledDate
+      ? {
+          title: "Cancel date",
+          value: format(new Date(data?.notaryCancelledDate), "dd.MM.yyyy HH:mm:ss") ?? t("not signed"),
+        }
+      : null,
+    data?.cancelReasonStr ? { title: "Cancel reason str", value: data?.cancelReasonStr ?? t("not signed") } : null,
+  ].filter(Boolean);
 
   const members = data?.requester.concat(data.members);
 
@@ -114,7 +121,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                       wordBreak: "break-word",
                     }}
                   >
-                    {t(el.title)}
+                    {t(el?.title)}
                   </Typography>
                   <Typography
                     sx={{
@@ -124,7 +131,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                       wordBreak: "break-all",
                     }}
                   >
-                    {el.value != null && el.value !== "" ? el.value : t("absent")}
+                    {el?.value != null && el?.value !== "" ? el?.value : t("absent")}
                   </Typography>
                 </ListItem>
               );
