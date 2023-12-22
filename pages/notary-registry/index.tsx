@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { Box, CircularProgress, Container, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { useState } from "react";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IMarker } from "@/components/ui/LeafletMap";
@@ -21,12 +21,15 @@ export default function Notaries() {
     { loading: () => <p>Loading...</p>, ssr: false }
   );
 
-  const { data: notaryData, loading: notaryDataLoading } = useFetch("/api/notaries", "POST");
+  const { data: companies, loading: companiesLoading } = useFetch<FetchResponseBody | null | undefined>(
+    "/api/companies",
+    "POST"
+  );
 
   useEffectOnce(() => {
-    if (Array.isArray(notaryData?.data)) {
+    if (Array.isArray(companies?.data)) {
       setMarkers(
-        notaryData?.data.map((item) => ({
+        companies?.data.map((item) => ({
           coordinates: {
             lat: item.latitude,
             lng: item.longitude,
@@ -44,7 +47,7 @@ export default function Notaries() {
         }))
       );
     }
-  }, [notaryData]);
+  }, [companies]);
 
   return (
     <>
@@ -58,7 +61,7 @@ export default function Notaries() {
           <Typography variant="h4" color="success.main">
             {t("Search for a notary on the map")}
           </Typography>
-          {!notaryDataLoading && notaryData ? (
+          {!companiesLoading && companies ? (
             <LeafletMap
               zoom={12}
               markers={markers}
