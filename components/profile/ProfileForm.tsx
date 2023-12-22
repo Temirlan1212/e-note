@@ -61,7 +61,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const [userData, setUserData] = useState<FetchResponseBody | null>();
   const [base64Image, setBase64Image] = useState<string | null>(null);
   const [userIsNotary, setUserIsNotary] = useState(false);
-  // const [addEds, setAddEds] = useState();
   const [alertOpen, setAlertOpen] = useState(false);
 
   const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
@@ -70,10 +69,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const { update: getUserData, loading: userDataLoading } = useFetch("", "POST");
   const { data: checkFaceData, update: checkFace, loading: checkFaceLoading } = useFetch("", "POST");
-  // const { data: edsData, update: edsUpdate } = useFetch(
-  //   "/api/sign-register/" + userData?.data[0].activeCompany.id,
-  //   "POST"
-  // );
 
   useEffectOnce(async () => {
     setUserIsNotary(Boolean(profileData?.activeCompany));
@@ -304,9 +299,9 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
             {t("Remove")}
           </Button>
         </Box>
-        {/*<Box sx={{ width: "100%", display: "flex", justifyContent: "end", alignItems: "center" }}>*/}
-        {/*  <RegisterSignModal addedEds={(eds) => setAddEds(eds)} />*/}
-        {/*</Box>*/}
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "end", alignItems: "center" }}>
+          <RegisterSignModal />
+        </Box>
       </Box>
       <Divider
         sx={{
@@ -573,30 +568,30 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
               <ProfileWorkingDays />
 
-              {/*<Box*/}
-              {/*  sx={{*/}
-              {/*    display: "flex",*/}
-              {/*    flexDirection: "column",*/}
-              {/*    gap: "15px",*/}
-              {/*  }}*/}
-              {/*>*/}
-              {/*  <Typography*/}
-              {/*    sx={{*/}
-              {/*      color: "#687C9B",*/}
-              {/*      fontSize: "16px",*/}
-              {/*      fontWeight: "600",*/}
-              {/*    }}*/}
-              {/*  >*/}
-              {/*    {t("EDS list")}*/}
-              {/*  </Typography>*/}
-              {/*  <List>*/}
-              {/*    {edsData?.data?.map((item) => (*/}
-              {/*      <ListItem key={item}>*/}
-              {/*        <ListItemText primary={`${item.typeOfSignature} - ${item.digitalSignNumber}`} />*/}
-              {/*      </ListItem>*/}
-              {/*    ))}*/}
-              {/*  </List>*/}
-              {/*</Box>*/}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "15px",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "#687C9B",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                  }}
+                >
+                  {t("EDS list")}
+                </Typography>
+                <List>
+                  {Array.from([1, 2, 3]).map((item) => (
+                    <ListItem key={item}>
+                      <ListItemText primary={`Rutoken ${item}`} />
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
             </Box>
           </ExpandingFields>
         )}
