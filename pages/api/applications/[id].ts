@@ -24,6 +24,7 @@ const fields: string[] = [
   "company.partner.fullName",
   "files",
   "isToPrintLineSubTotal",
+  "orderNumber",
 ];
 
 const related: Record<string, typeof fields> = {
