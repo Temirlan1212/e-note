@@ -85,6 +85,7 @@ export interface IPersonalDataProps {
   loading?: boolean;
   disableFields?: boolean;
   isTundukRequested?: boolean;
+  isRequester?: boolean;
 }
 
 export default function PersonalData({
@@ -97,6 +98,7 @@ export default function PersonalData({
   loading,
   disableFields,
   isTundukRequested,
+  isRequester = false,
 }: IPersonalDataProps) {
   const t = useTranslations();
 
@@ -317,7 +319,29 @@ export default function PersonalData({
                   defaultValue={defaultValues?.tundukDocumentSeries ?? null}
                   render={({ field, fieldState }) => (
                     <Box display="flex" flexDirection="column" width="100%">
-                      <InputLabel sx={{ fontWeight: 600 }}>{t("Series")}</InputLabel>
+                      {isRequester ? (
+                        <InputLabel
+                          required
+                          sx={{
+                            fontWeight: 600,
+                            ".MuiFormLabel-asterisk": {
+                              color: "error.main",
+                              fontSize: "2em",
+                              verticalAlign: "middle",
+                            },
+                          }}
+                        >
+                          {t("Series")}
+                        </InputLabel>
+                      ) : (
+                        <InputLabel
+                          sx={{
+                            fontWeight: 600,
+                          }}
+                        >
+                          {t("Series")}
+                        </InputLabel>
+                      )}
                       <Select
                         labelField={
                           identityDocumentSeriesDictionary?.data?.length > 0 &&
@@ -352,7 +376,29 @@ export default function PersonalData({
                   defaultValue={defaultValues?.tundukDocumentNumber ?? ""}
                   render={({ field, fieldState }) => (
                     <Box display="flex" flexDirection="column" width="100%">
-                      <InputLabel sx={{ fontWeight: 600 }}>{t("Number")}</InputLabel>
+                      {isRequester ? (
+                        <InputLabel
+                          required
+                          sx={{
+                            fontWeight: 600,
+                            ".MuiFormLabel-asterisk": {
+                              color: "error.main",
+                              fontSize: "2em",
+                              verticalAlign: "middle",
+                            },
+                          }}
+                        >
+                          {t("Number")}
+                        </InputLabel>
+                      ) : (
+                        <InputLabel
+                          sx={{
+                            fontWeight: 600,
+                          }}
+                        >
+                          {t("Number")}
+                        </InputLabel>
+                      )}
                       <Input
                         sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                         inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
