@@ -118,6 +118,7 @@
   "Enter full name": "Enter full name",
   "Date of death": "Date of death",
   "Date of creation": "Date of creation",
+  "Date of signing": "Date of signing",
   "Collapse filter": "Collapse filter",
   "Expand filter": "Expand filter",
   "Sorting for": "Sorting for",
@@ -260,5 +261,6 @@
   "Do you really want to remove the template from the platform?": "Do you really want to remove the template from the platform?",
   "member shrinked": "mem",
   "Panning": "Panning",
-  "Something went wrong": "Something went wrong ..."
+  "Something went wrong": "Something went wrong ...",
+  "Description": "Description"
 }

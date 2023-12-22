@@ -118,6 +118,7 @@
   "Enter full name": "Толук атын киргизиңиз",
   "Date of death": "Өлгөн күнү",
   "Date of creation": "Түзүлгөн датасы",
+  "Date of signing": "Кол коюлган күн",
   "Collapse filter": "Чыпканы жыйыштыруу",
   "Expand filter": "Чыпканы кеңейтүү",
   "Sorting for": "Сортто",
@@ -260,5 +261,6 @@
   "Do you really want to remove the template from the platform?": "Шаблонду платформадан чын эле алып салгыңыз келеби?",
   "member shrinked": "кат",
   "Panning": "Жылдыруу",
-  "Something went wrong": "Бир жерден ката кетти ..."
+  "Something went wrong": "Бир жерден ката кетти ...",
+  "Description": "Мазмун"
 }
