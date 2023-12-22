@@ -56,17 +56,23 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
     { title: "Notary's full name", value: data?.company.partner?.fullName },
     { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },
     data?.orderNumber ? { title: "Previous document", value: data?.orderNumber ?? t("not signed") } : null,
+    data?.notaryAnnulmentReason
+      ? { title: "Annul reason str", value: data?.notaryAnnulmentReason ?? t("not signed") }
+      : null,
+    data?.notaryAnnulmentDate
+      ? {
+          title: "Annul date",
+          value: format(new Date(data?.notaryAnnulmentDate), "dd.MM.yyyy HH:mm:ss") ?? t("not signed"),
+        }
+      : null,
+    data?.notaryCancelledDate
+      ? {
+          title: "Cancel date",
+          value: format(new Date(data?.notaryCancelledDate), "dd.MM.yyyy HH:mm:ss") ?? t("not signed"),
+        }
+      : null,
+    data?.cancelReasonStr ? { title: "Cancel reason str", value: data?.cancelReasonStr ?? t("not signed") } : null,
   ].filter(Boolean);
-
-  if (data?.cancelReasonStr) {
-    titles.push(
-      { title: "Cancel reason str", value: data?.cancelReasonStr },
-      {
-        title: "Cancel date",
-        value: format(new Date(data?.notaryCancelledDate!), "dd.MM.yyyy HH:mm:ss"),
-      }
-    );
-  }
 
   const members = data?.requester.concat(data.members);
 
