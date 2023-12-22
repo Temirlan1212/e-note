@@ -262,6 +262,11 @@
   "Do you really want to remove the template from the platform?": "Вы действительно хотите удалить шаблон с платформы?",
   "member shrinked": "уч",
   "Panning": "Перемещение",
-  "Something went wrong": "Что-то пошло не так ...",
-  "Description": "Содержание"
+  "Description": "Содержание",
+  "Register": "Зарегистрировать",
+  "Register an EDS": "Зарегистрировать ЭЦП",
+  "EDS list": "Список ЭЦП",
+  "EDS registration": "Регистрация ЭЦП",
+  "You can register an EDS for further use": "Вы можете зарегистрировать ЭЦП для дальнейшего использования",
+  "Something went wrong": "Что-то пошло не так ..."
 }

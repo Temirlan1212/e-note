@@ -262,6 +262,11 @@
   "Do you really want to remove the template from the platform?": "Do you really want to remove the template from the platform?",
   "member shrinked": "mem",
   "Panning": "Panning",
-  "Something went wrong": "Something went wrong ...",
-  "Description": "Description"
+  "Description": "Description",
+  "Register": "Register",
+  "Register an EDS": "Register an EDS",
+  "EDS list": "EDS list",
+  "EDS registration": "EDS registration",
+  "You can register an EDS for further use": "You can register an EDS for further use",
+  "Something went wrong": "Something went wrong ..."
 }
