@@ -114,6 +114,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
               }}
               onPinCheck={() => handlePinCheck(index)}
               onPinReset={() => handlePinReset(index)}
+              isRequester={true}
             />
             <ExpandingFields title="Additional information" permanentExpand={expand}>
               <Box display="flex" gap="20px" flexDirection="column">
