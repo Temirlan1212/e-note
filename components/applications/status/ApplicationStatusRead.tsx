@@ -55,9 +55,10 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
     },
     { title: "Notary's full name", value: data?.company.partner?.fullName },
     { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },
-  ];
+    data?.orderNumber ? { title: "Previous document", value: data?.orderNumber ?? t("not signed") } : null,
+  ].filter(Boolean);
 
-  if (data?.notaryCancelledDate) {
+  if (data?.cancelReasonStr) {
     titles.push(
       { title: "Cancel reason str", value: data?.cancelReasonStr },
       {
@@ -114,7 +115,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                       wordBreak: "break-word",
                     }}
                   >
-                    {t(el.title)}
+                    {t(el?.title)}
                   </Typography>
                   <Typography
                     sx={{
@@ -124,7 +125,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                       wordBreak: "break-all",
                     }}
                   >
-                    {el.value != null && el.value !== "" ? el.value : t("absent")}
+                    {el?.value != null && el?.value !== "" ? el?.value : t("absent")}
                   </Typography>
                 </ListItem>
               );

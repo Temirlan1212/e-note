@@ -452,7 +452,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
                 <Box
                   maxHeight={190}
                   overflow="auto"
-                  maxWidth={250}
+                  maxWidth={260}
                   sx={{
                     "::-webkit-scrollbar": { width: "4px" },
                     "::-webkit-scrollbar-thumb": {

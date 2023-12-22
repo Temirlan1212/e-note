@@ -18,6 +18,7 @@ import Button from "@/components/ui/Button";
 import { IFetchByIdData, IFetchNotaryChat } from "@/models/chat";
 import CancelIcon from "@mui/icons-material/Cancel";
 import KeyIcon from "@mui/icons-material/Key";
+import BlockIcon from "@mui/icons-material/Block";
 import Input from "@/components/ui/Input";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
@@ -33,8 +34,8 @@ export const ApplicationListActions = ({
   const t = useTranslations();
   const [openModal, setOpenModal] = useState(false);
   const [signModal, setSignModal] = useState(false);
-  const [inputValue, setInputValue] = useState<string | null>(null);
-  const [inputError, setInputError] = useState<boolean>(false);
+  const [cancelReason, setCancelReason] = useState<string | null>(null);
+  const [annulmentReason, setAnnulmentReason] = useState<string | null>(null);
   const [userData, setUserData] = useState<IUserData | null>();
   const profile = useProfileStore((state) => state);
 
@@ -107,26 +108,50 @@ export const ApplicationListActions = ({
   };
 
   const handleCancelClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
-    if (params.row.id != null && inputValue) {
+    if (params.row.id != null && cancelReason) {
       await cancelUpdate("/api/applications/update/" + params.row.id, {
         id: params.row.id,
         version: params.row.version,
         statusSelect: 3,
         notaryReliabilityStatus: "3",
         notaryCancelledDate: new Date().toISOString(),
-        cancelReasonStr: inputValue,
+        cancelReasonStr: cancelReason,
       });
       callback(false);
       onDelete();
     }
-    setInputError(true);
+    setCancelReason("");
   };
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-    if (e.target.value) {
-      setInputError(false);
+  const handleAnnulClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
+    if (params.row.id != null && annulmentReason) {
+      await cancelUpdate("/api/applications/update/" + params.row.id, {
+        id: params.row.id,
+        version: params.row.version,
+        statusSelect: 4,
+        notaryReliabilityStatus: "4",
+        notaryAnnulmentDate: new Date().toISOString(),
+        notaryAnnulmentReason: annulmentReason,
+      }).then(() =>
+        getCopy("/api/applications/copy/" + params.row.id).then((res) => {
+          updateCopyData("/api/applications/copy/update", {
+            data: {
+              ...res?.data[0],
+              statusSelect: 2,
+              notarySignatureStatus: 2,
+              notaryReliabilityStatus: 2,
+              orderNumber: params.row.notaryUniqNumber,
+              notaryDateHandWritten: null,
+              notaryUniqNumber: null,
+              isToPrintLineSubTotal: true,
+              documentInfo: null,
+            },
+          });
+        })
+      );
+      callback(false);
     }
+    setAnnulmentReason("");
   };
 
   useEffectOnce(() => {
@@ -139,6 +164,9 @@ export const ApplicationListActions = ({
         data: {
           ...res?.data[0],
           statusSelect: 2,
+          notarySignatureStatus: 2,
+          notaryReliabilityStatus: 2,
+          notaryDateHandWritten: null,
           notaryUniqNumber: null,
           isToPrintLineSubTotal: true,
           documentInfo: null,
@@ -294,10 +322,9 @@ export const ApplicationListActions = ({
                 <Box sx={{ marginBottom: "20px" }}>
                   <InputLabel>{t("Enter a reason")}</InputLabel>
                   <Input
-                    value={inputValue}
-                    onChange={handleSearchChange}
-                    inputType={inputError ? "error" : "secondary"}
-                    helperText={inputError && t("This field is required!")}
+                    onChange={(e) => setCancelReason(e.target.value)}
+                    inputType={cancelReason === "" ? "error" : "secondary"}
+                    helperText={cancelReason === "" && t("This field is required!")}
                   />
                 </Box>
               ),
@@ -306,6 +333,30 @@ export const ApplicationListActions = ({
             <Tooltip title={t("Cancel")} arrow>
               <IconButton>
                 <CancelIcon />
+              </IconButton>
+            </Tooltip>
+          </ConfirmationModal>
+
+          <ConfirmationModal
+            hintTitle="Do you really want to annul the application?"
+            title="Annulling an application"
+            onConfirm={(callback) => handleAnnulClick(callback)}
+            slots={{
+              body: () => (
+                <Box sx={{ marginBottom: "20px" }}>
+                  <InputLabel>{t("Enter a reason")}</InputLabel>
+                  <Input
+                    onChange={(e) => setAnnulmentReason(e.target.value)}
+                    inputType={annulmentReason === "" ? "error" : "secondary"}
+                    helperText={annulmentReason === "" && t("This field is required!")}
+                  />
+                </Box>
+              ),
+            }}
+          >
+            <Tooltip title={t("Annul")} arrow>
+              <IconButton>
+                <BlockIcon />
               </IconButton>
             </Tooltip>
           </ConfirmationModal>
