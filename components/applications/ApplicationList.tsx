@@ -441,6 +441,7 @@ export default function ApplicationList() {
             width: 190,
             sortable: isSearchedData ? false : true,
             valueGetter: (params: GridValueGetterParams) => {
+              if (!params.value) return t("absent");
               const date = new Date(params.value);
               return isValid(date) ? format(date, "dd.MM.yyyy HH:mm") : t("absent");
             },
@@ -451,6 +452,7 @@ export default function ApplicationList() {
             width: 190,
             sortable: false,
             valueGetter: (params: GridValueGetterParams) => {
+              if (!params.value) return t("absent");
               const date = new Date(params.value);
               return isValid(date) ? format(date, "dd.MM.yyyy HH:mm") : t("absent");
             },
