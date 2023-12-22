@@ -13,17 +13,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
+      fields: ["notary", "typeOfSignature", "digitalSignNumber"],
       data: {
-        fields: ["notary", "typeOfSignature", "digitalSignNumber"],
-        data: {
-          criteria: [
-            {
-              fieldName: "notary.id",
-              operator: "=",
-              value: id,
-            },
-          ],
-        },
+        criteria: [
+          {
+            fieldName: "notary.id",
+            operator: "=",
+            value: id,
+          },
+        ],
       },
     }),
   });

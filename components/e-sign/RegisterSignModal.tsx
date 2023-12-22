@@ -39,6 +39,8 @@ export default function RegisterSignModal() {
         digitalSignNumber: serialNumber,
       });
 
+      // addedEds(register);
+
       if (register.status == "-1") {
         setAlertOpen(true);
         return;
