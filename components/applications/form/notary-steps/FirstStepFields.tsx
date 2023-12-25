@@ -205,7 +205,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
   const isFieldsOpen = watch("openFields") as boolean;
 
-  useEffectOnce(() => {
+  useEffectOnce(async () => {
     const requesters = getValues("requester");
 
     const updateSubjectRole = (requesterIndex: number) => {
@@ -217,6 +217,11 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
     for (let i = 0; i < (requesters?.length as number) ?? 0; i++) {
       updateSubjectRole(i);
+    }
+
+    const lastIndex = (requesters?.length as number) - 1;
+    if (lastIndex >= 0) {
+      await tabsRef.current?.handleTabChange(lastIndex);
     }
   }, [items]);
 
