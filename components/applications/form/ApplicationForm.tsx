@@ -144,6 +144,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   }, []);
 
   const selectTemplateFromMade = form.watch("selectTemplateFromMade");
+  const oneSideAction = form.watch("product.oneSideAction");
 
   const steps =
     userData?.group?.id === 4
@@ -177,7 +178,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
               onPrev={() => setStep(step - 1)}
               onNext={({ step, isStepByStep }) => {
                 if (!isStepByStep) getDynamicFormAppData();
-                const oneSideAction = form.getValues("product.oneSideAction");
                 setStep((prev) => {
                   if (oneSideAction && !isStepByStep) return prev + 2;
                   if (step != null) return step;
@@ -192,7 +192,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
               form={form}
               onPrev={() => setStep(step - 1)}
               onNext={({ step }) => {
-                const oneSideAction = form.getValues("product.oneSideAction");
                 getDynamicFormAppData();
                 setStep((prev) => {
                   if (oneSideAction) return prev + 2;
@@ -221,7 +220,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             dynamicForm={dynamicForm}
             form={form}
             onPrev={() => {
-              const oneSideAction = form.getValues("product.oneSideAction");
               oneSideAction ? setStep(step - 2) : setStep(step - 1);
             }}
             onNext={({ step }) =>
@@ -270,9 +268,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
               onPrev={() => setStep(step - 1)}
               onNext={({ step, isStepByStep }) => {
                 if (!isStepByStep) getDynamicFormAppData();
-                const oneSideAction = form.getValues("product.oneSideAction");
                 setStep((prev) => {
-                  if (oneSideAction) return prev + 2;
                   if (step != null) return step;
                   return prev + 1;
                 });
@@ -285,10 +281,8 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
               form={form}
               onPrev={() => setStep(step - 1)}
               onNext={({ step }) => {
-                const oneSideAction = form.getValues("product.oneSideAction");
                 getDynamicFormAppData();
                 setStep((prev) => {
-                  if (oneSideAction) return prev + 2;
                   if (step != null) return step;
                   return prev + 1;
                 });
@@ -301,7 +295,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             form={form}
             onPrev={() => setStep(step - 1)}
             onNext={({ step }) => {
-              const oneSideAction = form.getValues("product.oneSideAction");
               getDynamicFormAppData();
               setStep((prev) => {
                 if (oneSideAction) return prev + 2;
@@ -315,7 +308,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             key={4}
             form={form}
             onPrev={() => {
-              const oneSideAction = form.getValues("product.oneSideAction");
               oneSideAction ? setStep(step - 2) : setStep(step - 1);
             }}
             onNext={({ step }) =>
@@ -330,7 +322,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             key={5}
             dynamicForm={dynamicForm}
             form={form}
-            onPrev={() => setStep(step - 1)}
+            onPrev={() => setStep(step - 2)}
             onNext={({ step }) =>
               setStep((prev) => {
                 if (step != null) return step;
@@ -359,6 +351,8 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           sx={{ justifyContent: "center" }}
         >
           {steps.map((component, index) => {
+            const isClicableStep = index === (userData?.group?.id === 4 ? 3 : 4) && oneSideAction ? false : true;
+
             return (
               <Step key={index} completed={step - 1 === index} sx={{ display: "flex", p: 0 }}>
                 <StepIcon
@@ -371,13 +365,17 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
                         sx={{ width: "30px", height: "30px" }}
                         cursor={stepProgress.current >= index && steps.length - 1 !== step ? "pointer" : "initial"}
                         onClick={() =>
-                          stepProgress.current >= index && step !== index && handleStepChangeByStepper(index)
+                          isClicableStep
+                            ? stepProgress.current >= index && step !== index && handleStepChangeByStepper(index)
+                            : null
                         }
                       />
                     ) : (
                       <RadioButtonCheckedIcon
                         onClick={() =>
-                          stepProgress.current >= index && step !== index && handleStepChangeByStepper(index)
+                          isClicableStep
+                            ? stepProgress.current >= index && step !== index && handleStepChangeByStepper(index)
+                            : null
                         }
                         color={step === index ? "success" : stepProgress.current >= index ? "secondary" : "disabled"}
                         sx={{
