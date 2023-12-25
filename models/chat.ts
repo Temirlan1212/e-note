@@ -6,25 +6,28 @@ export interface IContact {
   userToken: string;
 }
 
-interface IUser {
-  $version: number;
-  code: string;
-  fullName: string;
+export interface IUser {
   id: number;
+  "partner.fullName": string;
+  version: number;
 }
 
-interface IRequester {
+export interface IChatUser {
+  data: IUser[];
+}
+
+export interface IRequester {
   id: number;
-  user?: IUser;
+  personalNumber?: string;
   version: number;
 }
 
 export interface IFetchByIdData {
-  status: number;
   data: {
     id: number;
     version: number;
     requester: IRequester[];
+    members: IRequester[];
   }[];
 }
 

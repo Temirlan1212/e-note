@@ -1,23 +1,26 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
-
   if (req.method !== "POST") {
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + `/ws/rest/com.axelor.apps.sale.db.SaleOrder/${id}/fetch`, {
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.auth.db.User/search", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      fields: ["requester", "members"],
-      related: {
-        requester: ["personalNumber"],
-        members: ["personalNumber"],
+      fields: ["id", "partner.fullName"],
+      data: {
+        criteria: [
+          {
+            fieldName: "code",
+            operator: "=",
+            value: req.body.pin,
+          },
+        ],
       },
     }),
   });
