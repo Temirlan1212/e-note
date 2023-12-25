@@ -180,7 +180,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
   const isFieldsOpen = watch("openFields") as boolean;
 
-  useEffectOnce(() => {
+  useEffectOnce(async () => {
     const members = getValues("members");
 
     const updateSubjectRole = (memberIndex: number) => {
@@ -192,6 +192,11 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
 
     for (let i = 0; i < (members?.length as number) ?? 0; i++) {
       updateSubjectRole(i);
+    }
+
+    const lastIndex = (members?.length as number) - 1;
+    if (lastIndex >= 0) {
+      await tabsRef.current?.handleTabChange(lastIndex);
     }
   }, [items]);
 
