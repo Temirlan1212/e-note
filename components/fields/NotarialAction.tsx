@@ -35,25 +35,29 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
     "POST"
   );
 
-  const { data: objectTypeData, loading: objectTypeLoading } = useFetch<INotarialActionData>(
-    `/api/dictionaries/notarial-action?actionType=objectType&parentId=${objectVal}`,
-    "POST"
-  );
+  const {
+    data: objectTypeData,
+    update: objectTypeUpdate,
+    loading: objectTypeLoading,
+  } = useFetch<INotarialActionData>(`/api/dictionaries/notarial-action?actionType=objectType`, "POST");
 
-  const { data: notarialActionData, loading: notarialActionLoading } = useFetch<INotarialActionData>(
-    `/api/dictionaries/notarial-action?actionType=notarialAction&parentId=${objectTypeVal}`,
-    "POST"
-  );
+  const {
+    data: notarialActionData,
+    update: notarialActionUpdate,
+    loading: notarialActionLoading,
+  } = useFetch<INotarialActionData>(`/api/dictionaries/notarial-action?actionType=notarialAction`, "POST");
 
-  const { data: typeNotarialActionData, loading: typeNotarialActionLoading } = useFetch<INotarialActionData>(
-    `/api/dictionaries/notarial-action?actionType=typeNotarialAction&parentId=${notarialActionVal}`,
-    "POST"
-  );
+  const {
+    data: typeNotarialActionData,
+    update: typeNotarialActionUpdate,
+    loading: typeNotarialActionLoading,
+  } = useFetch<INotarialActionData>(`/api/dictionaries/notarial-action?actionType=typeNotarialAction`, "POST");
 
-  const { data: actionData, loading: actionLoading } = useFetch<INotarialActionData>(
-    `/api/dictionaries/notarial-action?actionType=action&parentId=${typeNotarialActionVal}`,
-    "POST"
-  );
+  const {
+    data: actionData,
+    update: actionUpdate,
+    loading: actionLoading,
+  } = useFetch<INotarialActionData>(`/api/dictionaries/notarial-action?actionType=action`, "POST");
 
   const { data: searchedDocData, loading: searchedDocLoading, update: updateSearchedDoc } = useFetch("", "POST");
   const { update: updateSearchedDocTree } = useFetch("", "POST");
@@ -77,6 +81,42 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
 
     if (isValuesSelected) setIsAdditionalFieldsOpen(isValuesSelected);
   }, values);
+
+  useEffectOnce(() => {
+    const parentId = objectVal || objectTypeVal || notarialActionVal || typeNotarialActionVal || "";
+    objectTypeUpdate(
+      `/api/dictionaries/notarial-action?actionType=objectType${
+        objectTypeVal ? "" : objectVal ? `&parentId=${objectVal}` : parentId ? `&parentId=${parentId}` : ""
+      }`
+    );
+    notarialActionUpdate(
+      `/api/dictionaries/notarial-action?actionType=notarialAction${
+        notarialActionVal ? "" : objectTypeVal ? `&parentId=${objectTypeVal}` : parentId ? `&parentId=${parentId}` : ""
+      }`
+    );
+    typeNotarialActionUpdate(
+      `/api/dictionaries/notarial-action?actionType=typeNotarialAction${
+        typeNotarialActionVal
+          ? ""
+          : notarialActionVal
+          ? `&parentId=${notarialActionVal}`
+          : parentId
+          ? `&parentId=${parentId}`
+          : ""
+      }`
+    );
+    actionUpdate(
+      `/api/dictionaries/notarial-action?actionType=action${
+        actionVal
+          ? ""
+          : typeNotarialActionVal
+          ? `&parentId=${typeNotarialActionVal}`
+          : parentId
+          ? `&parentId=${parentId}`
+          : ""
+      }`
+    );
+  }, [objectVal, objectTypeVal, notarialActionVal, typeNotarialActionVal]);
 
   useEffectOnce(async () => {
     const productId = product?.id;
@@ -209,7 +249,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                   <InputLabel sx={{ fontWeight: 600 }}>{t("Object type")}</InputLabel>
                   <Select
                     sx={{ fontWeight: 500 }}
-                    disabled={!objectVal}
+                    // disabled={!objectVal}
                     placeholder={t("All types of objects")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     data={objectTypeList ?? []}
@@ -250,7 +290,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                   <InputLabel sx={{ fontWeight: 600 }}>{t("Notarial action")}</InputLabel>
                   <Select
                     sx={{ fontWeight: 500 }}
-                    disabled={!objectTypeVal}
+                    // disabled={!objectTypeVal}
                     placeholder={t("All notarial actions")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     data={notarialActionList ?? []}
@@ -287,7 +327,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                   <InputLabel sx={{ fontWeight: 600 }}>{t("Type of notarial action")}</InputLabel>
                   <Select
                     sx={{ fontWeight: 500 }}
-                    disabled={!notarialActionVal}
+                    // disabled={!notarialActionVal}
                     placeholder={t("All types of notarial actions")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     data={typeNotarialActionList ?? []}
@@ -322,7 +362,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                   <InputLabel sx={{ fontWeight: 600 }}>{t("Purpose of action")}</InputLabel>
                   <Select
                     sx={{ fontWeight: 500 }}
-                    disabled={!typeNotarialActionVal}
+                    // disabled={!typeNotarialActionVal}
                     placeholder={t("All action goals")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     data={actionList ?? []}
