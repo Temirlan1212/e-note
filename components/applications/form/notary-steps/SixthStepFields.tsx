@@ -178,6 +178,17 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
           title={t("View document")}
           loading={applicationLoading || prepareLoading || pdfLoading || syncLoading}
         />
+        <ConfirmationModal
+          title="Rebuild the document"
+          type="hint"
+          hintTitle=""
+          hintText={"All changes made earlier in the document will be lost"}
+          onConfirm={handlePrepareDocument}
+        >
+          <Button startIcon={<SyncIcon />} sx={{ flexGrow: "1" }}>
+            {t("Rebuild the document")}
+          </Button>
+        </ConfirmationModal>
       </Box>
 
       {docUrl && <PDFViewer fileUrl={docUrl} />}
@@ -211,7 +222,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
             target="_blank"
             onClick={() => setIsBackdropOpen(true)}
           >
-            <Button startIcon={<EditIcon />} sx={{ flexGrow: "1" }}>
+            <Button startIcon={<EditIcon />} sx={{ flexGrow: "1", height: "100%" }}>
               {t("Edit")}
             </Button>
           </Link>
@@ -225,18 +236,6 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
             gap="20px"
             flexDirection={{ xs: "column", md: "row" }}
           >
-            {/* <ConfirmationModal
-                  title="Rebuild the document"
-                  type="hint"
-                  hintTitle=""
-                  hintText={"All changes made earlier in the document will be lost"}
-                  onConfirm={handlePrepareDocument}
-                >
-                  <Button startIcon={<SyncIcon />} sx={{ flexGrow: "1" }}>
-                    {t("Rebuild the document")}
-                  </Button>
-                </ConfirmationModal> */}
-
             {!isDeclSigned && base64Doc != null && !showSign && (
               <SignModal
                 base64Doc={base64Doc}
