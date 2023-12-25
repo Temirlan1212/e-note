@@ -15,7 +15,7 @@ import { useProfileStore } from "@/stores/profile";
 import { IUserData } from "@/models/user";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import Button from "@/components/ui/Button";
-import { IFetchByIdData, IFetchNotaryChat } from "@/models/chat";
+import { IChatUser, IFetchByIdData, IFetchNotaryChat, IRequester, IUser } from "@/models/chat";
 import CancelIcon from "@mui/icons-material/Cancel";
 import KeyIcon from "@mui/icons-material/Key";
 import BlockIcon from "@mui/icons-material/Block";
@@ -36,11 +36,13 @@ export const ApplicationListActions = ({
   const [signModal, setSignModal] = useState(false);
   const [cancelReason, setCancelReason] = useState<string | null>(null);
   const [annulmentReason, setAnnulmentReason] = useState<string | null>(null);
+  const [users, setUsers] = useState<IUser[]>([]);
   const [userData, setUserData] = useState<IUserData | null>();
   const profile = useProfileStore((state) => state);
 
   const { data, update: createChat } = useFetch<IFetchNotaryChat>("", "POST");
-  const { data: userById, update: getUser } = useFetch<IFetchByIdData>("", "POST");
+  const { update: getUser } = useFetch<IFetchByIdData>("", "POST");
+  const { update: getChatUsers } = useFetch<IChatUser>("", "POST");
   const { update } = useFetch<Response>("", "DELETE", {
     returnResponse: true,
   });
@@ -48,7 +50,7 @@ export const ApplicationListActions = ({
   const { update: downloadUpdate } = useFetch<FetchResponseBody | null>("", "POST");
   const { update: cancelUpdate } = useFetch<FetchResponseBody | null>("", "PUT");
   const { update: getCopy } = useFetch<IFetchByIdData>("", "GET");
-  const { data: copyData, update: updateCopyData } = useFetch<IFetchByIdData>("", "POST");
+  const { data: copyData, update: updateCopyData } = useFetch("", "POST");
   const { update: getApplication, loading: applicationLoading } = useFetch("", "POST");
 
   const handleDownloadClick = async () => {
@@ -86,7 +88,30 @@ export const ApplicationListActions = ({
 
   const handleFetchId = () => {
     handleToggle();
-    getUser("/api/chat/user/" + params.id);
+    getUser("/api/chat/user/" + params.id).then((res) => {
+      const user = res?.data?.[0];
+      const users: IRequester[] = [];
+
+      if (user?.requester) users.push(...user?.requester);
+      if (user?.members) users.push(...user?.members);
+
+      const userPromises = users.map((user) => {
+        return getChatUsers("/api/user/search", {
+          pin: user.personalNumber,
+        });
+      });
+
+      Promise.all(userPromises).then((results) => {
+        const chatUsers: IUser[] = [];
+
+        results.forEach((res) => {
+          if (res.data?.length > 0) {
+            chatUsers.push(...res.data);
+          }
+        });
+        setUsers(chatUsers);
+      });
+    });
   };
 
   useEffect(() => {
@@ -215,29 +240,29 @@ export const ApplicationListActions = ({
           slots={{
             body: () => (
               <Box display="flex" flexDirection="column" gap="20px">
-                {userById?.data[0].requester.find((item) => !item.user) ? (
-                  <Typography fontSize={14} color="text.primary">
-                    {t("User unavailable")}
-                  </Typography>
-                ) : (
-                  userById?.data[0].requester.map((item) => {
-                    const handleCreateChat = () => {
-                      if (item.user) {
-                        createChat("/api/chat/create/notary/" + item.user?.id);
+                {users.length > 0 ? (
+                  users?.map((chatUser) => {
+                    const handleCreateChat = async () => {
+                      if (chatUser?.id) {
+                        await createChat("/api/chat/create/notary/" + chatUser.id);
                       }
                     };
                     return (
                       <Button
-                        key={item.id}
+                        key={chatUser.id}
                         variant="contained"
                         buttonType="secondary"
                         sx={{ fontSize: "14px" }}
                         onClick={handleCreateChat}
                       >
-                        {item.user?.fullName}
+                        {chatUser["partner.fullName"]}
                       </Button>
                     );
                   })
+                ) : (
+                  <Typography fontSize={14} color="text.primary">
+                    {t("User unavailable")}
+                  </Typography>
                 )}
               </Box>
             ),
