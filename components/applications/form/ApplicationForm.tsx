@@ -146,8 +146,6 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const selectTemplateFromMade = form.watch("selectTemplateFromMade");
   const oneSideAction = form.watch("product.oneSideAction");
 
-  const isNotary = userData?.group?.name === "Notary";
-
   const steps =
     userData?.group?.id === 4
       ? [
@@ -353,7 +351,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           sx={{ justifyContent: "center" }}
         >
           {steps.map((component, index) => {
-            const isClicableStep = index === (isNotary ? 3 : 4) && oneSideAction ? false : true;
+            const isClicableStep = index === (userData?.group?.id === 4 ? 3 : 4) && oneSideAction ? false : true;
 
             return (
               <Step key={index} completed={step - 1 === index} sx={{ display: "flex", p: 0 }}>
