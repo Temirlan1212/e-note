@@ -38,7 +38,6 @@ import Coordinates from "@/components/fields/Coordinates";
 import ExpandingFields from "../fields/ExpandingFields";
 import ProfileWorkingDays from "./ProfileWorkingDays";
 import { format } from "date-fns";
-import RegisterSignModal from "@/components/e-sign/RegisterSignModal";
 
 interface IProfileFormProps {}
 
@@ -298,9 +297,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           >
             {t("Remove")}
           </Button>
-        </Box>
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "end", alignItems: "center" }}>
-          <RegisterSignModal />
         </Box>
       </Box>
       <Divider
@@ -567,31 +563,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               </Box>
 
               <ProfileWorkingDays />
-
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "15px",
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#687C9B",
-                    fontSize: "16px",
-                    fontWeight: "600",
-                  }}
-                >
-                  {t("EDS list")}
-                </Typography>
-                <List>
-                  {Array.from([1, 2, 3]).map((item) => (
-                    <ListItem key={item}>
-                      <ListItemText primary={`Rutoken ${item}`} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
             </Box>
           </ExpandingFields>
         )}
@@ -600,6 +571,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           display="flex"
           gap="30px"
           sx={{
+            position: "sticky",
+            bottom: "20px",
             flexDirection: {
               xs: "column",
               md: "row",

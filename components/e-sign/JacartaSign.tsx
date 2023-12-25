@@ -13,18 +13,13 @@ type IWindow = Window &
 
 export interface IJacartaSignProps {
   base64Doc: string;
-  getSerialNumber?: (serialNumber: number) => void;
-  onlyDevice?: boolean;
 }
 
 export interface IJacartaSignRef {
   handleSign: (callback?: (sign: string) => Promise<boolean>) => Promise<boolean>;
 }
 
-export default forwardRef(function JacartaSign(
-  { base64Doc, getSerialNumber, onlyDevice }: IJacartaSignProps,
-  ref: Ref<IJacartaSignRef>
-) {
+export default forwardRef(function JacartaSign({ base64Doc }: IJacartaSignProps, ref: Ref<IJacartaSignRef>) {
   const t = useTranslations();
   const [devices, setDevices] = useState<Record<string, any>[]>();
   const [device, setDevice] = useState<number>(-1);
@@ -44,10 +39,7 @@ export default forwardRef(function JacartaSign(
     const tmpDevices = await Promise.all(
       devices.map(async (item: Record<string, any>) => {
         const containers = lib.getContainerList({ args: { tokenID: item.id } });
-        const serialNumber = item.device.serialNumber;
-        if (getSerialNumber) {
-          getSerialNumber(serialNumber);
-        }
+
         return {
           label: `${item.id}_${item.device.serialNumber}`,
           value: item.id,
@@ -126,28 +118,26 @@ export default forwardRef(function JacartaSign(
         />
       </Box>
 
-      {onlyDevice ||
-        (device !== -1 && (
-          <Box display="flex" flexDirection="column" my={2}>
-            <InputLabel>{t("Container")}</InputLabel>
-            <Select
-              value={container}
-              data={devices?.find((item) => item.value === device)?.containers ?? []}
-              onChange={(event: SelectChangeEvent<number>) => {
-                setContainer(event.target.value as number);
-                setPin("");
-              }}
-            />
-          </Box>
-        ))}
+      {device !== -1 && (
+        <Box display="flex" flexDirection="column" my={2}>
+          <InputLabel>{t("Container")}</InputLabel>
+          <Select
+            value={container}
+            data={devices?.find((item) => item.value === device)?.containers ?? []}
+            onChange={(event: SelectChangeEvent<number>) => {
+              setContainer(event.target.value as number);
+              setPin("");
+            }}
+          />
+        </Box>
+      )}
 
-      {onlyDevice ||
-        (container !== -1 && (
-          <Box display="flex" flexDirection="column" my={2}>
-            <InputLabel>{t("PIN code")}</InputLabel>
-            <Input type="password" value={pin} onChange={(event) => setPin(event.target.value)} />
-          </Box>
-        ))}
+      {container !== -1 && (
+        <Box display="flex" flexDirection="column" my={2}>
+          <InputLabel>{t("PIN code")}</InputLabel>
+          <Input type="password" value={pin} onChange={(event) => setPin(event.target.value)} />
+        </Box>
+      )}
     </>
   );
 });
