@@ -10,6 +10,7 @@ export interface IConfirmationModal extends Omit<ModalProps, "slots"> {
   onConfirm: (callback: Dispatch<SetStateAction<boolean>>) => void;
   onToggle: (callback: Dispatch<SetStateAction<boolean>>) => void;
   isPermanentOpen?: boolean;
+  confirmLoading?: boolean;
   isHintShown?: boolean;
   hintTitle: string;
   hintText: string;
@@ -27,6 +28,7 @@ export const ConfirmationModal = ({
   onConfirm,
   slots,
   children,
+  confirmLoading,
   isPermanentOpen,
   confirmButtonType,
   isHintShown = true,
@@ -100,6 +102,7 @@ export const ConfirmationModal = ({
                   <Button
                     buttonType={confirmButtonType ? confirmButtonType : type === "warning" ? "warning" : "danger"}
                     onClick={handleConfirm}
+                    loading={confirmLoading}
                   >
                     {t("Yes")}
                   </Button>

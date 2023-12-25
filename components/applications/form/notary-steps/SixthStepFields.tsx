@@ -122,7 +122,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     return false;
   };
 
-  const handlePrepareDocument = async () => {
+  const handlePrepareDocument = async (callback?: Dispatch<SetStateAction<boolean>>) => {
     const prepareData = await getPrepare(`/api/files/prepare/${id}`);
     if (prepareData?.data?.saleOrderVersion != null) {
       setValue("version", prepareData.data.saleOrderVersion);
@@ -132,6 +132,8 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
       setToken(prepareData.data.token);
       handlePdfDownload(prepareData.data.pdfLink, prepareData.data.token);
     }
+
+    if (callback) callback(false);
   };
 
   useEffectOnce(async () => {
@@ -183,7 +185,8 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
           type="hint"
           hintTitle=""
           hintText={"All changes made earlier in the document will be lost"}
-          onConfirm={handlePrepareDocument}
+          onConfirm={(callback) => handlePrepareDocument(callback)}
+          confirmLoading={prepareLoading}
         >
           <Button startIcon={<SyncIcon />} sx={{ flexGrow: "1" }}>
             {t("Rebuild the document")}
