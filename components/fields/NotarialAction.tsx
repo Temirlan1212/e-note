@@ -249,7 +249,6 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                   <InputLabel sx={{ fontWeight: 600 }}>{t("Object type")}</InputLabel>
                   <Select
                     sx={{ fontWeight: 500 }}
-                    // disabled={!objectVal}
                     placeholder={t("All types of objects")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     data={objectTypeList ?? []}
@@ -290,7 +289,6 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                   <InputLabel sx={{ fontWeight: 600 }}>{t("Notarial action")}</InputLabel>
                   <Select
                     sx={{ fontWeight: 500 }}
-                    // disabled={!objectTypeVal}
                     placeholder={t("All notarial actions")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     data={notarialActionList ?? []}
@@ -327,7 +325,6 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                   <InputLabel sx={{ fontWeight: 600 }}>{t("Type of notarial action")}</InputLabel>
                   <Select
                     sx={{ fontWeight: 500 }}
-                    // disabled={!notarialActionVal}
                     placeholder={t("All types of notarial actions")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     data={typeNotarialActionList ?? []}
@@ -362,7 +359,6 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
                   <InputLabel sx={{ fontWeight: 600 }}>{t("Purpose of action")}</InputLabel>
                   <Select
                     sx={{ fontWeight: 500 }}
-                    // disabled={!typeNotarialActionVal}
                     placeholder={t("All action goals")}
                     selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                     data={actionList ?? []}
