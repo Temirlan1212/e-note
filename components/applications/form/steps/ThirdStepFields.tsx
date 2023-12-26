@@ -49,16 +49,23 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
   const [loading, setLoading] = useState(false);
   const [partnerId, setPartnerId] = useState<number>();
 
-  const { data: requesterData } = useFetch(
+  const { data: requesterData, loading: requesterDataLoading } = useFetch(
     partnerId != null && requesterId == null ? `/api/profile/partner/${partnerId}` : "",
     "POST"
   );
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
 
+  const getTundukParamsFields = (index: number) =>
+    ({
+      tundukDocumentSeries: `requester.${index}.passportSeries`,
+      tundukDocumentNumber: `requester.${index}.passportNumber`,
+    }) as const;
+
   const getPersonalDataNames = (index: number) => ({
     type: `requester.${index}.partnerTypeSelect`,
     foreigner: `requester.${index}.foreigner`,
+    validatePassport: `requester.${index}.validatePassport`,
     lastName: `requester.${index}.lastName`,
     firstName: `requester.${index}.firstName`,
     name: `requester.${index}.name`,
@@ -248,7 +255,12 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
       <StepperContentStep step={3} title={t("fourth-step-title")} />
 
       <Typography variant="h5">{t("Personal data")}</Typography>
-      <PersonalData form={form} names={getPersonalDataNames(0)} />
+      <PersonalData
+        form={form}
+        names={{ ...getPersonalDataNames(0), ...getTundukParamsFields(0) }}
+        isRequester={true}
+        validatePassport={true}
+      />
 
       <ExpandingFields title="Additional information" permanentExpand={false}>
         <Box display="flex" gap="20px" flexDirection="column">
@@ -330,7 +342,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
             onClick={() => handleNextClick()}
             endIcon={<ArrowForwardIcon />}
             sx={{ width: "auto" }}
-            disabled={!!errors?.requester?.length}
+            disabled={!!errors?.requester?.length || requesterDataLoading}
           >
             {t("Next")}
           </Button>
