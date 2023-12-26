@@ -230,7 +230,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
     setPartnerId(profile.userData?.partner?.id);
   }, [profile]);
 
-  useEffectOnce(async () => {
+  useEffectOnce(() => {
     if (requesterData?.data?.[0]?.id == null || requesterId != null) return;
 
     const index = 0;
