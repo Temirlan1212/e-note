@@ -35,7 +35,6 @@ export const ApplicationListActions = ({
   const [openModal, setOpenModal] = useState(false);
   const [signModal, setSignModal] = useState(false);
   const [annulmentReason, setannulmentReason] = useState<string | null>(null);
-  // const [annulmentReason, setAnnulmentReason] = useState<string | null>(null);
   const [users, setUsers] = useState<IUser[]>([]);
   const [userData, setUserData] = useState<IUserData | null>();
   const profile = useProfileStore((state) => state);
