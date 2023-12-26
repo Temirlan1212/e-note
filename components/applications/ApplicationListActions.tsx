@@ -34,7 +34,7 @@ export const ApplicationListActions = ({
   const t = useTranslations();
   const [openModal, setOpenModal] = useState(false);
   const [signModal, setSignModal] = useState(false);
-  const [annulmentReason, setannulmentReason] = useState<string | null>(null);
+  const [annulmentReason, setAnnulmentReason] = useState<string | null>(null);
   const [users, setUsers] = useState<IUser[]>([]);
   const [userData, setUserData] = useState<IUserData | null>();
   const profile = useProfileStore((state) => state);
@@ -144,7 +144,7 @@ export const ApplicationListActions = ({
       callback(false);
       onDelete();
     }
-    setannulmentReason("");
+    setAnnulmentReason("");
   };
 
   useEffectOnce(() => {
@@ -317,7 +317,7 @@ export const ApplicationListActions = ({
                 <Box sx={{ marginBottom: "20px" }}>
                   <InputLabel>{t("Enter the reason for canceling the application")}</InputLabel>
                   <Input
-                    onChange={(e) => setannulmentReason(e.target.value)}
+                    onChange={(e) => setAnnulmentReason(e.target.value)}
                     inputType={annulmentReason === "" ? "error" : "secondary"}
                     helperText={annulmentReason === "" && t("This field is required!")}
                   />
