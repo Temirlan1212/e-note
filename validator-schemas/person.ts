@@ -132,35 +132,35 @@ export const personSchema = object()
       .when("partnerTypeSelect", {
         is: 1,
         then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
+        otherwise: (schema) => schema.nullable().transform((value) => (isNaN(value) ? null : value)),
       }),
     notaryOKPONumber: number()
       .integer()
       .when("partnerTypeSelect", {
         is: 1,
         then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
+        otherwise: (schema) => schema.nullable().transform((value) => (isNaN(value) ? null : value)),
       }),
     notaryPhysicalParticipantsQty: number()
       .integer()
       .when("partnerTypeSelect", {
         is: 1,
         then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
+        otherwise: (schema) => schema.nullable().transform((value) => (isNaN(value) ? null : value)),
       }),
     notaryLegalParticipantsQty: number()
       .integer()
       .when("partnerTypeSelect", {
         is: 1,
         then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
+        otherwise: (schema) => schema.nullable().transform((value) => (isNaN(value) ? null : value)),
       }),
     notaryTotalParticipantsQty: number()
       .integer()
       .when("partnerTypeSelect", {
         is: 1,
         then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
+        otherwise: (schema) => schema.nullable().transform((value) => (isNaN(value) ? null : value)),
       }),
     notaryDateOfOrder: date().nullable(),
     tundukPassportSeries: string()
