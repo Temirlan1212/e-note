@@ -55,7 +55,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const { update: getNotaryApp } = useFetch("", "POST");
 
   const form = useForm<IApplicationSchema>({
-    mode: "onTouched",
+    mode: "all",
     resolver: yupResolver<IApplicationSchema>(applicationSchema),
     values: data?.status === 0 && data?.data[0]?.id != null ? data.data[0] : undefined,
   });
