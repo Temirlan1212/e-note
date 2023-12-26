@@ -34,8 +34,8 @@ export const ApplicationListActions = ({
   const t = useTranslations();
   const [openModal, setOpenModal] = useState(false);
   const [signModal, setSignModal] = useState(false);
-  const [cancelReason, setCancelReason] = useState<string | null>(null);
-  const [annulmentReason, setAnnulmentReason] = useState<string | null>(null);
+  const [annulmentReason, setannulmentReason] = useState<string | null>(null);
+  // const [annulmentReason, setAnnulmentReason] = useState<string | null>(null);
   const [users, setUsers] = useState<IUser[]>([]);
   const [userData, setUserData] = useState<IUserData | null>();
   const profile = useProfileStore((state) => state);
@@ -132,22 +132,6 @@ export const ApplicationListActions = ({
     }
   };
 
-  const handleCancelClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
-    if (params.row.id != null && cancelReason) {
-      await cancelUpdate("/api/applications/update/" + params.row.id, {
-        id: params.row.id,
-        version: params.row.version,
-        statusSelect: 3,
-        notaryReliabilityStatus: "3",
-        notaryCancelledDate: new Date().toISOString(),
-        cancelReasonStr: cancelReason,
-      });
-      callback(false);
-      onDelete();
-    }
-    setCancelReason("");
-  };
-
   const handleAnnulClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
     if (params.row.id != null && annulmentReason) {
       await cancelUpdate("/api/applications/update/" + params.row.id, {
@@ -157,28 +141,11 @@ export const ApplicationListActions = ({
         notaryReliabilityStatus: "4",
         notaryAnnulmentDate: new Date().toISOString(),
         notaryAnnulmentReason: annulmentReason,
-      }).then(() =>
-        getCopy("/api/applications/copy/" + params.row.id).then((res) => {
-          updateCopyData("/api/applications/copy/update", {
-            data: {
-              ...res?.data[0],
-              statusSelect: 2,
-              notarySignatureStatus: 2,
-              notaryReliabilityStatus: 2,
-              orderNumber: params.row.notaryUniqNumber,
-              notaryDateHandWritten: null,
-              notaryUniqNumber: null,
-              notaryAnnulmentDate: null,
-              notaryAnnulmentReason: null,
-              isToPrintLineSubTotal: true,
-              documentInfo: null,
-            },
-          });
-        })
-      );
+      });
       callback(false);
+      onDelete();
     }
-    setAnnulmentReason("");
+    setannulmentReason("");
   };
 
   useEffectOnce(() => {
@@ -343,39 +310,15 @@ export const ApplicationListActions = ({
       {params.row.statusSelect === 1 && (
         <>
           <ConfirmationModal
-            hintTitle="Do you really want to cancel the application?"
-            title="Canceling an application"
-            onConfirm={(callback) => handleCancelClick(callback)}
-            slots={{
-              body: () => (
-                <Box sx={{ marginBottom: "20px" }}>
-                  <InputLabel>{t("Enter a reason")}</InputLabel>
-                  <Input
-                    onChange={(e) => setCancelReason(e.target.value)}
-                    inputType={cancelReason === "" ? "error" : "secondary"}
-                    helperText={cancelReason === "" && t("This field is required!")}
-                  />
-                </Box>
-              ),
-            }}
-          >
-            <Tooltip title={t("Cancel")} arrow>
-              <IconButton>
-                <CancelIcon />
-              </IconButton>
-            </Tooltip>
-          </ConfirmationModal>
-
-          <ConfirmationModal
             hintTitle="Do you really want to annul the application?"
             title="Annulling an application"
             onConfirm={(callback) => handleAnnulClick(callback)}
             slots={{
               body: () => (
                 <Box sx={{ marginBottom: "20px" }}>
-                  <InputLabel>{t("Enter a reason")}</InputLabel>
+                  <InputLabel>{t("Enter the reason for canceling the application")}</InputLabel>
                   <Input
-                    onChange={(e) => setAnnulmentReason(e.target.value)}
+                    onChange={(e) => setannulmentReason(e.target.value)}
                     inputType={annulmentReason === "" ? "error" : "secondary"}
                     helperText={annulmentReason === "" && t("This field is required!")}
                   />
@@ -385,7 +328,7 @@ export const ApplicationListActions = ({
           >
             <Tooltip title={t("Annul")} arrow>
               <IconButton>
-                <BlockIcon />
+                <CancelIcon />
               </IconButton>
             </Tooltip>
           </ConfirmationModal>

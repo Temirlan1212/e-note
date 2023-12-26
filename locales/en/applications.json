@@ -88,7 +88,7 @@
   "Rebuild the document": "Rebuild the document",
   "Canceling an application": "Canceling an application",
   "Annulling an application": "Annuling an application",
-  "Do you really want to cancel the application?": "Do you really want to cancel the application?",
+  "Enter the reason for canceling the application": "Enter the reason for canceling the application",
   "Do you really want to annul the application?": "Do you really want to annul the application?",
   "Enter a reason": "Enter a reason",
   "Cancel reason str": "Cancel reason",
