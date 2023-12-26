@@ -102,13 +102,17 @@ export const ApplicationListActions = ({
       });
 
       Promise.all(userPromises).then((results) => {
-        const chatUsers: IUser[] = [];
+        const chatUsers = results
+          .flatMap((res) => res.data ?? [])
+          .reduce((uniqueUsers, user) => {
+            const uniqueUserSet = new Set(uniqueUsers.map((u: IUser) => u.id));
+            if (!uniqueUserSet.has(user.id)) {
+              uniqueUsers.push(user);
+            }
 
-        results.forEach((res) => {
-          if (res.data?.length > 0) {
-            chatUsers.push(...res.data);
-          }
-        });
+            return uniqueUsers;
+          }, []);
+
         setUsers(chatUsers);
       });
     });
