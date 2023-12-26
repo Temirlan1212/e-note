@@ -37,6 +37,7 @@ export interface IPersonalDataProps {
     picture?: string;
     tundukDocumentSeries?: string;
     tundukDocumentNumber?: string;
+    validatePassport?: string;
   };
   defaultValues?: {
     type?: number | null;
@@ -86,6 +87,7 @@ export interface IPersonalDataProps {
   disableFields?: boolean;
   isTundukRequested?: boolean;
   isRequester?: boolean;
+  validatePassport?: boolean;
 }
 
 export default function PersonalData({
@@ -99,6 +101,7 @@ export default function PersonalData({
   disableFields,
   isTundukRequested,
   isRequester = false,
+  validatePassport = false,
 }: IPersonalDataProps) {
   const t = useTranslations();
 
@@ -107,6 +110,8 @@ export default function PersonalData({
 
   const { trigger, control, watch, resetField } = form;
 
+  const passportSeries = watch(names?.tundukDocumentSeries ?? "");
+  const passportNumber = watch(names?.tundukDocumentNumber ?? "");
   const foreigner = watch(names.foreigner);
   const type = watch(names.type);
   const picture = watch(names?.picture!);
@@ -155,6 +160,12 @@ export default function PersonalData({
       form.setValue(names?.firstName, name);
     }
   }, [name]);
+
+  useEffectOnce(() => {
+    if (validatePassport && (!passportSeries || !passportNumber)) {
+      form.setValue(names?.validatePassport as string, validatePassport);
+    }
+  }, [passportSeries, passportNumber]);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">

@@ -74,12 +74,18 @@ export const personSchema = object()
       .integer()
       .nullable()
       .transform((value) => (isNaN(value) ? null : value)),
-    passportSeries: number()
-      .integer()
-      .nullable()
-      .transform((value) => (isNaN(value) ? null : value)),
+    passportSeries: string().when("validatePassport", {
+      is: true,
+      then: (schema) => schema.required("This field is required!"),
+      otherwise: (schema) => schema.nullable(),
+    }),
     passportNumber: string()
       .trim()
+      .when("validatePassport", {
+        is: true,
+        then: (schema) => schema.required("This field is required!"),
+        otherwise: (schema) => schema.matches(/^[0-9]*$/, "onlyNumbers"),
+      })
       .when("foreigner", {
         is: true,
         then: (schema) => schema.trim(),
