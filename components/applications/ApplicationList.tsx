@@ -315,15 +315,6 @@ export default function ApplicationList() {
       <GridTable
         columns={[
           {
-            field: "actions",
-            headerName: "Actions",
-            width: isMobileMedia ? 50 : 300,
-            sortable: false,
-            type: isMobileMedia ? "actions" : "string",
-            cellClassName: isMobileMedia ? "actions-pinnable" : "",
-            renderCell: (params) => <ApplicationListActions params={params} onDelete={handleDelete} />,
-          },
-          {
             field: "QR",
             headerName: "QR",
             width: 70,
@@ -361,6 +352,7 @@ export default function ApplicationList() {
               return isSearchedData ? params.row?.member?.[0]?.fullName : members || t("not assigned");
             },
           },
+
           // {
           //   field: "typeNotarialAction",
           //   headerName: "Type of action",
@@ -485,6 +477,16 @@ export default function ApplicationList() {
             valueGetter: (params: GridValueGetterParams) => {
               return isSearchedData ? params.row?.createdBy?.fullName : params.value || t("not assigned");
             },
+          },
+          {
+            field: "actions",
+            headerName: "Actions",
+            headerClassName: "pinnable",
+            width: isMobileMedia ? 100 : 300,
+            sortable: false,
+            type: isMobileMedia ? "actions" : "string",
+            cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
+            renderCell: (params) => <ApplicationListActions params={params} onDelete={handleDelete} />,
           },
         ]}
         rows={filteredData ?? []}
