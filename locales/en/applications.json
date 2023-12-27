@@ -124,5 +124,6 @@
   "NOT FOUND INDIVIDUAL": "Individual not found",
   "NOT FOUND TRANSPORTS": "Transport not found",
   "NOT FOUND COMPANY": "Legal entity not found",
-  "NOT FOUND ZAGS INDIVIDUAL": "The civil registration authorities did not find such an individual"
+  "NOT FOUND ZAGS INDIVIDUAL": "The civil registration authorities did not find such an individual",
+  "No template available": "No template available"
 }
