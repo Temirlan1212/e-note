@@ -5,7 +5,16 @@ import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { InputLabel, Box, SxProps, Theme } from "@mui/material";
 import Autocomplete from "../ui/Autocomplete";
 import { INotaryDistrict } from "@/models/notary-district";
-import useEffectOnce from "@/hooks/useEffectOnce";
+
+interface SkipField {
+  skip: {
+    field: string;
+  };
+  when: {
+    field: string;
+    id: number;
+  };
+}
 
 export interface IAreaProps {
   form: UseFormReturn<any>;
@@ -35,7 +44,7 @@ export interface IAreaProps {
     labelsSx: SxProps<Theme>;
     inputSx: SxProps<Theme>;
   };
-  skipField?: any;
+  skipField?: SkipField;
 }
 
 export default function Area({
