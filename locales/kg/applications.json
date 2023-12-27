@@ -124,5 +124,6 @@
   "NOT FOUND INDIVIDUAL": "Жеке адам табылган жок",
   "NOT FOUND TRANSPORTS": "Транспорт табылган жок",
   "NOT FOUND COMPANY": "Юридикалык жак табылган жок",
-  "NOT FOUND ZAGS INDIVIDUAL": "Жарандык абалдын актыларын жазуу органдары андай адамды тапкан эмес"
+  "NOT FOUND ZAGS INDIVIDUAL": "Жарандык абалдын актыларын жазуу органдары андай адамды тапкан эмес",
+  "No template available": "Шаблон жок"
 }

@@ -170,6 +170,7 @@ export default function NotarialAction({ form, step }: INotarialActionProps) {
               type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
               helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
               options={searchedDocData?.status === 0 ? (searchedDocData?.data as Record<string, any>[]) ?? [] : []}
+              noOptionsText={t("No template available")}
               loading={searchedDocLoading}
               value={
                 field.value != null
