@@ -83,6 +83,9 @@ export const GridTable: React.FC<IGridTableProps> = ({
   ...rest
 }) => {
   const t = useTranslations();
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const [isScrolledRight, setIsScrolledRight] = React.useState(false);
+
   const rootStyles = {
     height: "100%",
     ".MuiDataGrid-cell": {
@@ -97,6 +100,11 @@ export const GridTable: React.FC<IGridTableProps> = ({
 
       "&:hover": {
         backgroundColor: lighten("#F6F6F6", 0.7),
+        ".actions-on-hover": {
+          opacity: 1,
+          right: 0,
+          pointerEvents: "initial",
+        },
       },
     },
     ".css-yrdy0g-MuiDataGrid-columnHeaderRow": {
@@ -148,12 +156,23 @@ export const GridTable: React.FC<IGridTableProps> = ({
       left: "5px",
       right: 0,
     },
+    ".actions-on-hover": {
+      position: "sticky",
+      left: "5px",
+      right: "-50px",
+      backgroundColor: isScrolledRight ? "transparent" : lighten("#F6F6F6", 0.7),
+      minWidth: isScrolledRight ? "" : "160px !important",
+      transition: "all 0.3s ease",
+      display: "flex",
+      justifyContent: "flex-end",
+      opacity: isScrolledRight ? 1 : 0,
+      borderTopLeftRadius: "10px",
+      borderBottomLeftRadius: "10px",
+      pointerEvents: "none",
+    },
     border: "none",
     background: "#F6F6F6",
   };
-
-  const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const [isScrolledRight, setIsScrolledRight] = React.useState(false);
 
   const handleScrollLeft = () => {
     if (containerRef.current) {
@@ -240,7 +259,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
             return {
               ...col,
               renderCell: (params) => {
-                return <GridTableActionsCell params={params} column={col} pinnable={!isScrolledRight} />;
+                return <GridTableActionsCell params={params} column={col} pinnable={true} />;
               },
             };
           }
