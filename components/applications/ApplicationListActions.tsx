@@ -169,6 +169,7 @@ export const ApplicationListActions = ({
           notaryUniqNumber: null,
           isToPrintLineSubTotal: true,
           documentInfo: null,
+          uniqueQrCode: null,
         },
       });
     });
