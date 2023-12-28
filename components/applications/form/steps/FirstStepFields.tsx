@@ -153,10 +153,12 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
       const filteredCompanies = {
         ...companyDictionary,
-        data: (companyDictionary.data as any[]).filter((company) => {
-          const licenseTermUntil = new Date(company.licenseTermUntil);
-          return licenseTermUntil > currentDay;
-        }),
+        data: Array.isArray(companyDictionary?.data)
+          ? (companyDictionary?.data as any[]).filter((company) => {
+              const licenseTermUntil = new Date(company?.licenseTermUntil);
+              return licenseTermUntil > currentDay;
+            })
+          : [],
       };
 
       setFilteredCompanyDictionary(filteredCompanies);
@@ -218,6 +220,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
             withoutFieldBinding={true}
             form={form}
             names={{ region: "region", district: "district", city: "city" }}
+            skipField={{ skip: { field: "district" }, when: { field: "region", id: 8 } }}
           />
 
           <Controller

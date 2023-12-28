@@ -6,6 +6,16 @@ import { InputLabel, Box, SxProps, Theme } from "@mui/material";
 import Autocomplete from "../ui/Autocomplete";
 import { INotaryDistrict } from "@/models/notary-district";
 
+interface SkipField {
+  skip: {
+    field: string;
+  };
+  when: {
+    field: string;
+    id: number;
+  };
+}
+
 export interface IAreaProps {
   form: UseFormReturn<any>;
   names: {
@@ -34,11 +44,13 @@ export interface IAreaProps {
     labelsSx: SxProps<Theme>;
     inputSx: SxProps<Theme>;
   };
+  skipField?: SkipField;
 }
 
 export default function Area({
   form,
   names,
+  skipField,
   placeholders,
   defaultValues,
   disableFields,
@@ -63,7 +75,7 @@ export default function Area({
     loading: districtDictionaryLoading,
     update,
   } = useFetch(
-    withoutFieldBinding ? (region != null ? `/api/dictionaries/districts?regionId=${region.id}` : "") : "",
+    withoutFieldBinding ? (region != null ? `/api/dictionaries/districts?regionId=${region?.id}` : "") : "",
     "GET"
   );
 
@@ -71,7 +83,7 @@ export default function Area({
     withoutFieldBinding
       ? `/api/dictionaries/cities?regionId=${region?.id ?? ""}&districtId=${district?.id ?? ""}`
       : region != null
-      ? `/api/dictionaries/cities?regionId=${region.id}&districtId=${district?.id ?? ""}`
+      ? `/api/dictionaries/cities?regionId=${region?.id}&districtId=${district?.id ?? ""}`
       : "",
     "GET"
   );
@@ -86,6 +98,17 @@ export default function Area({
     }`,
     "GET"
   );
+
+  const shouldSkipField = (fieldName: string) => {
+    const { when, skip } = skipField || {};
+    const allFields = form.getValues();
+
+    if (skip?.field === fieldName && when?.field && when?.id && allFields[when.field]?.id === when.id) {
+      return true;
+    }
+
+    return false;
+  };
 
   useEffect(() => {
     update(`/api/dictionaries/districts${region ? `?regionId=${region?.id}` : ""}`);
@@ -111,7 +134,7 @@ export default function Area({
               <InputLabel sx={sx?.labelsSx}>{t("Region")}</InputLabel>
               <Autocomplete
                 sx={sx?.inputSx}
-                disabled={disableFields}
+                disabled={skipField ? shouldSkipField(field?.name) : disableFields}
                 labelField={getLabelField(regionDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
@@ -147,7 +170,13 @@ export default function Area({
                 labelField={getLabelField(districtDictionary)}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={withoutFieldBinding ? disableFields : !region || disableFields}
+                disabled={
+                  skipField
+                    ? shouldSkipField(field?.name)
+                    : withoutFieldBinding
+                    ? disableFields
+                    : !region || disableFields
+                }
                 options={
                   districtDictionary?.status === 0 ? (districtDictionary?.data as Record<string, any>[]) ?? [] : []
                 }
@@ -187,7 +216,13 @@ export default function Area({
                   labelField={getLabelField(cityDictionary)}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                  disabled={withoutFieldBinding ? disableFields : !region || disableFields}
+                  disabled={
+                    skipField
+                      ? shouldSkipField(field?.name)
+                      : withoutFieldBinding
+                      ? disableFields
+                      : !region || disableFields
+                  }
                   options={options ?? []}
                   textFieldPlaceholder={placeholders?.city ?? "---"}
                   loading={cityDictionaryLoading}
@@ -218,7 +253,11 @@ export default function Area({
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 disabled={
-                  withoutFieldBinding || getAllNotaryDistricts ? disableFields : !district || !city || disableFields
+                  skipField
+                    ? shouldSkipField(field?.name)
+                    : withoutFieldBinding || getAllNotaryDistricts
+                    ? disableFields
+                    : !district || !city || disableFields
                 }
                 options={
                   notaryDistrictDictionary?.status === 0

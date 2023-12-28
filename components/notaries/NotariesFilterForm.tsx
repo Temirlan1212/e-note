@@ -78,6 +78,7 @@ export default function NotariesFilterForm({ form, onFormSubmit, onFormReset }: 
           }}
           form={form}
           names={{ region: "region", district: "district", city: "city" }}
+          skipField={{ skip: { field: "district" }, when: { field: "region", id: 8 } }}
         />
 
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
