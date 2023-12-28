@@ -203,20 +203,20 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
 
     if (!notaryPowerAttorneyTerm || !relationshipType || !!orderNumber) return;
 
-    let partnerType: PartnerType = PartnerType.Individual;
+    let partnerType: PartnerType = PartnerType.LegalEntity;
 
     const isLegalEntity = (value: string | number) =>
       value === PartnerType.LegalEntity || value === String(PartnerType.LegalEntity);
 
     if (typeNotarialAction === 41) {
       if (requester?.some((requester: any) => isLegalEntity(requester?.partnerTypeSelect))) {
-        partnerType = PartnerType.LegalEntity;
+        partnerType = PartnerType.Individual;
       }
     } else if (
       requester?.some((requester: any) => isLegalEntity(requester?.partnerTypeSelect)) ||
       members?.some((member: any) => isLegalEntity(member?.partnerTypeSelect))
     ) {
-      partnerType = PartnerType.LegalEntity;
+      partnerType = PartnerType.Individual;
     }
 
     const isValid = !!product?.id && !!relationshipType && !!partnerType && !!notaryPowerAttorneyTerm;
