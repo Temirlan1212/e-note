@@ -32,7 +32,10 @@ export default forwardRef(function RutokenSign({ base64Doc }: IRutokenSignProps,
 
     const tmpDevices = await Promise.all(
       devices.map(async (item: number) => {
-        const certificates = await lib.enumerateCertificates(item, lib.CERT_CATEGORY_USER);
+        const certificates = [
+          ...await lib.enumerateCertificates(item, lib.CERT_CATEGORY_UNSPEC),
+          ...await lib.enumerateCertificates(item, lib.CERT_CATEGORY_USER),
+        ];
 
         return {
           label:
