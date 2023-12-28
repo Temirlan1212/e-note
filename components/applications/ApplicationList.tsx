@@ -464,15 +464,6 @@ export default function ApplicationList() {
             headerName: "Executor",
             width: 200,
             sortable: false,
-            filter: isSearchedData
-              ? undefined
-              : {
-                  data: executorData?.data ?? [],
-                  labelField: locale === "ru" || locale === "kg" ? "title_ru" : "title",
-                  valueField: "value",
-                  type: "dictionary",
-                  field: "createdBy.partner.fullName",
-                },
             cellClassName: "executorColumn",
             valueGetter: (params: GridValueGetterParams) => {
               return isSearchedData ? params.row?.createdBy?.fullName : params.value || t("not assigned");
