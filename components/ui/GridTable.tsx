@@ -569,7 +569,20 @@ export const GridTableActionsCell: React.FC<IGridTableActionsCellProps> = ({ par
         >
           <MoreVertIcon />
         </IconButton>
-        <Menu anchorEl={menu} open={!!menu} onClose={handleMenuClose}>
+        <Menu
+          slotProps={{
+            paper: {
+              style: {
+                width: 315,
+                padding: 0,
+                left: "50%",
+              },
+            },
+          }}
+          anchorEl={menu}
+          open={!!menu}
+          onClose={handleMenuClose}
+        >
           <MenuItem>{column?.renderCell && column.renderCell(params)}</MenuItem>
         </Menu>
       </Box>
