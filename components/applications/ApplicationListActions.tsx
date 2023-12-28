@@ -163,13 +163,15 @@ export const ApplicationListActions = ({
           statusSelect: 2,
           notarySignatureStatus: 2,
           notaryReliabilityStatus: 2,
+          barCode: null,
+          notaryDocumentSignDate: null,
+          uniqueQrCode: null,
           notaryDateHandWritten: null,
           notaryAnnulmentDate: null,
           notaryAnnulmentReason: null,
           notaryUniqNumber: null,
           isToPrintLineSubTotal: true,
           documentInfo: null,
-          uniqueQrCode: null,
         },
       });
     });
