@@ -66,9 +66,7 @@ export default function SignModal({
       title="Entry into the register"
       type="hint"
       hintTitle=""
-      hintText={
-        "To enter a document into the registry and assign a unique document number, you need confirmation of your Face ID and your EDS"
-      }
+      hintText="Face id hint text"
       slots={{
         button: (callback) => (
           <Box width="100%">
