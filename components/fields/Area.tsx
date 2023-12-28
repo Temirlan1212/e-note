@@ -67,7 +67,6 @@ export default function Area({
   const region = watch(names.region);
   const district = watch(names.district);
   const city = watch(names.city);
-  const allFields = watch();
   const isRegionalSignificance = region != null && district == null;
 
   const { data: regionDictionary, loading: regionDictionaryLoading } = useFetch("/api/dictionaries/regions", "GET");
@@ -102,6 +101,7 @@ export default function Area({
 
   const shouldSkipField = (fieldName: string) => {
     const { when, skip } = skipField || {};
+    const allFields = form.getValues();
 
     if (skip?.field === fieldName && when?.field && when?.id && allFields[when.field]?.id === when.id) {
       return true;
