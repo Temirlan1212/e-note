@@ -8,6 +8,7 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import JacartaSign, { IJacartaSignRef } from "./JacartaSign";
 import RutokenSign, { IRutokenSignRef } from "./RutokenSign";
 import FaceIdScanner from "@/components/face-id/FaceId";
+import { useProfileStore } from "@/stores/profile";
 
 enum SignType {
   Jacarta = "jacarta",
@@ -31,6 +32,7 @@ export default function SignModal({
   const [alertOpen, setAlertOpen] = useState(false);
   const [signType, setSignType] = useState<SignType>();
   const [faceIdScanner, setFaceIdScanner] = useState(false);
+  const profile = useProfileStore.getState()?.userData;
 
   const jcRef = useRef<IJacartaSignRef>(null);
   const rtRef = useRef<IRutokenSignRef>(null);
@@ -107,13 +109,17 @@ export default function SignModal({
 
             {!faceIdScanner && <FaceIdScanner getStatus={(status) => setFaceIdScanner(status)} />}
 
-            <Button
-              sx={{ marginTop: "15px" }}
-              onClick={() => (faceIdScanner ? onSign("sign") : setFaceIdScanner(true))}
-              loading={signLoading}
-            >
-              {t(faceIdScanner ? "Without EDS" : "Without Face ID")}
-            </Button>
+            {faceIdScanner && profile?.["activeCompany.typeOfNotary"] === "state" && (
+              <Button sx={{ marginTop: "15px" }} onClick={() => onSign("sign")} loading={signLoading}>
+                {t("Without EDS")}
+              </Button>
+            )}
+
+            {!faceIdScanner && (
+              <Button sx={{ marginTop: "15px" }} onClick={() => setFaceIdScanner(true)} loading={signLoading}>
+                {t("Without Face ID")}
+              </Button>
+            )}
           </Box>
         ),
       }}

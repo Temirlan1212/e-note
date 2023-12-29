@@ -22,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "image",
         "roles",
         "activeCompany",
+        "activeCompany.typeOfNotary",
         "partner.emailAddress",
       ],
       data: {
