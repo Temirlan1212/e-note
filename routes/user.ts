@@ -26,6 +26,12 @@ export const routes: IRoute[] = [
     icon: "Chat",
   },
   {
+    title: "Questions and answers",
+    link: "/notary-qa",
+    type: "menu",
+    icon: "Quiz",
+  },
+  {
     title: "Registries",
     link: "",
     type: "group",
