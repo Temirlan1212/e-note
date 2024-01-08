@@ -17,7 +17,7 @@ interface QAData extends FetchResponseBody {
   }[];
 }
 
-export default function QA() {
+export default function QaForNotaries() {
   const t = useTranslations();
   const [expanded, setExpanded] = React.useState<number | false>(0);
 
@@ -37,15 +37,13 @@ export default function QA() {
         <title>{t("Questions and answers")}</title>
       </Head>
 
-      <Container>
-        <Box
-          component="section"
-          py={5}
-          display="flex"
-          justifyContent="space-between"
-          gap={{ xs: "20px", lg: "110px" }}
-          alignItems="center"
-        >
+      <Container
+        maxWidth="xl"
+        sx={{
+          py: "50px",
+        }}
+      >
+        <Box display="flex" justifyContent="space-between" alignItems="center" gap={{ xs: "20px", lg: "110px" }}>
           {data && (
             <Box width={340} height={600} display={{ xs: "none", md: "flex" }} alignItems="center">
               <Image src="/images/qa.png" alt="E-notariat" width={340} height={600} layout="responsive" />
