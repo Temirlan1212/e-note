@@ -31,8 +31,8 @@ export const ApplicationListActions = ({
 }: {
   params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>;
   onDelete: () => void;
-  checkNotaryLicense: any;
-  setAlertOpen: any;
+  checkNotaryLicense: () => Promise<boolean>;
+  setAlertOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const router = useRouter();
   const t = useTranslations();

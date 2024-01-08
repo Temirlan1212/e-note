@@ -179,9 +179,17 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const handleCreateAppClick = async () => {
     notaryData?.[0] != null && setNotaryData(notaryData[0]);
-    const license = await handleCheckLicenseDate();
-    if (license === true && notaryData?.[0]?.statusOfNotary === "active") {
-      router.push("/applications/create");
+    const isPrivateNotary = notaryData?.[0]?.typeOfNotary === "private";
+    const isStateNotary = notaryData?.[0]?.typeOfNotary === "state";
+    const isActiveNotary = notaryData?.[0]?.statusOfNotary === "active";
+
+    if (isActiveNotary) {
+      if (isPrivateNotary) {
+        const license = await handleCheckLicenseDate();
+        license === true ? router.push("/applications/create") : setAlertOpen(true);
+      } else if (isStateNotary) {
+        router.push("/applications/create");
+      }
     } else {
       setAlertOpen(true);
     }
