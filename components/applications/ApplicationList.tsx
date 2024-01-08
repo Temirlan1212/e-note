@@ -264,7 +264,7 @@ export default function ApplicationList() {
   };
 
   return (
-    <Box height={{ xs: "600px", md: "700px" }}>
+    <Box height={{ xs: "600px" }}>
       <Collapse in={alertOpen} sx={{ marginBottom: "10px", display: alertOpen ? "block" : "none" }}>
         <Alert severity="warning" onClose={() => setAlertOpen(false)}>
           {t("License has expired or is invalid")}

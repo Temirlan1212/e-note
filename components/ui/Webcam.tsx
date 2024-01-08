@@ -28,7 +28,7 @@ interface IWebcamProps extends Partial<WebcamProps> {
         type: "live";
       }
     | {
-        type: "record";
+        type: "record" | "preview";
         blobUrl: string | null;
       };
   slots?: {
@@ -111,7 +111,7 @@ const Webcam: FC<IWebcamProps> = ({
       });
   }, []);
 
-  const isBlobUrl = variant?.type === "record" && variant?.blobUrl != null;
+  const isBlobUrl = (variant?.type === "record" || variant?.type === "preview") && variant?.blobUrl != null;
 
   return (
     <>
@@ -153,18 +153,21 @@ const Webcam: FC<IWebcamProps> = ({
               <Box>{slots.body({ capturing, start: handleStartCaptureClick, stop: handleStopCaptureClick })}</Box>
             ) : (
               <>
-                {!isBlobUrl && recordedChunks.length < 1 && variant?.type === "record" && (
-                  <Button
-                    endIcon={capturing ? <Countdown seconds={maxCaptureTime / 1000} /> : null}
-                    sx={{
-                      fontSize: { xs: "14px", sm: "16px" },
-                    }}
-                    buttonType={capturing ? "danger" : "secondary"}
-                    onClick={capturing ? handleStopCaptureClick : handleStartCaptureClick}
-                  >
-                    {capturing ? t("Stop recording") : t("Start recording")}
-                  </Button>
-                )}
+                {variant?.type !== "preview" &&
+                  !isBlobUrl &&
+                  recordedChunks.length < 1 &&
+                  variant?.type === "record" && (
+                    <Button
+                      endIcon={capturing ? <Countdown seconds={maxCaptureTime / 1000} /> : null}
+                      sx={{
+                        fontSize: { xs: "14px", sm: "16px" },
+                      }}
+                      buttonType={capturing ? "danger" : "secondary"}
+                      onClick={capturing ? handleStopCaptureClick : handleStartCaptureClick}
+                    >
+                      {capturing ? t("Stop recording") : t("Start recording")}
+                    </Button>
+                  )}
               </>
             )}
 

@@ -10,9 +10,9 @@ import { useRouter } from "next/router";
 import Button from "@/components/ui/Button";
 
 export default function DeclVideoRecordModal(
-  props: Partial<PropsWithChildren<IConfirmationModal>> & { applicationId: number }
+  props: Partial<PropsWithChildren<IConfirmationModal>> & { applicationId: number; variant?: "preview" | "editable" }
 ) {
-  const { applicationId } = props;
+  const { applicationId, variant = "editable" } = props;
   const t = useTranslations();
   const { update, loading } = useFetch("", "POST");
   const [users, setUsers] = useState<Record<string, any>[]>([]);
@@ -52,11 +52,15 @@ export default function DeclVideoRecordModal(
 
   if (applicationId == null) return;
 
+  const records =
+    variant === "preview" ? users?.filter((item) => getLastFileId(item?.id ? item.id : null) != null) : users;
+
   return (
     <ConfirmationModal
-      title="Video recording"
+      title={variant === "preview" ? "Video recordings" : "Video recording"}
       type="hint"
       hintTitle=""
+      isHintShown={variant !== "preview"}
       hintText={
         !isUserSelected
           ? "To record a video, select a participant"
@@ -74,48 +78,52 @@ export default function DeclVideoRecordModal(
 
             {!isUserSelected && !loading ? (
               <List sx={{ width: "100%", bgcolor: "background.paper", maxHeight: 300, overflow: "auto" }}>
-                {users.length > 0
-                  ? users.map((item, index) => (
-                      <Fragment key={index}>
-                        <ListItem
-                          alignItems="flex-start"
-                          sx={{ "&:hover": { background: "rgba(0, 0, 0, 0.1)", cursor: "pointer" } }}
-                          onClick={() => {
-                            setUserId(item?.id ? item.id : null);
-                          }}
-                        >
-                          <ListItemText
-                            primary={`${item?.lastName} ${item?.firstName}`}
-                            secondary={
-                              <>
-                                {!!item?.personalNumber && (
-                                  <Typography
-                                    sx={{ display: "inline" }}
-                                    component="span"
-                                    variant="body2"
-                                    color="text.primary"
-                                  >
-                                    {item.personalNumber}
-                                  </Typography>
-                                )}
-                                {getLastFileId(item?.id ? item.id : null) != null && (
-                                  <Typography
-                                    sx={{ display: "block" }}
-                                    component="span"
-                                    variant="body2"
-                                    color="text.damger"
-                                  >
-                                    {t("Video recorded")}
-                                  </Typography>
-                                )}
-                              </>
-                            }
-                          />
-                        </ListItem>
-                        <Divider component="li" />
-                      </Fragment>
-                    ))
-                  : null}
+                {records?.length > 0 ? (
+                  records.map((item, index) => (
+                    <Fragment key={index}>
+                      <ListItem
+                        alignItems="flex-start"
+                        sx={{ "&:hover": { background: "rgba(0, 0, 0, 0.1)", cursor: "pointer" } }}
+                        onClick={() => {
+                          setUserId(item?.id ? item.id : null);
+                        }}
+                      >
+                        <ListItemText
+                          primary={`${item?.lastName} ${item?.firstName}`}
+                          secondary={
+                            <>
+                              {!!item?.personalNumber && (
+                                <Typography
+                                  sx={{ display: "inline" }}
+                                  component="span"
+                                  variant="body2"
+                                  color="text.primary"
+                                >
+                                  {item.personalNumber}
+                                </Typography>
+                              )}
+                              {getLastFileId(item?.id ? item.id : null) != null && (
+                                <Typography
+                                  sx={{ display: "block" }}
+                                  component="span"
+                                  variant="body2"
+                                  color="text.damger"
+                                >
+                                  {t("Video recorded")}
+                                </Typography>
+                              )}
+                            </>
+                          }
+                        />
+                      </ListItem>
+                      <Divider component="li" />
+                    </Fragment>
+                  ))
+                ) : (
+                  <Typography variant="h6" textAlign="center">
+                    {t("There are no records")}
+                  </Typography>
+                )}
               </List>
             ) : null}
 
@@ -125,6 +133,7 @@ export default function DeclVideoRecordModal(
                   <KeyboardBackspaceIcon />
                 </IconButton>
                 <VideoUpload
+                  variant={variant}
                   onUpload={handleDeclList}
                   userId={userId}
                   fileId={getLastFileId(userId)}
@@ -145,12 +154,14 @@ export default function DeclVideoRecordModal(
 const VideoUpload = ({
   userId,
   fileId,
+  variant,
   applicationId,
   onUpload,
 }: {
   applicationId: number;
   userId: number;
   fileId: number | null;
+  variant: "preview" | "editable";
   onUpload: () => Promise<void>;
 }) => {
   const t = useTranslations();
@@ -202,11 +213,12 @@ const VideoUpload = ({
       <Webcam
         videoBitsPerSecond={0}
         muted={true}
-        variant={{ type: "record", blobUrl: !!blobURL ? blobURL : null }}
+        variant={{ type: variant === "preview" ? "preview" : "record", blobUrl: !!blobURL ? blobURL : null }}
         audio={true}
         maxCaptureTime={30000}
         slots={{
           footer: ({ restart, chunks, setAlert, setChunks }) => {
+            if (variant === "preview") return null;
             if (setAlert == null || setChunks == null || restart == null) return <></>;
             const isVideoRecorded = !!(chunks != null && chunks?.length > 0);
 
