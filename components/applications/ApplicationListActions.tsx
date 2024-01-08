@@ -18,10 +18,11 @@ import Button from "@/components/ui/Button";
 import { IChatUser, IFetchByIdData, IFetchNotaryChat, IRequester, IUser } from "@/models/chat";
 import CancelIcon from "@mui/icons-material/Cancel";
 import KeyIcon from "@mui/icons-material/Key";
-import BlockIcon from "@mui/icons-material/Block";
+import VideocamIcon from "@mui/icons-material/Videocam";
 import Input from "@/components/ui/Input";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
+import DeclVideoRecordModal from "../decl-video-record/DeclVideoRecordModal";
 
 export const ApplicationListActions = ({
   params,
@@ -263,6 +264,14 @@ export const ApplicationListActions = ({
           <DownloadIcon />
         </IconButton>
       </Tooltip>
+
+      <DeclVideoRecordModal applicationId={params.row.id} variant="preview">
+        <Tooltip title={t("Video recordings")} arrow>
+          <IconButton>
+            <VideocamIcon />
+          </IconButton>
+        </Tooltip>
+      </DeclVideoRecordModal>
 
       {params.row.statusSelect === 2 && (
         <>

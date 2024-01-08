@@ -97,6 +97,8 @@
   "Do you really want to annul the application?": "Вы действительно хотите аннулировать заявку?",
   "All changes made earlier in the document will be lost": "Все изменения, внесенные ранее в документ, будут утеряны",
   "Video recording": "Видеозапись",
+  "Video recordings": "Видеозаписи",
+  "There are no records": "Записей нет",
   "To record a video, select a participant": "Чтобы записать видео, выберите участника",
   "The maximum amount of video recording time is 30 seconds": "Максимальное время записи видео составляет 30 секунд",
   "Last recorded video": "Последнее записанное видео",
