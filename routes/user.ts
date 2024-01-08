@@ -27,7 +27,7 @@ export const routes: IRoute[] = [
   },
   {
     title: "Questions and answers",
-    link: "/qa-for-notaries",
+    link: "/faq",
     type: "menu",
     icon: "Quiz",
   },
