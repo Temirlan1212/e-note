@@ -82,6 +82,7 @@ const Input: React.ForwardRefRenderFunction<HTMLDivElement, IInputProps> = (
       }
       {...props}
       inputRef={ref}
+      onWheel={(e: any) => (type === "number" ? e.target.blur() : e)}
     />
   );
 };
