@@ -180,7 +180,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const handleCreateAppClick = async () => {
     notaryData?.[0] != null && setNotaryData(notaryData[0]);
     const license = await handleCheckLicenseDate();
-    if (license === true) {
+    if (license === true && notaryData?.[0]?.statusOfNotary === "active") {
       router.push("/applications/create");
     } else {
       setAlertOpen(true);
@@ -188,17 +188,16 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   };
 
   const handleCheckLicenseDate = async () => {
-    const res = await getLicenseInfo(userData?.id != null ? "/api/applications/license-info/" + userData?.id : "");
+    const res = await getLicenseInfo(
+      notaryData?.[0]?.partner?.linkedUser?.id != null
+        ? "/api/applications/license-info/" + notaryData?.[0]?.partner?.linkedUser?.id
+        : ""
+    );
 
-    const userlicenseTermUntil = new Date(res?.data?.[0]?.activeCompany?.licenseTermUntil);
-    const notaryLicenseTermUntil = new Date(notaryData?.[0]?.licenseTermUntil);
+    const licenseTermUntil = new Date(res?.data?.[0]?.activeCompany?.licenseTermUntil);
     const currentDate = new Date();
 
-    if (userData?.group?.name === "Notary") {
-      return userlicenseTermUntil > currentDate && notaryLicenseTermUntil > currentDate;
-    } else {
-      return notaryLicenseTermUntil > currentDate;
-    }
+    return licenseTermUntil > currentDate;
   };
 
   const filteredInfoArray = infoArray.filter((item) => item.text);

@@ -237,12 +237,17 @@ export default function ApplicationList() {
   };
 
   const handleCreate = async () => {
-    if (userData?.group?.name === "Notary") {
-      const license = await handleCheckLicenseDate();
-      if (license === true) {
+    const isNotary = userData?.group?.name === "Notary";
+    const isPrivateNotary = userData?.["activeCompany.typeOfNotary"] === "private";
+    const isStateNotary = userData?.["activeCompany.typeOfNotary"] === "state";
+    const isActiveNotary = userData?.["activeCompany.statusOfNotary"] === "active";
+
+    if (isNotary && isActiveNotary) {
+      if (isPrivateNotary) {
+        const license = await handleCheckLicenseDate();
+        license === true ? router.push("/applications/create") : setAlertOpen(true);
+      } else if (isStateNotary) {
         router.push("/applications/create");
-      } else {
-        setAlertOpen(true);
       }
     } else {
       router.push("/applications/create");
@@ -477,7 +482,14 @@ export default function ApplicationList() {
             sortable: false,
             type: isMobileMedia ? "actions" : "string",
             cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
-            renderCell: (params) => <ApplicationListActions params={params} onDelete={handleDelete} />,
+            renderCell: (params) => (
+              <ApplicationListActions
+                params={params}
+                onDelete={handleDelete}
+                checkNotaryLicense={handleCheckLicenseDate}
+                setAlertOpen={setAlertOpen}
+              />
+            ),
           },
         ]}
         rows={filteredData ?? []}
