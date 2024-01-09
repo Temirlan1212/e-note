@@ -5,15 +5,18 @@ import { RenderDownloadProps, getFilePlugin } from "@react-pdf-viewer/get-file";
 import { printPlugin, RenderPrintProps } from "@react-pdf-viewer/print";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/print/lib/styles/index.css";
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { Box, BoxProps, IconButton, Tooltip } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import PrintIcon from "@mui/icons-material/Print";
 
 type IPDFViewerProps = {
   fileUrl: string;
+  props?: {
+    workerBox?: BoxProps;
+  };
 };
 
-const PDFViewer: FC<IPDFViewerProps> = ({ fileUrl }) => {
+const PDFViewer: FC<IPDFViewerProps> = ({ fileUrl, props }) => {
   const t = useTranslations();
   const getFilePluginInstance = getFilePlugin();
   const { Download } = getFilePluginInstance;
@@ -43,7 +46,7 @@ const PDFViewer: FC<IPDFViewerProps> = ({ fileUrl }) => {
         </Print>
       </Box>
 
-      <Box overflow="hidden" p={0.5}>
+      <Box overflow="hidden" p={0.5} {...(props?.workerBox || {})}>
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
           <Viewer fileUrl={fileUrl} plugins={[getFilePluginInstance, printPluginInstance]} />
         </Worker>
