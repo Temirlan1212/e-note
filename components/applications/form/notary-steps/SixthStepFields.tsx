@@ -111,7 +111,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   };
 
   const handleSign = async (sign: string, callback: Dispatch<SetStateAction<boolean>>) => {
-    const signedPdf = await signDocument(`/api/files/sign/${id}`, { hash: sign, haveESP: false });
+    const signedPdf = await signDocument(`/api/files/sign/${id}`, { hash: sign, haveESP: sign !== "sign" });
 
     if (signedPdf?.data?.pdfLink != null && token != null) {
       await handlePdfDownload(signedPdf.data.pdfLink, token);
