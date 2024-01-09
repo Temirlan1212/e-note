@@ -205,8 +205,8 @@ export const ApplicationListActions = ({
         license === true && isActiveNotary
           ? router.push({ pathname: `/applications/edit/${id}`, query: { step: 5 } })
           : setAlertOpen(true);
-      } else if (isStateNotary && isActiveNotary) {
-        router.push({ pathname: `/applications/edit/${id}`, query: { step: 5 } });
+      } else if (isStateNotary) {
+        isActiveNotary ? router.push({ pathname: `/applications/edit/${id}`, query: { step: 5 } }) : setAlertOpen(true);
       }
     } else {
       setSignModal(true);
@@ -218,8 +218,8 @@ export const ApplicationListActions = ({
       if (isPrivateNotary) {
         const license = await checkNotaryLicense();
         license === true && isActiveNotary ? router.push(`/applications/edit/${rowId}`) : setAlertOpen(true);
-      } else if (isStateNotary && isActiveNotary) {
-        router.push(`/applications/edit/${rowId}`);
+      } else if (isStateNotary) {
+        isActiveNotary ? router.push(`/applications/edit/${rowId}`) : setAlertOpen(true);
       }
     } else {
       router.push(`/applications/edit/${rowId}`);

@@ -246,8 +246,8 @@ export default function ApplicationList() {
       if (isPrivateNotary) {
         const license = await handleCheckLicenseDate();
         license === true && isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
-      } else if (isStateNotary && isActiveNotary) {
-        router.push("/applications/create");
+      } else if (isStateNotary) {
+        isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
       }
     } else {
       router.push("/applications/create");

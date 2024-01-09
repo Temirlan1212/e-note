@@ -97,8 +97,8 @@ function GridTableActionsCell({
         if (isPrivateNotary) {
           const license = await handleCheckLicenseDate();
           license === true && isActiveNotary ? await editTemplate("/api/templates/edit/" + row.id) : setAlertOpen(true);
-        } else if (isStateNotary && isActiveNotary) {
-          await editTemplate("/api/templates/edit/" + row.id);
+        } else if (isStateNotary) {
+          isActiveNotary ? await editTemplate("/api/templates/edit/" + row.id) : setAlertOpen(true);
         }
       } else {
         await editTemplate("/api/templates/edit/" + row.id);
