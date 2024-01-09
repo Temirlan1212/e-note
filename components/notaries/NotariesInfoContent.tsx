@@ -186,7 +186,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
     if (isActiveNotary) {
       if (isPrivateNotary) {
         const license = await handleCheckLicenseDate();
-        license === true ? router.push("/applications/create") : setAlertOpen(true);
+        !!license ? router.push("/applications/create") : setAlertOpen(true);
       } else if (isStateNotary) {
         router.push("/applications/create");
       }

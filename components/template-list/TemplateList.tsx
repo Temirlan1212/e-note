@@ -73,7 +73,7 @@ function GridTableActionsCell({
     if (isNotary) {
       if (isPrivateNotary) {
         const license = await handleCheckLicenseDate();
-        license === true && isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
+        !!license && isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
       } else if (isStateNotary) {
         isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
       }

@@ -65,7 +65,7 @@ function GridTableActionsCell({
   const handleCreateClick = async () => {
     if (profile?.group?.name === "Notary") {
       const license = await handleCheckLicenseDate();
-      if (license === true) {
+      if (!!license) {
         router.push("/applications/create");
       } else {
         setAlertOpen(true);
@@ -96,7 +96,7 @@ function GridTableActionsCell({
       if (isNotary) {
         if (isPrivateNotary) {
           const license = await handleCheckLicenseDate();
-          license === true && isActiveNotary ? await editTemplate("/api/templates/edit/" + row.id) : setAlertOpen(true);
+          !!license && isActiveNotary ? await editTemplate("/api/templates/edit/" + row.id) : setAlertOpen(true);
         } else if (isStateNotary) {
           isActiveNotary ? await editTemplate("/api/templates/edit/" + row.id) : setAlertOpen(true);
         }

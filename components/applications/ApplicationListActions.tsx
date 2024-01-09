@@ -202,7 +202,7 @@ export const ApplicationListActions = ({
     if (!!pdfLink) {
       if (isPrivateNotary) {
         const license = await checkNotaryLicense();
-        license === true && isActiveNotary
+        !!license && isActiveNotary
           ? router.push({ pathname: `/applications/edit/${id}`, query: { step: 5 } })
           : setAlertOpen(true);
       } else if (isStateNotary) {
@@ -217,7 +217,7 @@ export const ApplicationListActions = ({
     if (isNotary) {
       if (isPrivateNotary) {
         const license = await checkNotaryLicense();
-        license === true && isActiveNotary ? router.push(`/applications/edit/${rowId}`) : setAlertOpen(true);
+        !!license && isActiveNotary ? router.push(`/applications/edit/${rowId}`) : setAlertOpen(true);
       } else if (isStateNotary) {
         isActiveNotary ? router.push(`/applications/edit/${rowId}`) : setAlertOpen(true);
       }
