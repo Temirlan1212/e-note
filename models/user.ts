@@ -86,7 +86,6 @@ export interface IUserData extends IUser {
   partner: Partial<IPartner>;
   activeCompany: ICompany;
   "activeCompany.typeOfNotary": string;
-  "activeCompany.statusOfNotary": string;
   group: IUserGroup;
   roles: IUserRole[];
 }

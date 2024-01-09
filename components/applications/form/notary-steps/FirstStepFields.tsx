@@ -73,20 +73,9 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   } = useFetch<FetchResponseBody | null>("", "POST");
 
   useEffectOnce(async () => {
-    const isNotary = userData?.group?.name === "Notary";
-    const isPrivateNotary = userData?.["activeCompany.typeOfNotary"] === "private";
-    const isStateNotary = userData?.["activeCompany.typeOfNotary"] === "state";
-    const isActiveNotary = userData?.["activeCompany.statusOfNotary"] === "active";
-
-    if (isNotary && isActiveNotary) {
-      if (isPrivateNotary) {
-        const license = await handleCheckLicenseDate();
-        license === false && router.push("/applications");
-      } else if (isStateNotary) {
-        router.push("/applications");
-      }
-    } else {
-      router.push("/applications");
+    if (userData?.group?.name === "Notary") {
+      const license = await handleCheckLicenseDate();
+      if (license === false) router.push("/applications");
     }
   });
 
