@@ -65,17 +65,12 @@ function GridTableActionsCell({
   };
 
   const handleCreateClick = async () => {
-    const isNotary = profile?.group?.name === "Notary";
-    const isPrivateNotary = profile?.["activeCompany.typeOfNotary"] === "private";
-    const isStateNotary = profile?.["activeCompany.typeOfNotary"] === "state";
-    const isActiveNotary = profile?.["activeCompany.statusOfNotary"] === "active";
-
-    if (isNotary && isActiveNotary) {
-      if (isPrivateNotary) {
-        const license = await handleCheckLicenseDate();
-        license === true ? router.push("/applications/create") : setAlertOpen(true);
-      } else if (isStateNotary) {
+    if (profile?.group?.name === "Notary") {
+      const license = await handleCheckLicenseDate();
+      if (license === true) {
         router.push("/applications/create");
+      } else {
+        setAlertOpen(true);
       }
     } else {
       router.push("/applications/create");

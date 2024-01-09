@@ -62,7 +62,6 @@ export interface INotaryInfoData {
   $processInstanceId: any;
   id: number;
   typeOfNotary: string;
-  statusOfNotary: string;
   longitude: string;
   latitude: string;
 }
