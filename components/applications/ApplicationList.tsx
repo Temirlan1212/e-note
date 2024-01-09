@@ -63,7 +63,7 @@ export default function ApplicationList() {
     "/api/dictionaries/selection/notary.filter.saleorder.by.performer.type.select",
     "POST"
   );
-  const { update: getLicenseInfo, loading: licenseInfoLoading } = useFetch<FetchResponseBody | null>("", "POST");
+  const { update: getLicenseInfo } = useFetch<FetchResponseBody | null>("", "POST");
 
   const form = useForm<IKeywordSchema>({
     resolver: yupResolver<IKeywordSchema>(keywordSchema),
@@ -237,12 +237,17 @@ export default function ApplicationList() {
   };
 
   const handleCreate = async () => {
-    if (userData?.group?.name === "Notary") {
-      const license = await handleCheckLicenseDate();
-      if (license === true) {
-        router.push("/applications/create");
-      } else {
-        setAlertOpen(true);
+    const isNotary = userData?.group?.name === "Notary";
+    const isPrivateNotary = userData?.["activeCompany.typeOfNotary"] === "private";
+    const isStateNotary = userData?.["activeCompany.typeOfNotary"] === "state";
+    const isActiveNotary = userData?.["activeCompany.statusOfNotary"] === "active";
+
+    if (isNotary) {
+      if (isPrivateNotary) {
+        const license = await handleCheckLicenseDate();
+        !!license && isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
+      } else if (isStateNotary) {
+        isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
       }
     } else {
       router.push("/applications/create");
@@ -275,13 +280,7 @@ export default function ApplicationList() {
           {t("Notarial actions")}
         </Typography>
         <Box>
-          <Button
-            onClick={handleCreate}
-            loading={licenseInfoLoading}
-            sx={{ py: "10px", px: "20px" }}
-            component="label"
-            startIcon={<PostAddIcon />}
-          >
+          <Button onClick={handleCreate} sx={{ py: "10px", px: "20px" }} component="label" startIcon={<PostAddIcon />}>
             {t("Create")}
           </Button>
         </Box>
@@ -477,7 +476,14 @@ export default function ApplicationList() {
             sortable: false,
             type: isMobileMedia ? "actions" : "string",
             cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
-            renderCell: (params) => <ApplicationListActions params={params} onDelete={handleDelete} />,
+            renderCell: (params) => (
+              <ApplicationListActions
+                params={params}
+                onDelete={handleDelete}
+                checkNotaryLicense={handleCheckLicenseDate}
+                setAlertOpen={setAlertOpen}
+              />
+            ),
           },
         ]}
         rows={filteredData ?? []}

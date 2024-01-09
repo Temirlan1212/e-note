@@ -27,9 +27,13 @@ import DeclVideoRecordModal from "../decl-video-record/DeclVideoRecordModal";
 export const ApplicationListActions = ({
   params,
   onDelete,
+  checkNotaryLicense,
+  setAlertOpen,
 }: {
   params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>;
   onDelete: () => void;
+  checkNotaryLicense: () => Promise<boolean>;
+  setAlertOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const router = useRouter();
   const t = useTranslations();
@@ -39,6 +43,11 @@ export const ApplicationListActions = ({
   const [users, setUsers] = useState<IUser[]>([]);
   const [userData, setUserData] = useState<IUserData | null>();
   const profile = useProfileStore((state) => state);
+
+  const isNotary = userData?.group?.name === "Notary";
+  const isPrivateNotary = userData?.["activeCompany.typeOfNotary"] === "private";
+  const isStateNotary = userData?.["activeCompany.typeOfNotary"] === "state";
+  const isActiveNotary = userData?.["activeCompany.statusOfNotary"] === "active";
 
   const { data, update: createChat } = useFetch<IFetchNotaryChat>("", "POST");
   const { update: getUser } = useFetch<IFetchByIdData>("", "POST");
@@ -188,15 +197,34 @@ export const ApplicationListActions = ({
     e.stopPropagation();
     const res = await getApplication(`/api/applications/${id}`);
     const pdfLink = res?.data?.[0]?.documentInfo?.pdfLink;
+    const license = await checkNotaryLicense();
 
     if (!!pdfLink) {
-      router.push({ pathname: `/applications/edit/${id}`, query: { step: 5 } });
+      if (isPrivateNotary) {
+        const license = await checkNotaryLicense();
+        !!license && isActiveNotary
+          ? router.push({ pathname: `/applications/edit/${id}`, query: { step: 5 } })
+          : setAlertOpen(true);
+      } else if (isStateNotary) {
+        isActiveNotary ? router.push({ pathname: `/applications/edit/${id}`, query: { step: 5 } }) : setAlertOpen(true);
+      }
     } else {
       setSignModal(true);
     }
   };
 
-  const isNotary = userData?.group.id === 4;
+  const handleEditClick = async (rowId: number) => {
+    if (isNotary) {
+      if (isPrivateNotary) {
+        const license = await checkNotaryLicense();
+        !!license && isActiveNotary ? router.push(`/applications/edit/${rowId}`) : setAlertOpen(true);
+      } else if (isStateNotary) {
+        isActiveNotary ? router.push(`/applications/edit/${rowId}`) : setAlertOpen(true);
+      }
+    } else {
+      router.push(`/applications/edit/${rowId}`);
+    }
+  };
 
   return (
     <Box display="flex" alignItems="center">
@@ -275,13 +303,11 @@ export const ApplicationListActions = ({
 
       {params.row.statusSelect === 2 && (
         <>
-          <Link href={`/applications/edit/${params.row.id}`}>
-            <Tooltip title={t("Edit")} arrow>
-              <IconButton>
-                <ModeEditIcon />
-              </IconButton>
-            </Tooltip>
-          </Link>
+          <Tooltip title={t("Edit")} arrow>
+            <IconButton onClick={() => handleEditClick(params.row.id)}>
+              <ModeEditIcon />
+            </IconButton>
+          </Tooltip>
 
           <ConfirmationModal
             hintTitle="Do you really want to remove the application from the platform?"
