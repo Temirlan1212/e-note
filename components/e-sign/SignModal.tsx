@@ -72,7 +72,7 @@ export default function SignModal({
       slots={{
         button: (callback) => (
           <Box width="100%">
-            <Button disabled={!faceIdScanner} onClick={() => handleSign(callback)}>
+            <Button loading={signLoading} disabled={!faceIdScanner} onClick={() => handleSign(callback)}>
               {t("Sign")}
             </Button>
           </Box>
