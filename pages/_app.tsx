@@ -20,6 +20,7 @@ import { routes as guestRoutes } from "@/routes/guest";
 import { routes as userRoutes } from "@/routes/user";
 import { getRoutes, isRoutesIncludesPath } from "@/routes/data";
 import FaceIdScanner from "@/components/face-id/FaceId";
+import AgreementPersonalDataModal from "@/components/agreementPersonalData/AgreementPersonalDataModal";
 
 const guestRoutesRendered = getRoutes(guestRoutes, "rendered");
 const userRoutesRendered = getRoutes(userRoutes, "rendered");
@@ -28,11 +29,13 @@ function Layout({ children }: { children: JSX.Element }) {
   const t = useTranslations();
   const router = useRouter();
   const profile = useProfileStore((state) => state);
+  const showPersonalAgreement = profile.userData?.showPersonalAgreement;
   const [user, setUser]: [IUser | null, Function] = useState(null);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
   const [faceIdScannerOpen, setFaceIdScannerOpen] = useState<boolean>(false);
   const [faceIdScanner, setFaceIdScanner] = useState(false);
+  const [isAgreementPersonalDataOpen, setIsAgreementPersonalDataOpen] = useState<boolean | null>(false);
 
   const { loading, update: setRole } = useFetch("", "GET");
 
@@ -90,6 +93,18 @@ function Layout({ children }: { children: JSX.Element }) {
     }
   }, [faceIdScanner]);
 
+  useEffect(() => {
+    if (showPersonalAgreement === undefined) {
+      setIsAgreementPersonalDataOpen(false);
+      return;
+    }
+
+    setIsAgreementPersonalDataOpen((prev) => {
+      if (prev !== null) return !!showPersonalAgreement;
+      return prev;
+    });
+  }, [showPersonalAgreement]);
+
   if (user != null && router.asPath.length > 1 && !isRoutesIncludesPath(guestRoutesRendered, router.asPath)) {
     return <PrivateLayout>{children}</PrivateLayout>;
   }
@@ -108,8 +123,13 @@ function Layout({ children }: { children: JSX.Element }) {
         <Backdrop open={isBackdropOpen} sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
           <CircularProgress sx={{ justifyContent: "center" }} size={60} />
         </Backdrop>
+
+        {isAgreementPersonalDataOpen && user != null && (
+          <AgreementPersonalDataModal onSubmit={(v) => setIsAgreementPersonalDataOpen(!v ? null : false)} />
+        )}
+
         <ConfirmationModal
-          isPermanentOpen={faceIdScannerOpen}
+          isPermanentOpen={faceIdScannerOpen && !isAgreementPersonalDataOpen && user != null}
           isCloseIconShown={true}
           onToggle={handleLogout}
           title="Confirmation of identity"
@@ -121,7 +141,8 @@ function Layout({ children }: { children: JSX.Element }) {
             button: () => <></>,
           }}
         />
-        {!faceIdScannerOpen && (
+
+        {!faceIdScannerOpen && !isAgreementPersonalDataOpen && user != null && (
           <ConfirmationModal
             isPermanentOpen={isRoleModalOpen}
             title="Enter as"

@@ -7,11 +7,13 @@ const contentStyle: SxProps<Theme> = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: { xs: 320, sm: 450, md: 500, lg: 530, xl: 550 },
+  maxHeight: "90vh",
+  minWidth: { xs: 320, sm: 450, md: 500 },
   bgcolor: "background.paper",
   boxShadow: 24,
   p: { xs: 1.5, sm: 4 },
   outline: "none",
+  overflow: "auto",
 };
 
 interface IModalProps extends ModalProps {}
@@ -19,7 +21,9 @@ interface IModalProps extends ModalProps {}
 export default function Modal({ children, ...rest }: IModalProps) {
   return (
     <MUIModal aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description" {...rest}>
-      <Box sx={contentStyle}>{children}</Box>
+      <Box sx={contentStyle} {...rest}>
+        {children}
+      </Box>
     </MUIModal>
   );
 }

@@ -25,6 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "activeCompany.typeOfNotary",
         "activeCompany.statusOfNotary",
         "partner.emailAddress",
+        "agreementPersonalData",
+        "showPersonalAgreement",
       ],
       data: {
         criteria: [{ fieldName: "code", operator: "=", value: req.body.username }],

@@ -268,5 +268,9 @@
   "EDS list": "ЭЦП тизме",
   "EDS registration": "ЭЦП каттоо",
   "You can register an EDS for further use": "Сиз андан ары колдонуу үчүн ЭЦП каттай аласыз",
-  "Something went wrong": "Бир жерден ката кетти ..."
+  "Something went wrong": "Бир жерден ката кетти ...",
+  "Don't show it anymore": "Больше не показывать",
+  "The electronic Notary of the Kyrgyz Republic requests your permission": "КРнын электрондук нотариаты сизден уруксат сурайт",
+  "Allow collection": "Уруксат берүү",
+  "Do not allow collection": "Уруксат бербөө"
 }

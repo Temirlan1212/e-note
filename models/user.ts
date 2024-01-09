@@ -89,4 +89,6 @@ export interface IUserData extends IUser {
   "activeCompany.statusOfNotary": string;
   group: IUserGroup;
   roles: IUserRole[];
+  agreementPersonalData: boolean | null;
+  showPersonalAgreement: boolean | null;
 }
