@@ -87,13 +87,18 @@ function GridTableActionsCell({
   };
 
   const handleEditClick = async () => {
+    const isNotary = profile?.group?.name === "Notary";
+    const isPrivateNotary = profile?.["activeCompany.typeOfNotary"] === "private";
+    const isStateNotary = profile?.["activeCompany.typeOfNotary"] === "state";
+    const isActiveNotary = profile?.["activeCompany.statusOfNotary"] === "Active";
+
     if (row.id != null) {
-      if (profile?.group?.name === "Notary") {
-        const license = await handleCheckLicenseDate();
-        if (license === true) {
+      if (isNotary) {
+        if (isPrivateNotary) {
+          const license = await handleCheckLicenseDate();
+          license === true && isActiveNotary ? await editTemplate("/api/templates/edit/" + row.id) : setAlertOpen(true);
+        } else if (isStateNotary && isActiveNotary) {
           await editTemplate("/api/templates/edit/" + row.id);
-        } else {
-          setAlertOpen(true);
         }
       } else {
         await editTemplate("/api/templates/edit/" + row.id);

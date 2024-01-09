@@ -155,8 +155,15 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         ...companyDictionary,
         data: Array.isArray(companyDictionary?.data)
           ? (companyDictionary?.data as any[]).filter((company) => {
-              const licenseTermUntil = new Date(company?.licenseTermUntil);
-              return licenseTermUntil > currentDay;
+              const typeOfNotary = company?.typeOfNotary;
+              const statusOfNotary = company?.statusOfNotary;
+
+              if (typeOfNotary === "private") {
+                const licenseTermUntil = new Date(company?.licenseTermUntil);
+                return licenseTermUntil > currentDay && statusOfNotary === "active";
+              } else if (typeOfNotary === "state") {
+                return statusOfNotary === "active";
+              }
             })
           : [],
       };
