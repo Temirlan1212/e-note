@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { ApexOptions } from "apexcharts";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { subDays } from "date-fns";
 import { IAnalyticsItem } from "@/models/analytics";
@@ -25,6 +25,10 @@ export default function StatisticsTodayContent() {
       endDate: formatDate(currentDate.toISOString()), // Конечная дата
     });
   }, []);
+
+  if (!Array.isArray(data?.data)) {
+    return <Typography variant="h5">{t("Analytics is unavailable")}</Typography>;
+  }
 
   const labels = data?.data?.map((company) => company.name);
   const values = data?.data?.map((company) => company.actionCounter);

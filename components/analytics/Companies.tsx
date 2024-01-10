@@ -47,6 +47,10 @@ export default function CompanyContent() {
     }
   };
 
+  if (!Array.isArray(data?.data)) {
+    return <Typography variant="h5">{t("Analytics is unavailable")}</Typography>;
+  }
+
   const companyLabels = data?.data?.map((company) => company.name);
   const companyValues = data?.data?.map((company) => company.actionCounter);
 
