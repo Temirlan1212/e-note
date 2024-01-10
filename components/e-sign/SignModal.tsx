@@ -78,7 +78,7 @@ export default function SignModal({
           </Box>
         ),
         body: () => (
-          <Box pb={5} sx={{ maxHeight: { xs: "300px", md: "unset" }, overflowY: { xs: "scroll", md: "unset" } }}>
+          <Box pb={3} sx={{ maxHeight: { xs: "300px", md: "unset" }, overflowY: { xs: "scroll", md: "unset" } }}>
             {!faceIdScanner && (
               <Typography align="center" fontSize={{ xs: "16px", sm: "20px" }} fontWeight={600}>
                 {t("Confirmation of identity")}
@@ -111,13 +111,13 @@ export default function SignModal({
 
             {faceIdScanner && (
               // profile?.["activeCompany.typeOfNotary"] === "state" &&
-              <Button sx={{ marginTop: "15px" }} onClick={() => onSign("sign")} loading={signLoading}>
+              <Button onClick={() => onSign("sign")} loading={signLoading}>
                 {t("Without EDS")}
               </Button>
             )}
 
             {!faceIdScanner && (
-              <Button sx={{ marginTop: "15px" }} onClick={() => setFaceIdScanner(true)} loading={signLoading}>
+              <Button onClick={() => setFaceIdScanner(true)} loading={signLoading}>
                 {t("Without Face ID")}
               </Button>
             )}

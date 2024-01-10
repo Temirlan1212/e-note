@@ -1,6 +1,6 @@
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import ReactWebcam, { WebcamProps } from "react-webcam";
-import { Alert, Box, Collapse, Typography } from "@mui/material";
+import { Alert, Box, Collapse, Icon, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import Button from "@/components/ui/Button";
@@ -59,8 +59,8 @@ const Webcam: FC<IWebcamProps> = ({
     setAlertOpen(false);
     setCapturing(true);
     mediaRecorderRef.current = new MediaRecorder(webcamRef.current?.stream as MediaStream, {
-      mimeType: "video/webm;codecs=H264",
-      videoBitsPerSecond,
+      mimeType: "video/webm",
+      // videoBitsPerSecond,
     });
     mediaRecorderRef.current.addEventListener("dataavailable", handleDataAvailable);
     mediaRecorderRef.current.start();
@@ -138,17 +138,29 @@ const Webcam: FC<IWebcamProps> = ({
               </video>
             ) : null}
 
-            {!isBlobUrl && (
-              <ReactWebcam
-                style={{ display: recordedChunks?.length > 0 && variant?.type === "record" ? "none" : "block" }}
-                width="100%"
-                height="200px"
-                videoConstraints={{ facingMode: "user" }}
-                ref={webcamRef}
-                {...rest}
-              />
+            {!(recordedChunks?.length > 0) && !isBlobUrl && (
+              <Box sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <ReactWebcam
+                  style={{ display: recordedChunks?.length > 0 && variant?.type === "record" ? "none" : "block" }}
+                  width="100%"
+                  height="100%"
+                  videoConstraints={{ facingMode: "user" }}
+                  ref={webcamRef}
+                  {...rest}
+                />
+                {!(recordedChunks?.length > 0) && !isBlobUrl && variant?.type === "live" && (
+                  <Box
+                    component="img"
+                    src="/images/face-id-recognition.png"
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      width: "100%",
+                    }}
+                  />
+                )}
+              </Box>
             )}
-
             {slots?.body ? (
               <Box>{slots.body({ capturing, start: handleStartCaptureClick, stop: handleStopCaptureClick })}</Box>
             ) : (
@@ -197,7 +209,7 @@ const Webcam: FC<IWebcamProps> = ({
 
 export default Webcam;
 
-function Countdown({ seconds = 30 }: { seconds?: number }) {
+export function Countdown({ seconds = 30 }: { seconds?: number }) {
   const [timer, setTimer] = useState(seconds);
   const id = useRef<number | null>(null);
   const clear = () => (id.current != null ? window.clearInterval(id.current) : null);

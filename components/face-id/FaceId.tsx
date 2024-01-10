@@ -2,7 +2,7 @@ import { Dispatch, FC, SetStateAction } from "react";
 import useFetch from "@/hooks/useFetch";
 import { useTranslations } from "next-intl";
 import Button from "@/components/ui/Button";
-import Webcam from "@/components/ui/Webcam";
+import Webcam, { Countdown } from "@/components/ui/Webcam";
 
 interface IFaceIdScannerProps {
   getStatus: (status: boolean) => void;
@@ -39,15 +39,16 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
         slots={{
           body: ({ capturing, start }) => (
             <Button
+              endIcon={capturing ? <Countdown seconds={2000 / 1000} /> : null}
               sx={{
                 fontSize: { xs: "14px", sm: "16px" },
               }}
-              buttonType="secondary"
+              buttonType={capturing ? "danger" : "secondary"}
               onClick={start}
               loading={loading}
               disabled={capturing}
             >
-              {t("Verify")}
+              {!capturing && t("Verify")}
             </Button>
           ),
           footer: () => <></>,
