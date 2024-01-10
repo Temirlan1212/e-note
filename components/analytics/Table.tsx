@@ -54,6 +54,10 @@ export default function AnalyticsTable() {
     }
   };
 
+  if (!Array.isArray(data?.data)) {
+    return <Typography variant="h5">{t("Analytics is unavailable")}</Typography>;
+  }
+
   return (
     <>
       <Box>

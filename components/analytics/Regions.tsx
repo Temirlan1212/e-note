@@ -47,6 +47,10 @@ export default function RegionsContent() {
     }
   };
 
+  if (!Array.isArray(data?.data)) {
+    return <Typography variant="h5">{t("Analytics is unavailable")}</Typography>;
+  }
+
   const labels = data?.data?.map((company) => company.name);
   const values = data?.data?.map((company) => company.actionCounter);
 
