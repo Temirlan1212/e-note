@@ -49,6 +49,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
   const { data: tundukData, update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
   const { update: getAmountStateTax } = useFetch("", "POST");
+  const { update: getSumOfTax } = useFetch("", "POST");
 
   const {
     update: getDocumentTemplateData,
@@ -119,6 +120,28 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
 
   const handlePrevClick = () => {
     if (onPrev != null) onPrev();
+  };
+
+  const handleCalculateSumOfTax = () => {
+    const dynamicFormValues = dynamicForm.getValues();
+    const formValues = form.getValues();
+
+    const { notaryIsBenefit, notaryAmountStateTax, notaryWithDeparture } = dynamicFormValues;
+    const { members, requester } = formValues;
+
+    const mapSubjectRole = (item: any) => ({ subjectRole: item?.subjectRole });
+
+    const params = {
+      notaryIsBenefit: notaryIsBenefit,
+      notaryAmountStateTax: notaryAmountStateTax,
+      notaryWithDeparture: notaryWithDeparture,
+      requester: requester?.map(mapSubjectRole),
+      members: members?.map(mapSubjectRole),
+    };
+
+    getSumOfTax(`/api/applications/calculate-tax`, {
+      params,
+    }).then((res) => dynamicForm.setValue("notarySumOfStateAmountTax", res?.data?.sum.toString() ?? ""));
   };
 
   const handlePinCheck = async (
@@ -305,7 +328,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                         />
                       ) : (
                         <DynamicFormElement
-                          disabled={item?.readonly}
+                          disabled={item?.readonly || item?.fieldName === "notarySumOfStateAmountTax"}
                           hidden={item?.hidden}
                           required={!!item?.required}
                           conditions={item?.conditions}
@@ -321,6 +344,10 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                           options={item?.options}
                           minLength={item?.minLength}
                           maxLength={item?.maxLength}
+                          onClick={() => {
+                            if (item?.actionType?.toLowerCase() === "calculate" && handleCalculateSumOfTax)
+                              handleCalculateSumOfTax();
+                          }}
                         />
                       )}
                     </Grid>
