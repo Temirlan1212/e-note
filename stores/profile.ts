@@ -11,6 +11,7 @@ export interface IProfileState {
   userRoleSelected: boolean;
   redirectTo: string | null;
   agreementPersonalData: boolean | null;
+  isAgreementPersonalDataModalOpen: boolean | null;
   getCookie: () => string | null;
   getUser: () => IUser | null;
   getUserData: () => IUserData | null;
@@ -21,6 +22,7 @@ export interface IProfileState {
   logOut: () => void;
   loadUserData: (user: IUser) => Promise<void>;
   setAgreementPersonalData: (agreement: boolean | null) => void;
+  setIsAgreementPersonalDataModalOpen: (open: boolean | null) => void;
 }
 
 export const useProfileStore = create<IProfileState>()(
@@ -32,6 +34,7 @@ export const useProfileStore = create<IProfileState>()(
       userRoleSelected: false,
       redirectTo: "/applications",
       agreementPersonalData: null,
+      isAgreementPersonalDataModalOpen: null,
       getCookie: () => {
         return get().cookie;
       },
@@ -50,6 +53,9 @@ export const useProfileStore = create<IProfileState>()(
       },
       setAgreementPersonalData: (value) => {
         set(() => ({ agreementPersonalData: value }));
+      },
+      setIsAgreementPersonalDataModalOpen: (value) => {
+        set(() => ({ isAgreementPersonalDataModalOpen: value }));
       },
       logIn: async (credentials) => {
         let cookie: string | null = null;
@@ -103,6 +109,7 @@ export const useProfileStore = create<IProfileState>()(
           userRoleSelected: false,
           redirectTo: redirectTo != null ? redirectTo : "/applications",
           agreementPersonalData: null,
+          isAgreementPersonalDataModalOpen: null,
         }));
       },
       loadUserData: async (user) => {
