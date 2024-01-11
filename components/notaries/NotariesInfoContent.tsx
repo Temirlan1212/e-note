@@ -196,13 +196,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   };
 
   const handleCheckLicenseDate = async () => {
-    const res = await getLicenseInfo(
-      notaryData?.[0]?.partner?.linkedUser?.id != null
-        ? "/api/applications/license-info/" + notaryData?.[0]?.partner?.linkedUser?.id
-        : ""
-    );
-
-    const licenseTermUntil = new Date(res?.data?.[0]?.activeCompany?.licenseTermUntil);
+    const licenseTermUntil = new Date(notaryData?.[0]?.licenseTermUntil);
     const currentDate = new Date();
 
     return licenseTermUntil > currentDate;
