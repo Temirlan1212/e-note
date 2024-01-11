@@ -5,7 +5,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/check-doc", {
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/public/document-sign-check", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
