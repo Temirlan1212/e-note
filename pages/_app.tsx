@@ -35,7 +35,8 @@ function Layout({ children }: { children: JSX.Element }) {
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
   const [faceIdScannerOpen, setFaceIdScannerOpen] = useState<boolean>(false);
   const [faceIdScanner, setFaceIdScanner] = useState(false);
-  const [isAgreementPersonalDataOpen, setIsAgreementPersonalDataOpen] = useState<boolean | null>(false);
+  const setIsAgreementPersonalDataModalOpen = profile.setIsAgreementPersonalDataModalOpen;
+  const isAgreementPersonalDataModalOpen = profile.isAgreementPersonalDataModalOpen;
 
   const { loading, update: setRole } = useFetch("", "GET");
 
@@ -65,14 +66,21 @@ function Layout({ children }: { children: JSX.Element }) {
     }
 
     if (profile.user != null && profile.redirectTo != null) {
-      await router.push(profile.redirectTo);
-      return profile.setRedirectTo(null);
+      if (profile.userData?.group?.id === 2 && !!profile.userData?.showPersonalAgreement) {
+        if (isAgreementPersonalDataModalOpen !== null) {
+          await router.push(profile.redirectTo);
+          return profile.setRedirectTo(null);
+        }
+      } else {
+        await router.push(profile.redirectTo);
+        return profile.setRedirectTo(null);
+      }
     }
 
     if (profile.user != null && router.route === "/login") {
       return profile.setRedirectTo("/applications");
     }
-  }, [profile.userData, router.route]);
+  }, [profile.userData, router.route, isAgreementPersonalDataModalOpen]);
 
   const handleChooseRole = async (role: 1 | 2) => {
     await setRole("/api/user/select?type=" + role);
@@ -93,18 +101,6 @@ function Layout({ children }: { children: JSX.Element }) {
     }
   }, [faceIdScanner]);
 
-  useEffect(() => {
-    if (showPersonalAgreement === undefined) {
-      setIsAgreementPersonalDataOpen(false);
-      return;
-    }
-
-    setIsAgreementPersonalDataOpen((prev) => {
-      if (prev !== null) return !!showPersonalAgreement;
-      return prev;
-    });
-  }, [showPersonalAgreement]);
-
   if (user != null && router.asPath.length > 1 && !isRoutesIncludesPath(guestRoutesRendered, router.asPath)) {
     return <PrivateLayout>{children}</PrivateLayout>;
   }
@@ -124,12 +120,12 @@ function Layout({ children }: { children: JSX.Element }) {
           <CircularProgress sx={{ justifyContent: "center" }} size={60} />
         </Backdrop>
 
-        {isAgreementPersonalDataOpen && user != null && (
-          <AgreementPersonalDataModal onSubmit={(v) => setIsAgreementPersonalDataOpen(!v ? null : false)} />
+        {!!showPersonalAgreement && user != null && profile.userData?.group?.id === 2 && (
+          <AgreementPersonalDataModal onSubmit={(v) => setIsAgreementPersonalDataModalOpen(!v ? null : false)} />
         )}
 
         <ConfirmationModal
-          isPermanentOpen={faceIdScannerOpen && !isAgreementPersonalDataOpen && user != null}
+          isPermanentOpen={faceIdScannerOpen && user != null}
           isCloseIconShown={true}
           onToggle={handleLogout}
           title="Confirmation of identity"
@@ -142,7 +138,7 @@ function Layout({ children }: { children: JSX.Element }) {
           }}
         />
 
-        {!faceIdScannerOpen && !isAgreementPersonalDataOpen && user != null && (
+        {!faceIdScannerOpen && user != null && (
           <ConfirmationModal
             isPermanentOpen={isRoleModalOpen}
             title="Enter as"

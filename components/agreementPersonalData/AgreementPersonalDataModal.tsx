@@ -58,7 +58,7 @@ export default function AgreementPersonalDataModal({ onSubmit }: { onSubmit?: (a
         body: () => (
           <Box>
             <PDFViewer
-              fileUrl="./documents/consentOfCitizen.pdf"
+              fileUrl="/documents/consentOfCitizen.pdf"
               props={{ workerBox: { height: "50vh", overflow: "auto" } }}
             />
             <Checkbox
