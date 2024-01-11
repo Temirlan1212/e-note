@@ -142,14 +142,16 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
         {/*<Hint type="hint">{t("Notary form first step hint text")}</Hint>*/}
       </Box>
 
-      <Box display="flex" gap="50px" alignItems="end">
+      <Box display="flex" flexWrap={{ xs: "wrap", md: "nowrap" }} gap="50px" alignItems="end">
         <Controller
           control={control}
           name="product"
           defaultValue={null}
           render={({ field, fieldState }) => (
             <Box width="100%" display="flex" flexDirection="column" gap="10px">
-              <InputLabel sx={{ fontWeight: 600 }}>{t("Select a notarial act by name")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600, whiteSpace: "normal" }}>
+                {t("Select a notarial act by name")}
+              </InputLabel>
               <Autocomplete
                 sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                 labelField={locale !== "en" ? "$t:name" : "name"}
@@ -197,7 +199,9 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
           render={({ field, fieldState }) => {
             return (
               <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                <InputLabel sx={{ fontWeight: 600 }}>{t("Select document from my templates")}</InputLabel>
+                <InputLabel sx={{ fontWeight: 600, whiteSpace: "normal" }}>
+                  {t("Select document from my templates")}
+                </InputLabel>
                 <Autocomplete
                   sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                   labelField="name"
