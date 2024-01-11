@@ -1,16 +1,13 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Box, Alert, Collapse, Typography, Fade } from "@mui/material";
+import { Box, Typography, Fade } from "@mui/material";
 import useFetch from "@/hooks/useFetch";
 import SearchBar from "@/components/ui/SearchBar";
-import { useRouter } from "next/router";
 import ErrorIcon from "@mui/icons-material/Error";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 export default function CheckByPDF() {
   const t = useTranslations();
-  const router = useRouter();
-  const [alertOpen, setAlertOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [base64Doc, setBase64Doc] = useState<string | null>(null);
 
@@ -44,54 +41,56 @@ export default function CheckByPDF() {
     reader.readAsDataURL(file);
   }
 
-  useEffect(() => {
-    if (data?.status === 0 && data.data == null) {
-      setAlertOpen(true);
-    }
-  }, [data]);
-
   return (
     <Box display="flex" flexDirection="column" gap="20px">
-      <Collapse sx={{ width: "100%" }} in={alertOpen}>
-        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-          {t("Document not found")}
-        </Alert>
-      </Collapse>
       <SearchBar type="file" loading={loading} onChange={handleFileChange} onClick={handleFileSubmit} />
 
-      <Fade in={!!data?.status} timeout={1000}>
+      {data && (
         <Box sx={{ marginTop: "50px" }}>
-          {data?.status === 1 ? (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: "15px",
-                padding: "10px",
-                borderRadius: "10px",
-                border: "2px dashed #1BAA75",
-              }}
-            >
-              <CheckCircleIcon sx={{ width: 50, height: 50 }} color="success" />
-              <Typography variant="h5">Подписан</Typography>
-            </Box>
-          ) : (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: "15px",
-                padding: "10px",
-                borderRadius: "10px",
-                border: "2px dashed #d32f2f",
-              }}
-            >
-              <ErrorIcon sx={{ width: 50, height: 50 }} color="error" />
-              <Typography variant="h5">Не подписан</Typography>
-            </Box>
+          {data?.status === 0 && (
+            <Fade in={data?.status === 0} timeout={1000}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "15px",
+                  padding: "10px",
+                  borderRadius: "10px",
+                  border: "2px dashed #1BAA75",
+                }}
+              >
+                <CheckCircleIcon sx={{ width: 50, height: 50 }} color="success" />
+                <Box sx={{ display: "flex", flexDirection: "column" }}>
+                  <Typography variant="h5" color="#1BAA75">
+                    {t("Signed")}
+                  </Typography>
+                  <Typography variant="h5">{data?.data?.company}</Typography>
+                </Box>
+              </Box>
+            </Fade>
+          )}
+
+          {data?.status != 0 && (
+            <Fade in={data?.status != 0} timeout={1000}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "15px",
+                  padding: "10px",
+                  borderRadius: "10px",
+                  border: "2px dashed #d32f2f",
+                }}
+              >
+                <ErrorIcon sx={{ width: 50, height: 50 }} color="error" />
+                <Typography variant="h5" color="#d32f2f">
+                  {t("Not signed")}
+                </Typography>
+              </Box>
+            </Fade>
           )}
         </Box>
-      </Fade>
+      )}
     </Box>
   );
 }
