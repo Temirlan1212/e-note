@@ -38,6 +38,8 @@ export const userProfileSchema = yup.object().shape({
         id: yup.number().integer().positive(),
       })
       .required("required"),
+    roundClock: yup.boolean().nullable(),
+    departure: yup.boolean().nullable(),
   }),
 });
 

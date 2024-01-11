@@ -138,6 +138,11 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     email: "partner.emailAddress.address",
   };
 
+  const workModeNames = {
+    roundClock: "activeCompany.roundClock",
+    departure: "activeCompany.departure",
+  };
+
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     setSelectedImage(file);
@@ -562,7 +567,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 </Box>
               </Box>
 
-              <ProfileWorkingDays />
+              <ProfileWorkingDays profileForm={form} names={userIsNotary ? workModeNames : undefined} />
             </Box>
           </ExpandingFields>
         )}
