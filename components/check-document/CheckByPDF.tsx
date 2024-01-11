@@ -1,9 +1,11 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Box, Alert, Collapse } from "@mui/material";
+import { Box, Alert, Collapse, Typography, Fade } from "@mui/material";
 import useFetch from "@/hooks/useFetch";
 import SearchBar from "@/components/ui/SearchBar";
 import { useRouter } from "next/router";
+import ErrorIcon from "@mui/icons-material/Error";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 export default function CheckByPDF() {
   const t = useTranslations();
@@ -23,7 +25,7 @@ export default function CheckByPDF() {
   const handleFileSubmit = async () => {
     if (file) {
       await update("/api/check-document/byPdf", {
-        encodedDocument: base64Doc,
+        signDocument: base64Doc,
       });
     }
   };
@@ -43,9 +45,6 @@ export default function CheckByPDF() {
   }
 
   useEffect(() => {
-    if (data?.data) {
-      router.push("/check-document/" + data.data);
-    }
     if (data?.status === 0 && data.data == null) {
       setAlertOpen(true);
     }
@@ -59,6 +58,40 @@ export default function CheckByPDF() {
         </Alert>
       </Collapse>
       <SearchBar type="file" loading={loading} onChange={handleFileChange} onClick={handleFileSubmit} />
+
+      <Fade in={!!data?.status} timeout={1000}>
+        <Box sx={{ marginTop: "50px" }}>
+          {data?.status === 1 ? (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "15px",
+                padding: "10px",
+                borderRadius: "10px",
+                border: "2px dashed #1BAA75",
+              }}
+            >
+              <CheckCircleIcon sx={{ width: 50, height: 50 }} color="success" />
+              <Typography variant="h5">Подписан</Typography>
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: "15px",
+                padding: "10px",
+                borderRadius: "10px",
+                border: "2px dashed #d32f2f",
+              }}
+            >
+              <ErrorIcon sx={{ width: 50, height: 50 }} color="error" />
+              <Typography variant="h5">Не подписан</Typography>
+            </Box>
+          )}
+        </Box>
+      </Fade>
     </Box>
   );
 }
