@@ -52,7 +52,7 @@ function GridTableActionsCell({
   const isNotary = profile?.group?.name === "Notary";
   const isPrivateNotary = profile?.["activeCompany.typeOfNotary"] === "private";
   const isStateNotary = profile?.["activeCompany.typeOfNotary"] === "state";
-  const isActiveNotary = profile?.["activeCompany.statusOfNotary"] === "Active";
+  const isActiveNotary = profile?.["activeCompany.statusOfNotary"] === "active";
 
   const { update: getLicenseInfo } = useFetch<FetchResponseBody | null>("", "POST");
   const { data, update: editTemplate } = useFetch<FetchResponseBody<IMyTemplateData[]>>("", "POST");
