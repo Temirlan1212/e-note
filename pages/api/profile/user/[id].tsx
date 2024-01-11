@@ -22,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "licenseTermUntil",
         "licenseStatus",
         "roundClock",
+        "departure",
         "workingDay",
         "notaryDistrict.name",
         "address.region.name",

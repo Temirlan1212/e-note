@@ -60,6 +60,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           notaryDistrict: {
             id: submitData?.activeCompany?.notaryDistrict?.id,
           },
+          roundClock: submitData?.activeCompany?.roundClock,
+          departure: submitData?.activeCompany?.departure,
         };
       }
       return requestBody;

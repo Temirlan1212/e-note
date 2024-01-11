@@ -20,6 +20,7 @@ import { getLabelField } from "@/components/notaries/NotariesFilterForm";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Checkbox from "../ui/Checkbox";
 
 interface IWorkingDay {
   order_seq: number;
@@ -31,7 +32,10 @@ interface IWorkingDay {
   id?: number;
 }
 
-interface IProfileWorkingDaysProps {}
+interface IProfileWorkingDaysProps {
+  profileForm: any;
+  names: any;
+}
 
 function GridTableActionsCell({
   row,
@@ -224,7 +228,7 @@ function GridTableActionsCell({
   );
 }
 
-const ProfileWorkingDays: React.FC<IProfileWorkingDaysProps> = (props) => {
+const ProfileWorkingDays: React.FC<IProfileWorkingDaysProps> = ({ profileForm, names }) => {
   const t = useTranslations();
 
   const { locale } = useRouter();
@@ -360,6 +364,53 @@ const ProfileWorkingDays: React.FC<IProfileWorkingDaysProps> = (props) => {
             {t("Add a working day")}
           </Typography>
         </Button>
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: "center",
+          gap: "50px",
+        }}
+      >
+        {Boolean(names?.roundClock) && (
+          <Controller
+            control={profileForm.control}
+            name={names.roundClock ?? ""}
+            defaultValue={profileForm.defaultValues?.roundClock ?? false}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" justifyContent="center">
+                <Checkbox
+                  label={t("Around the clock")}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  {...field}
+                  checked={!!field.value}
+                />
+              </Box>
+            )}
+          />
+        )}
+
+        {Boolean(names?.departure) && (
+          <Controller
+            control={profileForm.control}
+            name={names.departure ?? ""}
+            defaultValue={profileForm.defaultValues?.departure ?? false}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" justifyContent="center">
+                <Checkbox
+                  label={t("Visiting")}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  {...field}
+                  checked={!!field.value}
+                />
+              </Box>
+            )}
+          />
+        )}
       </Box>
 
       <GridTable
