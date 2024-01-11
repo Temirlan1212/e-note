@@ -602,14 +602,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         ref={tabsRef}
       />
 
-      <Box
-        width="fit-content"
-        position="sticky"
-        bottom="20px"
-        display="flex"
-        gap="20px"
-        flexDirection={{ xs: "column", md: "row" }}
-      >
+      <Box width="fit-content" position="sticky" bottom="20px" display="flex" gap="20px" flexDirection="row">
         {onPrev != null && (
           <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
