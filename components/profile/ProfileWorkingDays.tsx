@@ -13,6 +13,7 @@ import { Box, IconButton, InputLabel, Tooltip, Typography } from "@mui/material"
 import { GridValueGetterParams } from "@mui/x-data-grid";
 import Button from "@/components/ui/Button";
 import AddIcon from "@mui/icons-material/Add";
+import Checkbox from "@/components/ui/Checkbox";
 import TimePicker from "@/components/ui/TimePicker";
 import { GridTable } from "@/components/ui/GridTable";
 import Autocomplete from "@/components/ui/Autocomplete";
@@ -20,7 +21,6 @@ import { getLabelField } from "@/components/notaries/NotariesFilterForm";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Checkbox from "../ui/Checkbox";
 
 interface IWorkingDay {
   order_seq: number;
@@ -33,8 +33,11 @@ interface IWorkingDay {
 }
 
 interface IProfileWorkingDaysProps {
-  profileForm: any;
-  names: any;
+  profileForm: UseFormReturn<any>;
+  names?: {
+    roundClock: string;
+    departure: string;
+  };
 }
 
 function GridTableActionsCell({
@@ -377,8 +380,8 @@ const ProfileWorkingDays: React.FC<IProfileWorkingDaysProps> = ({ profileForm, n
         {Boolean(names?.roundClock) && (
           <Controller
             control={profileForm.control}
-            name={names.roundClock ?? ""}
-            defaultValue={profileForm.defaultValues?.roundClock ?? false}
+            name={names?.roundClock ?? ""}
+            defaultValue={null}
             render={({ field, fieldState }) => (
               <Box display="flex" flexDirection="column" justifyContent="center">
                 <Checkbox
@@ -396,8 +399,8 @@ const ProfileWorkingDays: React.FC<IProfileWorkingDaysProps> = ({ profileForm, n
         {Boolean(names?.departure) && (
           <Controller
             control={profileForm.control}
-            name={names.departure ?? ""}
-            defaultValue={profileForm.defaultValues?.departure ?? false}
+            name={names?.departure ?? ""}
+            defaultValue={null}
             render={({ field, fieldState }) => (
               <Box display="flex" flexDirection="column" justifyContent="center">
                 <Checkbox
