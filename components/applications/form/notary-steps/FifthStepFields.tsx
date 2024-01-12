@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { UseFormReturn } from "react-hook-form";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { Alert, Box, Collapse, Grid, Typography } from "@mui/material";
@@ -38,6 +38,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
+  const applicationId = form.watch("id");
   const isFieldsOpen = form.watch("openFields") as boolean;
 
   const notaryPowerAttorneyTerm = dynamicForm.watch("notaryPowerAttorneyTerm");
@@ -47,9 +48,10 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   const activeCompanyId = useProfileStore((state) => state.userData?.activeCompany?.id);
 
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
+  const { update: applicationFetch } = useFetch<FetchResponseBody | null>("", "POST");
   const { data: tundukData, update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
   const { update: getAmountStateTax } = useFetch("", "POST");
-  const { update: getSumOfTax } = useFetch("", "POST");
+  const { update: getSumOfTax, loading: sumOfTaxLoading } = useFetch<FetchResponseBody | null>("", "POST");
 
   const {
     update: getDocumentTemplateData,
@@ -66,6 +68,17 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
       await getDocumentTemplateData("/api/dictionaries/document-type/template/" + productId);
     }
   }, [productId]);
+
+  useEffectOnce(async () => {
+    if (applicationId != null) {
+      const applicationData = await applicationFetch(`/api/applications/${applicationId}`, {
+        fields: ["currency"],
+      });
+
+      const currency = applicationData?.data?.[0]?.currency;
+      currency != null && form.setValue("currency", currency);
+    }
+  }, [applicationId]);
 
   const getNames = (data: any[]) => {
     const names: string[] = [];
@@ -127,21 +140,26 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     const formValues = form.getValues();
 
     const { notaryIsBenefit, notaryAmountStateTax, notaryWithDeparture } = dynamicFormValues;
-    const { members, requester } = formValues;
+    const { members, requester, currency } = formValues;
 
     const mapSubjectRole = (item: any) => ({ subjectRole: item?.subjectRole });
 
-    const params = {
-      notaryIsBenefit: notaryIsBenefit,
-      notaryAmountStateTax: notaryAmountStateTax,
-      notaryWithDeparture: notaryWithDeparture,
-      requester: requester?.map(mapSubjectRole),
-      members: members?.map(mapSubjectRole),
-    };
+    if (currency) {
+      const { code, name, id }: any = currency;
 
-    getSumOfTax(`/api/applications/calculate-tax`, {
-      params,
-    }).then((res) => dynamicForm.setValue("notarySumOfStateAmountTax", res?.data?.sum.toString() ?? ""));
+      const params = {
+        currency: { code, name, id },
+        notaryIsBenefit: notaryIsBenefit,
+        notaryAmountStateTax: notaryAmountStateTax,
+        notaryWithDeparture: notaryWithDeparture,
+        requester: requester?.map(mapSubjectRole),
+        members: members?.map(mapSubjectRole),
+      };
+
+      getSumOfTax(`/api/applications/calculate-tax`, {
+        params,
+      }).then((res) => dynamicForm.setValue("notarySumOfStateAmountTax", res?.data?.sum.toString() ?? ""));
+    }
   };
 
   const handlePinCheck = async (
@@ -221,7 +239,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     const formValues = form.getValues();
     const dynamicFormValues = dynamicForm.getValues();
 
-    const { typeNotarialAction, product, requester, members, orderNumber } = formValues;
+    const { typeNotarialAction, product, requester, members, orderNumber, currency } = formValues;
     const { notaryPowerAttorneyTerm } = dynamicFormValues;
 
     if (!notaryPowerAttorneyTerm || !relationshipType || !!orderNumber) return;
@@ -242,17 +260,18 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
       partnerType = PartnerType.Individual;
     }
 
-    const isValid = !!product?.id && !!relationshipType && !!partnerType && !!notaryPowerAttorneyTerm;
+    const isValid = !!product?.id && !!currency?.id && !!relationshipType && !!partnerType && !!notaryPowerAttorneyTerm;
 
     if (isValid) {
       const params = {
+        currencyId: currency.id,
         notaryProductId: product.id,
         relationshipType: relationshipType,
         partnerType: partnerType,
         notaryPowerAttorneyTerm: String(notaryPowerAttorneyTerm),
       };
 
-      await getAmountStateTax("/api/applications/amount-of-state-tax", {
+      getAmountStateTax("/api/applications/amount-of-state-tax", {
         body: params,
       }).then((res) => dynamicForm.setValue("notaryAmountStateTax", res?.data?.[0]?.reward ?? ""));
     } else {
@@ -332,6 +351,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                           hidden={item?.hidden}
                           required={!!item?.required}
                           conditions={item?.conditions}
+                          loading={item?.actionType?.toLowerCase() === "calculate" && sumOfTaxLoading}
                           type={item?.fieldType}
                           form={dynamicForm}
                           label={item?.fieldLabels?.[locale ?? ""] ?? ""}

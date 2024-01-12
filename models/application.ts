@@ -29,4 +29,9 @@ export interface IApplication {
     fileName: string;
     editUrl: string;
   };
+  currency?: {
+    code: string;
+    name: string;
+    id: number;
+  };
 }

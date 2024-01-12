@@ -5,7 +5,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json(null);
   }
 
-  const { relationshipType, notaryProductId, partnerType, notaryPowerAttorneyTerm } = req.body.body;
+  const { relationshipType, notaryProductId, partnerType, notaryPowerAttorneyTerm, currencyId } = req.body.body;
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.PriceListLine/search", {
     method: "POST",
@@ -39,6 +39,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 fieldName: "notaryStateDutyTerm",
                 operator: "=",
                 value: notaryPowerAttorneyTerm,
+              },
+              {
+                fieldName: "currency.id",
+                operator: "=",
+                value: currencyId,
               },
             ],
           },
