@@ -19,6 +19,7 @@ export interface IProfileState {
   setRedirectTo: (value: string | null) => void;
   logIn: (credentials: IUserCredentials) => Promise<void>;
   logInEsi: (code: string) => Promise<void>;
+  logInEds: (hash: string) => Promise<void>;
   logOut: () => void;
   loadUserData: (user: IUser) => Promise<void>;
   setAgreementPersonalData: (agreement: boolean | null) => void;
@@ -98,6 +99,30 @@ export const useProfileStore = create<IProfileState>()(
         if (user?.username == null) return;
 
         set(() => ({ cookie, user }));
+        get().loadUserData(user);
+      },
+      logInEds: async (hash) => {
+        let cookie: string | null = null;
+        let user: IUser | null = null;
+
+        const response = await fetch(`/api/profile/eds-login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            hash,
+          }),
+        });
+
+        if (!response.ok) return;
+
+        const setCookie = response.headers.get("cookie");
+        if (setCookie == null) return;
+
+        cookie = setCookie;
+        user = await response.json();
+        if (user?.username == null) return;
+
+        set(() => ({ cookie, user, redirectTo: "/applications" }));
         get().loadUserData(user);
       },
       logOut: () => {

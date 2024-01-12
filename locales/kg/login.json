@@ -42,5 +42,6 @@
   "You need to verify your fingerprint to sign in": "Кирүү үчүн манжа изиңизди ырасташыңыз керек",
   "Confirm": "ырастоо",
   "Unsuccessful login attempt": "Кирүү аракети ийгиликсиз болду",
+  "User is not registered in the system": "Колдонуучу системада катталган эмес",
   "The link has been sent, check your email": "Шилтеме жөнөтүлдү, электрондук почтаңызды текшериңиз"
 }
