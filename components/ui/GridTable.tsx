@@ -573,7 +573,7 @@ export const GridTableActionsCell: React.FC<IGridTableActionsCellProps> = ({ par
           slotProps={{
             paper: {
               style: {
-                width: 315,
+                width: 350,
                 padding: 0,
                 left: "50%",
               },
