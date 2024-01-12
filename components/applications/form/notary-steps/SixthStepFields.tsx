@@ -630,7 +630,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
           }}
         >
           <Box>Дата: {signTime}</Box>
-          <Box>ФИО: {profile?.name}</Box>
+          <Box>ФИО: {profile?.partner.fullName}</Box>
           <Box>Hash: {hash?.slice(0, 32)}</Box>
         </Box>
       </Box>
