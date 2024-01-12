@@ -66,5 +66,10 @@ export const applicationSchema = object()
     openFields: boolean(),
     selectTemplateFromMade: boolean(),
     orderNumber: mixed().nullable(),
+    currency: object({
+      id: number().integer().positive().nullable(),
+      code: string().nullable(),
+      name: string().nullable(),
+    }).nullable(),
   })
   .concat(addressSchema.pick(["region", "district", "city"]));

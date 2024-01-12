@@ -28,6 +28,7 @@ const fields: string[] = [
   "files",
   "isToPrintLineSubTotal",
   "orderNumber",
+  "currency",
 ];
 
 const related: Record<string, typeof fields> = {
