@@ -25,12 +25,12 @@ const loginTypesData = [
     type: "ESI",
     content: LoginWithESI,
   },
-  // {
-  //   title: "Login via EDS",
-  //   icon: KeyIcon,
-  //   type: "ECP",
-  //   content: LoginWithECP,
-  // },
+  {
+    title: "Login via EDS",
+    icon: KeyIcon,
+    type: "ECP",
+    content: LoginWithECP,
+  },
   // {
   //   title: "Fingerprint Login",
   //   icon: FingerprintOutlinedIcon,

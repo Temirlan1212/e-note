@@ -42,5 +42,6 @@
   "You need to verify your fingerprint to sign in": "Для входа вам необходимо подтвердить отпечаток своего пальца",
   "Confirm": "Подтвердить",
   "Unsuccessful login attempt": "Неудачная попытка входа",
+  "User is not registered in the system": "Пользователь не зарегистрирован в системе",
   "The link has been sent, check your email": "Ссылка была отправлена, проверьте свою почту"
 }
