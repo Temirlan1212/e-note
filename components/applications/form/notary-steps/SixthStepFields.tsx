@@ -47,6 +47,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const [isDeclSigned, setIsDeclSigned] = useState(false);
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
   const [hash, setHash] = useState<string | null>(null);
+  const [signTime, setSignTime] = useState<string | null>(null);
   const htmlSignRef = useRef<HTMLDivElement | null>(null);
   // const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<null | HTMLElement>(null);
 
@@ -117,8 +118,14 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const handleSign = async (sign: string, callback: Dispatch<SetStateAction<boolean>>) => {
     htmlSignRef.current!.style.display = "block";
 
-    setHash(sign);
-    await new Promise((resolve) => setTimeout(resolve, 0)); // Introduce a small delay
+    const formattedDate = format(new Date(), "dd.MM.yyyy, HH:mm:ss");
+    const withoutESP = formattedDate + profile?.email;
+    const hashWithoutESP = btoa(withoutESP);
+
+    setHash(sign === "sign" ? hashWithoutESP : sign);
+    setSignTime(formattedDate);
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     const canvas = await html2canvas(htmlSignRef.current!);
     const dataUrl = canvas.toDataURL("image/png");
@@ -126,7 +133,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     htmlSignRef.current!.style.display = "none";
 
     const signedPdf = await signDocument(`/api/files/sign/${id}`, {
-      hash: sign,
+      hash: sign === "sign" ? hashWithoutESP : sign,
       haveESP: sign !== "sign",
       seal: base64String,
     });
@@ -170,8 +177,6 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   });
-
-  const formattedDate = format(new Date(), "dd.MM.yyyy, HH:mm:ss");
 
   const showSign = profile?.roles.some((role) => role.name === "Trainee" || role.name === "Assistant notary");
 
@@ -280,18 +285,13 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
           </Box>
         )}
       </Box>
-      <div
+
+      <Box
         ref={htmlSignRef}
-        style={{
-          display: "none",
-          border: "3px solid #105a9b",
-          borderRadius: "20px",
-          padding: "10px",
-          width: "300px",
-        }}
+        sx={{ display: "none", border: "3px solid #105a9b", borderRadius: "20px", padding: "10px", width: "300px" }}
       >
-        <div
-          style={{
+        <Box
+          sx={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -615,12 +615,12 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
             </defs>
           </svg>
 
-          <div style={{ color: "#105a9b", textAlign: "center", fontSize: "12px", fontWeight: 600 }}>
+          <Box sx={{ color: "#105a9b", textAlign: "center", fontSize: "12px", fontWeight: 600 }}>
             ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ
-          </div>
-        </div>
-        <div
-          style={{
+          </Box>
+        </Box>
+        <Box
+          sx={{
             display: "flex",
             flexDirection: "column",
             gap: "5px",
@@ -629,17 +629,11 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
             fontWeight: 600,
           }}
         >
-          <div>
-            Дата: <span>{formattedDate}</span>
-          </div>
-          <div>
-            ФИО: <span>{profile?.name}</span>
-          </div>
-          <div>
-            Hash: <span>{hash?.slice(0, 32)}</span>
-          </div>
-        </div>
-      </div>
+          <Box>Дата: {signTime}</Box>
+          <Box>ФИО: {profile?.name}</Box>
+          <Box>Hash: {hash?.slice(0, 32)}</Box>
+        </Box>
+      </Box>
     </Box>
   );
 }
