@@ -130,7 +130,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
   const handleStepChangeByStepper = async (target: number) => {
     setStepLoading(true);
-    if (stepNextClickMethod.current != null && steps.length - 1 !== step) await stepNextClickMethod.current(target);
+    if (stepNextClickMethod.current != null) await stepNextClickMethod.current(target);
     setStepLoading(false);
   };
 
@@ -164,8 +164,9 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             key={1}
             form={form}
             onPrev={() => setStep(step - 1)}
-            onNext={() => {
+            onNext={({ step }) => {
               setStep((prev) => {
+                if (step != null) return step;
                 return prev + 1;
               });
             }}
@@ -179,8 +180,8 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
               onNext={({ step, isStepByStep }) => {
                 if (!isStepByStep) getDynamicFormAppData();
                 setStep((prev) => {
-                  if (oneSideAction && !isStepByStep) return prev + 2;
                   if (step != null) return step;
+                  if (oneSideAction && !isStepByStep) return prev + 2;
                   return prev + 1;
                 });
               }}
@@ -194,15 +195,14 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
               onNext={({ step }) => {
                 getDynamicFormAppData();
                 setStep((prev) => {
-                  if (oneSideAction) return prev + 2;
                   if (step != null) return step;
+                  if (oneSideAction) return prev + 2;
                   return prev + 1;
                 });
               }}
               handleStepNextClick={handleStepNextClick}
             />
           ),
-
           <NotaryFourthStepFields
             key={3}
             form={form}
@@ -234,7 +234,13 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             key={5}
             form={form}
             onPrev={() => setStep(step - 1)}
-            onNext={() => router.push("/applications")}
+            onNext={({ step }) => {
+              setStep((prev) => {
+                if (step != null) return step;
+                router.push("/applications");
+                return prev;
+              });
+            }}
             handleStepNextClick={handleStepNextClick}
           />,
         ]
@@ -254,8 +260,9 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             key={1}
             form={form}
             onPrev={() => setStep(step - 1)}
-            onNext={() => {
+            onNext={({ step }) => {
               setStep((prev) => {
+                if (step != null) return step;
                 return prev + 1;
               });
             }}
@@ -335,7 +342,13 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             key={6}
             form={form}
             onPrev={() => setStep(step - 1)}
-            onNext={() => router.push("/applications")}
+            onNext={({ step }) => {
+              setStep((prev) => {
+                if (step != null) return step;
+                router.push("/applications");
+                return prev;
+              });
+            }}
             handleStepNextClick={handleStepNextClick}
           />,
         ];
@@ -351,7 +364,8 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           sx={{ justifyContent: "center" }}
         >
           {steps.map((component, index) => {
-            const isClicableStep = index === (userData?.group?.id === 4 ? 3 : 4) && oneSideAction ? false : true;
+            const isCurrentStep = step === index;
+            const isPassedStep = stepProgress.current >= index;
 
             return (
               <Step key={index} completed={step - 1 === index} sx={{ display: "flex", p: 0 }}>
@@ -361,28 +375,20 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
                       <CircularProgress sx={{ width: "30px !important", height: "30px !important" }} />
                     ) : step - 1 >= index ? (
                       <CheckCircleIcon
-                        color={steps.length - 1 === step ? "disabled" : "success"}
+                        color={isPassedStep ? "success" : "disabled"}
                         sx={{ width: "30px", height: "30px" }}
-                        cursor={stepProgress.current >= index && steps.length - 1 !== step ? "pointer" : "initial"}
-                        onClick={() =>
-                          isClicableStep
-                            ? stepProgress.current >= index && step !== index && handleStepChangeByStepper(index)
-                            : null
-                        }
+                        cursor={isPassedStep ? "pointer" : "initial"}
+                        onClick={() => isPassedStep && !isCurrentStep && handleStepChangeByStepper(index)}
                       />
                     ) : (
                       <RadioButtonCheckedIcon
-                        onClick={() =>
-                          isClicableStep
-                            ? stepProgress.current >= index && step !== index && handleStepChangeByStepper(index)
-                            : null
-                        }
-                        color={step === index ? "success" : stepProgress.current >= index ? "secondary" : "disabled"}
+                        onClick={() => isPassedStep && !isCurrentStep && handleStepChangeByStepper(index)}
+                        color={step === index ? "success" : isPassedStep ? "secondary" : "disabled"}
                         sx={{
                           width: "30px",
                           height: "30px",
                         }}
-                        cursor={stepProgress.current >= index ? "pointer" : "initial"}
+                        cursor={isPassedStep ? "pointer" : "initial"}
                       />
                     )
                   }
