@@ -472,7 +472,7 @@ export default function ApplicationList() {
             field: "actions",
             headerName: "Actions",
             headerClassName: "pinnable",
-            width: isMobileMedia ? 200 : 300,
+            width: isMobileMedia ? 250 : 350,
             sortable: false,
             type: isMobileMedia ? "actions" : "string",
             cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
