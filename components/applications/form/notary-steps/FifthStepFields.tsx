@@ -51,7 +51,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
   const { update: applicationFetch } = useFetch<FetchResponseBody | null>("", "POST");
   const { data: tundukData, update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
   const { update: getAmountStateTax } = useFetch("", "POST");
-  const { update: getSumOfTax, loading: sumOfTaxLoading } = useFetch("", "POST");
+  const { update: getSumOfTax, loading: sumOfTaxLoading } = useFetch<FetchResponseBody | null>("", "POST");
 
   const {
     update: getDocumentTemplateData,
@@ -135,7 +135,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     if (onPrev != null) onPrev();
   };
 
-  const handleCalculateSumOfTax = async () => {
+  const handleCalculateSumOfTax = () => {
     const dynamicFormValues = dynamicForm.getValues();
     const formValues = form.getValues();
 
