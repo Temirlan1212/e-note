@@ -106,7 +106,9 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                   </>
                 )}
 
-                <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
+                <Typography variant="h5">
+                  {partnerType == 1 || isForeigner ? t("Address") : t("Place of residence")}
+                </Typography>
                 <Address
                   form={form}
                   isForeigner={isForeigner}
