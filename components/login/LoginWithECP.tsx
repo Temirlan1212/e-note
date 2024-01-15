@@ -9,7 +9,6 @@ import RutokenSign, { IRutokenSignRef } from "@/components/e-sign/RutokenSign";
 
 import Button from "../ui/Button";
 import Select from "../ui/Select";
-import { useRouter } from "next/router";
 import { useProfileStore } from "@/stores/profile";
 
 enum SignType {
@@ -21,7 +20,6 @@ const signTypes = Object.entries(SignType).map(([label, value]) => ({ label, val
 
 const LoginWithECP: React.FC = () => {
   const t = useTranslations();
-  const router = useRouter();
 
   const [signType, setSignType] = useState<SignType>();
   const [alertOpen, setAlertOpen] = useState(false);
@@ -43,9 +41,10 @@ const LoginWithECP: React.FC = () => {
       if (!data) {
         setAlertText("User is not registered in the system");
         setAlertOpen(true);
+        return false;
       }
     }
-    return false;
+    return true;
   };
 
   const handleSign = async () => {
@@ -54,10 +53,10 @@ const LoginWithECP: React.FC = () => {
 
     try {
       const signed = await signRefCurrent?.handleSign(onSign);
-      // if (signed) {
-      //   setAlertOpen(true);
-      //   return;
-      // }
+      if (!signed) {
+        setAlertOpen(true);
+        return;
+      }
 
       setAlertOpen(false);
     } catch (e: any) {
