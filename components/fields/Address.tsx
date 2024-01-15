@@ -14,6 +14,7 @@ export interface IAddressProps extends IAreaProps {
     street: string;
     house: string;
     apartment: string;
+    foreignAddress?: string;
   };
   defaultValues?: {
     region?: { id: number } | null;
@@ -22,6 +23,7 @@ export interface IAddressProps extends IAreaProps {
     street?: string;
     house?: string;
     apartment?: string;
+    foreignAddress?: string;
   };
   disableFields?: boolean;
   boxSx?: SxProps<Theme> | undefined;
@@ -31,11 +33,13 @@ export interface IAddressProps extends IAreaProps {
     labelsSx: SxProps<Theme>;
     inputSx: SxProps<Theme>;
   };
+  isForeigner?: boolean;
 }
 
 export default function Address({
   form,
   names,
+  isForeigner,
   defaultValues,
   disableFields,
   withNotaryDistrict,
@@ -59,24 +63,14 @@ export default function Address({
 
   return (
     <Box sx={boxSx} display="flex" gap="20px" flexDirection="column">
-      <Area
-        form={form}
-        disableFields={disableFields}
-        names={names}
-        defaultValues={defaultValues}
-        withNotaryDistrict={withNotaryDistrict}
-        getAllNotaryDistricts={getAllNotaryDistricts}
-        sx={sx}
-      />
-
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+      {isForeigner ? (
         <Controller
           control={control}
-          name={names.street}
-          defaultValue={defaultValues?.street ?? ""}
+          name={names.foreignAddress ?? ""}
+          defaultValue={defaultValues?.foreignAddress ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel sx={sx?.labelsSx}>{t("Street")}</InputLabel>
+              <InputLabel sx={sx?.labelsSx}>{t("Address")}</InputLabel>
               <Input
                 sx={sx?.inputSx}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
@@ -87,41 +81,72 @@ export default function Address({
             </Box>
           )}
         />
-        <Controller
-          control={control}
-          name={names.house}
-          defaultValue={defaultValues?.house ?? ""}
-          render={({ field, fieldState }) => (
-            <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel sx={sx?.labelsSx}>{t("House")}</InputLabel>
-              <Input
-                sx={sx?.inputSx}
-                inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={disableFields}
-                {...field}
-              />
-            </Box>
-          )}
-        />
-        <Controller
-          control={control}
-          name={names.apartment}
-          defaultValue={defaultValues?.apartment ?? ""}
-          render={({ field, fieldState }) => (
-            <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel sx={sx?.labelsSx}>{t("Apartment")}</InputLabel>
-              <Input
-                sx={sx?.inputSx}
-                inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={disableFields}
-                {...field}
-              />
-            </Box>
-          )}
-        />
-      </Box>
+      ) : (
+        <>
+          <Area
+            form={form}
+            disableFields={disableFields}
+            names={names}
+            defaultValues={defaultValues}
+            withNotaryDistrict={withNotaryDistrict}
+            getAllNotaryDistricts={getAllNotaryDistricts}
+            sx={sx}
+          />
+          <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+            <Controller
+              control={control}
+              name={names.street}
+              defaultValue={defaultValues?.street ?? ""}
+              render={({ field, fieldState }) => (
+                <Box display="flex" flexDirection="column" width="100%">
+                  <InputLabel sx={sx?.labelsSx}>{t("Street")}</InputLabel>
+                  <Input
+                    sx={sx?.inputSx}
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    disabled={disableFields}
+                    {...field}
+                  />
+                </Box>
+              )}
+            />
+            <Controller
+              control={control}
+              name={names.house}
+              defaultValue={defaultValues?.house ?? ""}
+              render={({ field, fieldState }) => (
+                <Box display="flex" flexDirection="column" width="100%">
+                  <InputLabel sx={sx?.labelsSx}>{t("House")}</InputLabel>
+                  <Input
+                    sx={sx?.inputSx}
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    disabled={disableFields}
+                    {...field}
+                  />
+                </Box>
+              )}
+            />
+            <Controller
+              control={control}
+              name={names.apartment}
+              defaultValue={defaultValues?.apartment ?? ""}
+              render={({ field, fieldState }) => (
+                <Box display="flex" flexDirection="column" width="100%">
+                  <InputLabel sx={sx?.labelsSx}>{t("Apartment")}</InputLabel>
+                  <Input
+                    sx={sx?.inputSx}
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    disabled={disableFields}
+                    {...field}
+                  />
+                </Box>
+              )}
+            />
+          </Box>
+        </>
+      )}
     </Box>
   );
 }
