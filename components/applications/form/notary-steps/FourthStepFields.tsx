@@ -69,6 +69,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     {
       getElement(index: number, loading?: boolean, isTundukFieldsOpen?: boolean, expand?: boolean) {
         const partnerType = watch(`members.${index}.partnerTypeSelect`);
+        const isForeigner = watch(`members.${index}.foreigner`);
 
         return (
           <Box display="flex" gap="20px" flexDirection="column">
@@ -108,6 +109,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                 <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
                 <Address
                   form={form}
+                  isForeigner={isForeigner}
                   names={getAddressNames(index)}
                   disableFields={
                     isTundukFieldsOpen &&
@@ -120,7 +122,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
                   }}
                 />
 
-                {partnerType != 1 && (
+                {partnerType != 1 && !isForeigner && (
                   <>
                     <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap="10px">
                       <Typography variant="h5">{t("Actual place of residence")}</Typography>
@@ -251,6 +253,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     street: `members.${index}.mainAddress.addressL4`,
     house: `members.${index}.mainAddress.addressL3`,
     apartment: `members.${index}.mainAddress.addressL2`,
+    foreignAddress: `members.${index}.foreignAddress`,
   });
 
   const getActualAddressNames = (index: number) => ({
