@@ -148,11 +148,14 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     setSelectedImage(file);
 
     if (file) {
-      const blob = new Blob([file], { type: file.type });
-      const res = await checkFace("/api/check-face", { image: await convert.blob.toBase64Async(blob) });
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      setImagePreview(null);
+      // const blob = new Blob([file], { type: file.type });
+      // const res = await checkFace("/api/check-face", { image: await convert.blob.toBase64Async(blob) });
 
-      setImagePreview(res?.data?.message === "Face detected" ? URL.createObjectURL(file) : null);
-      setAlertOpen(res?.data?.message !== "Face detected");
+      // setImagePreview(res?.data?.message === "Face detected" ? URL.createObjectURL(file) : null);
+      // setAlertOpen(res?.data?.message !== "Face detected");
     }
   };
 
