@@ -378,7 +378,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
       </Box>
 
       {!documentTemplateLoading && (
-        <Box position="sticky" bottom="20px" width="fit-content" display="flex" gap="20px" flexDirection="row">
+        <Box position="sticky" bottom="30px" width="fit-content" display="flex" gap="20px" flexDirection="row">
           {onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
               {t("Prev")}
