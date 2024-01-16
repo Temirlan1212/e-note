@@ -54,7 +54,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
   const { data: prepare, loading: prepareLoading, update: getPrepare } = useFetch("", "GET");
   const { loading: syncLoading, update: getSync } = useFetch("", "GET");
-  const { update: signDocument, loading } = useFetch("", "POST");
+  const { data: signedDoc, update: signDocument, loading } = useFetch("", "POST");
   const { data: application, loading: applicationLoading } = useFetch(
     id != null ? `/api/applications/${id}` : "",
     "POST"
@@ -254,7 +254,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
             </Button>
           </Link>
         )}
-        {!applicationLoading && !prepareLoading && !pdfLoading && !syncLoading && (
+        {!signedDoc?.data?.success && !applicationLoading && !prepareLoading && !pdfLoading && !syncLoading && (
           <Box
             width="fit-content"
             position="sticky"
