@@ -26,12 +26,12 @@ export interface IAddressProps extends IAreaProps {
     foreignAddress?: string;
   };
   disableFields?: boolean;
-  boxSx?: SxProps<Theme> | undefined;
   withNotaryDistrict?: boolean;
   getAllNotaryDistricts?: boolean;
   sx?: {
-    labelsSx: SxProps<Theme>;
-    inputSx: SxProps<Theme>;
+    labelsSx?: SxProps<Theme>;
+    inputSx?: SxProps<Theme>;
+    boxSx?: SxProps<Theme>;
   };
   isForeigner?: boolean;
 }
@@ -44,7 +44,6 @@ export default function Address({
   disableFields,
   withNotaryDistrict,
   getAllNotaryDistricts,
-  boxSx,
   sx,
 }: IAddressProps) {
   const t = useTranslations();
@@ -62,7 +61,7 @@ export default function Address({
   }, [street, house, apartment]);
 
   return (
-    <Box sx={boxSx} display="flex" gap="20px" flexDirection="column">
+    <Box sx={sx?.boxSx} display="flex" gap="20px" flexDirection="column">
       {isForeigner ? (
         <Controller
           control={control}

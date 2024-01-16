@@ -41,8 +41,9 @@ export interface IAreaProps {
   withNotaryDistrict?: boolean;
   getAllNotaryDistricts?: boolean;
   sx?: {
-    labelsSx: SxProps<Theme>;
-    inputSx: SxProps<Theme>;
+    labelsSx?: SxProps<Theme>;
+    inputSx?: SxProps<Theme>;
+    boxSx?: SxProps<Theme>;
   };
   skipField?: SkipField;
 }

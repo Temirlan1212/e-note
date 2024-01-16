@@ -15,23 +15,19 @@ export interface ICoordinatesProps {
   };
   disableFields?: boolean;
   maxLength?: number;
-  boxSx?: SxProps<Theme> | undefined;
+  sx?: {
+    boxSx?: SxProps<Theme>;
+    labelsSx?: SxProps<Theme>;
+  };
 }
 
-export default function Coordinates({
-  form,
-  names,
-  defaultValues,
-  disableFields,
-  maxLength,
-  boxSx,
-}: ICoordinatesProps) {
+export default function Coordinates({ form, names, defaultValues, disableFields, maxLength, sx }: ICoordinatesProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
 
   return (
-    <Box sx={boxSx} display="flex" gap="20px" flexDirection="column">
+    <Box sx={sx?.boxSx} display="flex" gap="20px" flexDirection="column">
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller
           control={control}
@@ -39,7 +35,7 @@ export default function Coordinates({
           defaultValue={defaultValues?.latitude ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Latitude")}</InputLabel>
+              <InputLabel sx={sx?.labelsSx}>{t("Latitude")}</InputLabel>
               <Input
                 disabled={disableFields}
                 inputProps={{ maxLength: maxLength || undefined }}
@@ -61,7 +57,7 @@ export default function Coordinates({
           defaultValue={defaultValues?.longitude ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Longitude")}</InputLabel>
+              <InputLabel sx={sx?.labelsSx}>{t("Longitude")}</InputLabel>
               <Input
                 disabled={disableFields}
                 inputProps={{ maxLength: maxLength || undefined }}

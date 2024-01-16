@@ -35,6 +35,7 @@ import Address from "@/components/fields/Address";
 import License from "@/components/fields/License";
 import Hint from "@/components/ui/Hint";
 import Contact from "@/components/fields/Contact";
+import FullName from "@/components/fields/FullName";
 import Coordinates from "@/components/fields/Coordinates";
 import ExpandingFields from "../fields/ExpandingFields";
 import ProfileWorkingDays from "./ProfileWorkingDays";
@@ -143,6 +144,13 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const workModeNames = {
     roundClock: "activeCompany.roundClock",
     departure: "activeCompany.departure",
+  };
+
+  const personalDataNames = {
+    firstName: "partner.firstName",
+    lastName: "partner.lastName",
+    middleName: "partner.middleName",
+    code: "code",
   };
 
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -354,88 +362,11 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               justifyContent: "space-between",
             }}
           >
-            <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Last name")}
-              </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.partner?.lastName?.message ?? false}
-                helperText={errors.partner?.lastName?.message ? t(errors.partner?.lastName?.message) : ""}
-                register={form.register}
-                name="partner.lastName"
-              />
-            </FormControl>
-            <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("First name")}
-              </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.partner?.firstName?.message ?? false}
-                helperText={errors.partner?.firstName?.message ? t(errors.partner?.firstName?.message) : ""}
-                register={form.register}
-                name="partner.firstName"
-              />
-            </FormControl>
-            <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Middle name")}
-              </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.partner?.middleName?.message ?? false}
-                helperText={errors.partner?.middleName?.message ? t(errors.partner?.middleName?.message) : ""}
-                register={form.register}
-                name="partner.middleName"
-              />
-            </FormControl>
-            <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Username")}
-              </InputLabel>
-              <Input fullWidth register={form.register} name="code" disabled />
-            </FormControl>
+            <FullName
+              form={form}
+              names={personalDataNames}
+              sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
+            />
           </Box>
         </Box>
 
@@ -465,7 +396,11 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               },
             }}
           >
-            <Contact form={form} names={contactNames} boxSx={{ width: "100%" }} />
+            <Contact
+              form={form}
+              names={contactNames}
+              sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
+            />
           </Box>
         </Box>
 
@@ -504,7 +439,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                     names={addressNames}
                     withNotaryDistrict={true}
                     getAllNotaryDistricts={true}
-                    boxSx={{ width: "100%" }}
+                    sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
                   />
                 </Box>
               </Box>
@@ -548,7 +483,11 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Coordinates form={form} names={coordinateNames} boxSx={{ width: "100%" }} />
+                  <Coordinates
+                    form={form}
+                    names={coordinateNames}
+                    sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
+                  />
                 </Box>
               </Box>
 
@@ -579,7 +518,12 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                     },
                   }}
                 >
-                  <License form={form} names={licenseNames} disableFields={true} />
+                  <License
+                    form={form}
+                    names={licenseNames}
+                    disableFields={true}
+                    sx={{ labelsSx: { fontWeight: "600" } }}
+                  />
                 </Box>
               </Box>
 
