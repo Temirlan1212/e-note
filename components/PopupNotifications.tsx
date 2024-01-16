@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
-import { Box, Popover, IconButton, Badge, List, ListItem, ListItemText, CircularProgress } from "@mui/material";
+import { Badge, Box, CircularProgress, IconButton, List, ListItem, ListItemText, Popover } from "@mui/material";
 import { useProfileStore } from "../stores/profile";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
@@ -57,7 +57,9 @@ export default function PopupNotifications() {
           version: notification.version,
         });
       }
-      router.push(`/applications/status/${notification["message.relatedId"]}`);
+      if (!notification["message.subject"].includes("Your license")) {
+        router.push(`/applications/status/${notification["message.relatedId"]}`);
+      }
     }
   };
 
@@ -138,48 +140,58 @@ export default function PopupNotifications() {
           }}
         >
           {notifications?.data?.length! ? (
-            notifications?.data?.map((notification, idx) => (
-              <ListItem
-                key={notification.id}
-                sx={{
-                  padding: "0",
-                  cursor: "pointer",
-                  borderBottom: "1px solid #F6F6F6",
-                  "&:hover": {
-                    backgroundColor: "#F6F6F6",
-                  },
-                }}
-              >
-                <ListItemText
-                  onClick={() => handleRead(notification)}
+            notifications?.data?.map((notification, idx) => {
+              const getLicenseTranslate = () => {
+                if (notification["message.subject"].includes("Your license")) {
+                  const splitMsg = notification["message.subject"].split(":");
+                  console.log(splitMsg);
+                  return t(splitMsg[0]) + ":" + splitMsg[1] + ":" + splitMsg[2];
+                }
+              };
+
+              return (
+                <ListItem
+                  key={notification.id}
                   sx={{
-                    padding: "10px 15px",
-                    wordBreak: "break-word",
+                    padding: "0",
+                    cursor: "pointer",
+                    borderBottom: "1px solid #F6F6F6",
+                    "&:hover": {
+                      backgroundColor: "#F6F6F6",
+                    },
                   }}
-                  primaryTypographyProps={{ fontSize: { xs: "14px", md: "16px" } }}
-                  secondaryTypographyProps={{ fontSize: { xs: "12px", md: "14px" } }}
-                  primary={
-                    <Badge
-                      color="success"
-                      variant="dot"
-                      invisible={notification.isRead}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "left",
-                      }}
-                    >
-                      {notification?.displayName || t(notification["message.subject"])}
-                    </Badge>
-                  }
-                  secondary={getTimeAgo(notification)}
-                />
-                {notification["message.subject"] && (
-                  <IconButton onClick={() => handleDelete(notification)}>
-                    <DeleteIcon />
-                  </IconButton>
-                )}
-              </ListItem>
-            ))
+                >
+                  <ListItemText
+                    onClick={() => handleRead(notification)}
+                    sx={{
+                      padding: "10px 15px",
+                      wordBreak: "break-word",
+                    }}
+                    primaryTypographyProps={{ fontSize: { xs: "14px", md: "16px" } }}
+                    secondaryTypographyProps={{ fontSize: { xs: "12px", md: "14px" } }}
+                    primary={
+                      <Badge
+                        color="success"
+                        variant="dot"
+                        invisible={notification.isRead}
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "left",
+                        }}
+                      >
+                        {notification?.displayName || getLicenseTranslate() || t(notification["message.subject"])}
+                      </Badge>
+                    }
+                    secondary={getTimeAgo(notification)}
+                  />
+                  {notification["message.subject"] && (
+                    <IconButton onClick={() => handleDelete(notification)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  )}
+                </ListItem>
+              );
+            })
           ) : (
             <ListItem>
               <ListItemText sx={{ fontWeight: 600 }} color="textPrimary" primary={t("No notifications")} />
