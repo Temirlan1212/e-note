@@ -171,7 +171,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const setCloseNotification = useNotificationStore((state) => state.setNotification);
 
   const handleCloseNotification = (): void => {
-    setCloseNotification(null, null);
+    setCloseNotification("", severity);
   };
 
   return (
