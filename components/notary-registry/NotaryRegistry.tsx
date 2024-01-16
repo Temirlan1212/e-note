@@ -36,7 +36,7 @@ const NotaryRegistry: FC<INotariesContentProps> = (props) => {
 
   const [isCollapsed, setisCollapsed] = useState(true);
   const [notariesQueryParams, setNotariesQueryParams] = useState<INotariesQueryParams>({
-    pageSize: 8,
+    pageSize: 16,
     page: 1,
     sortBy: null,
     searchValue: null,
