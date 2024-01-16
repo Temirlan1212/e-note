@@ -167,10 +167,11 @@ function Layout({ children }: { children: JSX.Element }) {
 
 export default function App({ Component, pageProps }: AppProps) {
   const notification = useNotificationStore((state) => state.notification);
+  const severity = useNotificationStore((state) => state.severity);
   const setCloseNotification = useNotificationStore((state) => state.setNotification);
 
   const handleCloseNotification = (): void => {
-    setCloseNotification(null);
+    setCloseNotification(null, null);
   };
 
   return (
@@ -184,7 +185,7 @@ export default function App({ Component, pageProps }: AppProps) {
             title={notification ?? "Oops"}
             anchorOrigin={{ horizontal: "right", vertical: "top" }}
             variant="filled"
-            severity="error"
+            severity={severity ?? "error"}
           />
           <Layout>
             <Component {...pageProps} />

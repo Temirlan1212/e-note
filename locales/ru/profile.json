@@ -34,5 +34,6 @@
   "Deleting a working day": "Удаление рабочего дня",
   "Do you really want to remove the working day?": "Вы действительно хотите удалить этот рабочий день?",
   "No face detected in the image": "На изображении не обнаружено лицо",
-  "Face detected": "Лицо обнаружено"
+  "Face detected": "Лицо обнаружено",
+  "Profile saved successfully": "Профиль успешно сохранен"
 }

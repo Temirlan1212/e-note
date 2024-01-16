@@ -25,6 +25,7 @@ import ProfilePasswordForm from "./ProfilePasswordForm";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IUserProfileSchema, userProfileSchema } from "@/validator-schemas/profile";
 import { IProfileState, useProfileStore } from "@/stores/profile";
+import useNotificationStore from "@/stores/notification";
 import { IEmail, IUserData } from "@/models/user";
 
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
@@ -54,6 +55,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const profile = useProfileStore<IProfileState>((state) => state);
   const profileData: IExtendedUserData | null = profile.getUserData();
+  const setNotification = useNotificationStore((state) => state.setNotification);
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -178,6 +180,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 username: userData?.data?.[0]?.code,
               });
               getImage();
+              setNotification(t("Profile saved successfully"), "success");
             }
           });
         }
@@ -200,6 +203,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               username: userData?.data?.[0]?.code,
             });
             getImage();
+            setNotification(t("Profile saved successfully"), "success");
           }
         });
       }
