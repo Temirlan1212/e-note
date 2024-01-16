@@ -153,7 +153,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
       const blob = new Blob([file], { type: file.type });
       const res = await checkFace("/api/check-face", { image: await convert.blob.toBase64Async(blob) });
 
-      if (res && res?.ok) {
+      if (res) {
         const isFaceDetected = res?.data?.message === "Face detected";
         const isSingleFace = res?.data?.face_count === 1;
 
