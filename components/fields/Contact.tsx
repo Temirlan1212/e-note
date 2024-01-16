@@ -16,14 +16,14 @@ export interface IContactProps {
     phone?: string;
   };
   disableFields?: boolean;
-  boxSx?: SxProps<Theme> | undefined;
   sx?: {
-    labelsSx: SxProps<Theme>;
-    inputSx: SxProps<Theme>;
+    labelsSx?: SxProps<Theme>;
+    inputSx?: SxProps<Theme>;
+    boxSx?: SxProps<Theme>;
   };
 }
 
-export default function Contact({ form, names, defaultValues, disableFields, boxSx, sx }: IContactProps) {
+export default function Contact({ form, names, defaultValues, disableFields, sx }: IContactProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
@@ -35,7 +35,7 @@ export default function Contact({ form, names, defaultValues, disableFields, box
   }, [email]);
 
   return (
-    <Box sx={boxSx} display="flex" gap="20px" flexDirection="column">
+    <Box sx={sx?.boxSx} display="flex" gap="20px" flexDirection="column">
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller
           control={control}
