@@ -68,7 +68,7 @@ export default function SignModal({
       title="Entry into the register"
       type="hint"
       hintTitle=""
-      hintText="Face id hint text"
+      hintText={faceIdScanner ? "Eds hint text" : "Face id hint text"}
       slots={{
         button: (callback) => (
           <Box width="100%">
