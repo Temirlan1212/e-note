@@ -1,55 +1,39 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ApexOptions } from "apexcharts";
-import { Box, InputLabel, Typography, useMediaQuery } from "@mui/material";
+import { Box, CircularProgress, InputLabel, Typography, useMediaQuery } from "@mui/material";
 import DatePicker from "@/components/ui/DatePicker";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { IAnalyticsItem } from "@/models/analytics";
 import ApexChart from "../ui/ApexChart";
 import { currentDate, formatDate, initialDate } from "@/components/analytics/Analytics";
+import Button from "../ui/Button";
 
 export default function CompanyContent() {
   const t = useTranslations();
   const isMobileMedia = useMediaQuery("(max-width:800px)");
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [formattedDate, setFormattedDate] = useState<Date>();
+  const [startDate, setStartDate] = useState<Date | null>(initialDate);
+  const [endDate, setEndDate] = useState<Date | null>(currentDate);
 
   const { data, update, loading } = useFetch<FetchResponseBody<IAnalyticsItem[]>>("", "POST");
 
   useEffect(() => {
     if (startDate && endDate) {
       update("/api/analytics/companies", {
-        startDate: formatDate(startDate.toISOString()), // Начальная дата
-        endDate: formatDate(endDate.toISOString()), // Конечная дата
+        startDate: formatDate(startDate.toISOString()),
+        endDate: formatDate(endDate.toISOString()),
       });
     }
-  }, [startDate, endDate]);
-
-  useEffect(() => {
-    setStartDate(initialDate);
-    setEndDate(currentDate);
   }, []);
 
-  const handleDateChange = (date: Date) => {
-    setFormattedDate(date);
-  };
-
-  const handleStartDateSubmit = (): void => {
-    if (formattedDate) {
-      setStartDate(formattedDate);
+  const handleDateSubmit = () => {
+    if (startDate && endDate) {
+      update("/api/analytics/companies", {
+        startDate: formatDate(startDate.toISOString()),
+        endDate: formatDate(endDate.toISOString()),
+      });
     }
   };
-
-  const handleEndDateSubmit = (): void => {
-    if (formattedDate) {
-      setEndDate(formattedDate);
-    }
-  };
-
-  if (!Array.isArray(data?.data)) {
-    return <Typography variant="h5">{t("Analytics is unavailable")}</Typography>;
-  }
 
   const companyLabels = data?.data?.map((company) => company.name);
   const companyValues = data?.data?.map((company) => company.actionCounter);
@@ -108,26 +92,27 @@ export default function CompanyContent() {
     <>
       <Box>
         <InputLabel>Дата</InputLabel>
-        <Box sx={{ display: "flex", gap: "20px", alignItems: "center" }}>
-          <DatePicker
-            sx={{ maxWidth: "320px" }}
-            value={startDate}
-            onChange={handleDateChange}
-            onClose={handleStartDateSubmit}
-          />
+        <Box sx={{ display: "flex", gap: "20px", alignItems: "center", flexWrap: "wrap" }}>
+          <DatePicker sx={{ maxWidth: "320px" }} value={startDate} onChange={(date: Date) => setStartDate(date)} />
           <Typography>{t("FromTo")}</Typography>
-          <DatePicker
-            sx={{ maxWidth: "320px" }}
-            value={endDate}
-            onChange={handleDateChange}
-            onClose={handleEndDateSubmit}
-          />
+          <DatePicker sx={{ maxWidth: "320px" }} value={endDate} onChange={(date: Date) => setEndDate(date)} />
+          <Button sx={{ width: "auto" }} onClick={handleDateSubmit}>
+            {t("Generate report")}
+          </Button>
         </Box>
       </Box>
 
-      <Box maxHeight="600px" sx={{ overflowY: "auto", overflowX: "hidden", padding: "0 10px" }}>
-        <ApexChart options={options} series={series} type="bar" height={(companyValues?.length ?? 10) * 30} />
-      </Box>
+      {!data?.data ? (
+        <Typography variant="h5">{t("Analytics is unavailable")}</Typography>
+      ) : loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box maxHeight="600px" sx={{ overflowY: "auto", overflowX: "hidden", padding: "0 10px" }}>
+          <ApexChart options={options} series={series} type="bar" height={(companyValues?.length ?? 10) * 30} />
+        </Box>
+      )}
     </>
   );
 }
