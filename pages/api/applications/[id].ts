@@ -76,6 +76,9 @@ const related: Record<string, typeof fields> = {
     "disabled",
     "subjectRole",
     "picture",
+    "maritalStatus",
+    "nationality",
+    "passportStatus",
   ],
   members: [
     "partnerTypeSelect",
