@@ -670,7 +670,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         ref={tabsRef}
       />
 
-      <Box width="fit-content" position="sticky" bottom="20px" display="flex" gap="20px" flexDirection="row">
+      <Box width="fit-content" position="sticky" bottom="30px" display="flex" gap="20px" flexDirection="row">
         {onPrev != null && (
           <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}

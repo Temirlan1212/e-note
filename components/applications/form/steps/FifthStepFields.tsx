@@ -267,7 +267,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
         <Box
           width="fit-content"
           position="sticky"
-          bottom="20px"
+          bottom="30px"
           display="flex"
           gap="20px"
           flexDirection={{ xs: "column", md: "row" }}

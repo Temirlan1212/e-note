@@ -326,7 +326,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
       <Box
         width="fit-content"
         position="sticky"
-        bottom="20px"
+        bottom="30px"
         display="flex"
         gap="20px"
         flexDirection={{ xs: "column", md: "row" }}
