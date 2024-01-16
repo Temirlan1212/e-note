@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Box, Container } from "@mui/material";
+import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import FileList from "@/components/files/FileList";
@@ -13,14 +13,9 @@ export default function Files() {
         <title>{t("Files")}</title>
       </Head>
 
-      <Container
-        maxWidth="xl"
-        sx={{
-          py: "30px",
-        }}
-      >
+      <Box sx={{ py: "30px", px: "30px" }}>
         <FileList />
-      </Container>
+      </Box>
     </>
   );
 }
