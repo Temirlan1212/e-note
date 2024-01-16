@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/reset-password/" + email, {
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/public/reset-password/new-password" + email, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
