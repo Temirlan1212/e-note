@@ -48,6 +48,7 @@ export const ApplicationListActions = ({
   const isPrivateNotary = userData?.["activeCompany.typeOfNotary"] === "private";
   const isStateNotary = userData?.["activeCompany.typeOfNotary"] === "state";
   const isActiveNotary = userData?.["activeCompany.statusOfNotary"] === "active";
+  const showSign = userData?.roles.some((role) => role.name === "Trainee" || role.name === "Assistant notary");
 
   const { data, update: createChat } = useFetch<IFetchNotaryChat>("", "POST");
   const { update: getUser } = useFetch<IFetchByIdData>("", "POST");
@@ -320,7 +321,7 @@ export const ApplicationListActions = ({
               </IconButton>
             </Tooltip>
           </ConfirmationModal>
-          {isNotary && (
+          {isNotary && !showSign && (
             <ConfirmationModal
               isPermanentOpen={signModal}
               onClose={() => setSignModal(false)}
