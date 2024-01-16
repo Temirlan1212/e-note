@@ -66,6 +66,7 @@ export default function DeclVideoRecordModal(
           ? "To record a video, select a participant"
           : "The maximum amount of video recording time is 30 seconds"
       }
+      isCloseIconShown
       {...props}
       slots={{
         body: () => (
