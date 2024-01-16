@@ -25,6 +25,7 @@ import ProfilePasswordForm from "./ProfilePasswordForm";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IUserProfileSchema, userProfileSchema } from "@/validator-schemas/profile";
 import { IProfileState, useProfileStore } from "@/stores/profile";
+import useNotificationStore from "@/stores/notification";
 import { IEmail, IUserData } from "@/models/user";
 
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
@@ -54,6 +55,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const profile = useProfileStore<IProfileState>((state) => state);
   const profileData: IExtendedUserData | null = profile.getUserData();
+  const setNotification = useNotificationStore((state) => state.setNotification);
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -148,14 +150,16 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     setSelectedImage(file);
 
     if (file) {
-      setImagePreview(URL.createObjectURL(file));
-    } else {
-      setImagePreview(null);
-      // const blob = new Blob([file], { type: file.type });
-      // const res = await checkFace("/api/check-face", { image: await convert.blob.toBase64Async(blob) });
+      const blob = new Blob([file], { type: file.type });
+      const res = await checkFace("/api/check-face", { image: await convert.blob.toBase64Async(blob) });
 
-      // setImagePreview(res?.data?.message === "Face detected" ? URL.createObjectURL(file) : null);
-      // setAlertOpen(res?.data?.message !== "Face detected");
+      if (res && res?.ok) {
+        const isFaceDetected = res?.data?.message === "Face detected";
+        const isSingleFace = res?.data?.face_count === 1;
+
+        setImagePreview(isFaceDetected && isSingleFace ? URL.createObjectURL(file) : null);
+        setAlertOpen(!isFaceDetected || !isSingleFace);
+      }
     }
   };
 
@@ -178,6 +182,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                 username: userData?.data?.[0]?.code,
               });
               getImage();
+              setNotification(t("Profile saved successfully"), "success");
             }
           });
         }
@@ -200,6 +205,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               username: userData?.data?.[0]?.code,
             });
             getImage();
+            setNotification(t("Profile saved successfully"), "success");
           }
         });
       }
@@ -239,8 +245,15 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     formatLicenseDate();
   }, [userData]);
 
-  const checkFaceErrorMessage = (message: string) => {
-    return ["Face detected", "No face detected in the image"].includes(message) ? message : "Something went wrong";
+  const checkFaceErrorMessage = (message: string, faceCount?: number) => {
+    switch (message) {
+      case "Face detected":
+        return faceCount === 1 ? "Face detected" : "Something went wrong";
+      case "No face detected in the image":
+        return "No face detected in the image";
+      default:
+        return "Something went wrong";
+    }
   };
 
   return userDataLoading ? (
@@ -251,7 +264,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     <Box display="flex" flexDirection="column" gap="30px">
       <Collapse in={alertOpen}>
         <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-          {t(checkFaceErrorMessage(checkFaceData?.data?.message))}
+          {t(checkFaceErrorMessage(checkFaceData?.data?.message, checkFaceData?.data?.face_count))}
         </Alert>
       </Collapse>
       <Box

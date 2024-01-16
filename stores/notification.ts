@@ -2,12 +2,14 @@ import { create } from "zustand";
 
 interface INotificationState {
   notification: string | null;
-  setNotification: (notification: string | null) => void;
+  severity: "error" | "warning" | "info" | "success" | null;
+  setNotification: (notification: string | null, severity?: "error" | "warning" | "info" | "success" | null) => void;
 }
 
 const useNotificationStore = create<INotificationState>((set) => ({
   notification: null,
-  setNotification: (notification) => set({ notification }),
+  severity: null,
+  setNotification: (notification, severity) => set({ notification, severity }),
 }));
 
 export default useNotificationStore;
