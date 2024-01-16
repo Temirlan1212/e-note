@@ -61,7 +61,7 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
       borderColor: types[type],
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: types[type],
+      borderColor: rest.disabled ? "none" : types[type],
     },
   };
 
