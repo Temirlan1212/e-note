@@ -1,4 +1,7 @@
+import useUiStore from "@/stores/ui";
 import { Pagination as MUIPagination, PaginationProps, styled } from "@mui/material";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 const StyledPagination = styled(MUIPagination)(({ theme }) => ({
   display: "flex",
@@ -36,13 +39,32 @@ interface IPaginationProps extends PaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  persistName?: string;
 }
 
-const Pagination: React.FC<IPaginationProps> = ({ currentPage, totalPages, onPageChange, ...props }) => {
+const Pagination: React.FC<IPaginationProps> = ({ persistName, currentPage, totalPages, onPageChange, ...props }) => {
+  const pathname = usePathname();
+  const storageName = !!persistName ? pathname + " " + persistName : pathname;
+  const setUiValue = useUiStore((state) => state.setValue);
+  const paginationCurrentPages = useUiStore((state) => state.paginationCurrentPages);
+  const prevPathname = useUiStore((state) => state.pathname);
+
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     if (currentPage === page) return;
     onPageChange(page);
+    setUiValue("paginationCurrentPages", { ...paginationCurrentPages, [storageName]: page });
   };
+
+  useEffect(() => {
+    if (pathname === prevPathname) {
+      const page = paginationCurrentPages?.[storageName];
+      if (page != null && !isNaN(page)) onPageChange(page);
+    }
+  }, []);
+
+  useEffect(() => {
+    setUiValue("pathname", pathname);
+  }, [pathname]);
 
   return <StyledPagination count={totalPages} onChange={handlePageChange} page={currentPage} {...props} />;
 };
