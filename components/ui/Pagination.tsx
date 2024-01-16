@@ -47,6 +47,7 @@ const Pagination: React.FC<IPaginationProps> = ({ persistName, currentPage, tota
   const storageName = !!persistName ? pathname + " " + persistName : pathname;
   const setUiValue = useUiStore((state) => state.setValue);
   const paginationCurrentPages = useUiStore((state) => state.paginationCurrentPages);
+  const prevPathname = useUiStore((state) => state.pathname);
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     if (currentPage === page) return;
@@ -55,9 +56,15 @@ const Pagination: React.FC<IPaginationProps> = ({ persistName, currentPage, tota
   };
 
   useEffect(() => {
-    const page = paginationCurrentPages?.[storageName];
-    if (page != null && !isNaN(page)) onPageChange(page);
+    if (pathname === prevPathname) {
+      const page = paginationCurrentPages?.[storageName];
+      if (page != null && !isNaN(page)) onPageChange(page);
+    }
   }, []);
+
+  useEffect(() => {
+    setUiValue("pathname", pathname);
+  }, [pathname]);
 
   return <StyledPagination count={totalPages} onChange={handlePageChange} page={currentPage} {...props} />;
 };
