@@ -364,6 +364,7 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                           options={item?.options}
                           minLength={item?.minLength}
                           maxLength={item?.maxLength}
+                          pattern={item?.pattern}
                           onClick={() => {
                             if (item?.actionType?.toLowerCase() === "calculate" && handleCalculateSumOfTax)
                               handleCalculateSumOfTax();

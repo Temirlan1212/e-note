@@ -63,6 +63,7 @@ export default function RequestDynamicField({
                 observableForms={[form]}
                 loading={item?.actionType?.toLowerCase() === "reset" ? false : loading}
                 color={item?.color}
+                pattern={item?.pattern}
                 onClick={() => {
                   if (item?.actionType?.toLowerCase() === "confirm" && onPinCheck) onPinCheck(form);
                   if (item?.actionType?.toLowerCase() === "reset" && onPinReset) onPinReset();
@@ -109,6 +110,7 @@ export default function RequestDynamicField({
                 path={rest?.path || item?.path}
                 selectionName={item?.selection ?? ""}
                 objectName={item?.object ?? ""}
+                pattern={item?.pattern}
                 props={{ box: { mb: "10px" } }}
               />
             </Grid>
