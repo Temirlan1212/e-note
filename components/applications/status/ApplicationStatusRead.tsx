@@ -9,6 +9,7 @@ import { useTheme } from "@mui/material/styles";
 import { IApplication } from "@/models/application";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { INotarialAction } from "@/models/notarial-action";
+import { IPartner } from "@/models/user";
 
 interface IApplicationStatusReadProps {
   data: IApplication;
@@ -39,6 +40,24 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
     const matchedStatus = data?.find((item) => item.value == value);
     const translatedTitle = matchedStatus?.[("title_" + locale) as keyof IActionType];
     return !!translatedTitle ? translatedTitle : matchedStatus?.["title" as keyof IActionType] ?? "";
+  };
+
+  const getAddressFullName = (member: IPartner) => {
+    const { mainAddress } = member || {};
+    const { region, district, city, addressL4, addressL3, addressL2 } = mainAddress || {};
+
+    const formatAddressPart = (part: any) => part?.[locale !== "en" ? "$t:name" : "name"] || part?.fullName || "";
+
+    const formattedRegion = formatAddressPart(region);
+    const formattedDistrict = formatAddressPart(district);
+    const formattedCity = formatAddressPart(city);
+
+    const addressParts = [
+      [formattedRegion, formattedDistrict, formattedCity].filter(Boolean).join(", "),
+      [addressL4, addressL3, addressL2].filter(Boolean).join(" "),
+    ];
+
+    return addressParts.filter(Boolean).join(", ");
   };
 
   const titles = [
@@ -194,7 +213,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                         color: "#687C9B",
                       }}
                     >
-                      {member?.mainAddress?.fullName}
+                      {getAddressFullName(member)}
                     </Typography>
                   </Box>
                 ))}

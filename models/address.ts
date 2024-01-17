@@ -3,6 +3,7 @@ export interface IRegion {
   version: number;
   $version: number;
   name: string;
+  "$t:name": string;
   code: string;
 }
 
@@ -11,6 +12,7 @@ export interface IDistrict {
   version: number;
   $version: number;
   name: string;
+  "$t:name": string;
   code: string;
   "region.id": number;
 }
@@ -20,6 +22,7 @@ export interface ICity {
   version: number;
   $version: number;
   name: string;
+  "$t:name": string;
   zip: string;
   "district.id": number;
 }
