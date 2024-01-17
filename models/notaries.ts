@@ -79,4 +79,6 @@ export interface INotaryFilterData {
   region: number | null;
   typeOfNotary: string | null;
   workingDay: string | null;
+  roundClock?: boolean;
+  departure?: boolean;
 }

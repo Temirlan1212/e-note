@@ -80,7 +80,16 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
   };
 
   const handleFilterFormReset = () => {
-    const fields = ["notaryDistrict", "region", "district", "city", "workingDay", "typeOfNotary", "workMode"] as const;
+    const fields = [
+      "notaryDistrict",
+      "region",
+      "district",
+      "city",
+      "workingDay",
+      "typeOfNotary",
+      "roundClock",
+      "departure",
+    ] as const;
     fields.map((item) => resetField(item));
 
     if (notariesQueryParams.filterData != null) {
