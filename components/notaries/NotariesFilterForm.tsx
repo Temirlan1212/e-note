@@ -10,7 +10,6 @@ import WorkMode from "@/components/fields/WorkMode";
 import { INotariesSchema } from "@/validator-schemas/notaries";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import EraserIcon from "@/public/icons/eraser.svg";
-import Radio from "../ui/Radio";
 
 export interface INotariesFilterForm {
   form: UseFormReturn<INotariesSchema>;

@@ -10,8 +10,8 @@ export interface IWorkModeProps {
     departure?: string;
   };
   defaultValues?: {
-    roundClock?: string;
-    departure?: string;
+    roundClock?: boolean | null;
+    departure?: boolean | null;
   };
   disableFields?: boolean;
 }
@@ -27,7 +27,7 @@ export default function Contact({ form, names, defaultValues, disableFields }: I
         <Controller
           control={control}
           name={names?.roundClock ?? ""}
-          defaultValue={null}
+          defaultValue={defaultValues?.roundClock ?? null}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" justifyContent="center">
               <Checkbox
@@ -36,6 +36,7 @@ export default function Contact({ form, names, defaultValues, disableFields }: I
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 {...field}
                 checked={!!field.value}
+                disabled={disableFields}
               />
             </Box>
           )}
@@ -46,7 +47,7 @@ export default function Contact({ form, names, defaultValues, disableFields }: I
         <Controller
           control={control}
           name={names?.departure ?? ""}
-          defaultValue={null}
+          defaultValue={defaultValues?.departure ?? null}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" justifyContent="center">
               <Checkbox
@@ -55,6 +56,7 @@ export default function Contact({ form, names, defaultValues, disableFields }: I
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                 {...field}
                 checked={!!field.value}
+                disabled={disableFields}
               />
             </Box>
           )}
