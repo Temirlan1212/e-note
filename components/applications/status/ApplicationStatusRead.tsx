@@ -68,6 +68,10 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
         }
       : null,
     data?.cancelReasonStr ? { title: "Cancel reason str", value: data?.cancelReasonStr ?? t("not signed") } : null,
+    {
+      title: "Date of signing",
+      value: data?.notaryDocumentSignDate ? format(new Date(data?.notaryDocumentSignDate), "dd.MM.yyyy HH:mm:ss") : "",
+    },
   ].filter(Boolean);
 
   const members = data?.requester.concat(data.members);
