@@ -15,6 +15,7 @@ export interface INotary {
   "partner.fullName": string;
   "partner.linkedUser.id": number;
   name: string;
+  licenseTermUntil: string;
 }
 
 export interface INotaryInfoData {
