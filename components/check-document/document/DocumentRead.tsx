@@ -181,7 +181,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
                         color: "#687C9B",
                       }}
                     >
-                      {member.lastName} {member.name} {member.middleName}
+                      {member?.lastName} {member?.name} {member?.middleName}
                     </Typography>
                     <Typography
                       sx={{
@@ -190,7 +190,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
                         color: "#687C9B",
                       }}
                     >
-                      {member.mainAddress.fullName}
+                      {member?.mainAddress?.fullName}
                     </Typography>
                   </Box>
                 ))}
