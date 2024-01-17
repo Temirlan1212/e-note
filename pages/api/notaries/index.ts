@@ -31,11 +31,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         region: "address.region.id",
         workingDay: "workingDay.weekDayNumber",
         typeOfNotary: "typeOfNotary",
+        roundClock: "roundClock",
+        departure: "departure",
       };
 
       for (const field in fieldsMap) {
         const key = field as keyof typeof fieldsMap;
-        if (filterData[key] !== null) {
+        if (filterData[key] != null && filterData[key]) {
           criteria.push({
             fieldName: fieldsMap[key],
             operator: "=",
@@ -49,22 +51,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           fieldName: "workingDay.weekDayNumber",
           operator: "in",
           value: filterData.workingDay.split(",").map(Number),
-        });
-      }
-
-      if (filterData?.roundClock != null && filterData?.roundClock) {
-        criteria.push({
-          fieldName: "roundClock",
-          operator: "=",
-          value: filterData.roundClock,
-        });
-      }
-
-      if (filterData?.departure != null && filterData?.departure) {
-        criteria.push({
-          fieldName: "departure",
-          operator: "=",
-          value: filterData.departure,
         });
       }
     }
