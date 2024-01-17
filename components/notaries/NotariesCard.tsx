@@ -15,9 +15,10 @@ interface INotaryProps {
   area?: INotaryGeo;
   location?: string;
   userId?: number;
+  licenseTermUntil?: string | null;
 }
 
-const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, userId }) => {
+const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, userId, licenseTermUntil }) => {
   const { locale } = useRouter();
   const t = useTranslations();
 
@@ -32,6 +33,15 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, 
       returnResponse: true,
     }
   );
+
+  const handleCheckLicenseDate = () => {
+    if (licenseTermUntil) {
+      const notaryLicenseTermUntil = new Date(licenseTermUntil);
+      const currentDate = new Date();
+
+      return notaryLicenseTermUntil > currentDate && "License has expired or is invalid";
+    }
+  };
 
   useEffectOnce(async () => {
     const base64String = await imageData?.text();
@@ -103,6 +113,9 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, 
           </Typography>
           <Typography>{area ? (locale === "ru" || locale === "kg" ? area["$t:name"] : area.name) : ""}</Typography>
           <Typography>{location}</Typography>
+          <Typography fontSize="13px" fontWeight={500}>
+            {t(handleCheckLicenseDate())}
+          </Typography>
         </Box>
       </CardContent>
     </Card>

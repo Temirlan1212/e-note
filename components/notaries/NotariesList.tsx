@@ -54,6 +54,7 @@ const NotariesList: FC<INotaryListProps> = ({ loading, data, notariesQueryParams
                       region={notary["address.region"]}
                       area={notary["address.district"]}
                       location={notary["address.city"]?.fullName}
+                      licenseTermUntil={notary?.licenseTermUntil}
                     />
                   </Grid>
                 </Link>
