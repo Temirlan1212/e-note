@@ -29,6 +29,7 @@ const fields: string[] = [
   "isToPrintLineSubTotal",
   "orderNumber",
   "currency",
+  "notaryDocumentSignDate",
 ];
 
 const related: Record<string, typeof fields> = {
