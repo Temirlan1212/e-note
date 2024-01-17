@@ -130,7 +130,7 @@ export default function FileList() {
   };
 
   return (
-    <Box height={{ xs: "600px", md: "700px" }}>
+    <Box>
       <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
         <Typography variant="h4" color="primary">
           {t("Files")}
@@ -187,6 +187,9 @@ export default function FileList() {
         loading={loading}
         sortingMode="server"
         onSortModelChange={handleSortChange}
+        rowHeight={65}
+        autoHeight
+        props={{ wrapper: { height: `${94 * data?.data?.length ?? 1}px` } }}
       ></GridTable>
 
       <Pagination

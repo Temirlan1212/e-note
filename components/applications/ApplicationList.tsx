@@ -269,7 +269,7 @@ export default function ApplicationList() {
   };
 
   return (
-    <Box height={{ xs: "600px" }}>
+    <Box>
       <Collapse in={alertOpen} sx={{ marginBottom: "10px", display: alertOpen ? "block" : "none" }}>
         <Alert severity="warning" onClose={() => setAlertOpen(false)}>
           {t("License has expired or is invalid")}
@@ -351,7 +351,6 @@ export default function ApplicationList() {
               return isSearchedData ? params.row?.member?.[0]?.fullName : members || t("not assigned");
             },
           },
-
           // {
           //   field: "typeNotarialAction",
           //   headerName: "Type of action",
@@ -505,6 +504,8 @@ export default function ApplicationList() {
             },
         }}
         rowHeight={65}
+        autoHeight
+        props={{ wrapper: { height: `${100 * filteredData?.length ?? 1}px` } }}
       />
 
       <Pagination
