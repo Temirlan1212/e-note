@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import InheritanceCasesList from "@/components/inheritance-cases/InheritanceCasesList";
 import InProcess from "@/components/in-process/InProcess";
+
 export default function InheritanceCases() {
   const t = useTranslations();
 

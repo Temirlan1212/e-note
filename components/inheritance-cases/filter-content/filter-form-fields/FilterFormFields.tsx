@@ -2,13 +2,13 @@ import { Box, BoxProps } from "@mui/material";
 import React from "react";
 import Input from "../../../ui/Input";
 import { UseFormReturn } from "react-hook-form";
-import { IInheritanceCasesFilterForm } from "@/validator-schemas/inheritance-cases";
+import { IInheritanceCasesFilterFormFields } from "@/validator-schemas/inheritance-cases";
 import { useTranslations } from "next-intl";
 import SelectFormField from "./SelectFormField";
 
 const FilterFormFields = React.forwardRef<
   HTMLDivElement,
-  BoxProps & { form: UseFormReturn<IInheritanceCasesFilterForm> }
+  BoxProps & { form: UseFormReturn<IInheritanceCasesFilterFormFields> }
 >(({ className, form, ...props }, ref) => {
   const t = useTranslations();
   const errors = form.formState.errors;
@@ -82,7 +82,15 @@ const FilterFormFields = React.forwardRef<
           defaultValue=""
           trigger={trigger}
           props={{
-            select: { data: [{ label: "2022", value: 2022 }], sx: { width: "auto" } },
+            select: {
+              data: [
+                { value: "all", label: t("All years") },
+                { value: `2023 ${t("year")}`, label: `2023 ${t("year")}` },
+                { value: `2022 ${t("year")}`, label: `2022 ${t("year")}` },
+                { value: `2021 ${t("year")}`, label: `2021 ${t("year")}` },
+              ],
+              sx: { width: "auto" },
+            },
             wrapper: { width: "fit-content" },
           }}
         />

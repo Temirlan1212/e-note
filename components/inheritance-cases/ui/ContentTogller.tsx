@@ -47,6 +47,8 @@ const ContentTogller = React.forwardRef<HTMLDivElement, PropsWithChildren<IConte
   }
 );
 
+ContentTogller.displayName = "ContentTogller";
+
 const ContentTogllerTrigger = React.forwardRef<HTMLButtonElement, { trigger: TTrigger; isTriggered: boolean }>(
   ({ trigger, isTriggered, ...props }, ref) => {
     const toggleTrigger = () => trigger((prev) => !prev);
@@ -69,7 +71,6 @@ const ContentTogllerTrigger = React.forwardRef<HTMLButtonElement, { trigger: TTr
   }
 );
 
-ContentTogller.displayName = "ContentTogller";
 ContentTogllerTrigger.displayName = "ContentTogllerTrigger";
 
 export default ContentTogller;

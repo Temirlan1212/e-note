@@ -3,17 +3,17 @@ import React from "react";
 import { Controller, ControllerProps, UseFormTrigger } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import Select, { ISelectProps } from "@/components/ui/Select";
-import { IInheritanceCasesFilterForm } from "@/validator-schemas/inheritance-cases";
+import { IInheritanceCasesFilterFormFields } from "@/validator-schemas/inheritance-cases";
 
 type TProps = {
   select: Partial<ISelectProps>;
   wrapper: BoxProps;
 };
 
-type TControllerProps = Omit<ControllerProps<IInheritanceCasesFilterForm>, "render">;
+type TControllerProps = Omit<ControllerProps<IInheritanceCasesFilterFormFields>, "render">;
 
 interface ISelectFormField extends TControllerProps {
-  trigger: UseFormTrigger<IInheritanceCasesFilterForm>;
+  trigger: UseFormTrigger<IInheritanceCasesFilterFormFields>;
   loading?: boolean;
   props?: Partial<TProps>;
 }
@@ -33,7 +33,7 @@ const SelectFormField = React.forwardRef<HTMLDivElement, ISelectFormField>(({ ..
         return (
           <Box width="100%" display="flex" flexDirection="column" gap="10px" {...(wrapperProps || {})}>
             <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
-              <InputLabel sx={{ fontWeight: 600 }}>{t("Objects of civil rights")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>Objects of civil rights</InputLabel>
             </Box>
 
             <Select
