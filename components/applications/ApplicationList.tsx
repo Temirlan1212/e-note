@@ -105,7 +105,7 @@ export default function ApplicationList() {
         const res = await getProduct("/api/applications/product/" + item?.id);
         if (res?.data?.length > 0) {
           const product = res.data[0];
-          return { ...item, productName: product?.product, companyName: product?.company?.partner?.fullName };
+          return { ...item, productName: product?.product, companyName: product?.createdBy?.partner?.fullName };
         }
         return item;
       });
