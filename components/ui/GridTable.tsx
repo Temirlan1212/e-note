@@ -9,7 +9,7 @@ import {
   GridTreeNodeWithRender,
   GridCellClassNamePropType,
 } from "@mui/x-data-grid";
-import { Box, IconButton, LinearProgress, MenuItem, Typography, lighten } from "@mui/material";
+import { Box, BoxProps, IconButton, LinearProgress, MenuItem, Typography, lighten } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import Checkbox from "./Checkbox";
 import { useForm } from "react-hook-form";
@@ -60,6 +60,9 @@ export interface IGridTableProps extends DataGridProps {
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
   cellMaxHeight?: string | number;
   headerCellMaxHeight?: string | number;
+  props?: {
+    wrapper?: BoxProps;
+  };
 }
 
 export interface IGridTableHeaderProps {
@@ -224,7 +227,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
   const mergedStyles = { ...rootStyles, ...sx };
 
   return (
-    <Box height="100%" display="flex" flexDirection="column">
+    <Box height={"100%"} display="flex" flexDirection="column" {...(rest.props?.wrapper || {})}>
       <Box
         display={{ xs: "flex", md: "none" }}
         justifyContent="space-between"
