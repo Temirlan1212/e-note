@@ -183,7 +183,7 @@ export default function App({ Component, pageProps }: AppProps) {
             onClose={handleCloseNotification}
             onCloseAlert={handleCloseNotification}
             title={notification ?? "Oops"}
-            anchorOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "center", vertical: "top" }}
             variant="filled"
             severity={severity ?? "error"}
           />
