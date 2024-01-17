@@ -126,7 +126,9 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
     await new Promise((resolve) => setTimeout(resolve, 0));
 
-    const canvas = await html2canvas(htmlSignRef.current!);
+    const canvas = await html2canvas(htmlSignRef.current!, {
+      backgroundColor: null,
+    });
     const dataUrl = canvas.toDataURL("image/png");
     const base64String = dataUrl?.split(",")[1];
 
@@ -286,25 +288,36 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
       </Box>
 
       <Box sx={{ width: 0, height: 0, overflow: "hidden" }}>
-        <Box ref={htmlSignRef} sx={{ width: "400px" }}>
-          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "5px" }}>
-            <EmblemIcon />
-            <Box>
-              <Box sx={{ color: "#105a9b", fontSize: "14px", fontWeight: 600 }}>
-                ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ
-              </Box>
-              <Box
-                sx={{
-                  color: "#105a9b",
-                  fontSize: "12px",
-                  fontWeight: 600,
-                }}
-              >
-                <Box>Дата: {signTime}</Box>
-                <Box>ФИО: {profile?.activeCompany.name}</Box>
-                <Box>Hash: {hash?.slice(0, 32)}</Box>
-              </Box>
+        <Box
+          ref={htmlSignRef}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px",
+            width: "400px",
+            border: "5px double #105a9b",
+            borderRadius: "10px",
+            padding: "10px",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Box sx={{ width: "50px", height: "50px" }}>
+              <EmblemIcon />
             </Box>
+            <Box sx={{ color: "#105a9b", fontSize: "14px", fontWeight: 600, textAlign: "left" }}>
+              ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              color: "#105a9b",
+              fontSize: "12px",
+              fontWeight: 600,
+            }}
+          >
+            <Box>Дата: {signTime}</Box>
+            <Box>ФИО: {profile?.partner?.fullName}</Box>
+            <Box>Hash: {hash?.slice(0, 32)}</Box>
           </Box>
         </Box>
       </Box>
