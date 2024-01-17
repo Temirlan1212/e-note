@@ -17,7 +17,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 8;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
 
-  const radioValue = req.body["radioValue"];
   const searchValue = req.body["searchValue"];
   const filterData = req.body["filterData"];
   const sortBy = req.body["sortBy"];
@@ -45,31 +44,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         }
       }
 
-      if (filterData.workingDay !== null) {
+      if (filterData?.workingDay != null) {
         criteria.push({
           fieldName: "workingDay.weekDayNumber",
           operator: "in",
           value: filterData.workingDay.split(",").map(Number),
         });
       }
+
+      if (filterData?.roundClock != null && filterData?.roundClock) {
+        criteria.push({
+          fieldName: "roundClock",
+          operator: "=",
+          value: filterData.roundClock,
+        });
+      }
+
+      if (filterData?.departure != null && filterData?.departure) {
+        criteria.push({
+          fieldName: "departure",
+          operator: "=",
+          value: filterData.departure,
+        });
+      }
     }
     return criteria;
-  };
-
-  const radioChecked = () => {
-    if (radioValue === "roundClock") {
-      return [
-        { fieldName: "roundClock", operator: "=", value: true },
-        { fieldName: "checkOut", operator: "=", value: false },
-      ];
-    } else if (radioValue === "checkOut") {
-      return [
-        { fieldName: "roundClock", operator: "=", value: false },
-        { fieldName: "checkOut", operator: "=", value: true },
-      ];
-    } else {
-      return [];
-    }
   };
 
   const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/search/com.axelor.apps.base.db.Company", {
@@ -92,12 +91,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         "latitude",
         "longitude",
         "name",
+        "roundClock",
+        "departure",
         "partner.linkedUser.id",
       ],
       data: {
         operator: "and",
         criteria: [
-          { criteria: buildFilterCriteria(filterData).concat(radioChecked()), operator: "and" },
+          { criteria: buildFilterCriteria(filterData), operator: "and" },
           {
             fieldName: "name",
             operator: "like",

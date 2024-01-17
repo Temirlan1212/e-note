@@ -1,4 +1,4 @@
-import { number, object, InferType, string } from "yup";
+import { number, object, InferType, string, boolean } from "yup";
 import { addressSchema } from "./address";
 
 export type INotariesSchema = InferType<typeof notariesSchema>;
@@ -23,5 +23,7 @@ export const notariesSchema = object()
     keyWord: string(),
     workMode: string(),
     notariesSort: string(),
+    roundClock: boolean().nullable(),
+    departure: boolean().nullable(),
   })
   .concat(addressSchema.pick(["region", "district", "city"]));
