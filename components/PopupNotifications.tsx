@@ -144,7 +144,6 @@ export default function PopupNotifications() {
               const getLicenseTranslate = () => {
                 if (notification["message.subject"].includes("Your license")) {
                   const splitMsg = notification["message.subject"].split(":");
-                  console.log(splitMsg);
                   return t(splitMsg[0]) + ":" + splitMsg[1] + ":" + splitMsg[2];
                 }
               };
