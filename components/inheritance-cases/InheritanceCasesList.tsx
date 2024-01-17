@@ -3,16 +3,15 @@ import { useTranslations } from "next-intl";
 
 import { Box, Typography, InputLabel } from "@mui/material";
 import Grid from "@mui/material/Grid";
-
 import ExcelIcon from "@/public/icons/excel.svg";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
-
 import Select from "@/components/ui/Select";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
 import Pagination from "@/components/ui/Pagination";
-import SearchBar from "@/components/ui/SearchBar";
 import { GridTable, IGridColDef } from "@/components/ui/GridTable";
+import { IInheritanceCasesFilterForm } from "@/validator-schemas/inheritance-cases";
+import { useForm } from "react-hook-form";
+import FilterContent from "./filter-content";
 
 export default function InheritanceCases() {
   const [selectedPage, setSelectedPage] = useState(1);
@@ -252,44 +251,15 @@ export default function InheritanceCases() {
     }
   };
 
+  const form = useForm<IInheritanceCasesFilterForm>();
+
   return (
     <>
       <Typography typography="h4" color="primary">
         {t("Register of inheritance cases")}
       </Typography>
-      <Grid
-        container
-        spacing={{ xs: 2.5, sm: 3.75, md: 3.75 }}
-        justifyContent="space-between"
-        sx={{
-          display: { xs: "flex", sm: "flex" },
-          flexDirection: { xs: "column-reverse", sm: "column", md: "unset" },
-          alignItems: { xs: "unset", sm: "flex-end", md: "unset" },
-        }}
-      >
-        <Grid item xs={12} sm={12} md={9} sx={{ alignSelf: "stretch" }}>
-          <SearchBar onChange={handleSearchInputChange} value={searchQuery} />
-        </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Button
-            variant="outlined"
-            color="success"
-            sx={{
-              height: "auto",
-              gap: "10px",
-              fontSize: "14px",
-              padding: "10px 22px",
-              width: { xs: "100%" },
-              "&:hover": { color: "#F6F6F6" },
-            }}
-            fullWidth
-            endIcon={<ExcelIcon />}
-          >
-            {t("Export to excel")}
-          </Button>
-        </Grid>
-      </Grid>
+      <FilterContent form={form} />
 
       <Box
         sx={{

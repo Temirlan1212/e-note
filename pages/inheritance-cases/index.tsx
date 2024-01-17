@@ -21,8 +21,8 @@ export default function InheritanceCases() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        {/* <InheritanceCasesList /> */}
-        <InProcess />
+        <InheritanceCasesList />
+        {/* <InProcess /> */}
       </Container>
     </>
   );
