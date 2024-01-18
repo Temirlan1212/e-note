@@ -46,7 +46,9 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
     const { mainAddress } = member || {};
     const { region, district, city, addressL4, addressL3, addressL2 } = mainAddress || {};
 
-    const formatAddressPart = (part: any) => part?.[locale !== "en" ? "$t:name" : "name"] || part?.fullName || "";
+    const key = locale !== "en" ? "$t:name" : "name";
+    const fallbackKey = locale !== "en" ? "name" : "$t:name";
+    const formatAddressPart = (part: any) => part?.[key] || part?.[fallbackKey] || "";
 
     const formattedRegion = formatAddressPart(region);
     const formattedDistrict = formatAddressPart(district);
