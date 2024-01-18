@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { PermIdentity } from "@mui/icons-material";
 import {
   Alert,
@@ -50,6 +50,7 @@ interface IExtendedUserData extends IUserData {
 
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const t = useTranslations();
+  const locale = useLocale();
   const convert = useConvert();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -162,11 +163,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
       const res = await checkFace("/api/check-face", { image: await convert.blob.toBase64Async(blob) });
 
       if (res) {
-        const isFaceDetected = res?.data?.message === "Face detected";
-        const isSingleFace = res?.data?.face_count === 1;
+        const isFaceDetected = res?.data?.message_en === "Face detected";
 
-        setImagePreview(isFaceDetected && isSingleFace ? URL.createObjectURL(file) : null);
-        setAlertOpen(!isFaceDetected || !isSingleFace);
+        setImagePreview(isFaceDetected ? URL.createObjectURL(file) : null);
+        setAlertOpen(true);
       }
     }
   };
@@ -253,17 +253,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     formatLicenseDate();
   }, [userData]);
 
-  const checkFaceErrorMessage = (message: string, faceCount?: number) => {
-    switch (message) {
-      case "Face detected":
-        return faceCount === 1 ? "Face detected" : "Something went wrong";
-      case "No face detected in the image":
-        return "No face detected in the image";
-      default:
-        return "Something went wrong";
-    }
-  };
-
   return userDataLoading ? (
     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
       <CircularProgress />
@@ -271,8 +260,11 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   ) : (
     <Box display="flex" flexDirection="column" gap="30px">
       <Collapse in={alertOpen}>
-        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-          {t(checkFaceErrorMessage(checkFaceData?.data?.message, checkFaceData?.data?.face_count))}
+        <Alert
+          severity={checkFaceData?.data?.message_en === "Face detected" ? "success" : "warning"}
+          onClose={() => setAlertOpen(false)}
+        >
+          {checkFaceData?.data?.["message_" + locale]}
         </Alert>
       </Collapse>
       <Box
