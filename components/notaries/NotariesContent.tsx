@@ -13,6 +13,7 @@ import Button from "@/components/ui/Button";
 import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
 import ClearIcon from "@mui/icons-material/Clear";
 import NotariesFilterForm from "./NotariesFilterForm";
+import useUiStore from "@/stores/ui";
 
 export interface INotariesQueryParams {
   pageSize: number;
@@ -33,6 +34,9 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
 
   const form = useForm<INotariesSchema>();
   const { resetField, register, watch } = form;
+
+  const setCurrentPage = useUiStore((state) => state.setValue);
+  const paginationCurrentPages = useUiStore((state) => state.paginationCurrentPages);
 
   const [isCollapsed, setisCollapsed] = useState(true);
   const [notariesQueryParams, setNotariesQueryParams] = useState<INotariesQueryParams>({
@@ -55,6 +59,14 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
     if (notariesQueryParams.page !== page) updateNotariesQueryParams("page", page);
   };
 
+  const handleResetPages = () => {
+    const storageName = "/notaries";
+    if (paginationCurrentPages?.[storageName] != null) {
+      setCurrentPage("paginationCurrentPages", { ...paginationCurrentPages, [storageName]: 1 });
+      updateNotariesQueryParams("page", 1);
+    }
+  };
+
   const handleNotariesSortChange = (event: React.ChangeEvent<{ value: any }>) => {
     const value = event.target.value as any;
     if (value) {
@@ -68,14 +80,14 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
     const searchValue = form.getValues().keyWord;
     if (searchValue == null) return;
     updateNotariesQueryParams("searchValue", searchValue);
-    updateNotariesQueryParams("page", 1);
+    handleResetPages();
   };
 
   const handleSearchReset = () => {
     resetField("keyWord");
     if (notariesQueryParams.searchValue) {
       updateNotariesQueryParams("searchValue", "");
-      updateNotariesQueryParams("page", 1);
+      handleResetPages();
     }
   };
 
@@ -108,7 +120,7 @@ const NotariesContent: FC<INotariesContentProps> = (props) => {
     }
     if (Object.values(filteredData).every((item) => item == null)) return;
     updateNotariesQueryParams("filterData", filteredData);
-    updateNotariesQueryParams("page", 1);
+    handleResetPages();
   };
 
   const handleToggleCollapse = () => setisCollapsed(!isCollapsed);
