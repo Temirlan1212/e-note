@@ -64,6 +64,17 @@ function GridTableActionsCell({
     return licenseTermUntil > currentDate;
   };
 
+  const navigateOnCreateClick = () => {
+    const url = {
+      pathname: "/applications/create",
+      query: {
+        ...router.query,
+        productId: row?.id,
+      },
+    };
+    router.push(url, undefined, { shallow: true });
+  };
+
   const handleCreateClick = async () => {
     const isNotary = profile?.group?.name === "Notary";
     const isPrivateNotary = profile?.["activeCompany.typeOfNotary"] === "private";
@@ -73,12 +84,12 @@ function GridTableActionsCell({
     if (isNotary) {
       if (isPrivateNotary) {
         const license = await handleCheckLicenseDate();
-        !!license && isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
+        !!license && isActiveNotary ? navigateOnCreateClick() : setAlertOpen(true);
       } else if (isStateNotary) {
-        isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
+        isActiveNotary ? navigateOnCreateClick() : setAlertOpen(true);
       }
     } else {
-      router.push("/applications/create");
+      navigateOnCreateClick();
     }
   };
 
