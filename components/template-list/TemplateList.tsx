@@ -2,7 +2,7 @@ import { useState, ChangeEvent, useEffect, Dispatch, SetStateAction } from "reac
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 import { ValueOf } from "next/dist/shared/lib/constants";
-import { Alert, Box, Collapse, IconButton, InputLabel, Typography } from "@mui/material";
+import { Alert, Box, Collapse, IconButton, InputLabel, Typography, useMediaQuery } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import ClearIcon from "@mui/icons-material/Clear";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
@@ -152,6 +152,7 @@ function GridTableActionsCell({
 }
 
 export default function TemplateList() {
+  const isMobileMedia = useMediaQuery("(max-width:800px)");
   const [tempQueryParams, setTempQueryParams] = useState<ITempQueryParams>({
     pageSize: 7,
     page: 1,
@@ -424,10 +425,12 @@ export default function TemplateList() {
             },
             {
               field: "actions",
-              type: "actions",
+              headerName: "Actions",
+              headerClassName: "pinnable",
               sortable: false,
               width: 320,
-              cellClassName: "actions-pinnable",
+              type: isMobileMedia ? "actions" : "string",
+              cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
               renderCell: ({ row }) => <GridTableActionsCell row={row} setAlertOpen={setAlertOpen} />,
             },
           ]}
