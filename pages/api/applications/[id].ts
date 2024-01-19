@@ -127,6 +127,9 @@ const related: Record<string, typeof fields> = {
     "disabled",
     "subjectRole",
     "picture",
+    "maritalStatus",
+    "nationality",
+    "passportStatus",
   ],
   documentInfo: ["token", "pdfLink", "editUrl", "fileName"],
 };
