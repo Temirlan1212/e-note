@@ -585,7 +585,9 @@ export const GridTableActionsCell: React.FC<IGridTableActionsCellProps> = ({ par
           open={!!menu}
           onClose={handleMenuClose}
         >
-          <MenuItem>{column?.renderCell && column.renderCell(params)}</MenuItem>
+          <MenuItem sx={{ "&:hover": { bgcolor: "transparent" } }}>
+            {column?.renderCell && column.renderCell(params)}
+          </MenuItem>
         </Menu>
       </Box>
 

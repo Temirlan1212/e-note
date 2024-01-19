@@ -3,7 +3,7 @@ import { useLocale, useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { useProfileStore } from "@/stores/profile";
-import { Box, IconButton, Input, Typography } from "@mui/material";
+import { Box, IconButton, Input, Typography, useMediaQuery } from "@mui/material";
 import { GridSortModel } from "@mui/x-data-grid";
 import UploadIcon from "@mui/icons-material/Upload";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -71,6 +71,7 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
 }
 
 export default function FileList() {
+  const isMobileMedia = useMediaQuery("(max-width:800px)");
   const t = useTranslations();
   const locale = useLocale();
   const profile = useProfileStore((state) => state);
@@ -175,12 +176,13 @@ export default function FileList() {
           },
           {
             field: "Actions",
-            type: "actions",
-            headerName: "",
-            width: 100,
+            headerName: "Actions",
+            width: 120,
             sortable: false,
+            headerClassName: "pinnable",
+            type: isMobileMedia ? "actions" : "string",
+            cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
             renderCell: ({ row }) => <GridTableActionsCell row={row} onDelete={update} />,
-            cellClassName: "actions-pinnable",
           },
         ]}
         rows={data?.data ?? []}
