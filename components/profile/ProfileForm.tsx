@@ -478,6 +478,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                   <Coordinates
                     form={form}
                     names={coordinateNames}
+                    withMap={true}
                     sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
                   />
                 </Box>
