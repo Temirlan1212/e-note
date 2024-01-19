@@ -78,7 +78,7 @@ export default function SignModal({
           </Box>
         ),
         body: () => (
-          <Box pb={3} sx={{ maxHeight: { xs: "300px", md: "unset" }, overflowY: { xs: "scroll", md: "unset" } }}>
+          <Box pb={3} sx={{ maxHeight: { xs: "300px", md: "unset" }, overflowY: { xs: "auto", md: "unset" } }}>
             {!faceIdScanner && (
               <Typography align="center" fontSize={{ xs: "16px", sm: "20px" }} fontWeight={600}>
                 {t("Confirmation of identity")}
