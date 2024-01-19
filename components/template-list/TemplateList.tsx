@@ -64,6 +64,17 @@ function GridTableActionsCell({
     return licenseTermUntil > currentDate;
   };
 
+  const navigateOnCreateClick = () => {
+    const url = {
+      pathname: "/applications/create",
+      query: {
+        ...router.query,
+        productId: row?.id,
+      },
+    };
+    router.push(url, undefined, { shallow: true });
+  };
+
   const handleCreateClick = async () => {
     const isNotary = profile?.group?.name === "Notary";
     const isPrivateNotary = profile?.["activeCompany.typeOfNotary"] === "private";
@@ -73,12 +84,12 @@ function GridTableActionsCell({
     if (isNotary) {
       if (isPrivateNotary) {
         const license = await handleCheckLicenseDate();
-        !!license && isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
+        !!license && isActiveNotary ? navigateOnCreateClick() : setAlertOpen(true);
       } else if (isStateNotary) {
-        isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
+        isActiveNotary ? navigateOnCreateClick() : setAlertOpen(true);
       }
     } else {
-      router.push("/applications/create");
+      navigateOnCreateClick();
     }
   };
 
@@ -106,7 +117,7 @@ function GridTableActionsCell({
 
   return (
     <Box sx={{ display: "flex", gap: "16px" }}>
-      <Button variant="contained" onClick={handleCreateClick} loading={licenseInfoLoading}>
+      <Button variant="contained" onClick={handleCreateClick} loading={licenseInfoLoading} sx={{ width: "130px" }}>
         <Typography fontSize={14} fontWeight={600}>
           {t("New application")}
         </Typography>
@@ -427,8 +438,8 @@ export default function TemplateList() {
               field: "actions",
               headerName: "Actions",
               headerClassName: "pinnable",
+              width: isMobileMedia ? 100 : 320,
               sortable: false,
-              width: 320,
               type: isMobileMedia ? "actions" : "string",
               cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
               renderCell: ({ row }) => <GridTableActionsCell row={row} setAlertOpen={setAlertOpen} />,
