@@ -9,6 +9,7 @@ import Button from "@/components/ui/Button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import NotarialAction from "@/components/fields/NotarialAction";
+import { useRouter } from "next/router";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -20,15 +21,18 @@ export interface IStepFieldsProps {
 const fields = ["object", "objectType", "notarialAction", "typeNotarialAction", "action", "product"] as const;
 
 export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+  const router = useRouter();
   const t = useTranslations();
 
   const {
     trigger,
     getValues,
     setValue,
+    watch,
     formState: { errors },
   } = form;
 
+  const productId = watch("product.id");
   const [loading, setLoading] = useState(false);
 
   const { update: applicationUpdate } = useFetch("", "PUT");
@@ -79,6 +83,8 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
   };
 
   useEffectOnce(async () => {
+    const productIdQuery = Number(router.query?.productId);
+    if (productIdQuery != null && productId == null) setValue("product", { id: productIdQuery });
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
 
