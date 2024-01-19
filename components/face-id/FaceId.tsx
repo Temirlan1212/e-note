@@ -1,17 +1,16 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import useFetch from "@/hooks/useFetch";
-import { useTranslations } from "next-intl";
-import Button from "@/components/ui/Button";
-import Webcam, { Countdown } from "@/components/ui/Webcam";
+import { useLocale } from "next-intl";
+import Webcam from "@/components/ui/Webcam";
 
 interface IFaceIdScannerProps {
   getStatus: (status: boolean) => void;
 }
 
 const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
-  const t = useTranslations();
+  const locale = useLocale();
 
-  const { update, loading } = useFetch("", "POST");
+  const { data, update, loading } = useFetch("", "POST");
 
   const handleDownload = async (
     recordedChunks: BlobPart[],
@@ -36,21 +35,10 @@ const FaceIdScanner: FC<IFaceIdScannerProps> = ({ getStatus }) => {
     <>
       <Webcam
         audio={false}
+        loading={loading}
+        alertText={data?.data[`message_${locale}`]}
         slots={{
-          body: ({ capturing, start }) => (
-            <Button
-              endIcon={capturing ? <Countdown seconds={2000 / 1000} /> : null}
-              sx={{
-                fontSize: { xs: "14px", sm: "16px" },
-              }}
-              buttonType={capturing ? "danger" : "secondary"}
-              onClick={start}
-              loading={loading}
-              disabled={capturing}
-            >
-              {!capturing && t("Verify")}
-            </Button>
-          ),
+          body: () => <></>,
           footer: () => <></>,
         }}
         onStop={({ chunks, setAlert, setChunks }) => handleDownload(chunks, setAlert, setChunks)}
