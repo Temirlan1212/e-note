@@ -277,5 +277,7 @@
   "Allow collection": "Уруксат берүү",
   "Do not allow collection": "Уруксат бербөө",
   "Set": "Коюу",
-  "Картаны ачуу": "Картаны ачуу"
+  "Open map": "Картаны ачуу",
+  "Specify my location": "Менин жайгашкан жеримди көрсөтүү",
+  "The website is denied access to the location or another error occurred": "Веб-сайтка сиздин жайгашкан жериңизди алууга тыюу салынган же дагы башка ката кетирилген"
 }

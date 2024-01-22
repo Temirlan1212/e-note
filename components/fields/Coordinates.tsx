@@ -1,4 +1,13 @@
-import { InputLabel, Box, SxProps, Theme, IconButton, Typography, CircularProgress } from "@mui/material";
+import {
+  InputLabel,
+  Box,
+  SxProps,
+  Theme,
+  IconButton,
+  Typography,
+  CircularProgress,
+  useMediaQuery,
+} from "@mui/material";
 import { Controller, UseFormReturn } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import Input from "@/components/ui/Input";
@@ -6,9 +15,11 @@ import Button from "../ui/Button";
 import { ConfirmationModal } from "../ui/ConfirmationModal";
 import { Dispatch, SetStateAction, useState } from "react";
 import MapIcon from "@mui/icons-material/Map";
+import GpsFixedIcon from "@mui/icons-material/GpsFixed";
 
 import { IMarker } from "@/components/ui/LeafletMap";
 import dynamic from "next/dynamic";
+import useNotificationStore from "@/stores/notification";
 
 export interface ICoordinatesProps {
   form: UseFormReturn<any>;
@@ -46,6 +57,8 @@ export default function Coordinates({
   );
 
   const t = useTranslations();
+  const isMobileMedia = useMediaQuery("(max-width:800px)");
+  const setNotification = useNotificationStore((state) => state.setNotification);
 
   const { trigger, control, watch, resetField, setValue } = form;
 
@@ -54,10 +67,17 @@ export default function Coordinates({
 
   const [options, setOptions] = useState<{ lat: number; lng: number; zoom: number } | null>(null);
 
+  const handleSetCoordinates = (data: { lat: number; lng: number }) => {
+    const formattedLat = data?.lat?.toFixed(6);
+    const formattedLng = data?.lng?.toFixed(6);
+
+    setValue(names.latitude, formattedLat);
+    setValue(names.longitude, formattedLng);
+  };
+
   const handleConfirmClick = (callback: Dispatch<SetStateAction<boolean>>) => {
     if (options) {
-      setValue(names.latitude, options.lat);
-      setValue(names.longitude, options.lng);
+      handleSetCoordinates(options);
     }
     callback(false);
   };
@@ -70,9 +90,7 @@ export default function Coordinates({
 
   const handleCoordinatesChange = (newOptions: { lat: number; lng: number; zoom: number }) => {
     setOptions(newOptions);
-
-    setValue(names.latitude, newOptions.lat);
-    setValue(names.longitude, newOptions.lng);
+    handleSetCoordinates(newOptions);
   };
 
   const markers: IMarker[] =
@@ -93,6 +111,21 @@ export default function Coordinates({
       ? [parseFloat(latitude as string), parseFloat(longitude as string)]
       : [42.8777895, 74.6066926];
 
+  const getUserCoordinates = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        handleCoordinatesChange({
+          lat: position?.coords?.latitude,
+          lng: position?.coords?.longitude,
+          zoom: options?.zoom ?? 12,
+        });
+      },
+      (error) => {
+        setNotification(t("The website is denied access to the location or another error occurred") ?? null);
+      }
+    );
+  };
+
   return (
     <Box sx={sx?.boxSx} display="flex" gap="20px" flexDirection="column">
       {withMap && (
@@ -108,14 +141,27 @@ export default function Coordinates({
           slots={{
             body: () => {
               return (
-                <LeafletMap
-                  zoom={options?.zoom ?? 12}
-                  markers={markers}
-                  center={markerCenter}
-                  isSearchCoordinates={true}
-                  onCoordinatesChange={handleCoordinatesChange}
-                  style={{ height: "500px", width: "1000px" }}
-                />
+                <Box>
+                  <Button
+                    onClick={getUserCoordinates}
+                    sx={{ display: "flex", gap: "7px", fontSize: { xs: "14px", md: "unset" } }}
+                  >
+                    <GpsFixedIcon />
+                    {t("Specify my location")}
+                  </Button>
+                  <LeafletMap
+                    zoom={options?.zoom ?? 12}
+                    markers={markers}
+                    center={markerCenter}
+                    isSearchCoordinates={true}
+                    onCoordinatesChange={handleCoordinatesChange}
+                    style={{
+                      height: "500px",
+                      width: isMobileMedia ? "unset" : "1000px",
+                      margin: "auto",
+                    }}
+                  />
+                </Box>
               );
             },
           }}
