@@ -88,7 +88,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
 
   const { data: imageData, loading: imageLoading } = useFetch<Response>(
     userId != null ? "/api/notaries/download-image/" + userId : "",
-    "GET",
+    "POST",
     {
       returnResponse: true,
     }
