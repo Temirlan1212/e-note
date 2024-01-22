@@ -134,7 +134,6 @@ export default function Coordinates({
           onConfirm={(callback) => handleConfirmClick(callback)}
           handleReject={handleRejectClick}
           isHintShown={false}
-          isCloseIconShown={true}
           confirmButtonText="Set"
           confirmButtonType="primary"
           rejectButtonText="Cancel"
