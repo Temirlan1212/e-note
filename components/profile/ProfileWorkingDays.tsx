@@ -244,7 +244,7 @@ const ProfileWorkingDays: React.FC<IProfileWorkingDaysProps> = ({ profileForm, n
 
   const { data: workDaysDictionary } = useFetch<FetchResponseBody | null>(
     "/api/notaries/dictionaries/work-days",
-    "POST"
+    "GET"
   );
 
   const { update: getWorkingDay, loading: workingDaysLoading } = useFetch("", "GET");

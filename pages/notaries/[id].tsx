@@ -29,7 +29,7 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
     { loading: () => <p>Loading...</p>, ssr: false }
   );
 
-  const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "GET");
+  const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
 
   useEffectOnce(() => {
     if (Array.isArray(data?.data)) {

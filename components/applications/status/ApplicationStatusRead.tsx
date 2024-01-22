@@ -24,7 +24,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
   const locale = useLocale();
   const t = useTranslations();
 
-  const { data: notarialActionStatus, update } = useFetch("", "GET");
+  const { data: notarialActionStatus, update } = useFetch("", "POST");
   const { data: statusData, loading: statusDataLoading } = useFetch("/api/dictionaries/application-status", "POST");
   const { data: actionTypeData, loading: actionTypeDataLoading } = useFetch("/api/dictionaries/action-type", "POST");
   const { data: signatureStatusData, loading: signatureStatusDataLoading } = useFetch(

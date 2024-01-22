@@ -1,21 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") {
+  if (req.method !== "GET") {
     return res.status(400).json(null);
   }
 
   const response = await fetch(
     process.env.BACKEND_OPEN_API_URL + "/selection/notary.request.notary.actions.type.select",
     {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         Cookie: req.headers["server-cookie"]?.toString() ?? "",
       },
-      body: JSON.stringify({
-        translate: true,
-      }),
     }
   );
 
