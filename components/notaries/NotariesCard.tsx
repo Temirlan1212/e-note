@@ -28,7 +28,7 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, 
 
   const { data: imageData, loading: imageLoading } = useFetch<Response>(
     userId != null ? "/api/notaries/download-image/" + userId : "",
-    "GET",
+    "POST",
     {
       returnResponse: true,
     }
