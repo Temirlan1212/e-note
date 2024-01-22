@@ -53,9 +53,9 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const profile = useProfileStore((state) => state);
   const setNotaryData = useNotariesStore((state) => state.setNotaryData);
 
-  const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
+  const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "GET");
 
-  const { data: workDaysArea } = useFetch("/api/notaries/dictionaries/work-days", "GET");
+  const { data: workDaysArea } = useFetch("/api/notaries/dictionaries/work-days", "POST");
 
   const { update: contactUpdate, loading: contactLoading, error } = useFetch<IContact>("", "POST");
 
