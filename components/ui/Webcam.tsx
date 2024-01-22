@@ -176,7 +176,7 @@ const Webcam: FC<IWebcamProps> = ({
   }
 
   return (
-    <Box display="flex" flexDirection="column">
+    <Box display="flex" flexDirection="column" gap="10px">
       <Collapse in={alertOpen}>
         <Alert severity="warning" onClose={() => setAlertOpen(false)}>
           {t(alertText)}
@@ -236,7 +236,7 @@ const Webcam: FC<IWebcamProps> = ({
               />
             </Box>
           ) : (
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", margin: "10px 0" }}>
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               {!(recordedChunks?.length > 0) && !isBlobUrl && variant.type === "live" && (
                 <Box
                   sx={{
