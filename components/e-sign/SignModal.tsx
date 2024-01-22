@@ -8,6 +8,7 @@ import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import JacartaSign, { IJacartaSignRef } from "./JacartaSign";
 import RutokenSign, { IRutokenSignRef } from "./RutokenSign";
 import FaceIdScanner from "@/components/face-id/FaceId";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 // import { useProfileStore } from "@/stores/profile";
 
 enum SignType {
@@ -63,12 +64,19 @@ export default function SignModal({
     setFaceIdScanner(false);
   };
 
+  const HINT_TEXT = [
+    { name: t("Face id hint text1") },
+    { name: t("Face id hint text2") },
+    { name: t("Face id hint text3") },
+  ];
+
   return (
     <ConfirmationModal
       title="Entry into the register"
       type="hint"
       hintTitle=""
-      hintText={faceIdScanner ? "Eds hint text" : "Face id hint text"}
+      hintText={faceIdScanner ? "Eds hint text" : ""}
+      isHintShown={faceIdScanner}
       slots={{
         button: (callback) => (
           <Box width="100%">
@@ -78,11 +86,31 @@ export default function SignModal({
           </Box>
         ),
         body: () => (
-          <Box pb={3} sx={{ maxHeight: { xs: "300px", md: "unset" }, overflowY: { xs: "auto", md: "unset" } }}>
+          <Box pb={3} sx={{ maxHeight: { xs: "400px", md: "unset" }, overflowY: { xs: "auto", md: "unset" } }}>
             {!faceIdScanner && (
-              <Typography align="center" fontSize={{ xs: "16px", sm: "20px" }} fontWeight={600}>
-                {t("Confirmation of identity")}
-              </Typography>
+              <>
+                <Typography align="center" fontSize={{ xs: "16px", sm: "20px" }} fontWeight={600}>
+                  {t("Confirmation of identity")}
+                </Typography>
+                <Box
+                  sx={{
+                    margin: "10px 0",
+                    boxShadow: "rgb(233, 233, 233) 0px 10px 20px 0px",
+                    border: "1px solid #E9E9E9",
+                    padding: "10px",
+                    borderRadius: "10px",
+                  }}
+                >
+                  {HINT_TEXT.map((text, idx) => (
+                    <Box key={idx} sx={{ display: "flex", alignItems: "baseline", gap: "5px" }}>
+                      <FiberManualRecordIcon sx={{ width: 10, height: 10 }} />
+                      <Typography fontSize={14} color="text.primary">
+                        {text.name}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </>
             )}
             <Collapse in={alertOpen}>
               <Alert severity="warning" onClose={() => setAlertOpen(false)}>
