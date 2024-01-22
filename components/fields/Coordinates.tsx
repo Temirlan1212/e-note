@@ -1,3 +1,8 @@
+import { Dispatch, SetStateAction, useState } from "react";
+import { Controller, UseFormReturn } from "react-hook-form";
+import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
+
 import {
   InputLabel,
   Box,
@@ -8,17 +13,12 @@ import {
   CircularProgress,
   useMediaQuery,
 } from "@mui/material";
-import { Controller, UseFormReturn } from "react-hook-form";
-import { useTranslations } from "next-intl";
 import Input from "@/components/ui/Input";
-import Button from "../ui/Button";
-import { ConfirmationModal } from "../ui/ConfirmationModal";
-import { Dispatch, SetStateAction, useState } from "react";
+import Button from "@/components/ui/Button";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import { IMarker } from "@/components/ui/LeafletMap";
 import MapIcon from "@mui/icons-material/Map";
 import GpsFixedIcon from "@mui/icons-material/GpsFixed";
-
-import { IMarker } from "@/components/ui/LeafletMap";
-import dynamic from "next/dynamic";
 import useNotificationStore from "@/stores/notification";
 
 export interface ICoordinatesProps {
