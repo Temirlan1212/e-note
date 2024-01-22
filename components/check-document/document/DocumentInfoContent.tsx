@@ -20,7 +20,7 @@ const DocumentInfoContent: FC<IDocumentInfoContentProps> = ({ id }) => {
 
   const [accessToView, setAccessToView] = useState(false);
 
-  const { data: document, loading: documentLoading } = useFetch(id ? `/api/check-document/${id}` : "", "GET");
+  const { data: document, loading: documentLoading } = useFetch(id ? `/api/check-document/${id}` : "", "POST");
 
   useEffectOnce(() => {
     if (document?.data?.[0] != null) {

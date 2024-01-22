@@ -68,8 +68,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       sortBy: sortBy ?? [],
       fields: [
         "partner.simpleFullName",
-        "partner.fullName",
-        "licenseTermUntil",
         "partner.rating",
         "logo.fileName",
         "address.region",

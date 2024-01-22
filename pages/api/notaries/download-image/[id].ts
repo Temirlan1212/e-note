@@ -7,14 +7,14 @@ export const config = {
 export default async function handler(req: NextRequest) {
   const { searchParams } = new URL(req.url);
 
-  if (req.method !== "POST" && searchParams.get("id") == null) {
+  if (req.method !== "GET" && searchParams.get("id") == null) {
     return new Response(null, { status: 400 });
   }
 
   const response = await fetch(
     process.env.BACKEND_OPEN_API_URL + "/com.axelor.auth.db.User/image/" + searchParams.get("id"),
     {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
       },

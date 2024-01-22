@@ -2,12 +2,12 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { FetchResponseBody } from "@/hooks/useFetch";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<FetchResponseBody | null>) {
-  if (req.method !== "POST" && req.body == null) {
+  if (req.method !== "GET" && req.body == null) {
     return res.status(400).json(null);
   }
 
   const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/selection/select.company.type", {
-    method: "POST",
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
