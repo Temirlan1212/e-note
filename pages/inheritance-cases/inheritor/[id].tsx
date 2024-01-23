@@ -2,10 +2,10 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import InheritanceCasesInfoContent from "@/components/inheritance-cases/inheritance-case/InheritanceCaseInfoContent";
+import InheritorInfoContent from "@/components/inheritance-cases/inheritance-case/InheritorInfoContent";
 import { useRouter } from "next/router";
 
-export default function InheritanceCases() {
+export default function InheritorDetailPage() {
   const t = useTranslations();
 
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function InheritanceCases() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        <InheritanceCasesInfoContent id={id} />
+        <InheritorInfoContent id={id} />
       </Container>
     </>
   );
@@ -41,4 +41,8 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       },
     },
   };
+}
+
+export async function getStaticPaths() {
+  return { paths: [], fallback: "blocking" };
 }
