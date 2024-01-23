@@ -129,9 +129,13 @@ export default function InheritanceCasesList() {
 
       <FilterContent />
 
-      <Box height="50dvh">
-        <InheritanceCasesTable rows={rows} />
-      </Box>
+      <InheritanceCasesTable
+        rows={rows}
+        cellMaxHeight="200px"
+        rowHeight={65}
+        autoHeight
+        props={{ wrapper: { height: `${100 * rows?.length ?? 1}px` } }}
+      />
 
       <Box alignSelf="center">
         <Pagination
