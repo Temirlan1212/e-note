@@ -213,6 +213,47 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
             </IconButton>
           </Box>
         </Toolbar>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "10px",
+            pl: { xs: 2, sm: 3, md: type === "private" ? 10 : 3 },
+            transition: theme.transitions.create("margin", {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.leavingScreen,
+            }),
+            ...(open && {
+              transition: theme.transitions.create("margin", {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+              marginLeft: { xs: 0, md: "224px" },
+            }),
+          }}
+        >
+          <Link
+            href="https://wa.me/+996503291223"
+            target="_blank"
+            sx={{
+              textAlign: "center",
+              fontWeight: 600,
+            }}
+          >
+            {t("Technical support (WhatsApp)")}
+          </Link>
+          <Link
+            href="https://b10.okuukeremet.com/b/abd-cmd-vqe-ck9"
+            target="_blank"
+            sx={{
+              textAlign: "center",
+              fontWeight: 600,
+            }}
+          >
+            {t("Technical support (video call)")}
+          </Link>
+        </Box>
       </AppBar>
 
       <Drawer
