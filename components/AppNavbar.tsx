@@ -31,6 +31,11 @@ import ProfileDropdownButton from "./ProfileDropdownButton";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PopupNotifications from "./PopupNotifications";
 import ScrollToTopFab from "./ScrollToTopFab";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import SchoolIcon from "@mui/icons-material/School";
+import { useMediaQuery } from "@mui/material";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 const DrawerListItems = ({
   routes,
@@ -137,6 +142,7 @@ interface IAppNavbarProps extends DrawerProps {
 }
 
 export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
+  const isMobileMedia = useMediaQuery("(max-width:500px)");
   const theme = useTheme();
   const router = useRouter();
   const t = useTranslations();
@@ -163,6 +169,7 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
           sx={{
             gap: "15px",
             justifyContent: "space-between",
+            flexWrap: isMobileMedia ? "wrap" : "unset",
             backgroundColor: "white",
             pl: { xs: 2, sm: 3, md: type === "private" ? 10 : 3 },
             transition: theme.transitions.create("margin", {
@@ -178,12 +185,34 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
             }),
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              width: isMobileMedia ? "100%" : "unset",
+              justifyContent: isMobileMedia ? "space-between" : "unset",
+            }}
+          >
             <Link href="/" sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
               <Typography variant="h6" color="text.primary" fontWeight={600} whiteSpace="nowrap">
                 E-NOTARIAT
               </Typography>
+            </Link>
+            <Link href="https://wa.me/+996503291223" target="_blank">
+              <Tooltip title={t("Technical support (WhatsApp)")}>
+                <IconButton sx={{ color: "inherit" }}>
+                  <WhatsAppIcon />
+                </IconButton>
+              </Tooltip>
+            </Link>
+            <Link href="https://b10.okuukeremet.com/b/abd-cmd-vqe-ck9" target="_blank">
+              <Tooltip title={t("Technical support (video call)")}>
+                <IconButton sx={{ color: "inherit" }}>
+                  <SupportAgentIcon />
+                </IconButton>
+              </Tooltip>
             </Link>
           </Box>
 
@@ -203,7 +232,29 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
             </Box>
           )}
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              width: isMobileMedia ? "100%" : "unset",
+              justifyContent: isMobileMedia ? "space-between" : "unset",
+            }}
+          >
+            {/*<ConfirmationModal*/}
+            {/*  title="Learning"*/}
+            {/*  isHintShown={false}*/}
+            {/*  slots={{*/}
+            {/*    button: () => <></>,*/}
+            {/*    body: () => <></>,*/}
+            {/*  }}*/}
+            {/*>*/}
+            {/*  <Tooltip title={t("Learning")}>*/}
+            {/*    <IconButton sx={{ color: "inherit" }}>*/}
+            {/*      <SchoolIcon />*/}
+            {/*    </IconButton>*/}
+            {/*  </Tooltip>*/}
+            {/*</ConfirmationModal>*/}
             <LocaleSwitcher />
             <PopupNotifications />
             <ProfileDropdownButton />
