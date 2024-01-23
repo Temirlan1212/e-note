@@ -20,11 +20,16 @@ import ClearIcon from "@mui/icons-material/Clear";
 import ExcelIcon from "@/public/icons/excel.svg";
 import { GridValueGetterParams } from "@mui/x-data-grid";
 import { GridTable } from "@/components/ui/GridTable";
+import { FC } from "react";
 
-interface IInheritanceCaseInfoContentProps {}
+interface IInheritanceCaseInfoContentProps {
+  id?: string | string[];
+}
 
-const InheritanceCaseInfoContent = (props: IInheritanceCaseInfoContentProps) => {
+const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({ id }) => {
   const t = useTranslations();
+
+  console.log(id, "ID");
 
   const theme = useTheme();
 

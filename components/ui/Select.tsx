@@ -19,7 +19,7 @@ enum types {
   secondary = "secondary.main",
 }
 
-interface ISelectProps extends SelectProps {
+export interface ISelectProps extends SelectProps {
   data: Record<string, any>[];
   labelField?: string;
   valueField?: string;

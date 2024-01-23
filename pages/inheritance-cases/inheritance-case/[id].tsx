@@ -2,11 +2,14 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import InheritanceCasesList from "@/components/inheritance-cases/InheritanceCasesList";
-import { FilterValuesProvider } from "@/components/inheritance-cases/core/FilterValuesContext";
+import InheritanceCasesInfoContent from "@/components/inheritance-cases/inheritance-case/InheritanceCaseInfoContent";
+import { useRouter } from "next/router";
 
 export default function InheritanceCases() {
   const t = useTranslations();
+
+  const router = useRouter();
+  const { id } = router.query;
 
   return (
     <>
@@ -22,9 +25,7 @@ export default function InheritanceCases() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        <FilterValuesProvider>
-          <InheritanceCasesList />
-        </FilterValuesProvider>
+        <InheritanceCasesInfoContent id={id} />
       </Container>
     </>
   );
