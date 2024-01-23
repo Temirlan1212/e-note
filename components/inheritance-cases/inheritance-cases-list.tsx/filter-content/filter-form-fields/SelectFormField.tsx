@@ -3,17 +3,17 @@ import React from "react";
 import { Controller, ControllerProps, UseFormTrigger } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import Select, { ISelectProps } from "@/components/ui/Select";
-import { IInheritanceCasesFilterFormFields } from "@/validator-schemas/inheritance-cases";
+import { IInheritanceCasesListFilterFormFields } from "@/validator-schemas/inheritance-cases";
 
 type TProps = {
   select: Partial<ISelectProps>;
   wrapper: BoxProps;
 };
 
-type TControllerProps = Omit<ControllerProps<IInheritanceCasesFilterFormFields>, "render">;
+type TControllerProps = Omit<ControllerProps<IInheritanceCasesListFilterFormFields>, "render">;
 
 interface ISelectFormField extends TControllerProps {
-  trigger: UseFormTrigger<IInheritanceCasesFilterFormFields>;
+  trigger: UseFormTrigger<IInheritanceCasesListFilterFormFields>;
   loading?: boolean;
   props?: Partial<TProps>;
   label?: string;
@@ -32,9 +32,9 @@ const SelectFormField = React.forwardRef<HTMLDivElement, ISelectFormField>(({ la
       render={({ field, fieldState }) => {
         const errorMessage = fieldState.error?.message;
         return (
-          <Box width="100%" display="flex" flexDirection="column" gap="10px" {...(wrapperProps || {})}>
+          <Box width="100%" display="flex" gap="10px" alignItems="center" {...(wrapperProps || {})}>
             <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
-              <InputLabel sx={{ fontWeight: 600 }}>{label || "Год"}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{label || t("year")}</InputLabel>
             </Box>
 
             <Select

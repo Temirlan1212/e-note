@@ -2,16 +2,15 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  if (req.method !== "POST") {
+  if (req.method !== "GET") {
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_OPEN_API_URL + `/read/com.axelor.apps.sale.db.SaleOrder/${id}`, {
-    method: "POST",
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + `/com.axelor.apps.sale.db.SaleOrder/${id}`, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({}),
   });
 
   if (!response.ok) {

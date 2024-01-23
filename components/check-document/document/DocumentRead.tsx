@@ -24,18 +24,18 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
   const { locale } = useRouter();
   const t = useTranslations();
 
-  const { data: notarialActionStatus, update } = useFetch("", "POST");
+  const { data: notarialActionStatus, update } = useFetch("", "GET");
   const { data: statusData, loading: statusDataLoading } = useFetch(
     "/api/check-document/dictionaries/reliability-status",
-    "GET"
+    "POST"
   );
   const { data: actionTypeData, loading: actionTypeDataLoading } = useFetch(
     "/api/check-document/dictionaries/action-type",
-    "GET"
+    "POST"
   );
   const { data: signatureStatusData, loading: signatureStatusDataLoading } = useFetch(
     "/api/check-document/dictionaries/notary-signature-status",
-    "GET"
+    "POST"
   );
 
   useEffectOnce(() => {
