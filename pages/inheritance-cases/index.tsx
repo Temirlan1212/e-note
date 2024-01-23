@@ -2,8 +2,7 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import InheritanceCasesList from "@/components/inheritance-cases/InheritanceCasesList";
-import InProcess from "@/components/in-process/InProcess";
+import InheritanceInfoContent from "@/components/inheritance-cases/inheritance-case/InheritanceCaseInfoContent";
 export default function InheritanceCases() {
   const t = useTranslations();
 
@@ -21,8 +20,7 @@ export default function InheritanceCases() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        {/* <InheritanceCasesList /> */}
-        <InProcess />
+        <InheritanceInfoContent />
       </Container>
     </>
   );
