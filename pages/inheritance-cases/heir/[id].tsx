@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import InheritorInfoContent from "@/components/inheritance-cases/inheritance-case/InheritanceCaseInfoContent";
 import { useRouter } from "next/router";
+import InProcess from "@/components/in-process/InProcess";
 
 export default function InheritorDetailPage() {
   const t = useTranslations();
@@ -25,7 +26,8 @@ export default function InheritorDetailPage() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        <InheritorInfoContent id={id} />
+        {/* <InheritorInfoContent /> */}
+        <InProcess />
       </Container>
     </>
   );

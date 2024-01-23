@@ -20,25 +20,30 @@ import ClearIcon from "@mui/icons-material/Clear";
 import ExcelIcon from "@/public/icons/excel.svg";
 import { GridValueGetterParams } from "@mui/x-data-grid";
 import { GridTable } from "@/components/ui/GridTable";
-import { FC } from "react";
-import InheritanceCasesTable from "../inheritance-cases-table/InheritanceCasesTable";
+import { FC, useEffect } from "react";
+import HeirsTable from "@/components/inheritance-cases/inheritance-case/heirs-table/HeirsTable";
 import SearchBarForm from "../filter-content/search-bar-form/SearchBarForm";
 import { IInheritanceCasesSearchBarForm } from "@/validator-schemas/inheritance-cases";
 import { useForm } from "react-hook-form";
 import InheritanceCaseInfo from "./info/InheritanceCaseInfo";
 import TestatorInfo from "./info/TestatorInfo";
 import HeirInfo from "./info/HeirInfo";
+import { format } from "date-fns";
+import useEffectOnce from "@/hooks/useEffectOnce";
+import useFetch from "@/hooks/useFetch";
 
 interface IInheritanceCaseInfoContentProps {
-  id?: string | string[];
+  data?: any;
 }
 
-const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({ id }) => {
+const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({ data }) => {
   const t = useTranslations();
 
   const theme = useTheme();
 
   const searchBarForm = useForm<IInheritanceCasesSearchBarForm>();
+
+  const { data: testatorData, update: getTestatorData } = useFetch("", "POST");
 
   const rows = [
     {
@@ -143,9 +148,12 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({ id }
   ];
 
   const inheritanceCasetitles = [
-    { title: "Номер", value: "пусто" },
-    { title: "Дата открытия", value: "пусто" },
-    { title: "Кем создан", value: "пусто" },
+    { title: "Номер", value: data?.notaryUniqNumber },
+    {
+      title: "Дата открытия",
+      value: data?.createdOn ? format(new Date(data?.createdOn!), "dd.MM.yyyy HH:mm:ss") : "absent",
+    },
+    { title: "Кем создан", value: data?.company?.name },
   ].filter(Boolean);
 
   const testatorTitles = [
@@ -218,7 +226,7 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({ id }
 
           <SearchBarForm form={searchBarForm} />
         </Box>
-        <InheritanceCasesTable
+        <HeirsTable
           rows={rows}
           cellMaxHeight="200px"
           rowHeight={65}

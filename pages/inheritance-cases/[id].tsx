@@ -4,12 +4,19 @@ import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import InheritorInfoContent from "@/components/inheritance-cases/inheritance-case/InheritanceCaseInfoContent";
 import { useRouter } from "next/router";
+import useFetch from "@/hooks/useFetch";
 
 export default function InheritorDetailPage() {
   const t = useTranslations();
 
   const router = useRouter();
+
   const { id } = router.query;
+
+  const { data: inheritanceCaseData, update: getInheritanceCase } = useFetch(
+    id != null ? "/api/inheritance-cases/" + id : "",
+    "POST"
+  );
 
   return (
     <>
@@ -25,7 +32,7 @@ export default function InheritorDetailPage() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        <InheritorInfoContent id={id} />
+        <InheritorInfoContent data={inheritanceCaseData?.data?.[0]} />
       </Container>
     </>
   );
