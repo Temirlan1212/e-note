@@ -22,11 +22,13 @@ const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((pro
   const year = filterFormFields.watch("year");
 
   const searchBarFormSubmitHandler: SubmitHandler<IInheritanceCasesListSearchBarForm> = ({ keyWord }) => {
-    !!keyWord && updateFilterValues("keyWord", keyWord);
+    if (!!keyWord) updateFilterValues("keyWord", keyWord);
+    else updateFilterValues("keyWord", "");
   };
 
   const filterFormFieldsSubmitHandler: SubmitHandler<IInheritanceCasesListFilterFormFields> = ({ year }) => {
-    !!year && updateFilterValues("year", year);
+    if (!!year) updateFilterValues("year", year);
+    else updateFilterValues("year", "");
   };
 
   const filterFormFieldsResetHandler = () => {
@@ -36,6 +38,7 @@ const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((pro
   useEffect(() => {
     const yearFieldState = filterFormFields.getFieldState("year");
     if (yearFieldState.isDirty && !!year) updateFilterValues("year", year);
+    else updateFilterValues("year", "");
   }, [year]);
 
   return (
@@ -56,7 +59,6 @@ const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((pro
             props={{
               select: {
                 data: [
-                  { value: "all", label: t("All years") },
                   { value: 2023, label: `2023 ${t("year")}` },
                   { value: 2022, label: `2022 ${t("year")}` },
                   { value: 2021, label: `2021 ${t("year")}` },

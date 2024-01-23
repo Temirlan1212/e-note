@@ -1,15 +1,17 @@
 import React from "react";
 import { GridTable, IFilterSubmitParams, IGridColDef, IGridTableProps } from "@/components/ui/GridTable";
-import QrCode2Icon from "@mui/icons-material/QrCode2";
 import { useFilterValues } from "../core/FilterValuesContext";
 import { useMediaQuery } from "@mui/material";
 import { InheritanceCasesTableActions } from "./InheritanceCasesTableActions";
+import { GridValueGetterParams } from "@mui/x-data-grid";
+import { useLocale } from "next-intl";
 
 interface InheritanceCasesTableProps extends Omit<IGridTableProps, "columns"> {}
 
 const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesTableProps>(
   ({ className, ...props }, ref) => {
     const isMobileMedia = useMediaQuery("(max-width:800px)");
+    const locale = useLocale();
     const { updateFilterValues } = useFilterValues();
 
     const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
@@ -17,20 +19,14 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
       if (type === "simple") {
         const field = value.rowParams.colDef.field;
         const filterValue = value?.value;
-        updateFilterValues(field as any, filterValue as string);
+        if (!!filterValue && !Array.isArray(filterValue)) updateFilterValues(field as any, filterValue as string);
+        else updateFilterValues(field as any, "");
       }
     };
 
     const columns: IGridColDef[] = [
       {
-        field: "QR",
-        headerName: "QR",
-        width: 90,
-        sortable: false,
-        renderCell: (params: any) => <QrCode2Icon />,
-      },
-      {
-        field: "registryNumber",
+        field: "notaryUniqNumber",
         headerName: "Registry number",
         width: 210,
         sortable: false,
@@ -39,7 +35,7 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
         },
       },
       {
-        field: "pin",
+        field: "requester.personalNumber",
         headerName: "PIN of the deceased",
         width: 210,
         filter: {
@@ -48,7 +44,7 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
         sortable: false,
       },
       {
-        field: "fullName",
+        field: "requester.fullName",
         headerName: "Full name of the deceased",
         width: 270,
         filter: {
@@ -57,28 +53,45 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
         sortable: false,
       },
       {
-        field: "dateOfBirth",
+        field: "requester.birthDate",
         headerName: "Date of birth",
         width: 180,
       },
       {
-        field: "placeOfLastResidence",
+        field: "requester.actualResidenceAddress.addressL2",
         headerName: "Place of last residence",
         width: 270,
         sortable: false,
+        valueGetter: (params: GridValueGetterParams) => {
+          const nameKey = locale !== "en" ? "$t:name" : "name";
+          const region = params.row?.["requester.mainAddress.region"]?.[nameKey] || "";
+          const district = params.row?.["requester.mainAddress.district"]?.[nameKey] || "";
+          const city = params.row?.["requester.mainAddress.city.name"] || "";
+          const addressL4 = params.row?.["requester.mainAddress.addressL4"] || "";
+          const addressL3 = params.row?.["requester.mainAddress.addressL3"] || "";
+          const addressL2 = params.row?.["requester.mainAddress.addressL2"] || "";
+          const format = (text: string | null) => {
+            if (!text) return "";
+            return `${text} /`;
+          };
+
+          return `${format(region)} ${format(district)} ${format(city)} ${format(addressL4)} ${format(
+            addressL3
+          )} ${addressL2}`;
+        },
       },
       {
-        field: "dateOfDeath",
+        field: "requester.deathDate",
         headerName: "Date of death",
         width: 200,
       },
       {
-        field: "dateOfCreation",
+        field: "creationDate",
         headerName: "Date of creation",
         width: 210,
       },
       {
-        field: "whoCreated",
+        field: "company.name",
         headerName: "Created by",
         width: 200,
         sortable: false,
@@ -98,13 +111,17 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
     return (
       <GridTable
         {...props}
+        loading={props.loading}
+        rows={props.rows}
         columns={columns}
+        cellMaxHeight="200px"
+        rowHeight={65}
+        autoHeight
         sx={{
           ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": {
             padding: "10px 16px",
             whiteSpace: "normal",
           },
-          ".MuiBox-root": { backgroundColor: "#FFF" },
           ".MuiDataGrid-columnHeader": { padding: "16px" },
           ...(props.sx || {}),
         }}

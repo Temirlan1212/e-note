@@ -32,9 +32,9 @@ const SelectFormField = React.forwardRef<HTMLDivElement, ISelectFormField>(({ la
       render={({ field, fieldState }) => {
         const errorMessage = fieldState.error?.message;
         return (
-          <Box width="100%" display="flex" flexDirection="column" gap="10px" {...(wrapperProps || {})}>
+          <Box width="100%" display="flex" gap="10px" alignItems="center" {...(wrapperProps || {})}>
             <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
-              <InputLabel sx={{ fontWeight: 600 }}>{label || "Год"}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{label || t("year")}</InputLabel>
             </Box>
 
             <Select
