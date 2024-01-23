@@ -1,14 +1,14 @@
 import { Box, BoxProps, Grid } from "@mui/material";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
-import { IInheritanceCasesSearchBarForm } from "@/validator-schemas/inheritance-cases";
+import { IInheritanceCasesListSearchBarForm } from "@/validator-schemas/inheritance-cases";
 import { useTranslations } from "next-intl";
 import SearchBar from "@/components/ui/SearchBar";
 import Button from "@/components/ui/Button";
 
 const SearchBarForm = React.forwardRef<
   HTMLDivElement,
-  BoxProps & { form: UseFormReturn<IInheritanceCasesSearchBarForm> }
+  BoxProps & { form: UseFormReturn<IInheritanceCasesListSearchBarForm> }
 >(({ className, form, ...props }, ref) => {
   const t = useTranslations();
 

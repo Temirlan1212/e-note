@@ -2,8 +2,8 @@ import { Box, BoxProps } from "@mui/material";
 import React, { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
-  IInheritanceCasesFilterFormFields,
-  IInheritanceCasesSearchBarForm,
+  IInheritanceCasesListFilterFormFields,
+  IInheritanceCasesListSearchBarForm,
 } from "@/validator-schemas/inheritance-cases";
 import SearchBarForm from "./search-bar-form/SearchBarForm";
 import { useTranslations } from "next-intl";
@@ -17,15 +17,15 @@ const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((pro
 
   const t = useTranslations();
   const { className, ...rest } = props;
-  const searchBarForm = useForm<IInheritanceCasesSearchBarForm>();
-  const filterFormFields = useForm<IInheritanceCasesFilterFormFields>();
+  const searchBarForm = useForm<IInheritanceCasesListSearchBarForm>();
+  const filterFormFields = useForm<IInheritanceCasesListFilterFormFields>();
   const year = filterFormFields.watch("year");
 
-  const searchBarFormSubmitHandler: SubmitHandler<IInheritanceCasesSearchBarForm> = ({ keyWord }) => {
+  const searchBarFormSubmitHandler: SubmitHandler<IInheritanceCasesListSearchBarForm> = ({ keyWord }) => {
     !!keyWord && updateFilterValues("keyWord", keyWord);
   };
 
-  const filterFormFieldsSubmitHandler: SubmitHandler<IInheritanceCasesFilterFormFields> = ({ year }) => {
+  const filterFormFieldsSubmitHandler: SubmitHandler<IInheritanceCasesListFilterFormFields> = ({ year }) => {
     !!year && updateFilterValues("year", year);
   };
 

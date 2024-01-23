@@ -1,6 +1,6 @@
 import {
-  IInheritanceCasesFilterFormFields,
-  IInheritanceCasesSearchBarForm,
+  IInheritanceCasesListFilterFormFields,
+  IInheritanceCasesListSearchBarForm,
 } from "@/validator-schemas/inheritance-cases";
 import { ValueOf } from "next/dist/shared/lib/constants";
 import { FC, createContext, useContext, PropsWithChildren, useState, Dispatch, SetStateAction } from "react";
@@ -10,8 +10,8 @@ type FilterValuesProps = {
   pin: string;
   fullName: string;
   dateOfDeath: string;
-} & IInheritanceCasesFilterFormFields &
-  IInheritanceCasesSearchBarForm;
+} & IInheritanceCasesListFilterFormFields &
+  IInheritanceCasesListSearchBarForm;
 
 type QueryParamsProps = {
   pageSize: number;

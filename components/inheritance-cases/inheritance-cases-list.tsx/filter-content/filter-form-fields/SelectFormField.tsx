@@ -3,17 +3,17 @@ import React from "react";
 import { Controller, ControllerProps, UseFormTrigger } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import Select, { ISelectProps } from "@/components/ui/Select";
-import { IInheritanceCasesFilterFormFields } from "@/validator-schemas/inheritance-cases";
+import { IInheritanceCasesListFilterFormFields } from "@/validator-schemas/inheritance-cases";
 
 type TProps = {
   select: Partial<ISelectProps>;
   wrapper: BoxProps;
 };
 
-type TControllerProps = Omit<ControllerProps<IInheritanceCasesFilterFormFields>, "render">;
+type TControllerProps = Omit<ControllerProps<IInheritanceCasesListFilterFormFields>, "render">;
 
 interface ISelectFormField extends TControllerProps {
-  trigger: UseFormTrigger<IInheritanceCasesFilterFormFields>;
+  trigger: UseFormTrigger<IInheritanceCasesListFilterFormFields>;
   loading?: boolean;
   props?: Partial<TProps>;
   label?: string;
