@@ -1,17 +1,18 @@
+import useEffectOnce from "@/hooks/useEffectOnce";
 import {
-  IInheritanceCasesFilterFormFields,
-  IInheritanceCasesSearchBarForm,
+  IInheritanceCasesListFilterFormFields,
+  IInheritanceCasesListSearchBarForm,
 } from "@/validator-schemas/inheritance-cases";
 import { ValueOf } from "next/dist/shared/lib/constants";
-import { FC, createContext, useContext, PropsWithChildren, useState, Dispatch, SetStateAction } from "react";
+import { FC, createContext, useContext, PropsWithChildren, useState, Dispatch, SetStateAction, useRef } from "react";
 
 type FilterValuesProps = {
   inheritanceCaseNumber: string;
   pin: string;
   fullName: string;
   dateOfDeath: string;
-} & IInheritanceCasesFilterFormFields &
-  IInheritanceCasesSearchBarForm;
+} & IInheritanceCasesListFilterFormFields &
+  IInheritanceCasesListSearchBarForm;
 
 type QueryParamsProps = {
   pageSize: number;
@@ -29,13 +30,15 @@ type FilterValuesContextProps = {
   ) => void;
 } & { queryParams: QueryParamsProps };
 
+const queryParamsInitState = {
+  pageSize: 7,
+  page: 1,
+  sortBy: ["-creationDate"],
+  filterValues: {},
+};
+
 const FilterValuesContext = createContext<FilterValuesContextProps>({
-  queryParams: {
-    pageSize: 0,
-    page: 0,
-    sortBy: [],
-    filterValues: {},
-  },
+  queryParams: queryParamsInitState,
   setQueryParams: () => {},
   updateQueryParams: () => {},
   updateFilterValues: () => {},
@@ -44,12 +47,7 @@ const FilterValuesContext = createContext<FilterValuesContextProps>({
 const useFilterValues = () => useContext(FilterValuesContext);
 
 const FilterValuesProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [queryParams, setQueryParams] = useState({
-    pageSize: 7,
-    page: 1,
-    sortBy: ["-creationDate"],
-    filterValues: {},
-  });
+  const [queryParams, setQueryParams] = useState(queryParamsInitState);
 
   const updateQueryParams = (key: keyof QueryParamsProps, newValue: ValueOf<QueryParamsProps>) => {
     setQueryParams((prev) => {
@@ -59,8 +57,9 @@ const FilterValuesProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const updateFilterValues = (key: keyof Partial<FilterValuesProps>, newValue: ValueOf<Partial<FilterValuesProps>>) => {
     setQueryParams((prev) => {
-      const filterValues = prev.filterValues;
-      return { ...prev, filterValues: { ...filterValues, [key]: newValue } };
+      let filterValues: Partial<FilterValuesProps> = { ...prev.filterValues, [key]: newValue };
+      if (!newValue) delete filterValues[key];
+      return { ...prev, filterValues };
     });
   };
 

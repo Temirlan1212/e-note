@@ -1,12 +1,12 @@
 import { object, InferType, string } from "yup";
 
-export type IInheritanceCasesFilterFormFields = InferType<typeof inheritanceCasesFilterFormFields>;
-export type IInheritanceCasesSearchBarForm = InferType<typeof inheritanceCasesSearchBarForm>;
+export type IInheritanceCasesListFilterFormFields = InferType<typeof inheritanceCasesListFilterFormFields>;
+export type IInheritanceCasesListSearchBarForm = InferType<typeof inheritanceCasesListSearchBarForm>;
 
-export const inheritanceCasesFilterFormFields = object().shape({
+export const inheritanceCasesListFilterFormFields = object().shape({
   year: string(),
 });
 
-export const inheritanceCasesSearchBarForm = object().shape({
+export const inheritanceCasesListSearchBarForm = object().shape({
   keyWord: string(),
 });

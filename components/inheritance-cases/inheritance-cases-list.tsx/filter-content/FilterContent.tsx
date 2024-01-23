@@ -2,8 +2,8 @@ import { Box, BoxProps } from "@mui/material";
 import React, { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
-  IInheritanceCasesFilterFormFields,
-  IInheritanceCasesSearchBarForm,
+  IInheritanceCasesListFilterFormFields,
+  IInheritanceCasesListSearchBarForm,
 } from "@/validator-schemas/inheritance-cases";
 import SearchBarForm from "./search-bar-form/SearchBarForm";
 import { useTranslations } from "next-intl";
@@ -17,16 +17,18 @@ const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((pro
 
   const t = useTranslations();
   const { className, ...rest } = props;
-  const searchBarForm = useForm<IInheritanceCasesSearchBarForm>();
-  const filterFormFields = useForm<IInheritanceCasesFilterFormFields>();
+  const searchBarForm = useForm<IInheritanceCasesListSearchBarForm>();
+  const filterFormFields = useForm<IInheritanceCasesListFilterFormFields>();
   const year = filterFormFields.watch("year");
 
-  const searchBarFormSubmitHandler: SubmitHandler<IInheritanceCasesSearchBarForm> = ({ keyWord }) => {
-    !!keyWord && updateFilterValues("keyWord", keyWord);
+  const searchBarFormSubmitHandler: SubmitHandler<IInheritanceCasesListSearchBarForm> = ({ keyWord }) => {
+    if (!!keyWord) updateFilterValues("keyWord", keyWord);
+    else updateFilterValues("keyWord", "");
   };
 
-  const filterFormFieldsSubmitHandler: SubmitHandler<IInheritanceCasesFilterFormFields> = ({ year }) => {
-    !!year && updateFilterValues("year", year);
+  const filterFormFieldsSubmitHandler: SubmitHandler<IInheritanceCasesListFilterFormFields> = ({ year }) => {
+    if (!!year) updateFilterValues("year", year);
+    else updateFilterValues("year", "");
   };
 
   const filterFormFieldsResetHandler = () => {
@@ -36,6 +38,7 @@ const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((pro
   useEffect(() => {
     const yearFieldState = filterFormFields.getFieldState("year");
     if (yearFieldState.isDirty && !!year) updateFilterValues("year", year);
+    else updateFilterValues("year", "");
   }, [year]);
 
   return (
@@ -56,7 +59,6 @@ const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((pro
             props={{
               select: {
                 data: [
-                  { value: "all", label: t("All years") },
                   { value: 2023, label: `2023 ${t("year")}` },
                   { value: 2022, label: `2022 ${t("year")}` },
                   { value: 2021, label: `2021 ${t("year")}` },

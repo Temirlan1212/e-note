@@ -465,7 +465,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
           >
             <Box component="form" onSubmit={handleSubmit(onSubmit)} paddingTop="10px" minWidth={250}>
               {type === "simple" && (
-                <Box display="flex" justifyContent="center" mb="10px">
+                <Box display="flex" justifyContent="center" mb="10px" mx="10px">
                   <Input size="small" register={register} name="input" />
                 </Box>
               )}
