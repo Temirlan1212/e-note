@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import InheritorInfoContent from "@/components/inheritance-cases/inheritance-case/InheritorInfoContent";
+import InheritorInfoContent from "@/components/inheritance-cases/inheritance-case/InheritanceCaseInfoContent";
 import { useRouter } from "next/router";
 
 export default function InheritorDetailPage() {
