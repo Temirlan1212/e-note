@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Box, Typography } from "@mui/material";
 import Pagination from "@/components/ui/Pagination";
 import FilterContent from "./filter-content/FilterContent";
 import InheritanceCasesTable from "./inheritance-cases-table/InheritanceCasesTable";
-import { IInheritanceCasesFilterForm } from "@/validator-schemas/inheritance-cases";
+import { useFilterValues } from "./core/FilterValuesContext";
 
 const rows = [
   {
@@ -109,23 +109,17 @@ const rows = [
 ];
 
 export default function InheritanceCasesList() {
-  const [selectedPage, setSelectedPage] = useState(1);
-  const [formValues, setFormValues] = useState<IInheritanceCasesFilterForm>({});
-
   const t = useTranslations();
+  const {
+    updateQueryParams,
+    queryParams: { filterValues },
+  } = useFilterValues();
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(rows.length / 6);
 
-  const itemsPerPage = 6;
-  const totalPages = Math.ceil(rows.length / itemsPerPage);
-
-  const onPageChange = (page: number) => {
-    setSelectedPage(page);
-  };
-
-  const updatFormValues = (data: Record<string, any>) => {
-    setFormValues((prev) => {
-      return { ...prev, ...data };
-    });
-  };
+  useEffect(() => {
+    // write fetch request
+  }, [filterValues]);
 
   return (
     <>
@@ -133,18 +127,18 @@ export default function InheritanceCasesList() {
         {t("Register of inheritance cases")}
       </Typography>
 
-      <FilterContent
-        onSearchBarFormSubmit={updatFormValues}
-        onFilterFormFieldsSubmit={updatFormValues}
-        onFilterFormFieldsReset={updatFormValues}
-      />
+      <FilterContent />
 
       <Box height="50dvh">
         <InheritanceCasesTable rows={rows} />
       </Box>
 
       <Box alignSelf="center">
-        <Pagination currentPage={selectedPage} totalPages={totalPages} onPageChange={onPageChange} />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => updateQueryParams("page", page)}
+        />
       </Box>
     </>
   );

@@ -1,61 +1,73 @@
 import { Box, BoxProps } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
   IInheritanceCasesFilterFormFields,
   IInheritanceCasesSearchBarForm,
 } from "@/validator-schemas/inheritance-cases";
-import { useTranslations } from "next-intl";
-import FilterFormFields from "./filter-form-fields/FilterFormFields";
-import ContentTogller from "../ui/ContentTogller";
 import SearchBarForm from "./search-bar-form/SearchBarForm";
-import Button from "@/components/ui/Button";
+import { useTranslations } from "next-intl";
+import SelectFormField from "./filter-form-fields/SelectFormField";
+import { useFilterValues } from "../core/FilterValuesContext";
 
-interface IFilterContentProps extends BoxProps {
-  onSearchBarFormSubmit?: SubmitHandler<IInheritanceCasesSearchBarForm>;
-  onFilterFormFieldsSubmit?: SubmitHandler<IInheritanceCasesFilterFormFields>;
-  onFilterFormFieldsReset?: SubmitHandler<IInheritanceCasesFilterFormFields>;
-}
+interface IFilterContentProps extends BoxProps {}
 
 const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((props, ref) => {
-  const { className, onSearchBarFormSubmit, onFilterFormFieldsSubmit, onFilterFormFieldsReset, ...rest } = props;
+  const { updateFilterValues } = useFilterValues();
+
   const t = useTranslations();
+  const { className, ...rest } = props;
   const searchBarForm = useForm<IInheritanceCasesSearchBarForm>();
   const filterFormFields = useForm<IInheritanceCasesFilterFormFields>();
+  const year = filterFormFields.watch("year");
 
-  const searchBarFormSubmitHandler: SubmitHandler<IInheritanceCasesSearchBarForm> = (data) => {
-    onSearchBarFormSubmit && onSearchBarFormSubmit(data);
+  const searchBarFormSubmitHandler: SubmitHandler<IInheritanceCasesSearchBarForm> = ({ keyWord }) => {
+    !!keyWord && updateFilterValues("keyWord", keyWord);
   };
 
-  const filterFormFieldsSubmitHandler: SubmitHandler<IInheritanceCasesFilterFormFields> = (data) => {
-    onFilterFormFieldsSubmit && onFilterFormFieldsSubmit(data);
+  const filterFormFieldsSubmitHandler: SubmitHandler<IInheritanceCasesFilterFormFields> = ({ year }) => {
+    !!year && updateFilterValues("year", year);
   };
 
   const filterFormFieldsResetHandler = () => {
-    filterFormFields.reset({ dateOfDeath: "", fullName: "", inheritanceCaseNumber: "", pin: "", year: "" });
-    onFilterFormFieldsReset && onFilterFormFieldsReset(filterFormFields.getValues());
+    filterFormFields.reset({ year: "" });
   };
+
+  useEffect(() => {
+    const yearFieldState = filterFormFields.getFieldState("year");
+    if (yearFieldState.isDirty && !!year) updateFilterValues("year", year);
+  }, [year]);
 
   return (
     <Box ref={ref} display="flex" flexDirection="column" gap="10px" {...rest}>
       <form onSubmit={searchBarForm.handleSubmit(searchBarFormSubmitHandler)}>
         <SearchBarForm form={searchBarForm} />
       </form>
-
-      <ContentTogller>
-        <form
-          onReset={filterFormFieldsResetHandler}
-          onSubmit={filterFormFields.handleSubmit(filterFormFieldsSubmitHandler)}
-        >
-          <FilterFormFields form={filterFormFields} />
-          <Box width="fit-content" display="flex" gap="10px">
-            <Button type="submit">Применить</Button>
-            <Button type="reset" disabled={!filterFormFields.formState.isDirty} buttonType="danger">
-              Сбросить
-            </Button>
-          </Box>
-        </form>
-      </ContentTogller>
+      <form
+        onReset={filterFormFieldsResetHandler}
+        onSubmit={filterFormFields.handleSubmit(filterFormFieldsSubmitHandler)}
+      >
+        <Box display="flex" justifyContent="flex-end">
+          <SelectFormField
+            control={filterFormFields.control}
+            name="year"
+            defaultValue=""
+            trigger={filterFormFields.trigger}
+            props={{
+              select: {
+                data: [
+                  { value: "all", label: t("All years") },
+                  { value: 2023, label: `2023 ${t("year")}` },
+                  { value: 2022, label: `2022 ${t("year")}` },
+                  { value: 2021, label: `2021 ${t("year")}` },
+                ],
+                sx: { width: "auto" },
+              },
+              wrapper: { width: "fit-content" },
+            }}
+          />
+        </Box>
+      </form>
     </Box>
   );
 });

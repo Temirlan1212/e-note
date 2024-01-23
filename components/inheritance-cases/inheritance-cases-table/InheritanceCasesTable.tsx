@@ -1,6 +1,7 @@
 import React from "react";
-import { GridTable, IGridColDef, IGridTableProps } from "@/components/ui/GridTable";
+import { GridTable, IFilterSubmitParams, IGridColDef, IGridTableProps } from "@/components/ui/GridTable";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
+import { useFilterValues } from "../core/FilterValuesContext";
 
 interface InheritanceCasesTableProps extends Omit<IGridTableProps, "columns"> {}
 
@@ -70,6 +71,17 @@ const columns: IGridColDef[] = [
 
 const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesTableProps>(
   ({ className, ...props }, ref) => {
+    const { updateFilterValues } = useFilterValues();
+
+    const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
+      const type = value.rowParams.colDef.filter?.type;
+      if (type === "simple") {
+        const field = value.rowParams.colDef.field;
+        const filterValue = value?.value;
+        updateFilterValues(field as any, filterValue as string);
+      }
+    };
+
     return (
       <GridTable
         {...props}
@@ -83,6 +95,7 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
           ".MuiDataGrid-columnHeader": { padding: "16px" },
           ...(props.sx || {}),
         }}
+        onFilterSubmit={handleUpdateFilterValues}
       />
     );
   }

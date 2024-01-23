@@ -16,9 +16,10 @@ interface ISelectFormField extends TControllerProps {
   trigger: UseFormTrigger<IInheritanceCasesFilterFormFields>;
   loading?: boolean;
   props?: Partial<TProps>;
+  label?: string;
 }
 
-const SelectFormField = React.forwardRef<HTMLDivElement, ISelectFormField>(({ ...props }, ref) => {
+const SelectFormField = React.forwardRef<HTMLDivElement, ISelectFormField>(({ label, ...props }, ref) => {
   const t = useTranslations();
   const selectProps = props.props?.select;
   const wrapperProps = props.props?.wrapper;
@@ -33,7 +34,7 @@ const SelectFormField = React.forwardRef<HTMLDivElement, ISelectFormField>(({ ..
         return (
           <Box width="100%" display="flex" flexDirection="column" gap="10px" {...(wrapperProps || {})}>
             <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="10px 20px" alignItems="end">
-              <InputLabel sx={{ fontWeight: 600 }}>Objects of civil rights</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{label || "Год"}</InputLabel>
             </Box>
 
             <Select
