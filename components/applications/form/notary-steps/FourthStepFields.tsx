@@ -345,7 +345,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         newMembers = await Promise.all(
           values.members.map(async (value) => {
             const { id, version, emailAddress, ...rest } = value;
-            return await partnerUpdate("/api/user/partners/create", rest).then((res) => res.data[0]);
+            return await partnerUpdate("/api/user/partners/create", rest).then((res) => res?.data?.[0]);
           })
         );
       }
@@ -607,7 +607,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         ref={tabsRef}
       />
 
-      <Box width="fit-content" position="sticky" bottom="20px" display="flex" gap="20px" flexDirection="row">
+      <Box width="fit-content" position="sticky" bottom="30px" display="flex" gap="20px" flexDirection="row">
         {onPrev != null && (
           <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}

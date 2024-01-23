@@ -1,9 +1,12 @@
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import ReactWebcam, { WebcamProps } from "react-webcam";
-import { Alert, Box, Collapse, Icon, Typography } from "@mui/material";
+import { Alert, Box, CircularProgress, Collapse, Icon, IconButton, Skeleton, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import Button from "@/components/ui/Button";
+import { IProfileState, useProfileStore } from "@/stores/profile";
+import useFetch from "@/hooks/useFetch";
+import Hint from "@/components/ui/Hint";
 
 interface IButtonSlotProps extends Partial<IOnRecordStop> {
   start: () => void;
@@ -21,6 +24,7 @@ interface IOnRecordStop {
 interface IWebcamProps extends Partial<WebcamProps> {
   onStop?: (args: IOnRecordStop) => void;
   videoBitsPerSecond?: number;
+  loading?: boolean;
   maxCaptureTime?: number;
   alertText?: string;
   variant?:
@@ -40,6 +44,7 @@ interface IWebcamProps extends Partial<WebcamProps> {
 const Webcam: FC<IWebcamProps> = ({
   videoBitsPerSecond = 200000,
   slots,
+  loading,
   maxCaptureTime = 2000,
   onStop,
   alertText = "This action failed",
@@ -53,8 +58,24 @@ const Webcam: FC<IWebcamProps> = ({
   const [recordedChunks, setRecordedChunks] = useState<BlobPart[]>([]);
   const [isCameraAvailable, setIsCameraAvailable] = useState(true);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [startTimer, setStartTimer] = useState(false);
+  const [base64Image, setBase64Image] = useState<string | null>(null);
+  const profile = useProfileStore<IProfileState>((state) => state);
+  const profileData = profile.getUserData();
+
+  const { data: imageData } = useFetch<Response>(
+    profileData?.id != null ? "/api/profile/download-image/" + profileData?.id : "",
+    "GET",
+    {
+      returnResponse: true,
+    }
+  );
 
   const handleStartCaptureClick = useCallback(() => {
+    if (variant.type === "live") {
+      setStartTimer(!startTimer);
+    }
     if (webcamRef.current == null) return;
     setAlertOpen(false);
     setCapturing(true);
@@ -98,6 +119,8 @@ const Webcam: FC<IWebcamProps> = ({
     [setRecordedChunks]
   );
 
+  const isBlobUrl = (variant?.type === "record" || variant?.type === "preview") && variant?.blobUrl != null;
+
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ video: true })
@@ -111,100 +134,192 @@ const Webcam: FC<IWebcamProps> = ({
       });
   }, []);
 
-  const isBlobUrl = (variant?.type === "record" || variant?.type === "preview") && variant?.blobUrl != null;
+  useEffect(() => {
+    let timer: NodeJS.Timer;
+
+    if (startTimer) {
+      timer = setInterval(() => {
+        setProgress((prevProgress) => {
+          if (prevProgress >= 100) {
+            clearInterval(timer);
+            setStartTimer(false);
+            setProgress(0);
+            return 0;
+          } else {
+            return prevProgress + 10;
+          }
+        });
+      }, 180);
+    }
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [startTimer]);
+
+  useEffectOnce(async () => {
+    const base64String = await imageData?.text();
+    if (base64String) {
+      setBase64Image(base64String);
+    }
+  }, [imageData]);
+
+  if (variant.type === "live" && !base64Image) {
+    return (
+      <Hint
+        type="warning"
+        title={
+          "To begin the Face ID verification process, you must submit a personal photo by setting it as your avatar in the Personal Area section of your personal account"
+        }
+      />
+    );
+  }
 
   return (
-    <>
-      <Box display="flex" flexDirection="column" gap="15px">
-        <Collapse in={alertOpen}>
-          <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-            {t(alertText)}
-          </Alert>
-        </Collapse>
-        {isCameraAvailable ? (
-          <>
-            {recordedChunks?.length > 0 || isBlobUrl ? (
-              <video
-                src={
-                  isBlobUrl
-                    ? variant?.blobUrl ?? ""
-                    : URL.createObjectURL(new Blob(recordedChunks, { type: "video/webm" }))
-                }
-                width="100%"
-                height="auto"
-                controls
-              >
-                {t("Your browser does not support the video tag")}
-              </video>
-            ) : null}
+    <Box display="flex" flexDirection="column" gap="10px">
+      <Collapse in={alertOpen}>
+        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+          {t(alertText)}
+        </Alert>
+      </Collapse>
+      {isCameraAvailable ? (
+        <>
+          {(variant.type === "record" && recordedChunks?.length > 0) || isBlobUrl ? (
+            <video
+              src={
+                isBlobUrl
+                  ? variant?.blobUrl ?? ""
+                  : URL.createObjectURL(new Blob(recordedChunks, { type: "video/webm" }))
+              }
+              width="100%"
+              height="auto"
+              controls
+            >
+              {t("Your browser does not support the video tag")}
+            </video>
+          ) : null}
 
-            {!(recordedChunks?.length > 0) && !isBlobUrl && (
-              <Box sx={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
+          {slots?.body ? (
+            <Box>{slots.body({ capturing, start: handleStartCaptureClick, stop: handleStopCaptureClick })}</Box>
+          ) : (
+            variant?.type !== "preview" &&
+            !isBlobUrl &&
+            recordedChunks.length < 1 && (
+              <>
                 <ReactWebcam
-                  style={{ display: recordedChunks?.length > 0 && variant?.type === "record" ? "none" : "block" }}
+                  style={{ display: recordedChunks?.length > 0 && variant?.type != "live" ? "none" : "block" }}
                   width="100%"
                   height="100%"
                   videoConstraints={{ facingMode: "user" }}
                   ref={webcamRef}
                   {...rest}
                 />
-                {!(recordedChunks?.length > 0) && !isBlobUrl && variant?.type === "live" && (
-                  <Box
-                    component="img"
-                    src="/images/face-id-recognition.png"
-                    sx={{
-                      position: "absolute",
-                      top: 0,
+                <Button
+                  endIcon={capturing ? <Countdown seconds={maxCaptureTime / 1000} /> : null}
+                  sx={{
+                    fontSize: { xs: "14px", sm: "16px" },
+                  }}
+                  buttonType={capturing ? "danger" : "secondary"}
+                  onClick={capturing ? handleStopCaptureClick : handleStartCaptureClick}
+                >
+                  {capturing ? t("Stop recording") : t("Start recording")}
+                </Button>
+              </>
+            )
+          )}
+
+          {loading ? (
+            <Box sx={{ display: "flex", justifyContent: "center" }}>
+              <Skeleton
+                variant="circular"
+                sx={{ width: { xs: "320px", md: "400px" }, height: { xs: "320px", md: "400px" } }}
+              />
+            </Box>
+          ) : (
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              {!(recordedChunks?.length > 0) && !isBlobUrl && variant.type === "live" && (
+                <Box
+                  sx={{
+                    position: "relative",
+                    width: { xs: "320px", md: "400px" },
+                    height: { xs: "320px", md: "400px" },
+                  }}
+                >
+                  <ReactWebcam
+                    style={{
+                      display: recordedChunks?.length > 0 ? "none" : "block",
+                      borderRadius: "50%",
+                      border: "2px solid #000",
+                      objectFit: "cover",
                       width: "100%",
                       height: "100%",
                     }}
+                    videoConstraints={{ facingMode: "user", width: 800, height: 600 }}
+                    ref={webcamRef}
+                    {...rest}
                   />
-                )}
-              </Box>
-            )}
-            {slots?.body ? (
-              <Box>{slots.body({ capturing, start: handleStartCaptureClick, stop: handleStopCaptureClick })}</Box>
-            ) : (
-              <>
-                {variant?.type !== "preview" &&
-                  !isBlobUrl &&
-                  recordedChunks.length < 1 &&
-                  variant?.type === "record" && (
-                    <Button
-                      endIcon={capturing ? <Countdown seconds={maxCaptureTime / 1000} /> : null}
-                      sx={{
-                        fontSize: { xs: "14px", sm: "16px" },
-                      }}
-                      buttonType={capturing ? "danger" : "secondary"}
-                      onClick={capturing ? handleStopCaptureClick : handleStartCaptureClick}
-                    >
-                      {capturing ? t("Stop recording") : t("Start recording")}
-                    </Button>
-                  )}
-              </>
-            )}
 
-            {slots?.footer ? (
-              <Box>
-                {slots.footer({
-                  start: handleStartCaptureClick,
-                  stop: handleStopCaptureClick,
-                  restart: handleRestartCaptureClick,
-                  setAlert: setAlertOpen,
-                  setChunks: setRecordedChunks,
-                  chunks: recordedChunks,
-                  capturing,
-                })}
-              </Box>
-            ) : null}
-          </>
-        ) : (
-          <Typography align="center" fontSize={{ xs: "14px", sm: "16px" }} fontWeight={600}>
-            {t("Camera unavailable")}
-          </Typography>
-        )}
-      </Box>
-    </>
+                  {capturing && (
+                    <CircularProgress
+                      color="success"
+                      size="100%"
+                      thickness={0.5}
+                      variant="determinate"
+                      value={progress}
+                      sx={{ position: "absolute", top: 0, left: 0 }}
+                    />
+                  )}
+                  {!capturing && (
+                    <Box
+                      sx={{
+                        cursor: "pointer",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        position: "absolute",
+                        background: "#000",
+                        opacity: 0.5,
+                        top: 0,
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: "50%",
+                        transition: "opacity 0.5s",
+                        "&:hover": {
+                          opacity: 0,
+                        },
+                      }}
+                      onClick={handleStartCaptureClick}
+                    >
+                      <Typography align="center" color="primary.contrastText" variant="h3">
+                        {t("Verify")}
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              )}
+            </Box>
+          )}
+
+          {slots?.footer ? (
+            <Box>
+              {slots.footer({
+                start: handleStartCaptureClick,
+                stop: handleStopCaptureClick,
+                restart: handleRestartCaptureClick,
+                setAlert: setAlertOpen,
+                setChunks: setRecordedChunks,
+                chunks: recordedChunks,
+                capturing,
+              })}
+            </Box>
+          ) : null}
+        </>
+      ) : (
+        <Typography align="center" fontSize={{ xs: "14px", sm: "16px" }} fontWeight={600}>
+          {t("Camera unavailable")}
+        </Typography>
+      )}
+    </Box>
   );
 };
 

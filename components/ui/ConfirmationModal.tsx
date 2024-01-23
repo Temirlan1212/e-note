@@ -9,6 +9,9 @@ import { useTranslations } from "next-intl";
 export interface IConfirmationModal extends Omit<ModalProps, "slots"> {
   onConfirm: (callback: Dispatch<SetStateAction<boolean>>) => void;
   onToggle: (callback: Dispatch<SetStateAction<boolean>>) => void;
+  handleReject?: () => void;
+  confirmButtonText?: string;
+  rejectButtonText?: string;
   isPermanentOpen?: boolean;
   confirmLoading?: boolean;
   isHintShown?: boolean;
@@ -28,9 +31,12 @@ export const ConfirmationModal = ({
   onConfirm,
   slots,
   children,
+  handleReject,
   confirmLoading,
   isPermanentOpen,
   confirmButtonType,
+  confirmButtonText = "Yes",
+  rejectButtonText = "No",
   isHintShown = true,
   hintTitle = "Do you really want to delete this record?",
   hintText = "",
@@ -47,6 +53,10 @@ export const ConfirmationModal = ({
   const handleConfirm = () => {
     !onConfirm && setOpen(false);
     onConfirm && onConfirm(setOpen);
+  };
+
+  const handleRejectClick = () => {
+    handleReject && handleReject();
   };
 
   const handleToggle = () => {
@@ -104,10 +114,16 @@ export const ConfirmationModal = ({
                     onClick={handleConfirm}
                     loading={confirmLoading}
                   >
-                    {t("Yes")}
+                    {t(confirmButtonText)}
                   </Button>
-                  <Button buttonType="secondary" onClick={handleToggle}>
-                    {t("No")}
+                  <Button
+                    buttonType="secondary"
+                    onClick={() => {
+                      handleToggle();
+                      handleReject && handleRejectClick();
+                    }}
+                  >
+                    {t(rejectButtonText)}
                   </Button>
                 </>
               )}

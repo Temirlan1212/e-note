@@ -2,7 +2,7 @@ import { useState, ChangeEvent, useEffect, Dispatch, SetStateAction } from "reac
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 import { ValueOf } from "next/dist/shared/lib/constants";
-import { Alert, Box, Collapse, IconButton, InputLabel, Typography } from "@mui/material";
+import { Alert, Box, Collapse, IconButton, InputLabel, Typography, useMediaQuery } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import ClearIcon from "@mui/icons-material/Clear";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
@@ -64,6 +64,17 @@ function GridTableActionsCell({
     return licenseTermUntil > currentDate;
   };
 
+  const navigateOnCreateClick = () => {
+    const url = {
+      pathname: "/applications/create",
+      query: {
+        ...router.query,
+        productId: row?.id,
+      },
+    };
+    router.push(url, undefined, { shallow: true });
+  };
+
   const handleCreateClick = async () => {
     const isNotary = profile?.group?.name === "Notary";
     const isPrivateNotary = profile?.["activeCompany.typeOfNotary"] === "private";
@@ -73,12 +84,12 @@ function GridTableActionsCell({
     if (isNotary) {
       if (isPrivateNotary) {
         const license = await handleCheckLicenseDate();
-        !!license && isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
+        !!license && isActiveNotary ? navigateOnCreateClick() : setAlertOpen(true);
       } else if (isStateNotary) {
-        isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
+        isActiveNotary ? navigateOnCreateClick() : setAlertOpen(true);
       }
     } else {
-      router.push("/applications/create");
+      navigateOnCreateClick();
     }
   };
 
@@ -106,7 +117,7 @@ function GridTableActionsCell({
 
   return (
     <Box sx={{ display: "flex", gap: "16px" }}>
-      <Button variant="contained" onClick={handleCreateClick} loading={licenseInfoLoading}>
+      <Button variant="contained" onClick={handleCreateClick} loading={licenseInfoLoading} sx={{ width: "130px" }}>
         <Typography fontSize={14} fontWeight={600}>
           {t("New application")}
         </Typography>
@@ -152,6 +163,7 @@ function GridTableActionsCell({
 }
 
 export default function TemplateList() {
+  const isMobileMedia = useMediaQuery("(max-width:800px)");
   const [tempQueryParams, setTempQueryParams] = useState<ITempQueryParams>({
     pageSize: 7,
     page: 1,
@@ -424,10 +436,12 @@ export default function TemplateList() {
             },
             {
               field: "actions",
-              type: "actions",
+              headerName: "Actions",
+              headerClassName: "pinnable",
+              width: isMobileMedia ? 100 : 320,
               sortable: false,
-              width: 320,
-              cellClassName: "actions-pinnable",
+              type: isMobileMedia ? "actions" : "string",
+              cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
               renderCell: ({ row }) => <GridTableActionsCell row={row} setAlertOpen={setAlertOpen} />,
             },
           ]}

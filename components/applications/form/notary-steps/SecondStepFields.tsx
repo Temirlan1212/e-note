@@ -13,6 +13,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import { criteriaFieldNames } from "@/pages/api/dictionaries/document-type";
 import Autocomplete from "@/components/ui/Autocomplete";
+import { useRouter } from "next/router";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -24,6 +25,7 @@ export interface IStepFieldsProps {
 const fields = ["product"] as const;
 
 export default function SecondStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+  const router = useRouter();
   const profile = useProfileStore.getState();
   const t = useTranslations();
 
@@ -39,7 +41,6 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   } = form;
 
   const productId = watch("product.id");
-
   const [loading, setLoading] = useState(false);
   const [selectedInput, setSelectedInput] = useState<"my" | "system" | null>(null);
 
@@ -123,6 +124,8 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   };
 
   useEffectOnce(async () => {
+    const productIdQuery = Number(router.query?.productId);
+    if (productIdQuery != null && productId == null) setValue("product", { id: productIdQuery });
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
 

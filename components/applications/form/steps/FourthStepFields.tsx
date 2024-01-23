@@ -384,7 +384,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
       <Box
         width="fit-content"
         position="sticky"
-        bottom="20px"
+        bottom="30px"
         display="flex"
         gap="20px"
         flexDirection={{ xs: "column", md: "row" }}

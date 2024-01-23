@@ -15,6 +15,7 @@ export interface INotary {
   "partner.fullName": string;
   "partner.linkedUser.id": number;
   name: string;
+  licenseTermUntil: string;
 }
 
 export interface INotaryInfoData {
@@ -79,4 +80,6 @@ export interface INotaryFilterData {
   region: number | null;
   typeOfNotary: string | null;
   workingDay: string | null;
+  roundClock?: boolean;
+  departure?: boolean;
 }

@@ -9,7 +9,7 @@ import { Box, BoxProps, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 import useFetch from "@/hooks/useFetch";
-import { Dispatch, HTMLAttributes, SetStateAction, useState } from "react";
+import { Dispatch, HTMLAttributes, SetStateAction, useEffect, useState } from "react";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import Radio from "@/components/ui/Radio";
 import { Subscription } from "react-hook-form/dist/utils/createSubject";
@@ -78,6 +78,10 @@ export interface IDynamicFormElementProps extends HTMLAttributes<HTMLElement> {
   color?: string;
   props?: {
     box?: BoxProps;
+  };
+  pattern?: {
+    value: RegExp;
+    message: string;
   };
 }
 
@@ -151,6 +155,7 @@ const getField = (
 
   let inputProps = {};
   if (!!maxLength?.freeze) inputProps = { ...inputProps, maxLength: maxLength?.value };
+
   const types = {
     String: (
       <Input
@@ -160,7 +165,10 @@ const getField = (
         helperText={errorMessage}
         onBlur={field.onBlur}
         value={getValue("String", field.value)}
-        onChange={(e) => field.onChange(String(e.target.value))}
+        onChange={(e) => {
+          const value = String(e.target.value);
+          field.onChange(value);
+        }}
         disabled={disabled}
         ref={field.ref}
         inputProps={inputProps}
@@ -373,6 +381,12 @@ const getConditionRuleValue = (condition: TCondition, form: UseFormReturn<any>, 
   return res?.length > 0 ? res.some((item) => !!item) : null;
 };
 
+const tranlsationPatterns = {
+  bd: "(bd-translation)",
+};
+
+const escapeRegExp = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
   const {
     form,
@@ -391,6 +405,7 @@ const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
     objectName,
     minLength,
     maxLength,
+    pattern,
     ...rest
   } = props;
 
@@ -470,6 +485,23 @@ const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
     };
   }
 
+  if (!!pattern?.value) {
+    const message = pattern?.message || (pattern as any)?.[`message_${locale}`];
+    validations = {
+      ...validations,
+      pattern: {
+        value: new RegExp(pattern?.value ?? ""),
+        message: message
+          ? `${tranlsationPatterns.bd} ${(pattern as any)?.[`message_${locale}`] ?? pattern?.message ?? ""}`
+          : "",
+      },
+    };
+  }
+
+  useEffect(() => {
+    form.trigger([getName(path, fieldName)]);
+  }, [locale]);
+
   return (
     <Controller
       control={form.control}
@@ -477,7 +509,14 @@ const DynamicFormElement: React.FC<IDynamicFormElementProps> = (props) => {
       defaultValue={getValue(type, defaultValue)}
       rules={validations}
       render={({ field, fieldState }) => {
-        let errorMessage = fieldState.error?.message ? t(fieldState.error.message) : fieldState.error?.message ?? "";
+        const fieldErrMessage = fieldState.error?.message;
+        const isBdErrorMessage = fieldErrMessage?.includes(tranlsationPatterns.bd);
+
+        let errorMessage = fieldErrMessage
+          ? isBdErrorMessage
+            ? fieldErrMessage.replace(new RegExp(escapeRegExp(tranlsationPatterns.bd) + " "), "")
+            : t(fieldErrMessage)
+          : "";
 
         if (["Date", "DateTime", "Time"].includes(type)) {
           if (typeof field.value === "object" && field.value == "Invalid Date") {

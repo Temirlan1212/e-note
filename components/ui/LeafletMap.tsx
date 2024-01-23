@@ -1,6 +1,6 @@
 import { FC, ReactNode, useMemo } from "react";
-import type { MapOptions } from "leaflet";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import type { LeafletMouseEvent, MapOptions } from "leaflet";
+import { MapContainer, Marker, Popup, TileLayer, useMapEvents } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { Icon } from "leaflet";
 
@@ -8,6 +8,8 @@ import "leaflet/dist/leaflet.css";
 
 interface ILeafletMapProps extends MapOptions {
   markers?: IMarker[];
+  isSearchCoordinates?: boolean;
+  onCoordinatesChange?: (coordinates: { lat: number; lng: number; zoom: number }) => void;
   children?: ReactNode;
   style?: any;
 }
@@ -16,6 +18,7 @@ export interface IMarker {
   coordinates: {
     lat: string;
     lng: string;
+    zoom?: number;
   };
   popup?: ReactNode;
 }
@@ -42,12 +45,18 @@ const createMarker = (data: IMarker, index: number) => {
 
   return (
     <Marker key={index} position={position} icon={customIcon}>
-      {data.popup && <Popup>{data.popup}</Popup>}
+      {data?.popup && <Popup>{data.popup}</Popup>}
     </Marker>
   );
 };
 
-const LeafletMap: FC<ILeafletMapProps> = ({ children, markers, ...options }) => {
+const LeafletMap: FC<ILeafletMapProps> = ({
+  children,
+  markers,
+  isSearchCoordinates,
+  onCoordinatesChange,
+  ...options
+}) => {
   const marker = useMemo(() => {
     if (markers != null) {
       return markers.map((data: IMarker, index: number) => createMarker(data, index));
@@ -55,8 +64,25 @@ const LeafletMap: FC<ILeafletMapProps> = ({ children, markers, ...options }) => 
     return [];
   }, [markers]);
 
+  const MapEventWrapper = () => {
+    const map = useMapEvents({
+      click: (event: LeafletMouseEvent) => {
+        if (isSearchCoordinates && onCoordinatesChange) {
+          onCoordinatesChange({
+            lat: parseFloat(event.latlng.lat.toFixed(6)),
+            lng: parseFloat(event.latlng.lng.toFixed(6)),
+            zoom: map.getZoom(),
+          });
+        }
+      },
+    });
+
+    return null;
+  };
+
   return (
     <MapContainer maxZoom={18} center={options.center || [42.8777895, 74.6066926]} {...options}>
+      <MapEventWrapper />
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"

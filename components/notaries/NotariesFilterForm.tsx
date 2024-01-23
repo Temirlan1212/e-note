@@ -1,15 +1,16 @@
 import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
 import { INotaryDistrict } from "@/models/notary-district";
 import { Box, InputLabel } from "@mui/material";
 import Autocomplete from "@/components/ui/Autocomplete";
-import Area from "@/components/fields/Area";
-import { INotariesSchema } from "@/validator-schemas/notaries";
 import Button from "@/components/ui/Button";
+import Area from "@/components/fields/Area";
+import WorkMode from "@/components/fields/WorkMode";
+import { INotariesSchema } from "@/validator-schemas/notaries";
 import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import EraserIcon from "@/public/icons/eraser.svg";
-import Radio from "@/components/ui/Radio";
 
 export interface INotariesFilterForm {
   form: UseFormReturn<INotariesSchema>;
@@ -33,6 +34,13 @@ export default function NotariesFilterForm({ form, onFormSubmit, onFormReset }: 
   const { trigger, control, watch } = form;
 
   const city = watch("city");
+  const departure = watch("departure");
+  const district = watch("district");
+  const notaryDistrict = watch("notaryDistrict");
+  const region = watch("region");
+  const roundClock = watch("roundClock");
+  const typeOfNotary = watch("typeOfNotary");
+  const workingDay = watch("workingDay");
 
   const { data: notaryDistrictDictionary, loading: notaryDistrictDictionaryLoading } = useFetch(
     city != null ? `/api/dictionaries/notary-districts?cityId=${city.id}` : "",
@@ -58,6 +66,15 @@ export default function NotariesFilterForm({ form, onFormSubmit, onFormReset }: 
       placeholder: t("Choose working days"),
     },
   ] as const;
+
+  const workModeNames = {
+    roundClock: "roundClock",
+    departure: "departure",
+  };
+
+  useEffectOnce(() => {
+    onFormSubmit && form.handleSubmit(onFormSubmit)();
+  }, [departure, district, notaryDistrict, region, roundClock, typeOfNotary, workingDay, city]);
 
   return (
     <Box
@@ -152,21 +169,7 @@ export default function NotariesFilterForm({ form, onFormSubmit, onFormReset }: 
         </Box>
       </Box>
 
-      <Controller
-        name="workMode"
-        control={control}
-        render={({ field }) => (
-          <Radio
-            labelField="name"
-            row
-            {...field}
-            data={[
-              { name: t("Around the clock"), value: "roundClock" },
-              { name: t("Visiting"), value: "checkOut" },
-            ]}
-          />
-        )}
-      />
+      <WorkMode form={form} names={workModeNames} />
 
       <Box display="flex" gap="30px" flexDirection={{ xs: "column", md: "row" }} width={{ sx: "100%", md: "60%" }}>
         <Button

@@ -60,6 +60,10 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     values: data?.status === 0 && data?.data[0]?.id != null ? data.data[0] : undefined,
   });
 
+  const handleRemoveFormField = (field: keyof IApplicationSchema) => {
+    form.unregister(field);
+  };
+
   const dynamicForm = useForm({
     mode: "onTouched",
     values:
@@ -145,6 +149,10 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
 
   const selectTemplateFromMade = form.watch("selectTemplateFromMade");
   const oneSideAction = form.watch("product.oneSideAction");
+
+  useEffectOnce(() => {
+    !!oneSideAction && handleRemoveFormField("members");
+  }, [oneSideAction]);
 
   const steps =
     userData?.group?.id === 4

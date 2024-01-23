@@ -2,7 +2,7 @@ import { useState, ChangeEvent, Dispatch, SetStateAction, useEffect } from "reac
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
 import { ValueOf } from "next/dist/shared/lib/constants";
-import { Alert, Box, Collapse, IconButton, Tooltip, Typography } from "@mui/material";
+import { Alert, Box, Collapse, IconButton, Tooltip, Typography, useMediaQuery } from "@mui/material";
 import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import Pagination from "@/components/ui/Pagination";
@@ -67,16 +67,27 @@ function GridTableActionsCell({
     return licenseTermUntil > currentDate;
   };
 
+  const navigateOnCreateClick = () => {
+    const url = {
+      pathname: "/applications/create",
+      query: {
+        ...router.query,
+        productId: row?.id,
+      },
+    };
+    router.push(url, undefined, { shallow: true });
+  };
+
   const handleCreateClick = async () => {
     if (isNotary) {
       if (isPrivateNotary) {
         const license = await handleCheckLicenseDate();
-        !!license && isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
+        !!license && isActiveNotary ? navigateOnCreateClick() : setAlertOpen(true);
       } else if (isStateNotary) {
-        isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
+        isActiveNotary ? navigateOnCreateClick() : setAlertOpen(true);
       }
     } else {
-      router.push("/applications/create");
+      navigateOnCreateClick();
     }
   };
 
@@ -149,6 +160,7 @@ function GridTableActionsCell({
 }
 
 export default function TemplateList() {
+  const isMobileMedia = useMediaQuery("(max-width:800px)");
   const profile = useProfileStore((state) => state.getUserData());
   const [tempQueryParams, setTempQueryParams] = useState<ITempQueryParams>({
     pageSize: 7,
@@ -423,10 +435,12 @@ export default function TemplateList() {
             },
             {
               field: "actions",
-              type: "actions",
+              headerName: "Actions",
+              headerClassName: "pinnable",
               sortable: false,
               width: 150,
-              cellClassName: "actions-pinnable",
+              type: isMobileMedia ? "actions" : "string",
+              cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
               renderCell: ({ row }) => <GridTableActionsCell row={row} onDelete={update} setAlertOpen={setAlertOpen} />,
             },
           ]}

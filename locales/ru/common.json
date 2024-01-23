@@ -275,5 +275,9 @@
   "Don't show it anymore": "Больше не показывать",
   "The electronic Notary of the Kyrgyz Republic requests your permission": "Электронный нотариат КР запрашивает у вас разрешение",
   "Allow collection": "Разрешить сбор",
-  "Do not allow collection": "Не разрешать сбор"
+  "Do not allow collection": "Не разрешать сбор",
+  "Set": "Установить",
+  "Open map": "Открыть карту",
+  "Specify my location": "Указать мое местоположение",
+  "The website is denied access to the location or another error occurred": "Веб-сайту отказано в доступе к местоположению или произошла другая ошибка"
 }

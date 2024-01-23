@@ -29,6 +29,7 @@ const fields: string[] = [
   "isToPrintLineSubTotal",
   "orderNumber",
   "currency",
+  "notaryDocumentSignDate",
 ];
 
 const related: Record<string, typeof fields> = {
@@ -54,6 +55,7 @@ const related: Record<string, typeof fields> = {
     "mainAddress.region",
     "mainAddress.district",
     "mainAddress.city",
+    "mainAddress.city.name",
     "mainAddress.addressL4",
     "mainAddress.addressL3",
     "mainAddress.addressL2",
@@ -102,6 +104,7 @@ const related: Record<string, typeof fields> = {
     "mainAddress.region",
     "mainAddress.district",
     "mainAddress.city",
+    "mainAddress.city.name",
     "mainAddress.addressL4",
     "mainAddress.addressL3",
     "mainAddress.addressL2",
@@ -124,6 +127,9 @@ const related: Record<string, typeof fields> = {
     "disabled",
     "subjectRole",
     "picture",
+    "maritalStatus",
+    "nationality",
+    "passportStatus",
   ],
   documentInfo: ["token", "pdfLink", "editUrl", "fileName"],
 };

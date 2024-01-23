@@ -188,6 +188,10 @@ export default function PersonalData({
                     { id: 1, name: t("Juridical person") },
                   ]}
                   {...field}
+                  onChange={(e) => {
+                    field.onChange(e.target.value);
+                    form.clearErrors();
+                  }}
                   value={field.value != null ? field.value : ""}
                 />
               )}

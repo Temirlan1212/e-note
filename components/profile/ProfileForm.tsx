@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { PermIdentity } from "@mui/icons-material";
 import {
   Alert,
@@ -35,6 +35,7 @@ import Address from "@/components/fields/Address";
 import License from "@/components/fields/License";
 import Hint from "@/components/ui/Hint";
 import Contact from "@/components/fields/Contact";
+import FullName from "@/components/fields/FullName";
 import Coordinates from "@/components/fields/Coordinates";
 import ExpandingFields from "../fields/ExpandingFields";
 import ProfileWorkingDays from "./ProfileWorkingDays";
@@ -49,6 +50,7 @@ interface IExtendedUserData extends IUserData {
 
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const t = useTranslations();
+  const locale = useLocale();
   const convert = useConvert();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -145,6 +147,13 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     departure: "activeCompany.departure",
   };
 
+  const personalDataNames = {
+    firstName: "partner.firstName",
+    lastName: "partner.lastName",
+    middleName: "partner.middleName",
+    code: "code",
+  };
+
   const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     setSelectedImage(file);
@@ -154,11 +163,10 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
       const res = await checkFace("/api/check-face", { image: await convert.blob.toBase64Async(blob) });
 
       if (res) {
-        const isFaceDetected = res?.data?.message === "Face detected";
-        const isSingleFace = res?.data?.face_count === 1;
+        const isFaceDetected = res?.data?.message_en === "Face detected";
 
-        setImagePreview(isFaceDetected && isSingleFace ? URL.createObjectURL(file) : null);
-        setAlertOpen(!isFaceDetected || !isSingleFace);
+        setImagePreview(isFaceDetected ? URL.createObjectURL(file) : null);
+        setAlertOpen(true);
       }
     }
   };
@@ -245,17 +253,6 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     formatLicenseDate();
   }, [userData]);
 
-  const checkFaceErrorMessage = (message: string, faceCount?: number) => {
-    switch (message) {
-      case "Face detected":
-        return faceCount === 1 ? "Face detected" : "Something went wrong";
-      case "No face detected in the image":
-        return "No face detected in the image";
-      default:
-        return "Something went wrong";
-    }
-  };
-
   return userDataLoading ? (
     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
       <CircularProgress />
@@ -263,8 +260,11 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   ) : (
     <Box display="flex" flexDirection="column" gap="30px">
       <Collapse in={alertOpen}>
-        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-          {t(checkFaceErrorMessage(checkFaceData?.data?.message, checkFaceData?.data?.face_count))}
+        <Alert
+          severity={checkFaceData?.data?.message_en === "Face detected" ? "success" : "warning"}
+          onClose={() => setAlertOpen(false)}
+        >
+          {checkFaceData?.data?.["message_" + locale]}
         </Alert>
       </Collapse>
       <Box
@@ -354,88 +354,11 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               justifyContent: "space-between",
             }}
           >
-            <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Last name")}
-              </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.partner?.lastName?.message ?? false}
-                helperText={errors.partner?.lastName?.message ? t(errors.partner?.lastName?.message) : ""}
-                register={form.register}
-                name="partner.lastName"
-              />
-            </FormControl>
-            <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("First name")}
-              </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.partner?.firstName?.message ?? false}
-                helperText={errors.partner?.firstName?.message ? t(errors.partner?.firstName?.message) : ""}
-                register={form.register}
-                name="partner.firstName"
-              />
-            </FormControl>
-            <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Middle name")}
-              </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.partner?.middleName?.message ?? false}
-                helperText={errors.partner?.middleName?.message ? t(errors.partner?.middleName?.message) : ""}
-                register={form.register}
-                name="partner.middleName"
-              />
-            </FormControl>
-            <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Username")}
-              </InputLabel>
-              <Input fullWidth register={form.register} name="code" disabled />
-            </FormControl>
+            <FullName
+              form={form}
+              names={personalDataNames}
+              sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
+            />
           </Box>
         </Box>
 
@@ -465,7 +388,11 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               },
             }}
           >
-            <Contact form={form} names={contactNames} boxSx={{ width: "100%" }} />
+            <Contact
+              form={form}
+              names={contactNames}
+              sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
+            />
           </Box>
         </Box>
 
@@ -504,7 +431,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                     names={addressNames}
                     withNotaryDistrict={true}
                     getAllNotaryDistricts={true}
-                    boxSx={{ width: "100%" }}
+                    sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
                   />
                 </Box>
               </Box>
@@ -548,7 +475,12 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Coordinates form={form} names={coordinateNames} boxSx={{ width: "100%" }} />
+                  <Coordinates
+                    form={form}
+                    names={coordinateNames}
+                    withMap={true}
+                    sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
+                  />
                 </Box>
               </Box>
 
@@ -579,7 +511,12 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
                     },
                   }}
                 >
-                  <License form={form} names={licenseNames} disableFields={true} />
+                  <License
+                    form={form}
+                    names={licenseNames}
+                    disableFields={true}
+                    sx={{ labelsSx: { fontWeight: "600" } }}
+                  />
                 </Box>
               </Box>
 

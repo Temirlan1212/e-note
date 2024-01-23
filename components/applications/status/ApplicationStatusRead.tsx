@@ -9,6 +9,7 @@ import { useTheme } from "@mui/material/styles";
 import { IApplication } from "@/models/application";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { INotarialAction } from "@/models/notarial-action";
+import { IPartner } from "@/models/user";
 
 interface IApplicationStatusReadProps {
   data: IApplication;
@@ -41,6 +42,26 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
     return !!translatedTitle ? translatedTitle : matchedStatus?.["title" as keyof IActionType] ?? "";
   };
 
+  const getAddressFullName = (member: IPartner) => {
+    const { mainAddress } = member || {};
+    const { region, district, city, addressL4, addressL3, addressL2 } = mainAddress || {};
+
+    const key = locale !== "en" ? "$t:name" : "name";
+    const fallbackKey = locale !== "en" ? "name" : "$t:name";
+    const formatAddressPart = (part: any) => part?.[key] || part?.[fallbackKey] || "";
+
+    const formattedRegion = formatAddressPart(region);
+    const formattedDistrict = formatAddressPart(district);
+    const formattedCity = formatAddressPart(city);
+
+    const addressParts = [
+      [formattedRegion, formattedDistrict, formattedCity].filter(Boolean).join(", "),
+      [addressL4, addressL3, addressL2].filter(Boolean).join(" "),
+    ];
+
+    return addressParts.filter(Boolean).join(", ");
+  };
+
   const titles = [
     { title: "Name", value: locale !== "en" ? data?.product?.["$t:name"] || data?.product?.name : data?.product?.name },
     { title: "StatusApplication", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
@@ -68,6 +89,10 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
         }
       : null,
     data?.cancelReasonStr ? { title: "Cancel reason str", value: data?.cancelReasonStr ?? t("not signed") } : null,
+    {
+      title: "Date of signing",
+      value: data?.notaryDocumentSignDate ? format(new Date(data?.notaryDocumentSignDate), "dd.MM.yyyy HH:mm:ss") : "",
+    },
   ].filter(Boolean);
 
   const members = data?.requester.concat(data.members);
@@ -190,7 +215,7 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
                         color: "#687C9B",
                       }}
                     >
-                      {member?.mainAddress?.fullName}
+                      {getAddressFullName(member)}
                     </Typography>
                   </Box>
                 ))}

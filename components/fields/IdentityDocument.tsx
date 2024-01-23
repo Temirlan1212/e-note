@@ -352,7 +352,7 @@ export default function IdentityDocument({
 
                 <Checkbox
                   label={field.value ? t("Valid") : t("Invalid")}
-                  disabled={disableFields}
+                  disabled={true}
                   type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                   helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   {...field}

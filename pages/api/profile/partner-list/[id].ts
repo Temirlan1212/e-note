@@ -1,22 +1,20 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-const fields: string[] = ["product.name", "product.isProductCancelled", "createdBy.partner.fullName"];
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-
-  if (req.method !== "POST" || id == null) {
+  if (req.method !== "POST") {
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + `/ws/rest/com.axelor.apps.sale.db.SaleOrder/${id}/fetch`, {
+  const response = await fetch(process.env.BACKEND_API_URL + `/ws/rest/com.axelor.apps.base.db.Company/${id}/fetch`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      fields,
+      fields: ["partnerList"],
+      ...req.body,
     }),
   });
 
