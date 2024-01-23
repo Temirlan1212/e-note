@@ -279,5 +279,7 @@
   "Allow collection": "Allow collection",
   "Do not allow collection": "Do not allow collection",
   "Set": "Set",
-  "Open map": "Open map"
+  "Open map": "Open map",
+  "Specify my location": "Specify my location",
+  "The website is denied access to the location or another error occurred": "The website is denied access to the location or another error occurred"
 }

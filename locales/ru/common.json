@@ -279,5 +279,7 @@
   "Allow collection": "Разрешить сбор",
   "Do not allow collection": "Не разрешать сбор",
   "Set": "Установить",
-  "Open map": "Открыть карту"
+  "Open map": "Открыть карту",
+  "Specify my location": "Указать мое местоположение",
+  "The website is denied access to the location or another error occurred": "Веб-сайту отказано в доступе к местоположению или произошла другая ошибка"
 }

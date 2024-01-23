@@ -4,8 +4,6 @@ import { Alert, Box, CircularProgress, Collapse, Icon, IconButton, Skeleton, Typ
 import { useTranslations } from "next-intl";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import Button from "@/components/ui/Button";
-import AddBoxIcon from "@mui/icons-material/AddBox";
-import IndeterminateCheckBoxIcon from "@mui/icons-material/IndeterminateCheckBox";
 import { IProfileState, useProfileStore } from "@/stores/profile";
 import useFetch from "@/hooks/useFetch";
 import Hint from "@/components/ui/Hint";
@@ -151,41 +149,13 @@ const Webcam: FC<IWebcamProps> = ({
             return prevProgress + 10;
           }
         });
-      }, 200);
+      }, 180);
     }
 
     return () => {
       clearInterval(timer);
     };
   }, [startTimer]);
-
-  // const handleZoomIn = () => {
-  //   if (webcamRef.current && webcamRef.current.stream) {
-  //     const videoTrack = webcamRef.current.stream.getVideoTracks()[0];
-  //     const capabilities = videoTrack.getCapabilities();
-  //
-  //     if (capabilities.aspectRatio) {
-  //       const aspectRationZoom = videoTrack.getSettings().aspectRatio || 1;
-  //       const newAspectRatio = aspectRationZoom + 1;
-  //       videoTrack.applyConstraints({ aspectRatio: newAspectRatio });
-  //     }
-  //   }
-  // };
-
-  // const handleZoomOut = () => {
-  //   if (webcamRef.current && webcamRef.current.stream) {
-  //     const videoTrack = webcamRef.current.stream.getVideoTracks()[0];
-  //     const capabilities = videoTrack.getCapabilities();
-  //
-  //     if (capabilities.aspectRatio) {
-  //       const aspectRationZoom = videoTrack.getSettings().aspectRatio || 1;
-  //       const newAspectRatio = aspectRationZoom - 1;
-  //       if (newAspectRatio > 1) {
-  //         videoTrack.applyConstraints({ aspectRatio: newAspectRatio });
-  //       }
-  //     }
-  //   }
-  // };
 
   useEffectOnce(async () => {
     const base64String = await imageData?.text();
@@ -267,14 +237,6 @@ const Webcam: FC<IWebcamProps> = ({
             </Box>
           ) : (
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              {/*<Box sx={{ width: "100%", display: "flex", justifyContent: "end" }}>*/}
-              {/*  <IconButton onClick={handleZoomIn}>*/}
-              {/*    <AddBoxIcon color={"success"} />*/}
-              {/*  </IconButton>*/}
-              {/*  <IconButton onClick={handleZoomOut}>*/}
-              {/*    <IndeterminateCheckBoxIcon color={"warning"} />*/}
-              {/*  </IconButton>*/}
-              {/*</Box>*/}
               {!(recordedChunks?.length > 0) && !isBlobUrl && variant.type === "live" && (
                 <Box
                   sx={{
