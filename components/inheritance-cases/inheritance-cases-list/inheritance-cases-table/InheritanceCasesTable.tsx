@@ -6,6 +6,7 @@ import { ActualResidenceAddress } from "./components/ActualResidenceAddress";
 import { TableActions } from "./components/TableActions";
 import { useFetchListParams } from "@/contexts/fetch-list-params";
 import { InheritanceCasesFilterValuesProps } from "@/models/inheritance-cases";
+import { QrMenu } from "@/components/qr-menu/QrMenu";
 
 interface InheritanceCasesTableProps extends Omit<IGridTableProps, "columns"> {}
 
@@ -34,6 +35,13 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
     };
 
     const columns: IGridColDef[] = [
+      {
+        field: "QR",
+        headerName: "QR",
+        width: 70,
+        sortable: false,
+        renderCell: (params: any) => <QrMenu params={params} />,
+      },
       {
         field: "notaryUniqNumber",
         headerName: "Registry number",
@@ -90,8 +98,15 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
         sortable: true,
       },
       {
-        field: "company.name",
+        field: "createdBy.fullName",
         headerName: "Created by",
+        width: 200,
+        sortable: false,
+      },
+      {
+        field: "company.name",
+        headerName: "Executor",
+        cellClassName: "executor-column",
         width: 200,
         sortable: false,
       },
