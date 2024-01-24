@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { GridTable, IFilterSubmitParams, IGridColDef, IGridTableProps } from "@/components/ui/GridTable";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
-import { useFilterValues } from "@/components/inheritance-cases/inheritance-cases-list.tsx/core/FilterValuesContext";
 
 interface HeirsTableProps extends Omit<IGridTableProps, "columns"> {}
+
+interface IAppQueryParams {
+  pageSize: number;
+  page: number;
+  sortBy: string[];
+  filterValues: Record<string, (string | number)[]>;
+}
 
 const columns: IGridColDef[] = [
   {
@@ -44,14 +50,19 @@ const columns: IGridColDef[] = [
 ];
 
 const HeirsTable = React.forwardRef<HTMLDivElement, HeirsTableProps>(({ className, ...props }, ref) => {
-  const { updateFilterValues } = useFilterValues();
+  const [queryParams, setQueryParams] = useState<IAppQueryParams>({
+    pageSize: 7,
+    page: 1,
+    sortBy: ["-creationDate"],
+    filterValues: {},
+  });
 
   const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
     const type = value.rowParams.colDef.filter?.type;
     if (type === "simple") {
       const field = value.rowParams.colDef.field;
       const filterValue = value?.value;
-      updateFilterValues(field as any, filterValue as string);
+      // updateFilterValues(field as any, filterValue as string);
     }
   };
 

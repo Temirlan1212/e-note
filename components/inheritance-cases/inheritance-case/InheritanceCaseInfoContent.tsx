@@ -14,7 +14,6 @@ import TestatorInfo from "./info/TestatorInfo";
 import { format } from "date-fns";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { IPartner } from "@/models/user";
-import { useFilterValues } from "@/components/inheritance-cases/inheritance-cases-list.tsx/core/FilterValuesContext";
 import Pagination from "@/components/ui/Pagination";
 
 interface IInheritanceCaseInfoContentProps {
@@ -43,7 +42,12 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
 
   const [filteredData, setFilteredData] = useState([]);
 
-  const { updateQueryParams, queryParams } = useFilterValues();
+  const [queryParams, setQueryParams] = useState<IAppQueryParams>({
+    pageSize: 7,
+    page: 1,
+    sortBy: ["-creationDate"],
+    filterValues: {},
+  });
 
   const { data: testatorInfo, loading: loadingTestatorInfo } = useFetch(
     inheritanceCaseInfo?.requester?.[0]?.id
@@ -270,7 +274,7 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
           <Pagination
             sx={{ display: "flex", justifyContent: "center" }}
             currentPage={queryParams.page}
-            onPageChange={(page: any) => updateQueryParams("page", page)}
+            onPageChange={(page: any) => console.log("page", page)}
             totalPages={calculateTotalPages()}
           />
         </Box>
