@@ -21,7 +21,7 @@ import ExcelIcon from "@/public/icons/excel.svg";
 import { GridValueGetterParams } from "@mui/x-data-grid";
 import { GridTable } from "@/components/ui/GridTable";
 import { FC } from "react";
-import { IInheritanceCasesSearchBarForm } from "@/validator-schemas/inheritance-cases";
+import { IInheritanceCasesListSearchBarForm } from "@/validator-schemas/inheritance-cases";
 import { useForm } from "react-hook-form";
 
 interface ITestatorInfoProps {

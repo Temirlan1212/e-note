@@ -1,7 +1,7 @@
 import React from "react";
 import { GridTable, IFilterSubmitParams, IGridColDef, IGridTableProps } from "@/components/ui/GridTable";
 import QrCode2Icon from "@mui/icons-material/QrCode2";
-import { useFilterValues } from "@/components/inheritance-cases/core/FilterValuesContext";
+import { useFilterValues } from "@/components/inheritance-cases/inheritance-cases-list.tsx/core/FilterValuesContext";
 
 interface HeirsTableProps extends Omit<IGridTableProps, "columns"> {}
 

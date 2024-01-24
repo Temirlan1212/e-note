@@ -21,7 +21,7 @@ import ExcelIcon from "@/public/icons/excel.svg";
 import { GridValueGetterParams } from "@mui/x-data-grid";
 import { GridTable } from "@/components/ui/GridTable";
 import { FC } from "react";
-import { IInheritanceCasesSearchBarForm } from "@/validator-schemas/inheritance-cases";
+import { IInheritanceCasesListSearchBarForm } from "@/validator-schemas/inheritance-cases";
 import { useForm } from "react-hook-form";
 
 interface IInheritanceCaseInfoProps {
@@ -137,6 +137,7 @@ const InheritanceCaseInfo: FC<IInheritanceCaseInfoProps> = ({ titles }) => {
             {t("Save")}
           </Button>
           <Button
+            onClick={() => {}}
             buttonType="secondary"
             loading={false}
             sx={{
@@ -149,7 +150,6 @@ const InheritanceCaseInfo: FC<IInheritanceCaseInfoProps> = ({ titles }) => {
                 backgroundColor: "#3F5984",
               },
             }}
-            onClick={() => {}}
           >
             {t("Edit")}
           </Button>
