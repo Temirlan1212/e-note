@@ -4,11 +4,7 @@ import Link from "@/components/ui/Link";
 import { useTranslations } from "next-intl";
 import Button from "@/components/ui/Button";
 
-export const InheritanceCasesTableActions = ({
-  params,
-}: {
-  params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>;
-}) => {
+export const TableActions = ({ params }: { params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender> }) => {
   const t = useTranslations();
   return (
     <Box display="flex" alignItems="center">
