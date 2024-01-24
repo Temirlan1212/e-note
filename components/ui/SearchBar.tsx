@@ -9,11 +9,12 @@ type ISearchBarProps = IInputProps & {
   loading?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
   boxSx?: SxProps<Theme> | undefined;
+  showCloseButton?: boolean;
 };
 
 const SearchBar: React.FC<ISearchBarProps> = (props) => {
   const t = useTranslations();
-  const { loading, onClick, boxSx, ...rest } = props;
+  const { loading, onClick, boxSx, showCloseButton = false, ...rest } = props;
 
   return (
     <Box display="flex" sx={boxSx} position="relative">
@@ -33,29 +34,31 @@ const SearchBar: React.FC<ISearchBarProps> = (props) => {
 
       <Box
         sx={{
-          height: "43px",
+          height: "37px",
           position: "absolute",
-          right: 0,
-          top: 0,
+          right: "3px",
+          top: "3px",
           display: "flex",
           alignItems: "center",
         }}
       >
-        <Box>
-          <IconButton
-            type="reset"
-            sx={{
-              height: "30px",
-              width: "27px",
-              background: "white",
-              borderRadius: "0px",
-              opacity: 0.6,
-              "&:hover": { background: "white", opacity: 1 },
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </Box>
+        {showCloseButton && (
+          <Box>
+            <IconButton
+              type="reset"
+              sx={{
+                height: "30px",
+                width: "27px",
+                background: "white",
+                borderRadius: "0px",
+                opacity: 0.6,
+                "&:hover": { background: "white", opacity: 1 },
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+        )}
 
         <Button
           sx={{
