@@ -1,23 +1,21 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 
 import { Box, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 
-import SortSelect from "../ui/Select";
+import SortSelect from "../../ui/Select";
 import HeirAccordion from "./HeirAccordion";
 
-type IHeirFoundedDataProps = {};
+type IHeirFoundedDataProps = {
+  foundedData: any;
+};
 
 const heirCount = 4;
 
-const HeirFoundedData = (props: IHeirFoundedDataProps) => {
+const HeirFoundedData: FC<IHeirFoundedDataProps> = ({ foundedData }) => {
   const t = useTranslations();
 
-  const sortOptionsData = [
-    { value: 10, label: "В алфавитном порядке" },
-    { value: 20, label: "В алфавитном порядке" },
-    { value: 30, label: "В алфавитном порядке" },
-  ];
+  const sortOptionsData = [{ value: 10, label: "В алфавитном порядке" }];
 
   const [sortOptions, setSortOptions] = useState(sortOptionsData[0].value);
 
@@ -58,7 +56,7 @@ const HeirFoundedData = (props: IHeirFoundedDataProps) => {
             ...typographyStyles,
           }}
         >
-          {t("According to your query,")} <span style={{ color: "#1BAA75" }}>{heirCount}</span>{" "}
+          {t("According to your query,")} <span style={{ color: "#1BAA75" }}>{foundedData.length}</span>{" "}
           {t("inheritors", { count: heirCount })}
         </Typography>
 
@@ -81,11 +79,12 @@ const HeirFoundedData = (props: IHeirFoundedDataProps) => {
             defaultValue={sortOptions}
             onChange={handleSortChange}
             selectType="secondary"
+            disabled={true}
           />
         </Box>
       </Box>
       <Box>
-        <HeirAccordion />
+        <HeirAccordion foundedData={foundedData} />
       </Box>
     </Box>
   );

@@ -6,7 +6,7 @@ import Accordion from "@/components/ui/Accordion";
 import React from "react";
 import Image from "next/image";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
-import HeirNotFoundData from "@/components/search-for-heirs/HeirNotFoundData";
+import HeirNotFoundData from "@/components/search-for-heirs/components/HeirNotFoundData";
 
 interface QAData extends FetchResponseBody {
   data: {

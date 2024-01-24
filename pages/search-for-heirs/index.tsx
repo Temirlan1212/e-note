@@ -3,17 +3,12 @@ import { GetStaticPropsContext } from "next";
 import { useTranslations } from "next-intl";
 import Head from "next/head";
 
-import SearchForm from "@/components/search-for-heirs/HeirSearchForm";
-import HeirNotFoundData from "@/components/search-for-heirs/HeirNotFoundData";
-import HeirFoundedData from "@/components/search-for-heirs/HeirFoundedData";
-import InProcess from "@/components/in-process/InProcess";
+import HeirSearchContent from "@/components/search-for-heirs/HeirSearchContent";
 
-type ISearchForHeirsProps = {};
-
-const SearchForHeirs = (props: ISearchForHeirsProps) => {
+export default function SearchForHeirs() {
   const t = useTranslations();
 
-  const data = [2];
+  const data = [0];
 
   return (
     <>
@@ -22,7 +17,7 @@ const SearchForHeirs = (props: ISearchForHeirsProps) => {
       </Head>
 
       <Container sx={{ padding: "80px 15px" }}>
-        {/* <Typography
+        <Typography
           sx={{
             fontSize: {
               md: 36,
@@ -33,16 +28,12 @@ const SearchForHeirs = (props: ISearchForHeirsProps) => {
           }}
         >
           {t("Search for heirs")}
-        </Typography> 
-         <SearchForm />
-        {data.length ? <HeirFoundedData /> : <HeirNotFoundData />} */}
-        <InProcess />
+        </Typography>
+        <HeirSearchContent />
       </Container>
     </>
   );
-};
-
-export default SearchForHeirs;
+}
 
 export async function getStaticProps(context: GetStaticPropsContext) {
   return {
