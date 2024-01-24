@@ -68,6 +68,12 @@ export const routes: IRoute[] = [
         type: "menu",
         icon: "ReceiptLong",
       },
+      {
+        title: "Register of wills",
+        link: "/wills",
+        type: "menu",
+        icon: "BusinessCenter",
+      },
       // {
       //   title: "Black list",
       //   link: "/black-list",
