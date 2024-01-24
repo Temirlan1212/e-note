@@ -282,5 +282,10 @@
   "Set": "Коюу",
   "Open map": "Картаны ачуу",
   "Specify my location": "Менин жайгашкан жеримди көрсөтүү",
-  "The website is denied access to the location or another error occurred": "Веб-сайтка сиздин жайгашкан жериңизди алууга тыюу салынган же дагы башка ката кетирилген"
+  "The website is denied access to the location or another error occurred": "Веб-сайтка сиздин жайгашкан жериңизди алууга тыюу салынган же дагы башка ката кетирилген",
+  "Opening date": "Ачылыш датасы",
+  "Fullname": "ФИО",
+  "Date of application": "Өтүнмөнүн датасы",
+  "Unique number": "Уникалдуу номер",
+  "Will": "Керээз"
 }

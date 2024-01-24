@@ -282,5 +282,10 @@
   "Set": "Установить",
   "Open map": "Открыть карту",
   "Specify my location": "Указать мое местоположение",
-  "The website is denied access to the location or another error occurred": "Веб-сайту отказано в доступе к местоположению или произошла другая ошибка"
+  "The website is denied access to the location or another error occurred": "Веб-сайту отказано в доступе к местоположению или произошла другая ошибка",
+  "Opening date": "Дата открытия",
+  "Fullname": "ФИО",
+  "Date of application": "Дата заявления",
+  "Unique number": "Уникальный номер",
+  "Will": "Завещание"
 }

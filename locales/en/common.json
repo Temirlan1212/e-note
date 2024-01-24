@@ -282,5 +282,10 @@
   "Set": "Set",
   "Open map": "Open map",
   "Specify my location": "Specify my location",
-  "The website is denied access to the location or another error occurred": "The website is denied access to the location or another error occurred"
+  "The website is denied access to the location or another error occurred": "The website is denied access to the location or another error occurred",
+  "Opening date": "Opening date",
+  "Fullname": "Full name",
+  "Date of application": "Date of application",
+  "Unique number": "Unique number",
+  "Will": "Will"
 }
