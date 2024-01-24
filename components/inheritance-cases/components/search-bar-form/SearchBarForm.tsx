@@ -25,7 +25,7 @@ const SearchBarForm = React.forwardRef<
         }}
       >
         <Grid item xs={12} sm={12} md={9} sx={{ alignSelf: "stretch" }}>
-          <SearchBar name="keyWord" register={form.register} />
+          <SearchBar name="keyWord" register={form.register} showCloseButton />
         </Grid>
 
         <Grid item xs={12} sm={6} md={3}>
