@@ -178,7 +178,7 @@ const Webcam: FC<IWebcamProps> = ({
   return (
     <Box display="flex" flexDirection="column" gap="10px">
       <Collapse in={alertOpen}>
-        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+        <Alert severity="error" sx={{ fontSize: "16px", fontWeight: 600 }} onClose={() => setAlertOpen(false)}>
           {t(alertText)}
         </Alert>
       </Collapse>
@@ -249,7 +249,7 @@ const Webcam: FC<IWebcamProps> = ({
                     style={{
                       display: recordedChunks?.length > 0 ? "none" : "block",
                       borderRadius: "50%",
-                      border: "2px solid #000",
+                      border: `2px solid ${alertOpen ? "#d32f2f" : "#000"}`,
                       objectFit: "cover",
                       width: "100%",
                       height: "100%",
