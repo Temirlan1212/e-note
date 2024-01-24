@@ -287,5 +287,6 @@
   "Fullname": "ФИО",
   "Date of application": "Дата заявления",
   "Unique number": "Уникальный номер",
-  "Will": "Завещание"
+  "Will": "Завещание",
+  "not assigned": "не присвоен"
 }

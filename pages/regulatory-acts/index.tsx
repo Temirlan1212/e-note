@@ -7,7 +7,7 @@ import Head from "next/head";
 import { GetStaticPropsContext } from "next";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { useRouter } from "next/router";
-import HeirNotFoundData from "@/components/search-for-heirs/HeirNotFoundData";
+import HeirNotFoundData from "@/components/search-for-heirs/components/HeirNotFoundData";
 
 interface IRegulatoryActs {
   title: string;

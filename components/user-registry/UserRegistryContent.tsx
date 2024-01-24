@@ -9,7 +9,7 @@ import Button from "../ui/Button";
 import useFetch from "@/hooks/useFetch";
 import { ValueOf } from "next/dist/shared/lib/constants";
 import { useForm } from "react-hook-form";
-import HeirNotFoundData from "@/components/search-for-heirs/HeirNotFoundData";
+import HeirNotFoundData from "@/components/search-for-heirs/components/HeirNotFoundData";
 import { GridSortModel } from "@mui/x-data-grid";
 import SearchBar from "@/components/ui/SearchBar";
 import ExcelIcon from "@/public/icons/excel.svg";

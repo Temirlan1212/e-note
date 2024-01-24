@@ -3,7 +3,7 @@ import { ValueOf } from "next/dist/shared/lib/constants";
 import { useTranslations } from "next-intl";
 import { Box, IconButton, Typography } from "@mui/material";
 import useFetch from "@/hooks/useFetch";
-import HeirNotFoundData from "../search-for-heirs/HeirNotFoundData";
+import HeirNotFoundData from "../search-for-heirs/components/HeirNotFoundData";
 import { useForm } from "react-hook-form";
 import { INotariesSchema } from "@/validator-schemas/notaries";
 import SearchBar from "@/components/ui/SearchBar";
