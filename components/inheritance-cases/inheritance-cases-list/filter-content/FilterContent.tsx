@@ -5,15 +5,15 @@ import {
   IInheritanceCasesListFilterFormFields,
   IInheritanceCasesListSearchBarForm,
 } from "@/validator-schemas/inheritance-cases";
-import SearchBarForm from "./search-bar-form/SearchBarForm";
+import SearchBarForm from "../../components/search-bar-form/SearchBarForm";
 import { useTranslations } from "next-intl";
-import SelectFormField from "./filter-form-fields/SelectFormField";
+import SelectFormField from "../../components/form-fields/SelectFormField";
 import { useFilterValues } from "../core/FilterValuesContext";
 
 interface IFilterContentProps extends BoxProps {}
 
 const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((props, ref) => {
-  const { updateFilterValues } = useFilterValues();
+  const { updateFilterValues, updateQueryParams } = useFilterValues();
 
   const t = useTranslations();
   const { className, ...rest } = props;
@@ -22,8 +22,13 @@ const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((pro
   const year = filterFormFields.watch("year");
 
   const searchBarFormSubmitHandler: SubmitHandler<IInheritanceCasesListSearchBarForm> = ({ keyWord }) => {
-    if (!!keyWord) updateFilterValues("keyWord", keyWord);
-    else updateFilterValues("keyWord", "");
+    if (!!keyWord) {
+      updateFilterValues("keyWord", keyWord);
+      updateQueryParams("requestType", "search");
+    } else {
+      updateFilterValues("keyWord", "");
+      updateQueryParams("requestType", "fetch");
+    }
   };
 
   const filterFormFieldsSubmitHandler: SubmitHandler<IInheritanceCasesListFilterFormFields> = ({ year }) => {

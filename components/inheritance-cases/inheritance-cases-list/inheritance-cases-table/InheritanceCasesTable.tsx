@@ -1,18 +1,22 @@
 import React from "react";
 import { GridTable, IFilterSubmitParams, IGridColDef, IGridTableProps } from "@/components/ui/GridTable";
 import { useFilterValues } from "../core/FilterValuesContext";
-import { useMediaQuery } from "@mui/material";
-import { InheritanceCasesTableActions } from "./InheritanceCasesTableActions";
-import { GridValueGetterParams } from "@mui/x-data-grid";
-import { useLocale } from "next-intl";
+import { Box, useMediaQuery } from "@mui/material";
+import { GridSortModel } from "@mui/x-data-grid";
+import { ActualResidenceAddress } from "./components/ActualResidenceAddress";
+import { TableActions } from "./components/TableActions";
 
 interface InheritanceCasesTableProps extends Omit<IGridTableProps, "columns"> {}
 
 const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesTableProps>(
   ({ className, ...props }, ref) => {
     const isMobileMedia = useMediaQuery("(max-width:800px)");
-    const locale = useLocale();
-    const { updateFilterValues } = useFilterValues();
+
+    const {
+      updateFilterValues,
+      updateQueryParams,
+      queryParams: { requestType },
+    } = useFilterValues();
 
     const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
       const type = value.rowParams.colDef.filter?.type;
@@ -24,6 +28,11 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
       }
     };
 
+    const handleSortByDate = async (model: GridSortModel) => {
+      const sortBy = model.map((s) => (s.sort === "asc" ? s.field : `-${s.field}`));
+      updateQueryParams("sortBy", sortBy);
+    };
+
     const columns: IGridColDef[] = [
       {
         field: "notaryUniqNumber",
@@ -32,63 +41,53 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
         sortable: false,
         filter: {
           type: "simple",
+          disabled: requestType === "search",
         },
       },
       {
         field: "requester.personalNumber",
         headerName: "PIN of the deceased",
         width: 210,
+        sortable: false,
         filter: {
           type: "simple",
+          disabled: requestType === "search",
         },
-        sortable: false,
       },
       {
         field: "requester.fullName",
         headerName: "Full name of the deceased",
         width: 270,
+        sortable: false,
         filter: {
           type: "simple",
+          disabled: requestType === "search",
         },
-        sortable: false,
       },
       {
         field: "requester.birthDate",
         headerName: "Date of birth",
         width: 180,
+        sortable: false,
       },
       {
         field: "requester.actualResidenceAddress.addressL2",
         headerName: "Place of last residence",
         width: 270,
         sortable: false,
-        valueGetter: (params: GridValueGetterParams) => {
-          const nameKey = locale !== "en" ? "$t:name" : "name";
-          const region = params.row?.["requester.mainAddress.region"]?.[nameKey] || "";
-          const district = params.row?.["requester.mainAddress.district"]?.[nameKey] || "";
-          const city = params.row?.["requester.mainAddress.city.name"] || "";
-          const addressL4 = params.row?.["requester.mainAddress.addressL4"] || "";
-          const addressL3 = params.row?.["requester.mainAddress.addressL3"] || "";
-          const addressL2 = params.row?.["requester.mainAddress.addressL2"] || "";
-          const format = (text: string | null) => {
-            if (!text) return "";
-            return `${text} /`;
-          };
-
-          return `${format(region)} ${format(district)} ${format(city)} ${format(addressL4)} ${format(
-            addressL3
-          )} ${addressL2}`;
-        },
+        renderCell: (params) => ActualResidenceAddress(params),
       },
       {
         field: "requester.deathDate",
         headerName: "Date of death",
         width: 200,
+        sortable: false,
       },
       {
         field: "creationDate",
         headerName: "Date of creation",
         width: 210,
+        sortable: true,
       },
       {
         field: "company.name",
@@ -104,29 +103,32 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
         sortable: false,
         type: isMobileMedia ? "actions" : "string",
         cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
-        renderCell: (params) => <InheritanceCasesTableActions params={params} />,
+        renderCell: (params) => <TableActions params={params} />,
       },
     ];
 
     return (
-      <GridTable
-        {...props}
-        loading={props.loading}
-        rows={props.rows}
-        columns={columns}
-        cellMaxHeight="200px"
-        rowHeight={65}
-        autoHeight
-        sx={{
-          ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": {
-            padding: "10px 16px",
-            whiteSpace: "normal",
-          },
-          ".MuiDataGrid-columnHeader": { padding: "16px" },
-          ...(props.sx || {}),
-        }}
-        onFilterSubmit={handleUpdateFilterValues}
-      />
+      <Box ref={ref}>
+        <GridTable
+          {...props}
+          loading={props.loading}
+          rows={props.rows}
+          columns={columns}
+          cellMaxHeight="200px"
+          rowHeight={65}
+          autoHeight
+          sx={{
+            ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": {
+              padding: "10px 16px",
+              whiteSpace: "normal",
+            },
+            ".MuiDataGrid-columnHeader": { padding: "16px" },
+            ...(props.sx || {}),
+          }}
+          onFilterSubmit={handleUpdateFilterValues}
+          onSortModelChange={handleSortByDate}
+        />
+      </Box>
     );
   }
 );
