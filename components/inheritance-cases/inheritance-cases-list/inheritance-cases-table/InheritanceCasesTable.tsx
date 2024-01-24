@@ -1,22 +1,22 @@
 import React from "react";
 import { GridTable, IFilterSubmitParams, IGridColDef, IGridTableProps } from "@/components/ui/GridTable";
-import { useFilterValues } from "../core/FilterValuesContext";
 import { Box, useMediaQuery } from "@mui/material";
 import { GridSortModel } from "@mui/x-data-grid";
 import { ActualResidenceAddress } from "./components/ActualResidenceAddress";
 import { TableActions } from "./components/TableActions";
+import { useFetchListParams } from "@/contexts/fetch-list-params";
+import { InheritanceCasesFilterValuesProps } from "@/models/inheritance-cases";
 
 interface InheritanceCasesTableProps extends Omit<IGridTableProps, "columns"> {}
 
 const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesTableProps>(
   ({ className, ...props }, ref) => {
     const isMobileMedia = useMediaQuery("(max-width:800px)");
-
     const {
       updateFilterValues,
-      updateQueryParams,
-      queryParams: { requestType },
-    } = useFilterValues();
+      updateParams,
+      params: { requestType },
+    } = useFetchListParams<InheritanceCasesFilterValuesProps>();
 
     const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
       const type = value.rowParams.colDef.filter?.type;
@@ -30,7 +30,7 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
 
     const handleSortByDate = async (model: GridSortModel) => {
       const sortBy = model.map((s) => (s.sort === "asc" ? s.field : `-${s.field}`));
-      updateQueryParams("sortBy", sortBy);
+      updateParams("sortBy", sortBy);
     };
 
     const columns: IGridColDef[] = [

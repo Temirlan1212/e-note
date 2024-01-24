@@ -8,12 +8,13 @@ import {
 import SearchBarForm from "../../components/search-bar-form/SearchBarForm";
 import { useTranslations } from "next-intl";
 import SelectFormField from "../../components/form-fields/SelectFormField";
-import { useFilterValues } from "../core/FilterValuesContext";
+import { useFetchListParams } from "@/contexts/fetch-list-params";
+import { InheritanceCasesFilterValuesProps } from "@/models/inheritance-cases";
 
 interface IFilterContentProps extends BoxProps {}
 
 const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((props, ref) => {
-  const { updateFilterValues, updateQueryParams } = useFilterValues();
+  const { updateFilterValues, updateParams } = useFetchListParams<InheritanceCasesFilterValuesProps>();
 
   const t = useTranslations();
   const { className, ...rest } = props;
@@ -24,10 +25,10 @@ const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((pro
   const searchBarFormSubmitHandler: SubmitHandler<IInheritanceCasesListSearchBarForm> = ({ keyWord }) => {
     if (!!keyWord) {
       updateFilterValues("keyWord", keyWord);
-      updateQueryParams("requestType", "search");
+      updateParams("requestType", "search");
     } else {
       updateFilterValues("keyWord", "");
-      updateQueryParams("requestType", "fetch");
+      updateParams("requestType", "fetch");
     }
   };
 
