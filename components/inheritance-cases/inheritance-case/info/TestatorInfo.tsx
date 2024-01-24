@@ -84,7 +84,7 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ titles }) => {
                       fontWeight: "600",
                       width: "100%",
                       minWidth: "260px",
-                      maxWidth: { md: "280px", xs: "260px" },
+                      maxWidth: { xs: "100%", md: "280px" },
                       [theme.breakpoints.down("sm")]: {
                         maxWidth: "unset",
                       },
@@ -99,7 +99,7 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ titles }) => {
                       fontWeight: "500",
                       width: "100%",
                       minWidth: "260px",
-                      maxWidth: { md: "280px", xs: "260px" },
+                      maxWidth: { xs: "100%", md: "380px" },
                       color: "#687C9B",
                       [theme.breakpoints.down("sm")]: {
                         maxWidth: "unset",

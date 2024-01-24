@@ -1,41 +1,32 @@
-import { Alert, Avatar, Box, CircularProgress, Collapse, Typography, List, ListItem, IconButton } from "@mui/material";
-import Image from "next/image";
+import { Box, CircularProgress, Typography, Grid } from "@mui/material";
 import Button from "@/components/ui/Button";
-import Rating from "@/components/ui/Rating";
-import Link from "@/components/ui/Link";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import PhoneEnabledOutlinedIcon from "@mui/icons-material/PhoneEnabledOutlined";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
-import LicenseIcon from "@/public/icons/license.svg";
-import ContentPlusIcon from "@/public/icons/content-plus.svg";
-import CloudMessageIcon from "@/public/icons/cloud-message.svg";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "@mui/material/styles";
 import ExpandingFields from "@/components/fields/ExpandingFields";
 import SearchBar from "@/components/ui/SearchBar";
-import ClearIcon from "@mui/icons-material/Clear";
-import ExcelIcon from "@/public/icons/excel.svg";
 import { GridValueGetterParams } from "@mui/x-data-grid";
 import { GridTable } from "@/components/ui/GridTable";
-import { FC, useEffect } from "react";
-import HeirsTable from "@/components/inheritance-cases/inheritance-case/heirs-table/HeirsTable";
-import SearchBarForm from "@/components/inheritance-cases/inheritance-cases-list.tsx/filter-content/search-bar-form/SearchBarForm";
+import { FC, useEffect, useState } from "react";
 import { IInheritanceCasesListSearchBarForm } from "@/validator-schemas/inheritance-cases";
 import { useForm } from "react-hook-form";
 import InheritanceCaseInfo from "./info/InheritanceCaseInfo";
 import TestatorInfo from "./info/TestatorInfo";
-import HeirInfo from "./info/HeirInfo";
 import { format } from "date-fns";
-import useEffectOnce from "@/hooks/useEffectOnce";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { IPartner } from "@/models/user";
+import { useFilterValues } from "@/components/inheritance-cases/inheritance-cases-list.tsx/core/FilterValuesContext";
+import Pagination from "@/components/ui/Pagination";
 
 interface IInheritanceCaseInfoContentProps {
   inheritanceCaseInfo?: any;
   loadingInheritanceCaseInfo?: any;
+}
+
+interface IAppQueryParams {
+  pageSize: number;
+  page: number;
+  sortBy: string[];
+  filterValues: Record<string, (string | number)[]>;
 }
 
 const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
@@ -50,11 +41,27 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
 
   const searchBarForm = useForm<IInheritanceCasesListSearchBarForm>();
 
+  const [filteredData, setFilteredData] = useState([]);
+
+  const { updateQueryParams, queryParams } = useFilterValues();
+
   const { data: testatorInfo, loading: loadingTestatorInfo } = useFetch(
     inheritanceCaseInfo?.requester?.[0]?.id
       ? "/api/inheritance-cases/testator/" + inheritanceCaseInfo?.requester?.[0]?.id
       : "",
     "POST"
+  );
+
+  const {
+    data: tableInfo,
+    loading: tableInfoLoading,
+    update: getTableInfo,
+  } = useFetch<FetchResponseBody | null>(
+    inheritanceCaseInfo?.id ? "/api/inheritance-cases/heirs-list/" + inheritanceCaseInfo?.id : "",
+    "POST",
+    {
+      body: queryParams,
+    }
   );
 
   const getAddressFullName = (data: IPartner) => {
@@ -123,12 +130,11 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
     },
   ].filter(Boolean);
 
-  const heirTitles = [
-    { title: "ПИН", value: "пусто" },
-    { title: "Фамилия", value: "пусто" },
-    { title: "Имя", value: "пусто" },
-    { title: "Отчество", value: "пусто" },
-  ].filter(Boolean);
+  const total = tableInfo?.total || 1;
+
+  const calculateTotalPages = () => {
+    return Math.ceil(Number(total) / queryParams.pageSize);
+  };
 
   return (
     <Box
@@ -180,205 +186,94 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
             </Button>
           </Box>
 
-          <SearchBarForm form={searchBarForm} />
+          <Grid
+            container
+            spacing={{ xs: 2.5, sm: 3.75, md: 3.75 }}
+            justifyContent="space-between"
+            sx={{
+              display: { xs: "flex", sm: "flex" },
+              flexDirection: { xs: "column-reverse", sm: "column", md: "unset" },
+              alignItems: { xs: "unset", sm: "flex-end", md: "unset" },
+            }}
+          >
+            <Grid item xs={12} sm={12} md={9} sx={{ alignSelf: "stretch" }}>
+              <SearchBar name="keyWord" register={searchBarForm.register} />
+            </Grid>
+
+            <Grid item xs={12} sm={6} md={3}>
+              <Button
+                variant="outlined"
+                color="success"
+                type="button"
+                sx={{
+                  height: "auto",
+                  gap: "10px",
+                  fontSize: "14px",
+                  padding: "10px 22px",
+                  width: { xs: "100%" },
+                  "&:hover": { color: "#F6F6F6" },
+                }}
+                fullWidth
+              >
+                {t("Export to excel")}
+              </Button>
+            </Grid>
+          </Grid>
         </Box>
-        {/* <GridTable
-        columns={[
-          {
-            field: "QR",
-            headerName: "QR",
-            width: 70,
-            sortable: false,
-            renderCell: (params: any) => <ApplicationListQRMenu params={params} />,
-          },
-          {
-            field: "notaryUniqNumber",
-            headerName: "Unique number",
-            width: 200,
-            sortable: isSearchedData ? false : true,
-            valueGetter: (params: GridValueGetterParams) => {
-              return params.row?.notaryUniqNumber || t("not assigned");
-            },
-          },
-          {
-            field: "requester",
-            headerName: "Requested persons-1",
-            width: 200,
-            sortable: false,
-            cellClassName: "requestersColumn",
-            valueGetter: (params: GridValueGetterParams) => {
-              const requesters = params.value.map((requester: any) => requester.fullName).join(", ");
-              return isSearchedData ? params.row?.requester?.[0]?.fullName : requesters || t("not assigned");
-            },
-          },
-          {
-            field: "members",
-            headerName: "Requested persons-2",
-            width: 200,
-            sortable: false,
-            cellClassName: "membersColumn",
-            valueGetter: (params: GridValueGetterParams) => {
-              const members = params.value.map((member: any) => member.fullName).join(", ");
-              return isSearchedData ? params.row?.member?.[0]?.fullName : members || t("not assigned");
-            },
-          },
-          // {
-          //   field: "typeNotarialAction",
-          //   headerName: "Type of action",
-          //   width: 200,
-          //   editable: false,
-          //   sortable: false,
-          //   filter: isSearchedData
-          //     ? undefined
-          //     : {
-          //         data: actionTypeData?.data ?? [],
-          //         labelField: "title_" + locale,
-          //         valueField: "value",
-          //         type: "dictionary",
-          //         field: "typeNotarialAction",
-          //       },
-          //   valueGetter: (params: GridValueGetterParams) => {
-          //     if (actionTypeData?.data != null) {
-          //       const matchedItem = actionTypeData?.data.find(
-          //         (item: IActionType) => item.value == (isSearchedData ? params.row.typeNotarialAction : params.value)
-          //       );
-          //       const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
-          //       return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
-          //     }
-          //     return params.value;
-          //   },
-          // },
-          {
-            field: "productName",
-            headerName: "Type of document",
-            width: 250,
-            editable: false,
-            sortable: false,
-            filter: isSearchedData
-              ? undefined
-              : {
-                  data: documentTypeData?.data.filter((item: any) => item.isSystem === true) ?? [],
-                  labelField: locale !== "en" ? "$t:name" : "name",
-                  valueField: "id",
-                  type: "dictionary",
-                  field: "product.id",
-                },
-            valueGetter: (params: GridValueGetterParams) => {
-              const nameKey = locale !== "en" ? "$t:name" : "name";
-              const fullNameKey = locale !== "en" ? "$t:fullName" : "fullName";
-              return isSearchedData
-                ? params.row?.product?.[fullNameKey]
-                : params.value?.[nameKey] || params.value?.["name"] || t("not assigned");
-            },
-          },
-          {
-            field: "statusSelect",
-            headerName: "Status",
-            description: "statusSelect",
-            width: 200,
-            editable: false,
-            sortable: false,
-            filter: isSearchedData
-              ? undefined
-              : {
-                  data: statusData?.data ?? [],
-                  labelField: "title_" + locale,
-                  valueField: "value",
-                  type: "dictionary",
-                  field: "statusSelect",
-                },
-            valueGetter: (params: GridValueGetterParams) => {
-              if (statusData != null) {
-                const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(params.value));
-                const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
-                return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
-              }
-              return params.value;
-            },
-          },
-          {
-            field: "createdOn",
-            headerName: "Date of creation",
-            width: 190,
-            sortable: isSearchedData ? false : true,
-            valueGetter: (params: GridValueGetterParams) => {
-              if (!params.value) return t("absent");
-              const date = new Date(params.value);
-              return isValid(date) ? format(date, "dd.MM.yyyy HH:mm") : t("absent");
-            },
-          },
-          {
-            field: "notaryDocumentSignDate",
-            headerName: "Date of signing",
-            width: 190,
-            sortable: false,
-            valueGetter: (params: GridValueGetterParams) => {
-              if (!params.value) return t("absent");
-              const date = new Date(params.value);
-              return isValid(date) ? format(date, "dd.MM.yyyy HH:mm") : t("absent");
-            },
-          },
-          {
-            field: "description",
-            headerName: "Description",
-            width: 190,
-            sortable: false,
-            cellClassName: "descriptionColumn",
-            valueGetter: (params: GridValueGetterParams) => {
-              return params.value || t("absent");
-            },
-          },
-          {
-            field: "companyName",
-            headerName: "Executor",
-            width: 200,
-            sortable: false,
-            cellClassName: "executorColumn",
-            valueGetter: (params: GridValueGetterParams) => {
-              return isSearchedData ? params.row?.createdBy?.fullName : params.value || t("not assigned");
-            },
-          },
-          {
-            field: "actions",
-            headerName: "Actions",
-            headerClassName: "pinnable",
-            width: isMobileMedia ? 250 : 350,
-            sortable: false,
-            type: isMobileMedia ? "actions" : "string",
-            cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
-            renderCell: (params) => (
-              <ApplicationListActions
-                params={params}
-                onDelete={handleDelete}
-                checkNotaryLicense={handleCheckLicenseDate}
-                setAlertOpen={setAlertOpen}
-              />
-            ),
-          },
-        ]}
-        rows={filteredData ?? []}
-        onFilterSubmit={handleFilterSubmit}
-        onSortModelChange={handleSortByDate}
-        cellMaxHeight="200px"
-        loading={loading || searchLoading}
-        sx={{
-          height: "100%",
-          ".executorColumn": {
-            color: "success.main",
-          },
-          ".descriptionColumn .MuiDataGrid-cellContent, .requestersColumn .MuiDataGrid-cellContent, .membersColumn .MuiDataGrid-cellContent":
+        <GridTable
+          columns={[
             {
-              display: "-webkit-box !important",
-              WebkitLineClamp: "2",
-              WebkitBoxOrient: "vertical !important",
-              overflow: "hidden !important",
+              field: "requester.personalNumber",
+              headerName: "ПИН",
+              width: 280,
             },
-        }}
-        rowHeight={65}
-        autoHeight
-        props={{ wrapper: { height: `${100 * filteredData?.length ?? 1}px` } }}
-      />
-      */}
+            {
+              field: "requester.fullName",
+              headerName: "ФИО",
+              width: 280,
+            },
+            {
+              field: "requester.relationships.relationshipType",
+              headerName: "Родственные отношения",
+              width: 200,
+            },
+            {
+              field: "createdOn",
+              headerName: "Дата заявления",
+              width: 220,
+            },
+            {
+              field: "requester.mainAddress.fullName",
+              headerName: "Адрес",
+              width: 180,
+            },
+            {
+              field: "requester.mobilePhone",
+              headerName: "Номер моб. телефона",
+              width: 180,
+            },
+          ]}
+          sx={{
+            height: "100%",
+            ".notaryColumn": {
+              color: "success.main",
+            },
+          }}
+          rowHeight={65}
+          cellMaxHeight="200px"
+          loading={tableInfoLoading}
+          rows={tableInfo?.data ?? []}
+          // onFilterSubmit={handleFilterSubmit}
+          // onSortModelChange={handleSortByDate}
+        />
+        <Box alignSelf="center">
+          <Pagination
+            sx={{ display: "flex", justifyContent: "center" }}
+            currentPage={queryParams.page}
+            onPageChange={(page: any) => updateQueryParams("page", page)}
+            totalPages={calculateTotalPages()}
+          />
+        </Box>
       </Box>
     </Box>
   );

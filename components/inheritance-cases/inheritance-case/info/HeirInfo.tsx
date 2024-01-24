@@ -86,11 +86,11 @@ const HeirInfo: FC<IHeirInfoProps> = ({ titles }) => {
                       fontWeight: "600",
                       width: "100%",
                       minWidth: "260px",
-                      maxWidth: { md: "280px", xs: "260px" },
+                      maxWidth: { xs: "100%", md: "380px" },
                       [theme.breakpoints.down("sm")]: {
                         maxWidth: "unset",
                       },
-                      wordBreak: "break-word",
+                      overflowWrap: "break-word",
                     }}
                   >
                     {t(el?.title)}
@@ -101,12 +101,12 @@ const HeirInfo: FC<IHeirInfoProps> = ({ titles }) => {
                       fontWeight: "500",
                       width: "100%",
                       minWidth: "260px",
-                      maxWidth: { md: "280px", xs: "260px" },
+                      maxWidth: { xs: "100%", md: "380px" },
                       color: "#687C9B",
                       [theme.breakpoints.down("sm")]: {
                         maxWidth: "unset",
                       },
-                      wordBreak: "break-all",
+                      overflowWrap: "break-word",
                     }}
                   >
                     {el?.value != null && el?.value !== "" ? el?.value : t("absent")}
