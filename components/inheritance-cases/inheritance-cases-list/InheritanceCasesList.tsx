@@ -1,24 +1,25 @@
 import { useTranslations } from "next-intl";
 import Pagination from "@/components/ui/Pagination";
 import InheritanceCasesTable from "./inheritance-cases-table/InheritanceCasesTable";
-import { useFilterValues } from "./core/FilterValuesContext";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { Box, Typography } from "@mui/material";
 import FilterContent from "./filter-content/FilterContent";
+import { useFetchListParams } from "@/contexts/fetch-list-params";
+import { InheritanceCasesFilterValuesProps } from "@/models/inheritance-cases";
 
 export default function InheritanceCasesList() {
   const t = useTranslations();
-  const { updateQueryParams, queryParams } = useFilterValues();
+  const { updateParams, params } = useFetchListParams<InheritanceCasesFilterValuesProps>();
 
   const { data, loading } = useFetch<FetchResponseBody | null>("/api/inheritance-cases", "POST", {
-    body: queryParams,
+    body: params,
   });
 
   const rows = Array.isArray(data?.data) ? data?.data ?? [] : [];
   const total = data?.total || 1;
 
   const calculateTotalPages = () => {
-    return Math.ceil(Number(total) / queryParams.pageSize);
+    return Math.ceil(Number(total) / params.pageSize);
   };
 
   return (
@@ -34,8 +35,8 @@ export default function InheritanceCasesList() {
       <Box alignSelf="center">
         <Pagination
           sx={{ display: "flex", justifyContent: "center" }}
-          currentPage={queryParams.page}
-          onPageChange={(page) => updateQueryParams("page", page)}
+          currentPage={params.page}
+          onPageChange={(page) => updateParams("page", page)}
           totalPages={calculateTotalPages()}
         />
       </Box>

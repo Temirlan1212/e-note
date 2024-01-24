@@ -2,8 +2,8 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import { FilterValuesProvider } from "@/components/inheritance-cases/inheritance-cases-list/core/FilterValuesContext";
 import InheritanceCasesList from "@/components/inheritance-cases/inheritance-cases-list/InheritanceCasesList";
+import { FetchListParamsContextProvider } from "@/contexts/fetch-list-params";
 
 export default function InheritanceCases() {
   const t = useTranslations();
@@ -22,9 +22,9 @@ export default function InheritanceCases() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        <FilterValuesProvider>
+        <FetchListParamsContextProvider>
           <InheritanceCasesList />
-        </FilterValuesProvider>
+        </FetchListParamsContextProvider>
       </Container>
     </>
   );
