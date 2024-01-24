@@ -14,7 +14,6 @@ import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
 import Pagination from "@/components/ui/Pagination";
 import Link from "@/components/ui/Link";
 import { ApplicationListActions } from "./ApplicationListActions";
-import { ApplicationListQRMenu } from "./ApplicationListQRMenu";
 import SearchBar from "@/components/ui/SearchBar";
 import ClearIcon from "@mui/icons-material/Clear";
 import { IApplication } from "@/models/application";
@@ -23,6 +22,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { IKeywordSchema, keywordSchema } from "@/validator-schemas/keyword";
 import { format, isValid } from "date-fns";
 import useEffectOnce from "@/hooks/useEffectOnce";
+import { QrMenu } from "../qr-menu/QrMenu";
 
 interface IAppQueryParams {
   pageSize: number;
@@ -318,7 +318,7 @@ export default function ApplicationList() {
             headerName: "QR",
             width: 70,
             sortable: false,
-            renderCell: (params: any) => <ApplicationListQRMenu params={params} />,
+            renderCell: (params: any) => <QrMenu params={params} />,
           },
           {
             field: "notaryUniqNumber",

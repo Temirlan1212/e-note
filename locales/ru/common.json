@@ -287,5 +287,7 @@
   "Fullname": "ФИО",
   "Date of application": "Дата заявления",
   "Unique number": "Уникальный номер",
-  "Will": "Завещание"
+  "Will": "Завещание",
+  "Register of wills": "Реестр завещаний",
+  "Scan the QR code": "Отсканируйте QR-код"
 }
