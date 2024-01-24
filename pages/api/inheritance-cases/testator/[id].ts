@@ -9,28 +9,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_API_URL + `/ws/rest/com.axelor.apps.base.db.Partner/${id}/fetch`, {
+  const response = await fetch(process.env.BACKEND_API_URL + `/ws/rest/com.axelor.apps.sale.db.SaleOrder/${id}/fetch`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      fields: [
-        "personalNumber",
-        "lastName",
-        "firstName",
-        "middleName",
-        "birthDate",
-        "deathDate",
-        "mainAddress.city",
-        "mainAddress.region",
-        "mainAddress.district",
-        "mainAddress.addressL4",
-        "mainAddress.addressL3",
-        "mainAddress.addressL2",
-        "picture",
-      ],
+      fields: ["notaryInheritanceEndDate"],
+      related: {
+        requester: [
+          "personalNumber",
+          "lastName",
+          "firstName",
+          "middleName",
+          "birthDate",
+          "deathDate",
+          "mainAddress.region",
+          "mainAddress.district",
+          "mainAddress.city.name",
+          "mainAddress.addressL4",
+          "mainAddress.adddressL3",
+          "mainAddress.adddressL2",
+          "picture",
+        ],
+      },
     }),
   });
 

@@ -11,7 +11,7 @@ import { IInheritanceCasesListSearchBarForm } from "@/validator-schemas/inherita
 import { useForm } from "react-hook-form";
 import InheritanceCaseInfo from "./info/InheritanceCaseInfo";
 import TestatorInfo from "./info/TestatorInfo";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { IPartner } from "@/models/user";
 import Pagination from "@/components/ui/Pagination";
@@ -21,7 +21,7 @@ interface IInheritanceCaseInfoContentProps {
   loadingInheritanceCaseInfo?: any;
 }
 
-interface IAppQueryParams {
+interface IQueryParams {
   pageSize: number;
   page: number;
   sortBy: string[];
@@ -42,17 +42,15 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
 
   const [filteredData, setFilteredData] = useState([]);
 
-  const [queryParams, setQueryParams] = useState<IAppQueryParams>({
+  const [queryParams, setQueryParams] = useState<IQueryParams>({
     pageSize: 7,
     page: 1,
-    sortBy: ["-creationDate"],
+    sortBy: ["-createdOn"],
     filterValues: {},
   });
 
   const { data: testatorInfo, loading: loadingTestatorInfo } = useFetch(
-    inheritanceCaseInfo?.requester?.[0]?.id
-      ? "/api/inheritance-cases/testator/" + inheritanceCaseInfo?.requester?.[0]?.id
-      : "",
+    inheritanceCaseInfo?.id ? "/api/inheritance-cases/testator/" + inheritanceCaseInfo?.id : "",
     "POST"
   );
 
@@ -90,47 +88,67 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
 
   const inheritanceCasetitles = [
     {
-      title: "Номер",
+      title: "Unique number",
       value: inheritanceCaseInfo?.notaryUniqNumber ? inheritanceCaseInfo?.notaryUniqNumber : t("absent"),
     },
     {
-      title: "Дата открытия",
+      title: "Opening date",
       value: inheritanceCaseInfo?.createdOn
         ? format(new Date(inheritanceCaseInfo?.createdOn!), "dd.MM.yyyy HH:mm:ss")
         : t("absent"),
     },
     {
-      title: "Кем создан",
+      title: "Created by",
       value: inheritanceCaseInfo?.company?.name ? inheritanceCaseInfo?.company?.name : t("absent"),
     },
   ].filter(Boolean);
 
   const testatorTitles = [
     {
-      title: "ПИН",
-      value: testatorInfo?.data?.[0]?.personalNumber ? testatorInfo?.data?.[0]?.personalNumber : t("absent"),
-    },
-    { title: "Фамилия", value: testatorInfo?.data?.[0]?.lastName ? testatorInfo?.data?.[0]?.lastName : t("absent") },
-    { title: "Имя", value: testatorInfo?.data?.[0]?.firstName ? testatorInfo?.data?.[0]?.firstName : t("absent") },
-    {
-      title: "Отчество",
-      value: testatorInfo?.data?.[0]?.middleName ? testatorInfo?.data?.[0]?.middleName : t("absent"),
+      title: "PIN",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.personalNumber
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.personalNumber
+        : t("absent"),
     },
     {
-      title: "Дата рождения",
-      value: testatorInfo?.data?.[0]?.birthDate ? testatorInfo?.data?.[0]?.birthDate : t("absent"),
+      title: "Last name",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.lastName
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.lastName
+        : t("absent"),
     },
     {
-      title: "Дата смерти",
-      value: testatorInfo?.data?.[0]?.deathDate ? testatorInfo?.data?.[0]?.deathDate : t("absent"),
+      title: "Имя",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.firstName
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.firstName
+        : t("absent"),
     },
     {
-      title: "Место последнего проживания",
+      title: "Middle name",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.middleName
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.middleName
+        : t("absent"),
+    },
+    {
+      title: "Date of birth",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.birthDate
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.birthDate
+        : t("absent"),
+    },
+    {
+      title: "Date of death",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.deathDate
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.deathDate
+        : t("absent"),
+    },
+    {
+      title: "Place of last residence",
       value: getAddressFullName(testatorInfo?.data?.[0]),
     },
     {
-      title: "Дата окончания наслед. дела",
-      value: testatorInfo?.data?.[0]?.lastName ? testatorInfo?.data?.[0]?.personalNumber : "---",
+      title: "End date of inheritance",
+      value: testatorInfo?.data?.[0]?.notaryInheritanceEndDate
+        ? testatorInfo?.data?.[0]?.notaryInheritanceEndDate
+        : "---",
     },
   ].filter(Boolean);
 
@@ -157,12 +175,12 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
       <Box sx={{ display: "flex", flexDirection: "column", gap: "25px" }}>
         {loadingTestatorInfo ? <CircularProgress /> : <TestatorInfo titles={testatorTitles} />}
 
-        <ExpandingFields title="Завещание" permanentExpand={false}>
-          Завещание
+        <ExpandingFields title="Will" permanentExpand={false}>
+          {t("Will")}
         </ExpandingFields>
 
-        <ExpandingFields title="Документы" permanentExpand={false}>
-          Документы
+        <ExpandingFields title="Document" permanentExpand={false}>
+          {t("Document")}
         </ExpandingFields>
 
         <Box sx={{ display: "flex", flexDirection: "column", gap: "25px", mt: "30px" }}>
@@ -173,7 +191,7 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
             }}
           >
             <Typography variant="h4" color="success.main" pl="16px">
-              {t("Список наследников")}
+              {t("List of heirs")}
             </Typography>
             <Button
               onClick={() => {}}
@@ -186,7 +204,7 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
                 padding: "10px 0",
               }}
             >
-              {t("Создать наследника")}
+              {t("Create an heir")}
             </Button>
           </Box>
 
@@ -228,32 +246,37 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
           columns={[
             {
               field: "requester.personalNumber",
-              headerName: "ПИН",
-              width: 280,
+              headerName: "PIN",
+              width: 180,
             },
             {
               field: "requester.fullName",
-              headerName: "ФИО",
-              width: 280,
+              headerName: "Fullname",
+              width: 320,
             },
             {
               field: "requester.relationships.relationshipType",
-              headerName: "Родственные отношения",
+              headerName: "Family relationships",
               width: 200,
             },
             {
               field: "createdOn",
-              headerName: "Дата заявления",
-              width: 220,
+              headerName: "Date of application",
+              width: 280,
+              valueGetter: (params: GridValueGetterParams) => {
+                if (!params.value) return t("absent");
+                const date = new Date(params.value);
+                return isValid(date) ? format(date, "dd.MM.yyyy HH:mm") : t("absent");
+              },
             },
             {
               field: "requester.mainAddress.fullName",
-              headerName: "Адрес",
-              width: 180,
+              headerName: "Address",
+              width: 300,
             },
             {
               field: "requester.mobilePhone",
-              headerName: "Номер моб. телефона",
+              headerName: "Phone number",
               width: 180,
             },
           ]}

@@ -1,5 +1,9 @@
 {
   "PIN of the deceased": "ПИН умершего",
   "Full name of the deceased": "ФИО умершего",
-  "Place of last residence": "Место последнего проживания"
+  "Place of last residence": "Место последнего проживания",
+  "End date of inheritance": "Дата окончания наследственного дела",
+  "List of heirs": "Список наследников",
+  "Create an heir": "Создать наследника",
+  "Family relationships": "Родственные отношения"
 }
