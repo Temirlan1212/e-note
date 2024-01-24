@@ -27,14 +27,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json(null);
   }
 
+  const requestType = req.body["requestType"];
+
+  let response: any = {};
+  if (requestType === "fetch") response = await fetchList(req);
+  if (requestType === "search") response = await fetchSearchedList(req);
+
+  if (!response.ok) {
+    return res.status(response.status).json(null);
+  }
+
+  const responseData = await response.json();
+
+  return res.status(200).json(responseData);
+}
+
+const fetchList = async (req: NextApiRequest) => {
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
-  const filterValues = req.body["filterValues"];
-  const isFilterValueEmty = () => Object.keys(filterValues).length < 1;
 
-  const requestBody: {
+  let requestBody: {
     data?: IApplicationsQueryParamsData;
   } = {};
+
+  const filterValues = req.body["filterValues"];
+  const isFilterValueEmty = () => Object.keys(filterValues).length < 1;
 
   if (!isFilterValueEmty()) {
     const _domain = Object.keys(filterValues)
@@ -90,12 +107,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ...req.body,
     }),
   });
+  return response;
+};
 
-  if (!response.ok) {
-    return res.status(response.status).json(null);
-  }
+const fetchSearchedList = async (req: NextApiRequest) => {
+  const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 5;
+  const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
+  const value = req.body["filterValues"]?.["keyWord"] || "";
 
-  const responseData = await response.json();
-
-  return res.status(200).json(responseData);
-}
+  const response = await fetch(process.env.BACKEND_API_URL + "/ws/files/full-text-search", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: req.headers["server-cookie"]?.toString() ?? "",
+    },
+    body: JSON.stringify({
+      data: {
+        offset: page,
+        limit: pageSize,
+        content: value,
+      },
+    }),
+  });
+  return response;
+};

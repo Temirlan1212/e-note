@@ -29,6 +29,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 export type IGridColDefSimple = {
   filter?: {
     type: "simple";
+    disabled?: boolean;
   };
 } & GridColDef;
 
@@ -39,6 +40,7 @@ export type IGridColDefDictionary = {
     labelField: string;
     valueField: string;
     field: string | number;
+    disabled?: boolean;
   };
 } & GridColDef;
 
@@ -319,6 +321,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
 
 export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, onFilterSubmit }) => {
   const type = rowParams.colDef.filter?.type;
+  const disabled = rowParams.colDef.filter?.disabled;
 
   let dictionaryList: Record<string, any>[] = [];
   let valueField: string = "";
@@ -336,6 +339,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
   const [formValues, setFormValues] = React.useState<Record<string, any> | null>(null);
   const [isClearDisabled, setIsClearDisabled] = React.useState<boolean>(false);
   const [submitFormValues, setSubmitFormValues] = React.useState<Record<string, any> | null>(null);
+  const [badgeCount, setBadgeCount] = React.useState<number>(0);
   const open = !!filterMenu;
 
   const {
@@ -378,6 +382,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
       setSubmitFormValues(null);
       setFilterMenu(null);
       onFilterSubmit && onFilterSubmit({ value: [], rowParams: rowParams });
+      setBadgeCount(0);
     }
   };
 
@@ -392,10 +397,13 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
       setFormValues(data);
       const keysWithTrueValues = Object.keys(data).filter((key) => data[key] === true);
       onFilterSubmit({ value: keysWithTrueValues, rowParams });
+      setBadgeCount(filterSelectionQuantity(data));
     }
 
     if (type === "simple" && onFilterSubmit) {
       onFilterSubmit({ value: data.input, rowParams });
+      if (!!data.input) setBadgeCount(1);
+      else setBadgeCount(0);
     }
 
     setFilterMenu(null);
@@ -428,7 +436,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
         <>
           <Box
             onClick={(e: any) => handleMenuOpen(e)}
-            color="success.main"
+            color={disabled ? "rgba(0, 0, 0, 0.3)" : "success.main"}
             height="fit-content"
             display="flex"
             sx={{
@@ -436,21 +444,21 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
                 opacity: "0.7",
               },
               cursor: "pointer",
+              pointerEvents: disabled ? "none" : "initial",
             }}
           >
-            {open || filterSelectionQuantity(submitFormValues) > 0 ? (
+            {open || badgeCount > 0 ? (
               <Badge
-                badgeContent={filterSelectionQuantity(submitFormValues)}
+                badgeContent={badgeCount}
                 sx={{
                   "& .MuiBadge-badge": {
-                    color: "success.main",
                     border: "1px solid",
                     background: "#fff",
                   },
                 }}
                 max={9}
               >
-                <FilterAltIcon color="success" />
+                <FilterAltIcon />
               </Badge>
             ) : (
               <FilterAltOutlinedIcon />
