@@ -1,4 +1,3 @@
-import useEffectOnce from "@/hooks/useEffectOnce";
 import {
   IInheritanceCasesListFilterFormFields,
   IInheritanceCasesListSearchBarForm,
@@ -7,10 +6,10 @@ import { ValueOf } from "next/dist/shared/lib/constants";
 import { FC, createContext, useContext, PropsWithChildren, useState, Dispatch, SetStateAction, useRef } from "react";
 
 type FilterValuesProps = {
-  inheritanceCaseNumber: string;
-  pin: string;
-  fullName: string;
-  dateOfDeath: string;
+  notaryUniqNumber: string;
+  ["requester.personalNumber"]: string;
+  ["requester.fullName"]: string;
+  ["requester.deathDate"]: string;
 } & IInheritanceCasesListFilterFormFields &
   IInheritanceCasesListSearchBarForm;
 
@@ -19,6 +18,7 @@ type QueryParamsProps = {
   page: number;
   sortBy: string[];
   filterValues: Partial<FilterValuesProps>;
+  requestType: "search" | "fetch";
 };
 
 type FilterValuesContextProps = {
@@ -30,11 +30,12 @@ type FilterValuesContextProps = {
   ) => void;
 } & { queryParams: QueryParamsProps };
 
-const queryParamsInitState = {
+const queryParamsInitState: QueryParamsProps = {
   pageSize: 7,
   page: 1,
   sortBy: ["-creationDate"],
   filterValues: {},
+  requestType: "fetch",
 };
 
 const FilterValuesContext = createContext<FilterValuesContextProps>({

@@ -3,7 +3,7 @@ import { GridTable, IFilterSubmitParams, IGridColDef, IGridTableProps } from "@/
 import { useFilterValues } from "../core/FilterValuesContext";
 import { useMediaQuery } from "@mui/material";
 import { InheritanceCasesTableActions } from "./InheritanceCasesTableActions";
-import { GridValueGetterParams } from "@mui/x-data-grid";
+import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import { useLocale } from "next-intl";
 
 interface InheritanceCasesTableProps extends Omit<IGridTableProps, "columns"> {}
@@ -12,7 +12,11 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
   ({ className, ...props }, ref) => {
     const isMobileMedia = useMediaQuery("(max-width:800px)");
     const locale = useLocale();
-    const { updateFilterValues } = useFilterValues();
+    const {
+      updateFilterValues,
+      updateQueryParams,
+      queryParams: { requestType },
+    } = useFilterValues();
 
     const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
       const type = value.rowParams.colDef.filter?.type;
@@ -24,6 +28,11 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
       }
     };
 
+    const handleSortByDate = async (model: GridSortModel) => {
+      const sortBy = model.map((s) => (s.sort === "asc" ? s.field : `-${s.field}`));
+      updateQueryParams("sortBy", sortBy);
+    };
+
     const columns: IGridColDef[] = [
       {
         field: "notaryUniqNumber",
@@ -32,36 +41,41 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
         sortable: false,
         filter: {
           type: "simple",
+          disabled: requestType === "search",
         },
       },
       {
         field: "requester.personalNumber",
         headerName: "PIN of the deceased",
         width: 210,
+        sortable: false,
         filter: {
           type: "simple",
+          disabled: requestType === "search",
         },
-        sortable: false,
       },
       {
         field: "requester.fullName",
         headerName: "Full name of the deceased",
         width: 270,
+        sortable: false,
         filter: {
           type: "simple",
+          disabled: requestType === "search",
         },
-        sortable: false,
       },
       {
         field: "requester.birthDate",
         headerName: "Date of birth",
         width: 180,
+        sortable: false,
       },
       {
         field: "requester.actualResidenceAddress.addressL2",
         headerName: "Place of last residence",
         width: 270,
         sortable: false,
+
         valueGetter: (params: GridValueGetterParams) => {
           const nameKey = locale !== "en" ? "$t:name" : "name";
           const region = params.row?.["requester.mainAddress.region"]?.[nameKey] || "";
@@ -84,11 +98,13 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
         field: "requester.deathDate",
         headerName: "Date of death",
         width: 200,
+        sortable: false,
       },
       {
         field: "creationDate",
         headerName: "Date of creation",
         width: 210,
+        sortable: true,
       },
       {
         field: "company.name",
@@ -126,6 +142,7 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
           ...(props.sx || {}),
         }}
         onFilterSubmit={handleUpdateFilterValues}
+        onSortModelChange={handleSortByDate}
       />
     );
   }
