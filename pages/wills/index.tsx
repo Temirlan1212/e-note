@@ -3,6 +3,7 @@ import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import { FetchListParamsContextProvider } from "@/contexts/fetch-list-params";
+import WillsList from "@/components/wills/wills-list/WillList";
 
 export default function InheritanceCases() {
   const t = useTranslations();
@@ -21,7 +22,9 @@ export default function InheritanceCases() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        <FetchListParamsContextProvider></FetchListParamsContextProvider>
+        <FetchListParamsContextProvider>
+          <WillsList />
+        </FetchListParamsContextProvider>
       </Container>
     </>
   );
