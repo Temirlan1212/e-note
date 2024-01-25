@@ -29,7 +29,7 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
     { loading: () => <p>Loading...</p>, ssr: false }
   );
 
-  const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "GET");
+  const { data, loading } = useFetch<ApiNotaryResponse>("/api/notaries/" + router.query.id, "POST");
 
   useEffectOnce(() => {
     if (Array.isArray(data?.data)) {
@@ -56,7 +56,7 @@ const NotariesDetailPage: React.FC<NotariesDetailPageProps> = (props) => {
 
   const markerCenter: [number, number] =
     data?.data && data.data[0]
-      ? [parseFloat(data.data[0]?.latitude as string), parseFloat(data.data[0]?.longitude as string)]
+      ? [parseFloat(data?.data[0]?.latitude as string), parseFloat(data?.data[0]?.longitude as string)]
       : [42.8777895, 74.6066926];
 
   return (

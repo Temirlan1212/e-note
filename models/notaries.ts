@@ -30,11 +30,13 @@ export interface INotaryInfoData {
   licenseNo: string;
   address: {
     city: {
+      "$t:name": string;
       fullName: string;
       id: number;
       $version: number;
     };
     district: {
+      "$t:name": string;
       code: string;
       name: string;
       id: number;
@@ -45,6 +47,7 @@ export interface INotaryInfoData {
     id: number;
     $version: number;
     region: {
+      "$t:name": string;
       fullName: string;
       code: string;
       name: string;

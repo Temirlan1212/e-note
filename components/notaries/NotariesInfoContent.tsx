@@ -6,7 +6,7 @@ import { format } from "date-fns";
 
 import Button from "../ui/Button";
 import Rating from "../ui/Rating";
-import { ApiNotaryResponse } from "@/models/notaries";
+import { ApiNotaryResponse, INotaryInfoData } from "@/models/notaries";
 import Link from "@/components/ui/Link";
 
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
@@ -23,7 +23,7 @@ import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { useEffect, useState } from "react";
 import { useProfileStore } from "@/stores/profile";
 import useEffectOnce from "@/hooks/useEffectOnce";
-import { IUserData } from "@/models/user";
+import { IPartner, IUserData } from "@/models/user";
 import { IContact } from "@/models/chat";
 import useNotariesStore from "@/stores/notaries";
 
@@ -58,12 +58,6 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
   const { data: workDaysArea } = useFetch("/api/notaries/dictionaries/work-days", "POST");
 
   const { update: contactUpdate, loading: contactLoading, error } = useFetch<IContact>("", "POST");
-
-  const {
-    data: licenseInfoData,
-    update: getLicenseInfo,
-    loading: licenseInfoLoading,
-  } = useFetch<FetchResponseBody | null>("", "POST");
 
   const { data: ratingData, loading: ratingLoading } = useFetch(
     router?.query?.id != null ? `/api/rating/${router?.query?.id}` : "",
@@ -106,6 +100,26 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       router.push("/login");
     }
   }, [error]);
+
+  const getAddressFullName = (member: any) => {
+    const { address } = member || {};
+    const { region, district, city, addressL4, addressL3, addressL2 } = address || {};
+
+    const key = locale !== "en" ? "$t:name" : "name";
+    const fallbackKey = locale !== "en" ? "name" : "$t:name";
+    const formatAddressPart = (part: any) => part?.[key] || part?.[fallbackKey] || "";
+
+    const formattedRegion = formatAddressPart(region);
+    const formattedDistrict = formatAddressPart(district);
+    const formattedCity = formatAddressPart(city);
+
+    const addressParts = [
+      [formattedRegion, formattedDistrict, formattedCity].filter(Boolean).join(", "),
+      [addressL4, addressL3, addressL2].filter(Boolean).join(" "),
+    ];
+
+    return addressParts.filter(Boolean).join(", ");
+  };
 
   const infoArray = [
     {
@@ -153,14 +167,7 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
       array: [],
     },
     {
-      text:
-        notaryData[0]?.notaryDistrict?.name &&
-        notaryData[0]?.notaryDistrict?.["$t:name"] &&
-        notaryData[0]?.address?.fullName
-          ? `${notaryData[0]?.notaryDistrict?.[
-              locale === "ru" || locale === "kg" ? "$t:name" : "name"
-            ]}, ${notaryData[0]?.address?.fullName}`
-          : null,
+      text: getAddressFullName(notaryData[0]),
       icon: <LocationOnOutlinedIcon />,
       type: "text",
       array: [],
