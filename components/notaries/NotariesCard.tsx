@@ -13,12 +13,12 @@ interface INotaryProps {
   fullName?: string;
   region?: INotaryGeo;
   area?: INotaryGeo;
-  location?: string;
+  city?: string;
   userId?: number;
   licenseTermUntil?: string | null;
 }
 
-const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, userId, licenseTermUntil }) => {
+const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, city, userId, licenseTermUntil }) => {
   const { locale } = useRouter();
   const t = useTranslations();
 
@@ -112,7 +112,7 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, location, 
             {region ? (locale === "ru" || locale === "kg" ? region["$t:name"] : region.name) : ""}
           </Typography>
           <Typography>{area ? (locale === "ru" || locale === "kg" ? area["$t:name"] : area.name) : ""}</Typography>
-          <Typography>{location}</Typography>
+          <Typography>{city}</Typography>
           <Typography fontSize="13px" fontWeight={500}>
             {t(handleCheckLicenseDate())}
           </Typography>
