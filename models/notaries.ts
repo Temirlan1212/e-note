@@ -54,6 +54,9 @@ export interface INotaryInfoData {
       id: number;
       $version: number;
     };
+    addressL4: string;
+    addressL3: string;
+    addressL2: string;
   };
   $attachments: number;
   licenseTermUntil: string;

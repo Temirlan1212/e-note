@@ -101,8 +101,8 @@ const NotariesInfoContent = (props: INotariesInfoContentProps) => {
     }
   }, [error]);
 
-  const getAddressFullName = (member: any) => {
-    const { address } = member || {};
+  const getAddressFullName = (data: INotaryInfoData) => {
+    const { address } = data || {};
     const { region, district, city, addressL4, addressL3, addressL2 } = address || {};
 
     const key = locale !== "en" ? "$t:name" : "name";
