@@ -1,12 +1,23 @@
 import Head from "next/head";
-import { Container } from "@mui/material";
+import { CircularProgress, Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import { FetchListParamsContextProvider } from "@/contexts/fetch-list-params";
-import WillsList from "@/components/wills/wills-list/WillList";
+import WillInfoContent from "@/components/wills/will/WillInfoContent";
+import { useRouter } from "next/router";
+import useFetch from "@/hooks/useFetch";
 
-export default function WillsRegister() {
+export default function WillDetailPage() {
   const t = useTranslations();
+
+  const router = useRouter();
+
+  const { id } = router.query;
+
+  const {
+    data: willInfo,
+    loading: loadingWillInfo,
+    update: getWillInfo,
+  } = useFetch(id != null ? "/api/wills/" + id : "", "POST");
 
   return (
     <>
@@ -22,9 +33,7 @@ export default function WillsRegister() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        <FetchListParamsContextProvider>
-          <WillsList />
-        </FetchListParamsContextProvider>
+        {loadingWillInfo ? <CircularProgress /> : <WillInfoContent willInfo={willInfo?.data?.[0]} />}
       </Container>
     </>
   );
@@ -40,4 +49,8 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       },
     },
   };
+}
+
+export async function getStaticPaths() {
+  return { paths: [], fallback: "blocking" };
 }

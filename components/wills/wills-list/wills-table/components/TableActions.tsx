@@ -8,7 +8,7 @@ export const TableActions = ({ params }: { params: GridRenderCellParams<any, any
   const t = useTranslations();
   return (
     <Box display="flex" alignItems="center">
-      <Link href={`/inheritance-cases/${params.row.id}`}>
+      <Link href={`/wills/${params.row.id}`}>
         <Button>{t("More detailed")}</Button>
       </Link>
     </Box>
