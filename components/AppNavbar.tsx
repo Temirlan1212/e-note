@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IRoute, isRoutesIncludesPath } from "@/routes/data";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
@@ -36,6 +36,10 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import SchoolIcon from "@mui/icons-material/School";
 import { useMediaQuery } from "@mui/material";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import useInstructionStore from "@/stores/instruction";
+import useFetch from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
+import useConvert from "@/hooks/useConvert";
 
 const DrawerListItems = ({
   routes,
@@ -146,8 +150,37 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
   const theme = useTheme();
   const router = useRouter();
   const t = useTranslations();
-
+  const convert = useConvert();
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [open, setOpen] = useState(false);
+  const [videoURL, setVideoURL] = useState<string | null>(null);
+
+  const step = useInstructionStore((state) => state.step);
+
+  const { data, loading, update } = useFetch<Response>("", "GET", { returnResponse: true });
+
+  const getRoute = () => {
+    const applicationRoute = ["create", "edit"].some((route) => router.pathname.includes(route));
+    if (applicationRoute) {
+      return step;
+    }
+    return router.pathname;
+  };
+
+  useEffect(() => {
+    update(`/api/instruction?path=test123`);
+  }, [router.pathname]);
+
+  useEffectOnce(async () => {
+    const binaryData = await data?.text();
+    if (!!binaryData) {
+      const videoBlob = convert.binary.toBlob(binaryData, "video/mp4");
+      setVideoURL(URL.createObjectURL(videoBlob));
+      if (videoRef.current) {
+        videoRef.current.src = URL.createObjectURL(videoBlob);
+      }
+    }
+  }, [data]);
 
   const handleDrawerToggle = (e?: any, v?: boolean) => {
     if (e?.stopPropagation != null) e.stopPropagation();
@@ -241,20 +274,27 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
               justifyContent: isMobileMedia ? "space-between" : "unset",
             }}
           >
-            {/*<ConfirmationModal*/}
-            {/*  title="Learning"*/}
-            {/*  isHintShown={false}*/}
-            {/*  slots={{*/}
-            {/*    button: () => <></>,*/}
-            {/*    body: () => <></>,*/}
-            {/*  }}*/}
-            {/*>*/}
-            {/*  <Tooltip title={t("Learning")}>*/}
-            {/*    <IconButton sx={{ color: "inherit" }}>*/}
-            {/*      <SchoolIcon />*/}
-            {/*    </IconButton>*/}
-            {/*  </Tooltip>*/}
-            {/*</ConfirmationModal>*/}
+            <ConfirmationModal
+              title="Learning"
+              isCloseIconShown={true}
+              isHintShown={false}
+              slots={{
+                button: () => <></>,
+                body: () => (
+                  <>
+                    <video width={300} height={300} controls>
+                      <source src={"https://en.minjust.gov.kg/5f297ade-55a6-465a-8fa1-16e4bfc0a0c1"} type="video/mp4" />
+                    </video>
+                  </>
+                ),
+              }}
+            >
+              <Tooltip title={t("Learning")}>
+                <IconButton sx={{ color: "inherit" }}>
+                  <SchoolIcon />
+                </IconButton>
+              </Tooltip>
+            </ConfirmationModal>
             <LocaleSwitcher />
             <PopupNotifications />
             <ProfileDropdownButton />

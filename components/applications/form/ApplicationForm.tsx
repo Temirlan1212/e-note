@@ -27,6 +27,7 @@ import useNavigationConfirmation from "@/hooks/useNavigationConfirmation";
 import SelectTemplateSelectionType from "./common-steps/SelectTemplateSelectionType";
 import SecondStepFieldsSystemDocument from "./steps/SecondStepFieldsSystemDocument";
 import { useTranslations } from "next-intl";
+import useInstructionStore from "@/stores/instruction";
 
 export interface IApplicationFormProps {
   id?: number | null;
@@ -43,6 +44,8 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   const [userData, setUserData] = useState<IUserData | null>(null);
   const stepNextClickMethod = useRef<(target: number) => Promise<void>>();
   const stepProgress = useRef(0);
+
+  const setStepValue = useInstructionStore((state) => state.setValue);
 
   const { data, update } = useFetch("", "POST");
   const {
@@ -139,6 +142,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
   };
 
   useEffectOnce(() => {
+    setStepValue("step", step + 1);
     if (step > stepProgress.current) stepProgress.current = step;
   }, [step]);
 
