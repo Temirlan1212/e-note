@@ -3,11 +3,12 @@ import React, { FC, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
 
-import SortSelect from "../../ui/Select";
-import HeirAccordion from "./HeirAccordion";
+import SortSelect from "@/components/ui/Select";
+import HeirAccordion from "@/components/search-for-heirs/components/HeirAccordion";
+import { IHeir } from "@/models/heir";
 
 type IHeirFoundedDataProps = {
-  foundedData: any;
+  foundedData: IHeir[];
 };
 
 const heirCount = 4;

@@ -2,12 +2,13 @@ import React, { FC, useState } from "react";
 
 import { Box, Typography } from "@mui/material";
 
-import Accordion from "../../ui/Accordion";
-import Link from "../../ui/Link";
+import Accordion from "@/components/ui/Accordion";
+import Link from "@/components/ui/Link";
 import { useTranslations } from "next-intl";
+import { IHeir } from "@/models/heir";
 
 type IHeirAccordionProps = {
-  foundedData?: any;
+  foundedData: IHeir[];
 };
 
 const HeirAccordion: FC<IHeirAccordionProps> = ({ foundedData }) => {
@@ -24,7 +25,7 @@ const HeirAccordion: FC<IHeirAccordionProps> = ({ foundedData }) => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "3px", margin: "0 auto" }}>
-      {foundedData.map((item: any, key: number) => (
+      {foundedData.map((item: IHeir, key: number) => (
         <Accordion
           key={key}
           expanded={expandedMap[key]}
@@ -41,7 +42,7 @@ const HeirAccordion: FC<IHeirAccordionProps> = ({ foundedData }) => {
             </Typography>
 
             <Typography>
-              <b>{t("Unique number")}: </b> {item?.notaryUniqNumber ?? t("not assigned")}
+              <b>{t("The number of the inheritance case")}: </b> {item?.notaryUniqNumber ?? t("not assigned")}
             </Typography>
 
             <Typography>

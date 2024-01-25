@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const { keyWord, birthDate, deathDate } = req.body.requestData;
-  console.log(req.body.data);
+
   const buildCriteria = () => {
     const criteria = [];
 

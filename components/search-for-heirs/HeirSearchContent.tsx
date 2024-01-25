@@ -28,7 +28,7 @@ const SearchForHeirs = (props: ISearchForHeirsProps) => {
 
   const onSubmit = async (data: IHeir) => {
     const formattedDate = (date: Date | string) => {
-      date ? new Date(data?.birthDate as string).toISOString().slice(0, 10) : null;
+      return date ? new Date(data?.birthDate as string).toISOString().slice(0, 10) : null;
     };
 
     const requestData = {
@@ -54,7 +54,7 @@ const SearchForHeirs = (props: ISearchForHeirsProps) => {
 
       <SearchForm onSubmit={onSubmit} form={form} names={searchFormNames} />
 
-      {heirsInfo ? (
+      {heirsInfo?.data ? (
         heirsInfoLoading ? (
           <CircularProgress />
         ) : (
