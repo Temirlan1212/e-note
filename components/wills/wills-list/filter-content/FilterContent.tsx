@@ -1,28 +1,25 @@
 import { Box, BoxProps } from "@mui/material";
 import React, { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import {
-  IInheritanceCasesListFilterFormFields,
-  IInheritanceCasesListSearchBarForm,
-} from "@/validator-schemas/inheritance-cases";
 import SearchBarForm from "../../components/search-bar-form/SearchBarForm";
 import { useTranslations } from "next-intl";
 import SelectFormField from "../../components/form-fields/SelectFormField";
 import { useFetchListParams } from "@/contexts/fetch-list-params";
-import { InheritanceCasesFilterValuesProps } from "@/models/inheritance-cases";
+import { IWillsListFilterFormFields, IWillsListSearchBarForm } from "@/validator-schemas/will";
+import { WillsFilterValuesProps } from "@/models/wills";
 
 interface IFilterContentProps extends BoxProps {}
 
 const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((props, ref) => {
-  const { updateFilterValues, updateParams } = useFetchListParams<InheritanceCasesFilterValuesProps>();
+  const { updateFilterValues, updateParams } = useFetchListParams<WillsFilterValuesProps>();
 
   const t = useTranslations();
   const { className, ...rest } = props;
-  const searchBarForm = useForm<IInheritanceCasesListSearchBarForm>();
-  const filterFormFields = useForm<IInheritanceCasesListFilterFormFields>();
+  const searchBarForm = useForm<IWillsListSearchBarForm>();
+  const filterFormFields = useForm<IWillsListFilterFormFields>();
   const year = filterFormFields.watch("year");
 
-  const searchBarFormSubmitHandler: SubmitHandler<IInheritanceCasesListSearchBarForm> = ({ keyWord }) => {
+  const searchBarFormSubmitHandler: SubmitHandler<IWillsListSearchBarForm> = ({ keyWord }) => {
     if (!!keyWord) {
       updateFilterValues("keyWord", keyWord);
       updateParams("requestType", "search");
@@ -32,7 +29,7 @@ const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((pro
     }
   };
 
-  const filterFormFieldsSubmitHandler: SubmitHandler<IInheritanceCasesListFilterFormFields> = ({ year }) => {
+  const filterFormFieldsSubmitHandler: SubmitHandler<IWillsListFilterFormFields> = ({ year }) => {
     if (!!year) updateFilterValues("year", year);
     else updateFilterValues("year", "");
   };
