@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Divider, IconButton, Typography } from "@mui/material";
+import { Box, CircularProgress, Divider, IconButton, Skeleton, Typography } from "@mui/material";
 import { GridRenderCellParams, GridTreeNodeWithRender } from "@mui/x-data-grid";
 import { useState } from "react";
 import useFetch from "@/hooks/useFetch";
@@ -13,11 +13,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import BrokenImageIcon from "@mui/icons-material/BrokenImage";
 
-export const ApplicationListQRMenu = ({
-  params,
-}: {
-  params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>;
-}) => {
+export const QrMenu = ({ params }: { params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender> }) => {
   const t = useTranslations();
   const [menu, setMenu] = useState<HTMLElement | null>(null);
   const [qrUrl, setQrUrl] = useState<string | null>(null);
@@ -64,7 +60,7 @@ export const ApplicationListQRMenu = ({
           <Typography variant="h6"> {t("Scan the QR code")}</Typography>
 
           {loading || documentLoading ? (
-            <CircularProgress />
+            <Skeleton variant="rectangular" width={170} height={170} />
           ) : qrUrl != null ? (
             <Image src={qrUrl ?? ""} width={170} height={170} alt="qr code" onError={() => setQrUrl(null)} />
           ) : (

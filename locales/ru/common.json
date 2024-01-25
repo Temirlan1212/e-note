@@ -121,6 +121,7 @@
   "Enter full name": "Введите ФИО",
   "Date of birth": "Дата рождения",
   "Date of death": "Дата смерти",
+  "Date of will": "Дата завещания",
   "Date of creation": "Дата создания",
   "Date of signing": "Дата подписания",
   "Collapse filter": "Свернуть фильтр",
@@ -287,5 +288,9 @@
   "Fullname": "ФИО",
   "Date of application": "Дата заявления",
   "Unique number": "Уникальный номер",
-  "Will": "Завещание"
+  "Will": "Завещание",
+  "not assigned": "не присвоен",
+  "Register of wills": "Реестр завещаний",
+  "Scan the QR code": "Отсканируйте QR-код",
+  "The number of the inheritance case": "Номер наследственного дела"
 }

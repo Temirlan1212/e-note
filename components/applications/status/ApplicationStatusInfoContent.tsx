@@ -17,6 +17,7 @@ import ApplicationStatusRating from "./ApplicationStatusRating";
 
 interface IApplicationStatusInfoContentProps {
   id?: number;
+  isWill?: boolean;
 }
 
 interface IPartner {
@@ -30,7 +31,7 @@ interface IPartnerData {
 }
 
 const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (props) => {
-  const { id } = props;
+  const { id, isWill } = props;
   const t = useTranslations();
 
   const [accessToView, setAccessToView] = useState(false);
@@ -100,33 +101,37 @@ const ApplicationStatusInfoContent: FC<IApplicationStatusInfoContentProps> = (pr
       {accessToView && !userIsNotary && applicationStatusIsCompleted && (
         <ApplicationStatusRating data={data?.data[0]} />
       )}
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Typography
-          sx={{
-            fontSize: "18px",
-            fontWeight: "600",
-          }}
-        >
-          {t("InformationAboutStatusApplication")}
-        </Typography>
-        <Link href="/applications">
-          <Button
-            variant="text"
+
+      {!isWill && (
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography
             sx={{
-              backgroundColor: "none",
-              color: "#1BAA75",
-              fontSize: "16px",
-              width: "auto",
-              ":hover": {
-                backgroundColor: "transparent !important",
-              },
+              fontSize: "18px",
+              fontWeight: "600",
             }}
-            startIcon={<KeyboardBackspaceOutlinedIcon />}
           >
-            {t("Back")}
-          </Button>
-        </Link>
-      </Box>
+            {t("InformationAboutStatusApplication")}
+          </Typography>
+          <Link href="/applications">
+            <Button
+              variant="text"
+              sx={{
+                backgroundColor: "none",
+                color: "#1BAA75",
+                fontSize: "16px",
+                width: "auto",
+                ":hover": {
+                  backgroundColor: "transparent !important",
+                },
+              }}
+              startIcon={<KeyboardBackspaceOutlinedIcon />}
+            >
+              {t("Back")}
+            </Button>
+          </Link>
+        </Box>
+      )}
+
       <ApplicationStatusRead data={data?.data?.[0]} loading={loading} />
       {userIsNotary
         ? accessToView &&

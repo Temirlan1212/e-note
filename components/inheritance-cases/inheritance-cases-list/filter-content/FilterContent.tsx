@@ -39,6 +39,13 @@ const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((pro
 
   const filterFormFieldsResetHandler = () => {
     filterFormFields.reset({ year: "" });
+    updateFilterValues("year", "");
+  };
+
+  const searchBarFormResetHandler = () => {
+    searchBarForm.reset({ keyWord: "" });
+    updateFilterValues("keyWord", "");
+    updateParams("requestType", "fetch");
   };
 
   useEffect(() => {
@@ -49,7 +56,7 @@ const FilterContent = React.forwardRef<HTMLDivElement, IFilterContentProps>((pro
 
   return (
     <Box ref={ref} display="flex" flexDirection="column" gap="10px" {...rest}>
-      <form onSubmit={searchBarForm.handleSubmit(searchBarFormSubmitHandler)}>
+      <form onReset={searchBarFormResetHandler} onSubmit={searchBarForm.handleSubmit(searchBarFormSubmitHandler)}>
         <SearchBarForm form={searchBarForm} />
       </form>
       <form

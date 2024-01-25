@@ -121,6 +121,7 @@
   "Enter PIN": "ПИНди киргизиңиз",
   "Enter full name": "Толук атын киргизиңиз",
   "Date of death": "Өлгөн күнү",
+  "Date of will": "Керээздин датасы",
   "Date of creation": "Түзүлгөн датасы",
   "Date of signing": "Кол коюлган күн",
   "Collapse filter": "Чыпканы жыйыштыруу",
@@ -287,5 +288,9 @@
   "Fullname": "ФИО",
   "Date of application": "Өтүнмөнүн датасы",
   "Unique number": "Уникалдуу номер",
-  "Will": "Керээз"
+  "Will": "Керээз",
+  "not assigned": "дайындалган эмес",
+  "Register of wills": "Керээздердин реестри",
+  "Scan the QR code": "QR кодду сканерлөө",
+  "The number of the inheritance case": "Пробациялык иштин номери"
 }

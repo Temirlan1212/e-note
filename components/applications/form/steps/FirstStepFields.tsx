@@ -18,6 +18,7 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 import useNotariesStore from "@/stores/notaries";
 import { useProfileStore } from "@/stores/profile";
 import ExpandingFields from "@/components/fields/ExpandingFields";
+import { useRouter } from "next/router";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -34,6 +35,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const profile = useProfileStore.getState();
   const t = useTranslations();
   const locale = useLocale();
+  const router = useRouter();
 
   const {
     trigger,
@@ -100,12 +102,15 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     if (validated) {
       setLoading(true);
 
+      const saleOrderRef = Number(router.query?.saleOrderRef);
+      if (!!saleOrderRef && !isNaN(saleOrderRef)) setValue("saleOrderRef", { id: saleOrderRef });
       const values = getValues();
       const data: Partial<IApplicationSchema> & { creationDate: string } = {
         company: values.company,
         creationDate: format(new Date(), "yyyy-MM-dd"),
         statusSelect: 2,
         notarySignatureStatus: !!values?.notarySignatureStatus ? undefined : 2,
+        saleOrderRef: !!saleOrderRef ? { id: saleOrderRef } : { id: null },
       };
 
       let result = null;

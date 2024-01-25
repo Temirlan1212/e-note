@@ -76,7 +76,7 @@ const fetchList = async (req: NextApiRequest) => {
       limit: pageSize,
       sortBy: req.body["sortBy"] ?? [],
       fields: [
-        "barcode",
+        "barCode",
         "notaryUniqNumber",
         "requester.personalNumber",
         "requester.fullName",

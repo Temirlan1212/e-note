@@ -30,6 +30,7 @@ export default function useFetch<T = FetchResponseBody>(
   const setNotification = useNotificationStore((state) => state.setNotification);
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [status, setStatus] = useState<"pending" | "finished">("pending");
   const [error, setError] = useState<FetchError | null>(null);
   const [data, setData] = useState<T | null>(null);
 
@@ -47,6 +48,7 @@ export default function useFetch<T = FetchResponseBody>(
     }
 
     setLoading(true);
+    setStatus("pending");
     return fetch(fetchUrl, {
       headers: {
         ...headers,
@@ -84,8 +86,11 @@ export default function useFetch<T = FetchResponseBody>(
 
         setNotification(error?.message ?? null);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setStatus("finished");
+        setLoading(false);
+      });
   };
 
-  return { data, loading, error, update: handleFetching };
+  return { data, loading, status, error, update: handleFetching };
 }
