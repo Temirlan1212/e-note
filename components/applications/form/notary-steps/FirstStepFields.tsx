@@ -381,7 +381,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
 
     if (validated) {
       setLoading(true);
-
+      const saleOrderRef = Number(router.query?.saleOrderRef);
+      if (!!saleOrderRef && !isNaN(saleOrderRef)) setValue("saleOrderRef", { id: saleOrderRef });
       const values = getValues();
       let newRequesters: IPersonSchema[] = [];
       if (isEditableCopy && values.requester) {
@@ -400,6 +401,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         requester: newRequesters.length > 0 ? newRequesters : values.requester,
         statusSelect: 2,
         notarySignatureStatus: !!values?.notarySignatureStatus ? undefined : 2,
+        saleOrderRef: !!saleOrderRef ? { id: saleOrderRef } : { id: null },
       };
 
       let result = null;

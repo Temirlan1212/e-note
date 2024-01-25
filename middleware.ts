@@ -1,8 +1,15 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
-  // return NextResponse.redirect(new URL("/", req.url));
-}
+  const url = new URL(req.url);
+  const queryParams = url.searchParams;
+  const isRedirect = queryParams.get("isRedirect");
+  const redirectUrl = queryParams.get("redirectUrl");
 
-export const config = {};
+  if (!!isRedirect && !!redirectUrl) {
+    const url = new URL(redirectUrl, req.url);
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
+}

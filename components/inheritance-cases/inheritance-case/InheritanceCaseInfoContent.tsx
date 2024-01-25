@@ -23,10 +23,11 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
 
   const locale = useLocale();
 
-  const { data: testatorInfo, loading: loadingTestatorInfo } = useFetch(
-    inheritanceCaseInfo?.id ? "/api/inheritance-cases/testator/" + inheritanceCaseInfo?.id : "",
-    "POST"
-  );
+  const {
+    data: testatorInfo,
+    loading: loadingTestatorInfo,
+    status,
+  } = useFetch(inheritanceCaseInfo?.id ? "/api/inheritance-cases/testator/" + inheritanceCaseInfo?.id : "", "POST");
 
   const getAddressFullName = (data: IPartner) => {
     const { mainAddress } = data || {};
@@ -141,7 +142,7 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
       </Box>
 
       <FetchListParamsContextProvider>
-        <HeirsList />
+        <HeirsList parentRequestStatus={status} />
       </FetchListParamsContextProvider>
     </Box>
   );
