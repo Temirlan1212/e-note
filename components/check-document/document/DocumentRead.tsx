@@ -11,6 +11,7 @@ import { IApplication } from "@/models/application";
 import { useRouter } from "next/router";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { INotarialAction } from "@/models/notarial-action";
+import { IPartner } from "@/models/user";
 
 interface IDocumentReadProps {
   data: IApplication;
@@ -48,15 +49,39 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
     return !!translatedTitle ? translatedTitle : matchedStatus?.["title" as keyof IActionType] ?? "";
   };
 
+  const getAddressFullName = (member: IPartner) => {
+    const { mainAddress } = member || {};
+    const { region, district, city, addressL4, addressL3, addressL2 } = mainAddress || {};
+
+    const key = locale !== "en" ? "$t:name" : "name";
+    const fallbackKey = locale !== "en" ? "name" : "$t:name";
+    const formatAddressPart = (part: any) => part?.[key] || part?.[fallbackKey] || "";
+
+    const formattedRegion = formatAddressPart(region);
+    const formattedDistrict = formatAddressPart(district);
+    const formattedCity = formatAddressPart(city);
+
+    const addressParts = [
+      [formattedRegion, formattedDistrict, formattedCity].filter(Boolean).join(", "),
+      [addressL4, addressL3, addressL2].filter(Boolean).join(" "),
+    ];
+
+    return addressParts.filter(Boolean).join(", ");
+  };
+
   const titles = [
     { title: "Name", value: locale !== "en" ? data?.product?.["$t:name"] || data?.product?.name : data?.product?.name },
     { title: "Status", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
     { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
     {
       title: "Date of action",
-      value: data?.creationDate ? format(new Date(data?.creationDate!), "dd.MM.yyyy") : "",
+      value: data?.createdOn ? format(new Date(data?.createdOn!), "dd.MM.yyyy HH:mm:ss") : "",
     },
     { title: "Full name of the notary", value: data?.company?.partner?.fullName },
+    {
+      title: "Date of signing",
+      value: data?.notaryDocumentSignDate ? format(new Date(data?.notaryDocumentSignDate), "dd.MM.yyyy HH:mm:ss") : "",
+    },
     { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },
   ];
 
@@ -181,7 +206,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
                         color: "#687C9B",
                       }}
                     >
-                      {member?.lastName} {member?.name} {member?.middleName}
+                      {member?.lastName} {member?.firstName} {member?.middleName}
                     </Typography>
                     <Typography
                       sx={{
@@ -190,7 +215,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
                         color: "#687C9B",
                       }}
                     >
-                      {member?.mainAddress?.fullName}
+                      {getAddressFullName(member)}
                     </Typography>
                   </Box>
                 ))}

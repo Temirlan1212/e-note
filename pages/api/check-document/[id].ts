@@ -1,16 +1,167 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
+const fields: string[] = [
+  "id",
+  "version",
+  "createdBy",
+  "createdOn",
+  "notaryUniqNumber",
+  "notarySignatureStatus",
+  "company",
+  "object",
+  "objectType",
+  "notarialAction",
+  "typeNotarialAction",
+  "action",
+  "product",
+  "product.name",
+  "product.oneSideAction",
+  "cancelReasonStr",
+  "notaryAnnulmentReason",
+  "notaryAnnulmentDate",
+  "orderNumber",
+  "notaryCancelledDate",
+  "creationDate",
+  "statusSelect",
+  "notarySignatureStatus",
+  "company.partner.fullName",
+  "files",
+  "isToPrintLineSubTotal",
+  "orderNumber",
+  "currency",
+  "notaryDocumentSignDate",
+];
+
+const related: Record<string, typeof fields> = {
+  requester: [
+    "partnerTypeSelect",
+    "foreigner",
+    "lastName",
+    "firstName",
+    "middleName",
+    "personalNumber",
+    "birthDate",
+    "citizenship",
+    "identityDocument",
+    "passportSeries",
+    "passportNumber",
+    "authority",
+    "authorityNumber",
+    "dateOfIssue",
+    "mobilePhone",
+    "fullName",
+    "emailAddress.version",
+    "emailAddress.address",
+    "mainAddress.version",
+    "mainAddress.region",
+    "mainAddress.district",
+    "mainAddress.city",
+    "mainAddress.city.name",
+    "mainAddress.addressL4",
+    "mainAddress.addressL3",
+    "mainAddress.addressL2",
+    "actualResidenceAddress.version",
+    "actualResidenceAddress.region",
+    "actualResidenceAddress.district",
+    "actualResidenceAddress.city",
+    "actualResidenceAddress.addressL4",
+    "actualResidenceAddress.addressL3",
+    "actualResidenceAddress.addressL2",
+    "nameOfCompanyOfficial",
+    "nameOfCompanyGov",
+    "representativesName",
+    "notaryRegistrationNumber",
+    "notaryOKPONumber",
+    "notaryPhysicalParticipantsQty",
+    "notaryLegalParticipantsQty",
+    "notaryTotalParticipantsQty",
+    "notaryDateOfOrder",
+    "disabled",
+    "subjectRole",
+    "picture",
+    "maritalStatus",
+    "nationality",
+    "passportStatus",
+  ],
+  members: [
+    "partnerTypeSelect",
+    "foreigner",
+    "lastName",
+    "firstName",
+    "middleName",
+    "personalNumber",
+    "birthDate",
+    "citizenship",
+    "identityDocument",
+    "passportSeries",
+    "passportNumber",
+    "authority",
+    "authorityNumber",
+    "dateOfIssue",
+    "mobilePhone",
+    "fullName",
+    "emailAddress.version",
+    "emailAddress.address",
+    "mainAddress.version",
+    "mainAddress.region",
+    "mainAddress.district",
+    "mainAddress.city",
+    "mainAddress.city.name",
+    "mainAddress.addressL4",
+    "mainAddress.addressL3",
+    "mainAddress.addressL2",
+    "actualResidenceAddress.version",
+    "actualResidenceAddress.region",
+    "actualResidenceAddress.district",
+    "actualResidenceAddress.city",
+    "actualResidenceAddress.addressL4",
+    "actualResidenceAddress.addressL3",
+    "actualResidenceAddress.addressL2",
+    "nameOfCompanyOfficial",
+    "nameOfCompanyGov",
+    "representativesName",
+    "notaryRegistrationNumber",
+    "notaryOKPONumber",
+    "notaryPhysicalParticipantsQty",
+    "notaryLegalParticipantsQty",
+    "notaryTotalParticipantsQty",
+    "notaryDateOfOrder",
+    "disabled",
+    "subjectRole",
+    "picture",
+    "maritalStatus",
+    "nationality",
+    "passportStatus",
+  ],
+  documentInfo: ["token", "pdfLink", "editUrl", "fileName", "generalAccess"],
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
-  if (req.method !== "GET") {
+  if (req.method !== "POST") {
     return res.status(400).json(null);
   }
 
-  const response = await fetch(process.env.BACKEND_OPEN_API_URL + `/com.axelor.apps.sale.db.SaleOrder/${id}`, {
-    method: "GET",
+  let filterFields: typeof fields | null = null;
+  if (req.body.fields != null) {
+    filterFields = req.body.fields;
+  }
+
+  let filterRelated: typeof related | null = null;
+  if (req.body.related != null) {
+    filterRelated = req.body.related;
+  }
+
+  const response = await fetch(process.env.BACKEND_OPEN_API_URL + `/com.axelor.apps.sale.db.SaleOrder/${id}/fetch`, {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
+    body: JSON.stringify({
+      fields: filterFields ?? fields,
+      related: filterRelated ?? related,
+    }),
   });
 
   if (!response.ok) {
