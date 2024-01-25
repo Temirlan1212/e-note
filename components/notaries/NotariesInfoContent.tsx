@@ -19,11 +19,11 @@ import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import LicenseIcon from "@/public/icons/license.svg";
 import ContentPlusIcon from "@/public/icons/content-plus.svg";
 import CloudMessageIcon from "@/public/icons/cloud-message.svg";
-import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
+import useFetch from "@/hooks/useFetch";
 import { useEffect, useState } from "react";
 import { useProfileStore } from "@/stores/profile";
 import useEffectOnce from "@/hooks/useEffectOnce";
-import { IPartner, IUserData } from "@/models/user";
+import { IUserData } from "@/models/user";
 import { IContact } from "@/models/chat";
 import useNotariesStore from "@/stores/notaries";
 
