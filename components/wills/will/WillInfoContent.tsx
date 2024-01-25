@@ -1,20 +1,20 @@
-import { Box, CircularProgress } from "@mui/material";
-import { useLocale, useTranslations } from "next-intl";
-import ExpandingFields from "@/components/fields/ExpandingFields";
 import { FC } from "react";
+import { format } from "date-fns";
+import { useLocale, useTranslations } from "next-intl";
+import { useRouter } from "next/router";
+import useFetch from "@/hooks/useFetch";
+import { Box, CircularProgress } from "@mui/material";
+import ExpandingFields from "@/components/fields/ExpandingFields";
 import WillInfo from "@/components/wills/will/info/WillInfo";
 import TestatorInfo from "@/components/wills/will/info/TestatorInfo";
-import DocumentInfoContent from "@/components/check-document/document/DocumentInfoContent";
-import { format } from "date-fns";
-import useFetch from "@/hooks/useFetch";
-import { IPartner } from "@/models/user";
-import Button from "@/components/ui/Button";
 import ApplicationStatusInfoContent from "@/components/applications/status/ApplicationStatusInfoContent";
-import { useRouter } from "next/router";
+import { IPartner } from "@/models/user";
+import { IApplication } from "@/models/application";
+import Button from "@/components/ui/Button";
 import Hint from "@/components/ui/Hint";
 
 interface IWillInfoContentProps {
-  willInfo?: any;
+  willInfo?: IApplication;
 }
 
 const WillInfoContent: FC<IWillInfoContentProps> = ({ willInfo }) => {
@@ -48,7 +48,7 @@ const WillInfoContent: FC<IWillInfoContentProps> = ({ willInfo }) => {
   };
 
   const handleRevokeWill = () => {
-    router.push(`/applications/edit/${willInfo?.id}`);
+    router.push(`/applications/create`);
   };
 
   const willTitles = [
