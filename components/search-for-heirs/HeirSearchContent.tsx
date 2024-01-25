@@ -54,7 +54,7 @@ const SearchForHeirs = (props: ISearchForHeirsProps) => {
 
       <SearchForm onSubmit={onSubmit} form={form} names={searchFormNames} />
 
-      {heirsInfo ? (
+      {heirsInfo?.data ? (
         heirsInfoLoading ? (
           <CircularProgress />
         ) : (
