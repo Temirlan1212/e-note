@@ -48,6 +48,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         "partner.fullName",
         "address.fullName",
         "code",
+        "typeOfNotary",
+        "statusOfNotary",
         "notaryDistrict.id",
         "licenseTermUntil",
         "longitude",
