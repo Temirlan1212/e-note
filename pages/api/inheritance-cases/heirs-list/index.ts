@@ -11,14 +11,9 @@ export interface IApplicationsQueryParamsData {
 
 const initialCriteria = [
   {
-    fieldName: "notaryIsInheritance",
+    fieldName: "saleOrderRef.id",
     operator: "=",
-    value: true,
-  },
-  {
-    fieldName: "saleOrderRef",
-    operator: "isNull",
-    value: true,
+    value: 24797,
   },
 ];
 
@@ -77,7 +72,11 @@ const fetchList = async (req: NextApiRequest) => {
       sortBy: req.body["sortBy"] ?? [],
       fields: [
         "barCode",
-        "notaryUniqNumber",
+        "creationDate",
+        "createdOn",
+        "requester.relationships.relationshipType",
+        "requester.id",
+        "requester.mobilePhone",
         "requester.personalNumber",
         "requester.fullName",
         "requester.deathDate",
@@ -97,7 +96,6 @@ const fetchList = async (req: NextApiRequest) => {
         "company.address.addressL3",
         "company.address.addressL2",
         "requester.actualResidenceAddress.addressL2",
-        "creationDate",
       ],
       data: {
         operator: "and",
