@@ -42,7 +42,7 @@ const HeirAccordion: FC<IHeirAccordionProps> = ({ foundedData }) => {
             </Typography>
 
             <Typography>
-              <b>{t("Unique number")}: </b> {item?.notaryUniqNumber ?? t("not assigned")}
+              <b>{t("The number of the inheritance case")}: </b> {item?.notaryUniqNumber ?? t("not assigned")}
             </Typography>
 
             <Typography>
