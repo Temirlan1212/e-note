@@ -73,6 +73,6 @@ export const applicationSchema = object()
     }).nullable(),
     saleOrderRef: object({
       id: number().integer().nullable(),
-    }),
+    }).nullable(),
   })
   .concat(addressSchema.pick(["region", "district", "city"]));

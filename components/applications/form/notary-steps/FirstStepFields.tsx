@@ -401,7 +401,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         requester: newRequesters.length > 0 ? newRequesters : values.requester,
         statusSelect: 2,
         notarySignatureStatus: !!values?.notarySignatureStatus ? undefined : 2,
-        saleOrderRef: !!saleOrderRef ? { id: saleOrderRef } : { id: null },
+        saleOrderRef: !!saleOrderRef ? { id: saleOrderRef } : null,
       };
 
       let result = null;
