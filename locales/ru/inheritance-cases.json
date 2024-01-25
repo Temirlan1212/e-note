@@ -5,5 +5,7 @@
   "End date of inheritance": "Дата окончания наследственного дела",
   "List of heirs": "Список наследников",
   "Create an heir": "Создать наследника",
-  "Family relationships": "Родственные отношения"
+  "Family relationships": "Родственные отношения",
+  "Revoke the will": "Отменить завещание",
+  "When a will is revoked, a 'Statement of Revocation of Will' must be made": "При отмене завещания должно быть составлено 'Заявление об отмене завещания'"
 }

@@ -4,9 +4,14 @@ import ExpandingFields from "@/components/fields/ExpandingFields";
 import { FC } from "react";
 import WillInfo from "@/components/wills/will/info/WillInfo";
 import TestatorInfo from "@/components/wills/will/info/TestatorInfo";
+import DocumentInfoContent from "@/components/check-document/document/DocumentInfoContent";
 import { format } from "date-fns";
 import useFetch from "@/hooks/useFetch";
 import { IPartner } from "@/models/user";
+import Button from "@/components/ui/Button";
+import ApplicationStatusInfoContent from "@/components/applications/status/ApplicationStatusInfoContent";
+import { useRouter } from "next/router";
+import Hint from "@/components/ui/Hint";
 
 interface IWillInfoContentProps {
   willInfo?: any;
@@ -14,7 +19,7 @@ interface IWillInfoContentProps {
 
 const WillInfoContent: FC<IWillInfoContentProps> = ({ willInfo }) => {
   const t = useTranslations();
-
+  const router = useRouter();
   const locale = useLocale();
 
   const { data: testatorInfo, loading: loadingTestatorInfo } = useFetch(
@@ -40,6 +45,10 @@ const WillInfoContent: FC<IWillInfoContentProps> = ({ willInfo }) => {
     ];
 
     return addressParts.filter(Boolean).join(", ");
+  };
+
+  const handleRevokeWill = () => {
+    router.push(`/applications/edit/${willInfo?.id}`);
   };
 
   const willTitles = [
@@ -118,7 +127,24 @@ const WillInfoContent: FC<IWillInfoContentProps> = ({ willInfo }) => {
         {loadingTestatorInfo ? <CircularProgress /> : <TestatorInfo titles={testatorTitles} />}
 
         <ExpandingFields title="Will" permanentExpand={false}>
-          {t("Will")}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
+              justifyContent: "space-between",
+              px: { xs: "10px", md: "40px" },
+              gap: "15px",
+              mb: "20px",
+            }}
+          >
+            <Hint type="hint" defaultActive={false} sx={{ width: { xs: "100%", md: "50%" } }}>
+              {t("When a will is revoked, a 'Statement of Revocation of Will' must be made")}
+            </Hint>
+            <Button sx={{ width: "300px" }} onClick={handleRevokeWill}>
+              {t("Revoke the will")}
+            </Button>
+          </Box>
+          <ApplicationStatusInfoContent id={willInfo?.id} isWill={true} />
         </ExpandingFields>
       </Box>
     </Box>
