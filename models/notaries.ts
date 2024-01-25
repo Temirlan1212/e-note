@@ -10,6 +10,8 @@ export interface INotary {
   "address.district": INotaryGeo;
   "address.city": INotaryGeo;
   "address.region": INotaryGeo;
+  "$t:address.city.name": string;
+  "address.city.name": string;
   id: number;
   "partner.simpleFullName": string;
   "partner.fullName": string;

@@ -13,7 +13,6 @@ interface ITestatorInfoProps {
 }
 
 const TestatorInfo: FC<ITestatorInfoProps> = ({ titles }) => {
-  console.log(titles);
   const t = useTranslations();
 
   const theme = useTheme();
