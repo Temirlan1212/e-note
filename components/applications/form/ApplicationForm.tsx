@@ -245,7 +245,11 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             onNext={({ step }) => {
               setStep((prev) => {
                 if (step != null) return step;
-                router.push("/applications");
+                if (router.query?.redirectUrl) {
+                  router.push({ query: { ...router.query, isRedirect: true } });
+                } else {
+                  router.push("/applications");
+                }
                 return prev;
               });
             }}
@@ -353,7 +357,11 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
             onNext={({ step }) => {
               setStep((prev) => {
                 if (step != null) return step;
-                router.push("/applications");
+                if (router.query?.redirectUrl) {
+                  router.push({ query: { ...router.query, isRedirect: true } });
+                } else {
+                  router.push("/applications");
+                }
                 return prev;
               });
             }}

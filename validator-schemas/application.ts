@@ -71,5 +71,8 @@ export const applicationSchema = object()
       code: string().nullable(),
       name: string().nullable(),
     }).nullable(),
+    saleOrderRef: object({
+      id: number().integer().nullable(),
+    }),
   })
   .concat(addressSchema.pick(["region", "district", "city"]));

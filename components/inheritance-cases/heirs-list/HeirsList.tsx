@@ -9,13 +9,14 @@ import PostAddIcon from "@mui/icons-material/PostAdd";
 import Button from "@/components/ui/Button";
 import HeirsTable from "./heirs-table/HeirsTable";
 import FilterContent from "./filter-content/FilterContent";
+import { ScrollHandler } from "@/components/ui/ScrollHandler";
 
-export default function HeirsList() {
+export default function HeirsList({ parentRequestStatus }: { parentRequestStatus: "pending" | "finished" }) {
   const t = useTranslations();
   const router = useRouter();
   const { updateParams, params } = useFetchListParams<InheritanceCasesFilterValuesProps>();
 
-  const { data, loading } = useFetch<FetchResponseBody | null>("/api/inheritance-cases/heirs-list", "POST", {
+  const { data, loading, status } = useFetch<FetchResponseBody | null>("/api/inheritance-cases/heirs-list", "POST", {
     body: params,
   });
 
@@ -27,12 +28,15 @@ export default function HeirsList() {
   };
 
   const handleCreate = async () => {
-    router.push("/applications/create");
+    router.push({
+      pathname: "/applications/create",
+      query: { redirectUrl: router.asPath + "#hairs-list", saleOrderRef: router.query.id },
+    });
   };
 
   return (
-    <>
-      <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
+    <ScrollHandler start={status === "finished" && parentRequestStatus === "finished"} seconds={0}>
+      <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px" id="hairs-list">
         <Typography variant="h4" color="primary">
           {t("List of heirs")}
         </Typography>
@@ -55,6 +59,6 @@ export default function HeirsList() {
           totalPages={calculateTotalPages()}
         />
       </Box>
-    </>
+    </ScrollHandler>
   );
 }
