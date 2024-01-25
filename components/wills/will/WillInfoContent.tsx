@@ -131,18 +131,20 @@ const WillInfoContent: FC<IWillInfoContentProps> = ({ willInfo }) => {
             sx={{
               display: "flex",
               flexDirection: { xs: "column", md: "row" },
-              justifyContent: "space-between",
+              justifyContent: "flex-end",
               px: { xs: "10px", md: "40px" },
               gap: "15px",
               mb: "20px",
             }}
           >
-            <Hint type="hint" defaultActive={false} sx={{ width: { xs: "100%", md: "50%" } }}>
+            <Hint type="hint" defaultActive={false}>
               {t("When a will is revoked, a 'Statement of Revocation of Will' must be made")}
             </Hint>
-            <Button sx={{ width: "300px" }} onClick={handleRevokeWill}>
-              {t("Revoke the will")}
-            </Button>
+            <Box sx={{ height: "40px" }}>
+              <Button sx={{ width: "300px" }} onClick={handleRevokeWill}>
+                {t("Revoke the will")}
+              </Button>
+            </Box>
           </Box>
           <ApplicationStatusInfoContent id={willInfo?.id} isWill={true} />
         </ExpandingFields>
