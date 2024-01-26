@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IRoute, isRoutesIncludesPath } from "@/routes/data";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
@@ -34,12 +34,11 @@ import ScrollToTopFab from "./ScrollToTopFab";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import SchoolIcon from "@mui/icons-material/School";
-import { useMediaQuery } from "@mui/material";
+import { CircularProgress, useMediaQuery } from "@mui/material";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import useInstructionStore from "@/stores/instruction";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
-import useConvert from "@/hooks/useConvert";
 
 const DrawerListItems = ({
   routes,
@@ -150,8 +149,6 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
   const theme = useTheme();
   const router = useRouter();
   const t = useTranslations();
-  const convert = useConvert();
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [open, setOpen] = useState(false);
   const [videoURL, setVideoURL] = useState<string | null>(null);
 
@@ -159,7 +156,7 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
 
   const { data, loading, update } = useFetch<Response>("", "GET", { returnResponse: true });
 
-  const getRoute = () => {
+  const getRoutePath = () => {
     const applicationRoute = ["create", "edit"].some((route) => router.pathname.includes(route));
     if (applicationRoute) {
       return step;
@@ -167,25 +164,25 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
     return router.pathname;
   };
 
-  useEffect(() => {
-    update(`/api/instruction?path=test123`);
-  }, [router.pathname]);
-
   useEffectOnce(async () => {
     const binaryData = await data?.text();
     if (!!binaryData) {
-      const videoBlob = convert.binary.toBlob(binaryData, "video/mp4");
-      setVideoURL(URL.createObjectURL(videoBlob));
-      if (videoRef.current) {
-        videoRef.current.src = URL.createObjectURL(videoBlob);
-      }
+      setVideoURL(binaryData);
     }
   }, [data]);
+
+  useEffect(() => {
+    setVideoURL(null);
+  }, [router.pathname]);
 
   const handleDrawerToggle = (e?: any, v?: boolean) => {
     if (e?.stopPropagation != null) e.stopPropagation();
     setOpen((open) => v ?? !open);
   };
+
+  const fetchVideo = useCallback(async () => {
+    await update("/api/instruction?path=" + getRoutePath());
+  }, [getRoutePath, update, videoURL]);
 
   return (
     <Box display="flex" flexDirection="column" height="100%">
@@ -281,16 +278,25 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
               slots={{
                 button: () => <></>,
                 body: () => (
-                  <>
-                    <video width={300} height={300} controls>
-                      <source src={"https://en.minjust.gov.kg/5f297ade-55a6-465a-8fa1-16e4bfc0a0c1"} type="video/mp4" />
-                    </video>
-                  </>
+                  <Box width="100%" height="300px">
+                    {videoURL ? (
+                      <video width="100%" height="100%" src={`data:video/mp4;base64,${videoURL}`} controls></video>
+                    ) : (
+                      <Box height="100%">
+                        <Typography align="center" color="info.main" variant="h5">
+                          {t("Wait, it's loading")}...
+                        </Typography>
+                        <Box height="100%" display="flex" alignItems="center" justifyContent="center">
+                          <CircularProgress size={80} color="info" />
+                        </Box>
+                      </Box>
+                    )}
+                  </Box>
                 ),
               }}
             >
               <Tooltip title={t("Learning")}>
-                <IconButton sx={{ color: "inherit" }}>
+                <IconButton onClick={fetchVideo} sx={{ color: "inherit" }}>
                   <SchoolIcon />
                 </IconButton>
               </Tooltip>
