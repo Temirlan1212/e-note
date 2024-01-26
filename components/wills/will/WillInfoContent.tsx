@@ -1,14 +1,12 @@
 import { FC } from "react";
-import { format } from "date-fns";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/router";
+import { useTranslations } from "next-intl";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { Box, CircularProgress } from "@mui/material";
 import ExpandingFields from "@/components/fields/ExpandingFields";
 import WillInfo from "@/components/wills/will/info/WillInfo";
 import TestatorInfo from "@/components/wills/will/info/TestatorInfo";
 import ApplicationStatusInfoContent from "@/components/applications/status/ApplicationStatusInfoContent";
-import { IPartner } from "@/models/user";
 import { IApplication } from "@/models/application";
 import Button from "@/components/ui/Button";
 import Hint from "@/components/ui/Hint";
