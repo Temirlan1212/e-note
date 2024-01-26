@@ -10,6 +10,8 @@ export interface INotary {
   "address.district": INotaryGeo;
   "address.city": INotaryGeo;
   "address.region": INotaryGeo;
+  "$t:address.city.name": string;
+  "address.city.name": string;
   id: number;
   "partner.simpleFullName": string;
   "partner.fullName": string;
@@ -28,11 +30,13 @@ export interface INotaryInfoData {
   licenseNo: string;
   address: {
     city: {
+      "$t:name": string;
       fullName: string;
       id: number;
       $version: number;
     };
     district: {
+      "$t:name": string;
       code: string;
       name: string;
       id: number;
@@ -43,12 +47,16 @@ export interface INotaryInfoData {
     id: number;
     $version: number;
     region: {
+      "$t:name": string;
       fullName: string;
       code: string;
       name: string;
       id: number;
       $version: number;
     };
+    addressL4: string;
+    addressL3: string;
+    addressL2: string;
   };
   $attachments: number;
   licenseTermUntil: string;

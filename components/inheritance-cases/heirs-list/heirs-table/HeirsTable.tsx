@@ -16,13 +16,6 @@ const HeirsTable = React.forwardRef<HTMLDivElement, HeirsTableProps>(({ classNam
 
   const columns: IGridColDef[] = [
     {
-      field: "QR",
-      headerName: "QR",
-      width: 70,
-      sortable: false,
-      renderCell: (params: any) => <QrMenu params={params} />,
-    },
-    {
       field: "requester.personalNumber",
       headerName: "PIN",
       width: 180,
@@ -37,13 +30,13 @@ const HeirsTable = React.forwardRef<HTMLDivElement, HeirsTableProps>(({ classNam
     {
       field: "requester.relationships.relationshipType",
       headerName: "Family relationships",
-      width: 200,
+      width: 250,
       sortable: false,
     },
     {
       field: "createdOn",
       headerName: "Date of application",
-      width: 280,
+      width: 260,
       valueGetter: (params: GridValueGetterParams) => {
         if (!params.value) return t("absent");
         const date = new Date(params.value);
@@ -61,7 +54,7 @@ const HeirsTable = React.forwardRef<HTMLDivElement, HeirsTableProps>(({ classNam
     {
       field: "requester.mobilePhone",
       headerName: "Phone number",
-      width: 180,
+      width: 220,
       sortable: false,
     },
     {

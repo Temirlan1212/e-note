@@ -110,7 +110,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         creationDate: format(new Date(), "yyyy-MM-dd"),
         statusSelect: 2,
         notarySignatureStatus: !!values?.notarySignatureStatus ? undefined : 2,
-        saleOrderRef: !!saleOrderRef ? { id: saleOrderRef } : { id: null },
+        saleOrderRef: !!saleOrderRef ? { id: saleOrderRef } : null,
       };
 
       let result = null;

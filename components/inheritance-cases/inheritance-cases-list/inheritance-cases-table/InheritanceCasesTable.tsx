@@ -1,12 +1,13 @@
 import React from "react";
 import { GridTable, IFilterSubmitParams, IGridColDef, IGridTableProps } from "@/components/ui/GridTable";
 import { Box, useMediaQuery } from "@mui/material";
-import { GridSortModel } from "@mui/x-data-grid";
+import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import { ActualResidenceAddress } from "./components/ActualResidenceAddress";
 import { TableActions } from "./components/TableActions";
 import { useFetchListParams } from "@/contexts/fetch-list-params";
 import { InheritanceCasesFilterValuesProps } from "@/models/inheritance-cases";
 import { QrMenu } from "@/components/qr-menu/QrMenu";
+import { useLocale } from "next-intl";
 
 interface InheritanceCasesTableProps extends Omit<IGridTableProps, "columns"> {}
 
@@ -18,6 +19,8 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
       updateParams,
       params: { requestType },
     } = useFetchListParams<InheritanceCasesFilterValuesProps>();
+
+    const locale = useLocale();
 
     const handleUpdateFilterValues = (value: IFilterSubmitParams) => {
       const type = value.rowParams.colDef.filter?.type;
@@ -44,8 +47,8 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
       },
       {
         field: "notaryUniqNumber",
-        headerName: "Registry number",
-        width: 210,
+        headerName: "The number of the inheritance case",
+        width: 350,
         sortable: false,
         filter: {
           type: "simple",
@@ -54,8 +57,8 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
       },
       {
         field: "requester.personalNumber",
-        headerName: "PIN of the deceased",
-        width: 210,
+        headerName: "PIN",
+        width: 250,
         sortable: false,
         filter: {
           type: "simple",
@@ -65,25 +68,12 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
       {
         field: "requester.fullName",
         headerName: "Full name of the deceased",
-        width: 270,
+        width: 400,
         sortable: false,
         filter: {
           type: "simple",
           disabled: requestType === "search",
         },
-      },
-      {
-        field: "requester.birthDate",
-        headerName: "Date of birth",
-        width: 180,
-        sortable: false,
-      },
-      {
-        field: "requester.actualResidenceAddress.addressL2",
-        headerName: "Place of last residence",
-        width: 270,
-        sortable: false,
-        renderCell: (params) => ActualResidenceAddress(params),
       },
       {
         field: "requester.deathDate",
@@ -92,23 +82,21 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
         sortable: false,
       },
       {
-        field: "creationDate",
-        headerName: "Date of creation",
-        width: 210,
-        sortable: true,
-      },
-      {
         field: "createdBy.fullName",
         headerName: "Created by",
-        width: 200,
+        width: 250,
         sortable: false,
       },
       {
-        field: "company.name",
-        headerName: "Executor",
+        field: "company.notaryDistrict",
+        headerName: "Notary district",
         cellClassName: "executor-column",
-        width: 200,
+        width: 300,
         sortable: false,
+        valueGetter: (params: GridValueGetterParams) => {
+          const nameKey = locale !== "en" ? "$t:name" : "name";
+          return params.row?.["company.notaryDistrict"]?.[nameKey];
+        },
       },
       {
         field: "actions",
