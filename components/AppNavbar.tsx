@@ -181,7 +181,7 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
   };
 
   const fetchVideo = useCallback(async () => {
-    await update("/api/instruction?path=" + getRoutePath());
+    await update("/api/files/instruction?path=" + getRoutePath());
   }, [getRoutePath, update, videoURL]);
 
   return (
