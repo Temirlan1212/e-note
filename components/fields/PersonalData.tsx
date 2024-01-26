@@ -14,31 +14,33 @@ import { MouseEventHandler, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useEffectOnce from "@/hooks/useEffectOnce";
 
+type Names = {
+  type: string;
+  foreigner: string;
+  lastName: string;
+  firstName: string;
+  name: string;
+  middleName: string;
+  pin: string;
+  nameOfCompanyOfficial: string;
+  nameOfCompanyGov: string;
+  representativesName: string;
+  notaryRegistrationNumber: string;
+  notaryOKPONumber: string;
+  notaryPhysicalParticipantsQty: string;
+  notaryLegalParticipantsQty: string;
+  notaryTotalParticipantsQty: string;
+  notaryDateOfOrder: string;
+  subjectRole: string;
+  picture: string;
+  tundukDocumentSeries: string;
+  tundukDocumentNumber: string;
+  validatePassport: string;
+};
+
 export interface IPersonalDataProps {
   form: UseFormReturn<any>;
-  names: {
-    type: string;
-    foreigner: string;
-    lastName: string;
-    firstName: string;
-    name: string;
-    middleName: string;
-    pin: string;
-    nameOfCompanyOfficial: string;
-    nameOfCompanyGov: string;
-    representativesName: string;
-    notaryRegistrationNumber: string;
-    notaryOKPONumber: string;
-    notaryPhysicalParticipantsQty: string;
-    notaryLegalParticipantsQty: string;
-    notaryTotalParticipantsQty: string;
-    notaryDateOfOrder: string;
-    subjectRole?: string;
-    picture?: string;
-    tundukDocumentSeries?: string;
-    tundukDocumentNumber?: string;
-    validatePassport?: string;
-  };
+  names: Partial<Names>;
   defaultValues?: {
     type?: number | null;
     foreigner?: boolean;
@@ -112,11 +114,11 @@ export default function PersonalData({
 
   const passportSeries = watch(names?.tundukDocumentSeries ?? "");
   const passportNumber = watch(names?.tundukDocumentNumber ?? "");
-  const foreigner = watch(names.foreigner);
-  const type = watch(names.type);
-  const picture = watch(names?.picture!);
-  const firstName = watch(names?.firstName);
-  const name = watch(names?.nameOfCompanyOfficial);
+  const foreigner = watch(names?.foreigner ?? "");
+  const type = watch(names?.type ?? "");
+  const picture = watch(names?.picture ?? "");
+  const firstName = watch(names?.firstName ?? "");
+  const name = watch(names?.nameOfCompanyOfficial ?? "");
 
   const { data: imageData, update } = useFetch<Response>("", "GET", {
     returnResponse: true,
@@ -156,8 +158,8 @@ export default function PersonalData({
 
   useEffect(() => {
     if (name) {
-      form.setValue(names?.name, name);
-      form.setValue(names?.firstName, name);
+      form.setValue(names?.name!, name);
+      form.setValue(names?.firstName!, name);
     }
   }, [name]);
 
@@ -171,7 +173,7 @@ export default function PersonalData({
     <Box display="flex" gap="20px" flexDirection="column">
       <Box>
         <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-          {(fields?.type == null || !!fields?.type) && (
+          {(fields?.type == null || !!fields?.type) && names?.type && (
             <Controller
               control={control}
               name={names.type}
@@ -198,7 +200,7 @@ export default function PersonalData({
             />
           )}
 
-          {(fields?.foreigner == null || !!fields?.foreigner) && (
+          {(fields?.foreigner == null || !!fields?.foreigner) && names?.foreigner && (
             <Controller
               control={control}
               name={names.foreigner}
@@ -456,7 +458,7 @@ export default function PersonalData({
       {(type == null || type != 1) && (
         <>
           <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-            {(fields?.lastName == null || !!fields?.lastName) && (
+            {(fields?.lastName == null || !!fields?.lastName) && names?.lastName && (
               <Controller
                 control={control}
                 name={names.lastName}
@@ -488,7 +490,7 @@ export default function PersonalData({
               />
             )}
 
-            {(fields?.firstName == null || !!fields?.firstName) && (
+            {(fields?.firstName == null || !!fields?.firstName) && names?.firstName && (
               <Controller
                 control={control}
                 name={names.firstName}
@@ -520,7 +522,7 @@ export default function PersonalData({
               />
             )}
 
-            {(fields?.middleName == null || !!fields?.middleName) && (
+            {(fields?.middleName == null || !!fields?.middleName) && names?.middleName && (
               <Controller
                 control={control}
                 name={names.middleName}
@@ -545,27 +547,28 @@ export default function PersonalData({
 
       {type == 1 && (
         <>
-          {(fields?.nameOfCompanyOfficial == null || !!fields?.nameOfCompanyOfficial) && (
-            <Controller
-              control={control}
-              name={names.nameOfCompanyOfficial}
-              defaultValue={defaultValues?.nameOfCompanyOfficial ?? ""}
-              render={({ field, fieldState }) => (
-                <Box display="flex" flexDirection="column" width="100%">
-                  <InputLabel sx={{ fontWeight: 600 }}>{t("Full name in the official language")}</InputLabel>
-                  <Input
-                    sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
-                    disabled={disableFields}
-                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                    {...field}
-                  />
-                </Box>
-              )}
-            />
-          )}
+          {(fields?.nameOfCompanyOfficial == null || !!fields?.nameOfCompanyOfficial) &&
+            names?.nameOfCompanyOfficial && (
+              <Controller
+                control={control}
+                name={names.nameOfCompanyOfficial}
+                defaultValue={defaultValues?.nameOfCompanyOfficial ?? ""}
+                render={({ field, fieldState }) => (
+                  <Box display="flex" flexDirection="column" width="100%">
+                    <InputLabel sx={{ fontWeight: 600 }}>{t("Full name in the official language")}</InputLabel>
+                    <Input
+                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
+                      disabled={disableFields}
+                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                      {...field}
+                    />
+                  </Box>
+                )}
+              />
+            )}
 
-          {(fields?.nameOfCompanyGov == null || !!fields?.nameOfCompanyGov) && (
+          {(fields?.nameOfCompanyGov == null || !!fields?.nameOfCompanyGov) && names?.nameOfCompanyGov && (
             <Controller
               control={control}
               name={names.nameOfCompanyGov}
@@ -585,7 +588,7 @@ export default function PersonalData({
             />
           )}
 
-          {(fields?.representativesName == null || !!fields?.representativesName) && (
+          {(fields?.representativesName == null || !!fields?.representativesName) && names?.representativesName && (
             <Controller
               control={control}
               name={names.representativesName}
@@ -606,28 +609,29 @@ export default function PersonalData({
           )}
 
           <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-            {(fields?.notaryRegistrationNumber == null || !!fields?.notaryRegistrationNumber) && (
-              <Controller
-                control={control}
-                name={names.notaryRegistrationNumber}
-                defaultValue={defaultValues?.notaryRegistrationNumber ?? ""}
-                render={({ field, fieldState }) => (
-                  <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel sx={{ fontWeight: 600 }}>{t("Registration number")}</InputLabel>
-                    <Input
-                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
-                      disabled={disableFields}
-                      type="number"
-                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                      {...field}
-                    />
-                  </Box>
-                )}
-              />
-            )}
+            {(fields?.notaryRegistrationNumber == null || !!fields?.notaryRegistrationNumber) &&
+              names?.notaryRegistrationNumber && (
+                <Controller
+                  control={control}
+                  name={names.notaryRegistrationNumber}
+                  defaultValue={defaultValues?.notaryRegistrationNumber ?? ""}
+                  render={({ field, fieldState }) => (
+                    <Box display="flex" flexDirection="column" width="100%">
+                      <InputLabel sx={{ fontWeight: 600 }}>{t("Registration number")}</InputLabel>
+                      <Input
+                        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
+                        disabled={disableFields}
+                        type="number"
+                        inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                        helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                        {...field}
+                      />
+                    </Box>
+                  )}
+                />
+              )}
 
-            {(fields?.notaryOKPONumber == null || !!fields?.notaryOKPONumber) && (
+            {(fields?.notaryOKPONumber == null || !!fields?.notaryOKPONumber) && names?.notaryOKPONumber && (
               <Controller
                 control={control}
                 name={names.notaryOKPONumber}
@@ -650,76 +654,79 @@ export default function PersonalData({
           </Box>
 
           <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-            {(fields?.notaryPhysicalParticipantsQty == null || !!fields?.notaryPhysicalParticipantsQty) && (
-              <Controller
-                control={control}
-                name={names.notaryPhysicalParticipantsQty}
-                defaultValue={defaultValues?.notaryPhysicalParticipantsQty ?? ""}
-                render={({ field, fieldState }) => (
-                  <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel sx={{ fontWeight: 600 }}>
-                      {t("Number of founders (participants) of individuals")}
-                    </InputLabel>
-                    <Input
-                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
-                      disabled={disableFields}
-                      type="number"
-                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                      {...field}
-                    />
-                  </Box>
-                )}
-              />
-            )}
+            {(fields?.notaryPhysicalParticipantsQty == null || !!fields?.notaryPhysicalParticipantsQty) &&
+              names?.notaryPhysicalParticipantsQty && (
+                <Controller
+                  control={control}
+                  name={names.notaryPhysicalParticipantsQty}
+                  defaultValue={defaultValues?.notaryPhysicalParticipantsQty ?? ""}
+                  render={({ field, fieldState }) => (
+                    <Box display="flex" flexDirection="column" width="100%">
+                      <InputLabel sx={{ fontWeight: 600 }}>
+                        {t("Number of founders (participants) of individuals")}
+                      </InputLabel>
+                      <Input
+                        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
+                        disabled={disableFields}
+                        type="number"
+                        inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                        helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                        {...field}
+                      />
+                    </Box>
+                  )}
+                />
+              )}
 
-            {(fields?.notaryLegalParticipantsQty == null || !!fields?.notaryLegalParticipantsQty) && (
-              <Controller
-                control={control}
-                name={names.notaryLegalParticipantsQty}
-                defaultValue={defaultValues?.notaryLegalParticipantsQty ?? ""}
-                render={({ field, fieldState }) => (
-                  <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel sx={{ fontWeight: 600 }}>
-                      {t("Number of founders (participants) of legal entities")}
-                    </InputLabel>
-                    <Input
-                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
-                      disabled={disableFields}
-                      type="number"
-                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                      {...field}
-                    />
-                  </Box>
-                )}
-              />
-            )}
+            {(fields?.notaryLegalParticipantsQty == null || !!fields?.notaryLegalParticipantsQty) &&
+              names?.notaryLegalParticipantsQty && (
+                <Controller
+                  control={control}
+                  name={names.notaryLegalParticipantsQty}
+                  defaultValue={defaultValues?.notaryLegalParticipantsQty ?? ""}
+                  render={({ field, fieldState }) => (
+                    <Box display="flex" flexDirection="column" width="100%">
+                      <InputLabel sx={{ fontWeight: 600 }}>
+                        {t("Number of founders (participants) of legal entities")}
+                      </InputLabel>
+                      <Input
+                        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
+                        disabled={disableFields}
+                        type="number"
+                        inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                        helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                        {...field}
+                      />
+                    </Box>
+                  )}
+                />
+              )}
           </Box>
 
           <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-            {(fields?.notaryTotalParticipantsQty == null || !!fields?.notaryTotalParticipantsQty) && (
-              <Controller
-                control={control}
-                name={names.notaryTotalParticipantsQty}
-                defaultValue={defaultValues?.notaryTotalParticipantsQty ?? ""}
-                render={({ field, fieldState }) => (
-                  <Box display="flex" flexDirection="column" width="100%">
-                    <InputLabel sx={{ fontWeight: 600 }}>{t("Total number (participants)")}</InputLabel>
-                    <Input
-                      sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
-                      disabled={disableFields}
-                      type="number"
-                      inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                      helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                      {...field}
-                    />
-                  </Box>
-                )}
-              />
-            )}
+            {(fields?.notaryTotalParticipantsQty == null || !!fields?.notaryTotalParticipantsQty) &&
+              names?.notaryTotalParticipantsQty && (
+                <Controller
+                  control={control}
+                  name={names.notaryTotalParticipantsQty}
+                  defaultValue={defaultValues?.notaryTotalParticipantsQty ?? ""}
+                  render={({ field, fieldState }) => (
+                    <Box display="flex" flexDirection="column" width="100%">
+                      <InputLabel sx={{ fontWeight: 600 }}>{t("Total number (participants)")}</InputLabel>
+                      <Input
+                        sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
+                        disabled={disableFields}
+                        type="number"
+                        inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                        helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                        {...field}
+                      />
+                    </Box>
+                  )}
+                />
+              )}
 
-            {(fields?.notaryDateOfOrder == null || !!fields?.notaryDateOfOrder) && (
+            {(fields?.notaryDateOfOrder == null || !!fields?.notaryDateOfOrder) && names?.notaryDateOfOrder && (
               <Controller
                 control={control}
                 name={names.notaryDateOfOrder}
