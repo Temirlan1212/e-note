@@ -51,7 +51,7 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
 
   const inheritanceCasetitles = [
     {
-      title: "Unique number",
+      title: "Number",
       value: inheritanceCaseInfo?.notaryUniqNumber ? inheritanceCaseInfo?.notaryUniqNumber : t("absent"),
     },
     {
