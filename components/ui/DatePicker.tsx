@@ -1,6 +1,6 @@
 import { DatePicker as MUIDatePicker, DatePickerProps } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { enUS as en, ru } from "date-fns/locale";
 import { FormControl, FormHelperText, SxProps, Theme } from "@mui/material";
@@ -27,6 +27,7 @@ interface IDatePickerProps<T = Date | null> extends Omit<DatePickerProps<T>, "on
 const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProps> = (props, ref) => {
   const { onChange, value, placeholder, type = "secondary", helperText, boxSx, sx, ...restProps } = props;
 
+  const t = useTranslations();
   const locale = useLocale();
   const theme = useTheme();
 
@@ -64,6 +65,9 @@ const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProp
 
   const mergedStyles = { ...inputStyles, ...sx };
 
+  const displayHelperText =
+    helperText && helperText.includes("must be a `date` type") ? t("invalidDateErrorText") : helperText;
+
   return (
     <FormControl error={type === "error"} sx={boxSx}>
       <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={adapterLocale} localeText={localeText}>
@@ -80,7 +84,7 @@ const DatePicker: React.ForwardRefRenderFunction<HTMLDivElement, IDatePickerProp
           slotProps={{ textField: { placeholder } }}
           inputRef={ref as any}
         />
-        {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
+        {displayHelperText && <FormHelperText error={type === "error"}>{displayHelperText}</FormHelperText>}
       </LocalizationProvider>
     </FormControl>
   );
