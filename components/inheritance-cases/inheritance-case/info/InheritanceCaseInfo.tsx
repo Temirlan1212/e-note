@@ -35,7 +35,7 @@ const InheritanceCaseInfo: FC<IInheritanceCaseInfoProps> = ({ inheritanceCaseInf
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "25px" }}>
       <Typography variant="h4" color="success.main" pl="16px">
-        {t("Наследственное дело")}
+        {t("Inheritance case")}
       </Typography>
       <Box
         sx={{
