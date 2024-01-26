@@ -1,17 +1,34 @@
 import { FC } from "react";
+import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useTheme } from "@mui/material/styles";
 import { Box, Typography, List, ListItem } from "@mui/material";
+import { IApplication } from "@/models/application";
 import { InfoItem } from "./TestatorInfo";
 
 interface IWillInfoProps {
-  titles: InfoItem[];
+  willInfo: IApplication;
 }
 
-const WillInfo: FC<IWillInfoProps> = ({ titles }) => {
+const WillInfo: FC<IWillInfoProps> = ({ willInfo }) => {
   const t = useTranslations();
 
   const theme = useTheme();
+
+  const titles = [
+    {
+      title: "Number",
+      value: willInfo?.notaryUniqNumber ? willInfo?.notaryUniqNumber : t("absent"),
+    },
+    {
+      title: "Opening date",
+      value: willInfo?.createdOn ? format(new Date(willInfo?.createdOn!), "dd.MM.yyyy HH:mm:ss") : t("absent"),
+    },
+    {
+      title: "Created by",
+      value: willInfo?.company?.name ? willInfo?.company?.name : t("absent"),
+    },
+  ].filter(Boolean);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "25px" }}>
