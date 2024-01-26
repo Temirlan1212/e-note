@@ -2,12 +2,12 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "
 import { useTranslations } from "next-intl";
 import { UseFormReturn } from "react-hook-form";
 import html2canvas from "html2canvas";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import useConvert from "@/hooks/useConvert";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Backdrop, IconButton, Menu } from "@mui/material";
+import { Box, Backdrop, IconButton, Menu, InputLabel, Tooltip } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import EditIcon from "@mui/icons-material/Edit";
@@ -22,8 +22,12 @@ import DeclVideoRecordModal from "@/components/decl-video-record/DeclVideoRecord
 import KeyIcon from "@mui/icons-material/Key";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DocumentScannerIcon from "@mui/icons-material/DocumentScanner";
 import { useProfileStore } from "@/stores/profile";
 import EmblemIcon from "@/public/icons/emblem.svg";
+import Input from "@/components/ui/Input";
+import FileInput from "@/components/ui/FileInput";
+import { useRouter } from "next/router";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -34,12 +38,15 @@ export interface IStepFieldsProps {
 
 export default function SixthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
+  const router = useRouter();
   const convert = useConvert();
   const profile = useProfileStore((state) => state.getUserData());
   const { trigger, control, watch, setValue } = form;
 
   const id = watch("id");
   const version = watch("version");
+
+  const htmlSignRef = useRef<HTMLDivElement | null>(null);
 
   const [base64Doc, setBase64Doc] = useState<string>();
   const [docUrl, setDocUrl] = useState<string>();
@@ -49,7 +56,9 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
   const [hash, setHash] = useState<string | null>(null);
   const [signTime, setSignTime] = useState<string | null>(null);
-  const htmlSignRef = useRef<HTMLDivElement | null>(null);
+  const [editReason, setEditReason] = useState<string | null>(null);
+  const [file, setFile] = useState<File | File[] | null>();
+  const [fileError, setFileError] = useState<boolean>(false);
   // const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<null | HTMLElement>(null);
 
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
@@ -60,6 +69,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     id != null ? `/api/applications/${id}` : "",
     "POST"
   );
+  const { update: scanDoc, loading: scannedDocLoading } = useFetch("", "POST");
 
   useEffectOnce(async () => {
     const applicationData = application?.data?.[0];
@@ -159,6 +169,36 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     }
 
     if (callback) callback(false);
+  };
+
+  const handleEditReason = async (callback: Dispatch<SetStateAction<boolean>>) => {
+    if (editReason && file) {
+      const formData = new FormData();
+      if ("name" in file) {
+        formData.append("id", application?.data?.[0]?.id);
+        formData.append("editReason", editReason);
+        formData.append("fileName", file.name);
+        formData.append("file", file as File);
+
+        await scanDoc("/api/applications/edit-scan", formData).then((res) => {
+          if (res.status === 0) {
+            router.push("/applications");
+          }
+        });
+      }
+      callback(false);
+    }
+    if (!editReason) {
+      setEditReason("");
+    }
+    if (!fileError) {
+      setFileError(true);
+    }
+  };
+
+  const handleFileChange = (file: File | File[] | null) => {
+    setFile(file);
+    setFileError(false);
   };
 
   useEffectOnce(async () => {
@@ -285,6 +325,50 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
             )}
           </Box>
         )}
+
+        {application?.data?.[0]?.statusSelect === 1 &&
+          !applicationLoading &&
+          !prepareLoading &&
+          !pdfLoading &&
+          !syncLoading && (
+            <ConfirmationModal
+              hintTitle="Do you really want to edit the document?"
+              title="Edit document"
+              confirmLoading={scannedDocLoading}
+              onConfirm={(callback) => handleEditReason(callback)}
+              handleReject={() => {
+                setEditReason(null);
+                setFileError(false);
+              }}
+              slots={{
+                body: () => (
+                  <Box>
+                    <Box width="100%" height="90px">
+                      <InputLabel>{t("Enter the reason for editing the document")}</InputLabel>
+                      <Input
+                        onChange={(e) => setEditReason(e.target.value)}
+                        inputType={editReason === "" ? "error" : "secondary"}
+                        helperText={editReason === "" && t("This field is required!")}
+                      />
+                    </Box>
+                    <Box width="100%" height="90px">
+                      <InputLabel>{t("Attach a scanned copy of the edited document")}</InputLabel>
+                      <FileInput
+                        value={file}
+                        onChange={handleFileChange}
+                        inputType={fileError ? "error" : "secondary"}
+                        helperText={fileError && t("This field is required!")}
+                      />
+                    </Box>
+                  </Box>
+                ),
+              }}
+            >
+              <Button startIcon={<DocumentScannerIcon />} sx={{ flexGrow: "1", height: "100%" }}>
+                {t("Edit")}
+              </Button>
+            </ConfirmationModal>
+          )}
       </Box>
 
       <Box sx={{ width: 0, height: 0, overflow: "hidden" }}>

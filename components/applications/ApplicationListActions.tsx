@@ -19,6 +19,7 @@ import { IChatUser, IFetchByIdData, IFetchNotaryChat, IRequester, IUser } from "
 import CancelIcon from "@mui/icons-material/Cancel";
 import KeyIcon from "@mui/icons-material/Key";
 import VideocamIcon from "@mui/icons-material/Videocam";
+import DocumentScannerIcon from "@mui/icons-material/DocumentScanner";
 import Input from "@/components/ui/Input";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
@@ -214,6 +215,15 @@ export const ApplicationListActions = ({
     }
   };
 
+  const handleEditScanClick = async (id: number, e: Event) => {
+    e.stopPropagation();
+    const res = await getApplication(`/api/applications/${id}`);
+    const pdfLink = res?.data?.[0]?.documentInfo?.pdfLink;
+    if (!!pdfLink) {
+      router.push({ pathname: `/applications/edit/${id}`, query: { step: 5 } });
+    }
+  };
+
   const handleEditClick = async (rowId: number) => {
     if (isNotary) {
       if (isPrivateNotary) {
@@ -375,6 +385,18 @@ export const ApplicationListActions = ({
             </Tooltip>
           </ConfirmationModal>
         </>
+      )}
+
+      {params.row.statusSelect === 1 && (
+        <Tooltip title={t("Edit document")} arrow>
+          <IconButton onClick={(e: any) => handleEditScanClick(params.row.id, e)}>
+            {applicationLoading ? (
+              <CircularProgress sx={{ height: "20px !important", width: "20px !important" }} />
+            ) : (
+              <DocumentScannerIcon />
+            )}
+          </IconButton>
+        </Tooltip>
       )}
     </Box>
   );

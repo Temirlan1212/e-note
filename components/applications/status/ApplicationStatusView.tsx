@@ -22,19 +22,24 @@ const ApplicationStatusView: FC<IApplicationStatusViewProps> = (props) => {
   const [docUrl, setDocUrl] = useState<string>();
 
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
+  const { loading: scanLoading, update: getScan } = useFetch<Response>("", "GET", { returnResponse: true });
 
   useEffectOnce(async () => {
-    if (data?.documentInfo?.pdfLink != null && data?.documentInfo?.token != null) {
-      const pdfResponse = await getPdf(
-        `/api/adapter?url=${data.documentInfo.pdfLink}&token=${data.documentInfo.token}`
-      );
+    if (data.scan) {
+      const lastScanId = data.scan[data.scan.length - 1].id;
+      const pdfResponse = await getScan(`/api/files/download/${lastScanId}`);
 
-      const blob = await pdfResponse?.blob();
-      if (blob == null) return;
+      const binary = await pdfResponse?.text();
+      const pdfBlob = new Blob([binary], { type: "application/pdf" });
 
-      setDocUrl(URL.createObjectURL(blob));
+      // Создайте URL из Blob и установите его в состояние
+      const blobUrl = URL.createObjectURL(pdfBlob);
+
+      setDocUrl(blobUrl);
     }
   }, [data]);
+
+  console.log(docUrl);
 
   return (
     <Box display="flex" flexDirection="column" gap="25px">

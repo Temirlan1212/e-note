@@ -80,7 +80,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
     if (Number.isInteger(id)) {
       const application = await update(`/api/applications/${id}`);
       const status = application?.data?.[0]?.statusSelect;
-      if (status === 1) router.push("/applications");
+      if (status === 1 && stepProgress.current != 5) router.push("/applications");
     }
     setLoading(false);
 
@@ -382,6 +382,7 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
           {steps.map((component, index) => {
             const isCurrentStep = step === index;
             const isPassedStep = stepProgress.current >= index;
+            const disableSteps = data?.data?.[0]?.statusSelect === 1;
 
             return (
               <Step key={index} completed={step - 1 === index} sx={{ display: "flex", p: 0 }}>
@@ -391,10 +392,12 @@ export default function ApplicationForm({ id }: IApplicationFormProps) {
                       <CircularProgress sx={{ width: "30px !important", height: "30px !important" }} />
                     ) : step - 1 >= index ? (
                       <CheckCircleIcon
-                        color={isPassedStep ? "success" : "disabled"}
+                        color={isPassedStep && !disableSteps ? "success" : "disabled"}
                         sx={{ width: "30px", height: "30px" }}
-                        cursor={isPassedStep ? "pointer" : "initial"}
-                        onClick={() => isPassedStep && !isCurrentStep && handleStepChangeByStepper(index)}
+                        cursor={isPassedStep && !disableSteps ? "pointer" : "initial"}
+                        onClick={() =>
+                          isPassedStep && !disableSteps && !isCurrentStep && handleStepChangeByStepper(index)
+                        }
                       />
                     ) : (
                       <RadioButtonCheckedIcon

@@ -65,7 +65,29 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
   const titles = [
     { title: "Name", value: locale !== "en" ? data?.product?.["$t:name"] || data?.product?.name : data?.product?.name },
     { title: "StatusApplication", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
-    { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
+    {
+      title: "Signature status",
+      value: (
+        <>
+          {translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus)}
+          {data?.notaryReason && (
+            <Typography
+              component="span"
+              sx={{
+                fontSize: "14px",
+                fontWeight: "500",
+                color: "#ff5555",
+                wordBreak: "break-all",
+              }}
+            >
+              {" "}
+              ({t("After editing")})
+            </Typography>
+          )}
+        </>
+      ),
+    },
+    data?.notaryReason ? { title: "Reason for editing", value: data.notaryReason } : null,
     {
       title: "Date of the action",
       value: data?.createdOn ? format(new Date(data?.createdOn!), "dd.MM.yyyy HH:mm:ss") : "",

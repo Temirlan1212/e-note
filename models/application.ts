@@ -22,6 +22,11 @@ export interface IApplication {
   product: IProduct;
   requester: IPartner[];
   members: IPartner[];
+  scan?: {
+    fileName: string;
+    id: number;
+  }[];
+  notaryReason?: string;
   cancelReasonStr?: string;
   notaryCancelledDate?: string;
   documentInfo: {
