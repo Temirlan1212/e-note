@@ -98,6 +98,7 @@ const fetchList = async (req: NextApiRequest) => {
         "company.address.addressL2",
         "requester.actualResidenceAddress.addressL2",
         "creationDate",
+        "createdBy.fullName",
       ],
       data: {
         operator: "and",
