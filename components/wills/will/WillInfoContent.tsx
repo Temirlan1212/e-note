@@ -53,7 +53,7 @@ const WillInfoContent: FC<IWillInfoContentProps> = ({ willInfo }) => {
 
   const willTitles = [
     {
-      title: "Unique number",
+      title: "Number",
       value: willInfo?.notaryUniqNumber ? willInfo?.notaryUniqNumber : t("absent"),
     },
     {
