@@ -301,5 +301,6 @@
   "Register of wills": "Реестр завещаний",
   "Scan the QR code": "Отсканируйте QR-код",
   "Wait, it's loading": "Подождите, идет загрузка",
-  "The number of the inheritance case": "Номер наследст. дела"
+  "The number of the inheritance case": "Номер наследст. дела",
+  "invalidDateErrorText": "Пожалуйста, введите дату в формате ДД.ММ.ГГГГ"
 }

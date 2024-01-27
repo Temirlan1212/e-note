@@ -16,7 +16,7 @@ export default function HeirsList({ parentRequestStatus }: { parentRequestStatus
   const router = useRouter();
   const { updateParams, params } = useFetchListParams<InheritanceCasesFilterValuesProps>();
 
-  const { data, loading, status } = useFetch<FetchResponseBody | null>("/api/inheritance-cases/heirs-list", "POST", {
+  const { data, loading, status } = useFetch<FetchResponseBody | null>(`/api/heirs/${router.query?.id}`, "POST", {
     body: params,
   });
 
