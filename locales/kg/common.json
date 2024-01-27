@@ -300,6 +300,8 @@
   "not assigned": "дайындалган эмес",
   "Register of wills": "Керээздердин реестри",
   "Scan the QR code": "QR кодду сканерлөө",
+  "The person not alive on this PIN": "Бул ПИН боюнча адам каза болду",
+  "Wait, it's loading": "Күтө туруңуз, жүктөлүүдө",
   "The number of the inheritance case": "Пробациялык иштин номери",
-  "The person not alive on this PIN": "Бул ПИН боюнча адам каза болду"
+  "invalidDateErrorText": "Сураныч, КК.АА.ЖЖЖЖ форматында жарактуу күндү киргизиңиз"
 }

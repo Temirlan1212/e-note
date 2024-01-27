@@ -4,7 +4,7 @@ import Link from "@/components/ui/Link";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DownloadIcon from "@mui/icons-material/Download";
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
@@ -23,6 +23,8 @@ import Input from "@/components/ui/Input";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
 import DeclVideoRecordModal from "../decl-video-record/DeclVideoRecordModal";
+import EmblemIcon from "@/public/icons/emblem.svg";
+import html2canvas from "html2canvas";
 
 export const ApplicationListActions = ({
   params,
@@ -42,6 +44,9 @@ export const ApplicationListActions = ({
   const [annulmentReason, setAnnulmentReason] = useState<string | null>(null);
   const [users, setUsers] = useState<IUser[]>([]);
   const [userData, setUserData] = useState<IUserData | null>();
+  const [hash, setHash] = useState<string | null>(null);
+  const [signTime, setSignTime] = useState<string | null>(null);
+  const htmlSignRef = useRef<HTMLDivElement | null>(null);
   const profile = useProfileStore((state) => state);
 
   const isNotary = userData?.group?.name === "Notary";
@@ -53,6 +58,7 @@ export const ApplicationListActions = ({
   const { data, update: createChat } = useFetch<IFetchNotaryChat>("", "POST");
   const { update: getUser } = useFetch<IFetchByIdData>("", "POST");
   const { update: getChatUsers } = useFetch<IChatUser>("", "POST");
+  const { update: annulDoc, loading: annulLoading } = useFetch("", "POST");
   const { update } = useFetch<Response>("", "DELETE", {
     returnResponse: true,
   });
@@ -148,6 +154,27 @@ export const ApplicationListActions = ({
 
   const handleAnnulClick = async (callback: Dispatch<SetStateAction<boolean>>) => {
     if (params.row.id != null && annulmentReason) {
+      const formattedDate = format(new Date(), "dd.MM.yyyy, HH:mm:ss");
+      const uniqueData = formattedDate + userData?.email;
+      const hash = btoa(uniqueData);
+
+      setHash(hash);
+      setSignTime(formattedDate);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      const canvas = await html2canvas(htmlSignRef.current!, {
+        backgroundColor: null,
+      });
+
+      const dataUrl = canvas.toDataURL("image/png");
+      const base64String = dataUrl?.split(",")[1];
+
+      await annulDoc("/api/files/annul/" + params.row.id, {
+        hash,
+        seal: base64String,
+      });
+
       await cancelUpdate("/api/applications/update/" + params.row.id, {
         id: params.row.id,
         version: params.row.version,
@@ -349,11 +376,12 @@ export const ApplicationListActions = ({
         </>
       )}
 
-      {params.row.statusSelect === 1 && (
+      {isNotary && params.row.statusSelect === 1 && (
         <>
           <ConfirmationModal
             hintTitle="Do you really want to annul the application?"
             title="Annulling an application"
+            confirmLoading={annulLoading}
             onConfirm={(callback) => handleAnnulClick(callback)}
             slots={{
               body: () => (
@@ -376,6 +404,40 @@ export const ApplicationListActions = ({
           </ConfirmationModal>
         </>
       )}
+      <Box sx={{ width: 0, height: 0, overflow: "hidden" }}>
+        <Box
+          ref={htmlSignRef}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px",
+            width: "400px",
+            border: "5px double #ff5555",
+            borderRadius: "10px",
+            padding: "10px",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <Box sx={{ width: "50px", height: "50px" }}>
+              <EmblemIcon />
+            </Box>
+            <Box sx={{ color: "#ff5555", fontSize: "14px", fontWeight: 600, textAlign: "left" }}>
+              ДОКУМЕНТ АННУЛИРОВАН
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              color: "#ff5555",
+              fontSize: "12px",
+              fontWeight: 600,
+            }}
+          >
+            <Box>Дата: {signTime}</Box>
+            <Box>ФИО: {userData?.partner?.fullName}</Box>
+            <Box>Hash: {hash?.slice(0, 32)}</Box>
+          </Box>
+        </Box>
+      </Box>
     </Box>
   );
 };

@@ -300,6 +300,8 @@
   "not assigned": "не присвоен",
   "Register of wills": "Реестр завещаний",
   "Scan the QR code": "Отсканируйте QR-код",
+  "The person not alive on this PIN": "Человек по этому ПИНу умер",
+  "Wait, it's loading": "Подождите, идет загрузка",
   "The number of the inheritance case": "Номер наследст. дела",
-  "The person not alive on this PIN": "Человек по этому ПИНу умер"
+  "invalidDateErrorText": "Пожалуйста, введите дату в формате ДД.ММ.ГГГГ"
 }
