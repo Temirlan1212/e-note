@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
-import { InputLabel, Box } from "@mui/material";
+import { InputLabel, Box, BoxProps } from "@mui/material";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";
@@ -90,6 +90,9 @@ export interface IPersonalDataProps {
   isTundukRequested?: boolean;
   isRequester?: boolean;
   validatePassport?: boolean;
+  slotProps?: {
+    image?: BoxProps;
+  };
 }
 
 export default function PersonalData({
@@ -104,6 +107,7 @@ export default function PersonalData({
   isTundukRequested,
   isRequester = false,
   validatePassport = false,
+  slotProps,
 }: IPersonalDataProps) {
   const t = useTranslations();
 
@@ -267,6 +271,10 @@ export default function PersonalData({
           render={({ field }) => (
             <Box
               component="img"
+              {...field}
+              src={imageURL!}
+              alt="passport avatar"
+              {...(slotProps?.image || {})}
               sx={{
                 position: "absolute",
                 top: { xs: "55px", sm: "16px" },
@@ -274,10 +282,8 @@ export default function PersonalData({
                 objectFit: "contain",
                 height: { xs: "100px", sm: "200px" },
                 width: { xs: "70px", sm: "170px" },
+                ...(slotProps?.image?.sx || {}),
               }}
-              {...field}
-              src={imageURL!}
-              alt="passport avatar"
             />
           )}
         />
