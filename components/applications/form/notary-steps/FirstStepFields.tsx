@@ -22,6 +22,7 @@ import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/A
 import { IPersonSchema } from "@/validator-schemas/person";
 import ExpandingFields from "@/components/fields/ExpandingFields";
 import { useRouter } from "next/router";
+import { useCheckIsPersonAlive } from "@/hooks/useCheckIsPersonAlive";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -50,6 +51,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   const router = useRouter();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
   const tabsRef = useRef<ITabsRef>(null);
+  const { checkWithFormBind: checkIsPersonAlive, loading: isPersonAliveLoading } = useCheckIsPersonAlive();
 
   const {
     control,
@@ -375,8 +377,19 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
   };
 
   const handleNextClick = async (targetStep?: number) => {
-    const validated = await triggerFields();
+    const values = getValues("requester");
+    const pinValues = values?.map((item, index) => {
+      return { [`requester.${index}.personalNumber`]: item?.personalNumber };
+    })?.[0];
 
+    const isAlive = await checkIsPersonAlive({
+      onError: (name) => form.setError(name as any, { message: "The person not alive on this PIN" }),
+      values: pinValues ? pinValues : {},
+    });
+
+    if (!isAlive) return focusToFieldOnError();
+
+    const validated = await triggerFields();
     if (!validated) focusToFieldOnError();
 
     if (validated) {
@@ -680,7 +693,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         )}
         {onNext != null && (
           <Button
-            loading={loading}
+            loading={loading || isPersonAliveLoading}
             onClick={() => handleNextClick()}
             endIcon={<ArrowForwardIcon />}
             sx={{ width: "auto" }}

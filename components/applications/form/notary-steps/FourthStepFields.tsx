@@ -19,6 +19,7 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 import { IPersonSchema } from "@/validator-schemas/person";
 import ExpandingFields from "@/components/fields/ExpandingFields";
+import { useCheckIsPersonAlive } from "@/hooks/useCheckIsPersonAlive";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -45,6 +46,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
   const tabsRef = useRef<ITabsRef>(null);
+  const { checkWithFormBind: checkIsPersonAlive, loading: isPersonAliveLoading } = useCheckIsPersonAlive();
 
   const {
     control,
@@ -332,6 +334,17 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   };
 
   const handleNextClick = async (targetStep?: number) => {
+    const values = getValues("requester");
+    const pinValues = values?.map((item, index) => {
+      return { [`requester.${index}.personalNumber`]: item?.personalNumber };
+    })?.[0];
+
+    const isAlive = await checkIsPersonAlive({
+      onError: (name) => form.setError(name as any, { message: "The person not alive on this PIN" }),
+      values: pinValues ? pinValues : {},
+    });
+
+    if (!isAlive) return focusToFieldOnError();
     const validated = await triggerFields();
 
     if (!validated) focusToFieldOnError();
@@ -615,7 +628,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         )}
         {onNext != null && (
           <Button
-            loading={loading}
+            loading={loading || isPersonAliveLoading}
             onClick={() => handleNextClick()}
             endIcon={<ArrowForwardIcon />}
             sx={{ width: "auto" }}
