@@ -241,6 +241,7 @@ export default function ApplicationList() {
     const isPrivateNotary = userData?.["activeCompany.typeOfNotary"] === "private";
     const isStateNotary = userData?.["activeCompany.typeOfNotary"] === "state";
     const isActiveNotary = userData?.["activeCompany.statusOfNotary"] === "active";
+    const isForeignInstitution = userData?.roles?.[0]?.name === "Foreign institution official";
 
     if (isNotary) {
       if (isPrivateNotary) {
@@ -248,6 +249,8 @@ export default function ApplicationList() {
         !!license && isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
       } else if (isStateNotary) {
         isActiveNotary ? router.push("/applications/create") : setAlertOpen(true);
+      } else if (isForeignInstitution) {
+        isActiveNotary && router.push("/applications/create");
       }
     } else {
       router.push("/applications/create");
@@ -386,7 +389,7 @@ export default function ApplicationList() {
             filter: isSearchedData
               ? undefined
               : {
-                  data: documentTypeData?.data.filter((item: any) => item.isSystem === true) ?? [],
+                  data: documentTypeData?.data?.filter((item: any) => item.isSystem === true) ?? [],
                   labelField: locale !== "en" ? "$t:name" : "name",
                   valueField: "id",
                   type: "dictionary",

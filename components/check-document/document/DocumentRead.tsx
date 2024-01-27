@@ -69,8 +69,24 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
     return addressParts.filter(Boolean).join(", ");
   };
 
+  const removeWords = (text: string | null, stopwords: string[]) => {
+    if (text) {
+      const words = text.split(" ");
+      const filteredWords = words.filter(
+        (word) => !stopwords.some((sw) => word.toLowerCase().includes(sw.toLowerCase()))
+      );
+      return filteredWords.join(" ");
+    }
+  };
+
   const titles = [
-    { title: "Name", value: locale !== "en" ? data?.product?.["$t:name"] || data?.product?.name : data?.product?.name },
+    {
+      title: "Name",
+      value: removeWords(locale !== "en" ? data?.product?.["$t:name"] || data?.product?.name : data?.product?.name, [
+        "универсал",
+        "universal",
+      ]),
+    },
     { title: "Status", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
     { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
     {
