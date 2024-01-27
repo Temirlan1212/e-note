@@ -58,7 +58,7 @@ export const ApplicationListActions = ({
   const { data, update: createChat } = useFetch<IFetchNotaryChat>("", "POST");
   const { update: getUser } = useFetch<IFetchByIdData>("", "POST");
   const { update: getChatUsers } = useFetch<IChatUser>("", "POST");
-  const { update: annulDoc } = useFetch("", "POST");
+  const { update: annulDoc, loading: annulLoading } = useFetch("", "POST");
   const { update } = useFetch<Response>("", "DELETE", {
     returnResponse: true,
   });
@@ -170,7 +170,7 @@ export const ApplicationListActions = ({
       const dataUrl = canvas.toDataURL("image/png");
       const base64String = dataUrl?.split(",")[1];
 
-      await annulDoc("/api/files/annul", {
+      await annulDoc("/api/files/annul/" + params.row.id, {
         hash,
         seal: base64String,
       });
@@ -381,6 +381,7 @@ export const ApplicationListActions = ({
           <ConfirmationModal
             hintTitle="Do you really want to annul the application?"
             title="Annulling an application"
+            confirmLoading={annulLoading}
             onConfirm={(callback) => handleAnnulClick(callback)}
             slots={{
               body: () => (
@@ -421,7 +422,7 @@ export const ApplicationListActions = ({
               <EmblemIcon />
             </Box>
             <Box sx={{ color: "#ff5555", fontSize: "14px", fontWeight: 600, textAlign: "left" }}>
-              ДОКУМЕНТ ПОДПИСАН ЭЛЕКТРОННОЙ ПОДПИСЬЮ
+              ДОКУМЕНТ АННУЛИРОВАН
             </Box>
           </Box>
           <Box
