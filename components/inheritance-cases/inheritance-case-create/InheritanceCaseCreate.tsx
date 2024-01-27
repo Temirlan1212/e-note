@@ -70,7 +70,7 @@ export default function InheritanceCaseCreate() {
     >
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Typography variant="h3" color="success.main" fontWeight="600">
-          Создать наследственное дело
+          {t("Creation of an inheritance case")}
         </Typography>
         <Button startIcon={<CancelIcon />} sx={{ width: "fit-content" }} type="reset" buttonType="secondary">
           {t("Cancel")}
@@ -90,7 +90,7 @@ export default function InheritanceCaseCreate() {
         borderRadius={1}
       >
         <Typography variant="h4" fontWeight="600">
-          Информация об умершем
+          {t("Information about the deceased")}
         </Typography>
         <Collapse in={!!error.message}>
           <Alert
@@ -99,7 +99,7 @@ export default function InheritanceCaseCreate() {
             sx={{ display: "flex", alignItems: "center", gap: "20px", position: "relative", zIndex: 2 }}
           >
             {t(error.message || "Something went wrong")} <br />
-            {!!error.link && <Link href={error.link}>Перейти в наследственное дело</Link>}
+            {!!error.link && <Link href={error.link}>{t("Go into an inheritance case")}</Link>}
           </Alert>
         </Collapse>
 
