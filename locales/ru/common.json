@@ -300,5 +300,6 @@
   "not assigned": "не присвоен",
   "Register of wills": "Реестр завещаний",
   "Scan the QR code": "Отсканируйте QR-код",
-  "The number of the inheritance case": "Номер наследст. дела"
+  "The number of the inheritance case": "Номер наследст. дела",
+  "The person not alive on this PIN": "Человек по этому ПИНу умер"
 }
