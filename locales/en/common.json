@@ -300,5 +300,7 @@
   "not assigned": "not assigned",
   "Register of wills": "Register of wills",
   "Scan the QR code": "Scan the QR code",
-  "The number of the inheritance case": "The number of the inheritance case"
+  "Wait, it's loading": "Wait, it's loading",
+  "The number of the inheritance case": "The number of the inheritance case",
+  "invalidDateErrorText": "Please enter a valid date in the format DD.MM.YYYY"
 }

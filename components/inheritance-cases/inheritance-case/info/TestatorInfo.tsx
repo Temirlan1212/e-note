@@ -69,7 +69,7 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
         : t("absent"),
     },
     {
-      title: "Имя",
+      title: "First name",
       value: testatorInfo?.data?.[0]?.requester?.[0]?.firstName
         ? testatorInfo?.data?.[0]?.requester?.[0]?.firstName
         : t("absent"),
@@ -107,7 +107,7 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "25px" }}>
       <Typography variant="h4" pl="16px">
-        {t("Информация о наследодателе")}
+        {t("Information about the deceased")}
       </Typography>
       <Box
         sx={{

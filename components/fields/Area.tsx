@@ -125,7 +125,7 @@ export default function Area({
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }} sx={{ ...(sx?.boxSx || {}) }}>
         <Controller
           control={control}
           name={names.region}

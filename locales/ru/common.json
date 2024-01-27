@@ -300,5 +300,7 @@
   "not assigned": "не присвоен",
   "Register of wills": "Реестр завещаний",
   "Scan the QR code": "Отсканируйте QR-код",
-  "The number of the inheritance case": "Номер наследст. дела"
+  "Wait, it's loading": "Подождите, идет загрузка",
+  "The number of the inheritance case": "Номер наследст. дела",
+  "invalidDateErrorText": "Пожалуйста, введите дату в формате ДД.ММ.ГГГГ"
 }
