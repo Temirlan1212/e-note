@@ -24,6 +24,7 @@ export interface IAutocompleteProps<T = any>
   helperText?: string;
   type?: keyof typeof types;
   textFieldPlaceholder?: string;
+  noOptionsText?: string;
 }
 
 export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocomplete(
@@ -34,6 +35,7 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
     renderInput,
     textFieldPlaceholder,
     options,
+    noOptionsText = "",
     sx,
     ...rest
   }: IAutocompleteProps,
@@ -86,6 +88,7 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
   return (
     <MuiAutocomplete
       options={options ?? []}
+      noOptionsText={noOptionsText}
       getOptionLabel={(option) => option[labelField]}
       sx={combineStyles}
       {...rest}
