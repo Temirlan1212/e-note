@@ -134,6 +134,7 @@
   "year": "год",
   "All years": "Все года",
   "Register of inheritance cases": "Реестр наследственных дел",
+  "Inheritance case": "Наследственное дело",
   "Created by": "Кем создан",
   "Last name": "Фамилия",
   "First name": "Имя",
@@ -167,6 +168,13 @@
   "FromTo": "по",
   "Member": "Участник",
   "InformationAboutStatusApplication": "Информация о статусе заявки",
+  "StatusApplication": "Статус",
+  "Signature status": "Статус подписи",
+  "Date of the action": "Дата совершения действия",
+  "Notary's full name": "ФИО нотариуса",
+  "Unique registry number": "Уникальный номер реестра",
+  "Sides": "Стороны",
+  "Participant": "Участник",
   "Viewing a document": "Просмотр документа",
   "Templates": "Шаблоны",
   "My templates": "Мои шаблоны",
@@ -292,5 +300,5 @@
   "not assigned": "не присвоен",
   "Register of wills": "Реестр завещаний",
   "Scan the QR code": "Отсканируйте QR-код",
-  "The number of the inheritance case": "Номер наследственного дела"
+  "The number of the inheritance case": "Номер наследст. дела"
 }

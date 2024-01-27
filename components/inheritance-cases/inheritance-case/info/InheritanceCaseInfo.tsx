@@ -1,42 +1,41 @@
-import { Alert, Avatar, Box, CircularProgress, Collapse, Typography, List, ListItem, IconButton } from "@mui/material";
-import Image from "next/image";
-import Button from "@/components/ui/Button";
-import Rating from "@/components/ui/Rating";
-import Link from "@/components/ui/Link";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import PhoneEnabledOutlinedIcon from "@mui/icons-material/PhoneEnabledOutlined";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
-import LicenseIcon from "@/public/icons/license.svg";
-import ContentPlusIcon from "@/public/icons/content-plus.svg";
-import CloudMessageIcon from "@/public/icons/cloud-message.svg";
-import { useTranslations } from "next-intl";
-import { useTheme } from "@mui/material/styles";
-import ExpandingFields from "@/components/fields/ExpandingFields";
-import SearchBar from "@/components/ui/SearchBar";
-import ClearIcon from "@mui/icons-material/Clear";
-import ExcelIcon from "@/public/icons/excel.svg";
-import { GridValueGetterParams } from "@mui/x-data-grid";
-import { GridTable } from "@/components/ui/GridTable";
 import { FC } from "react";
-import { IInheritanceCasesListSearchBarForm } from "@/validator-schemas/inheritance-cases";
-import { useForm } from "react-hook-form";
+import { format } from "date-fns";
+import { useTranslations } from "next-intl";
+import Button from "@/components/ui/Button";
+import { Box, Typography, List, ListItem } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { IApplication } from "@/models/application";
 
 interface IInheritanceCaseInfoProps {
-  titles?: any;
+  inheritanceCaseInfo?: IApplication;
 }
 
-const InheritanceCaseInfo: FC<IInheritanceCaseInfoProps> = ({ titles }) => {
+const InheritanceCaseInfo: FC<IInheritanceCaseInfoProps> = ({ inheritanceCaseInfo }) => {
   const t = useTranslations();
 
   const theme = useTheme();
 
+  const titles = [
+    {
+      title: "Number",
+      value: inheritanceCaseInfo?.notaryUniqNumber ? inheritanceCaseInfo?.notaryUniqNumber : t("absent"),
+    },
+    {
+      title: "Opening date",
+      value: inheritanceCaseInfo?.createdOn
+        ? format(new Date(inheritanceCaseInfo?.createdOn!), "dd.MM.yyyy HH:mm:ss")
+        : t("absent"),
+    },
+    {
+      title: "Created by",
+      value: inheritanceCaseInfo?.company?.name ? inheritanceCaseInfo?.company?.name : t("absent"),
+    },
+  ].filter(Boolean);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "25px" }}>
       <Typography variant="h4" color="success.main" pl="16px">
-        {t("Наследственное дело")}
+        {t("Inheritance case")}
       </Typography>
       <Box
         sx={{

@@ -75,6 +75,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         "address.region",
         "address.district",
         "address.city",
+        "address.city.name",
+        "$t:address.city.name",
         "address.fullName",
         "latitude",
         "longitude",

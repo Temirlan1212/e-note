@@ -1,7 +1,10 @@
-import { FC } from "react";
-import { useTranslations } from "next-intl";
+import { FC, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
 import { Avatar, Box, Typography, List, ListItem } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { IPartner } from "@/models/user";
 
 export interface InfoItem {
   title: string;
@@ -9,14 +12,96 @@ export interface InfoItem {
 }
 
 interface ITestatorInfoProps {
-  titles: InfoItem[];
+  testatorInfo: FetchResponseBody | null;
 }
 
-const TestatorInfo: FC<ITestatorInfoProps> = ({ titles }) => {
-  console.log(titles);
+const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
   const t = useTranslations();
-
+  const locale = useLocale();
   const theme = useTheme();
+
+  const [imageURL, setImageURL] = useState<string | null>(null);
+
+  const { data: imageData, update: getImage } = useFetch<Response>("", "GET", {
+    returnResponse: true,
+  });
+
+  useEffectOnce(() => {
+    const pictureId = testatorInfo?.data?.[0]?.requester?.[0]?.picture?.id;
+    if (pictureId) {
+      getImage(`/api/user/image/` + pictureId);
+    }
+  }, [testatorInfo]);
+
+  useEffectOnce(async () => {
+    const base64String = await imageData?.text();
+    if (base64String) {
+      setImageURL(`data:image/jpeg;base64,${base64String}`);
+    }
+  }, [imageData]);
+
+  const getAddressFullName = (data: IPartner) => {
+    const { mainAddress } = data || {};
+    const { region, district, city, addressL4, addressL3, addressL2 } = mainAddress || {};
+
+    const key = locale !== "en" ? "$t:name" : "name";
+    const fallbackKey = locale !== "en" ? "name" : "$t:name";
+    const formatAddressPart = (part: any) => part?.[key] || part?.[fallbackKey] || "";
+
+    const formattedRegion = formatAddressPart(region);
+    const formattedDistrict = formatAddressPart(district);
+    const formattedCity = formatAddressPart(city);
+
+    const addressParts = [
+      [formattedRegion, formattedDistrict, formattedCity].filter(Boolean).join(", "),
+      [addressL4, addressL3, addressL2].filter(Boolean).join(" "),
+    ];
+
+    return addressParts.filter(Boolean).join(", ");
+  };
+
+  const titles = [
+    {
+      title: "PIN",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.personalNumber
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.personalNumber
+        : t("absent"),
+    },
+    {
+      title: "Last name",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.lastName
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.lastName
+        : t("absent"),
+    },
+    {
+      title: "Имя",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.firstName
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.firstName
+        : t("absent"),
+    },
+    {
+      title: "Middle name",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.middleName
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.middleName
+        : t("absent"),
+    },
+    {
+      title: "Date of birth",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.birthDate
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.birthDate
+        : t("absent"),
+    },
+    {
+      title: "Place of residence",
+      value: getAddressFullName(testatorInfo?.data?.[0]),
+    },
+    {
+      title: "Date of will",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.willData
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.willData
+        : t("absent"),
+    },
+  ].filter(Boolean);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "25px" }}>
@@ -112,12 +197,13 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ titles }) => {
             sizes="194"
             sx={{
               bgcolor: "success.main",
-              width: "194px",
-              height: "194px",
+              objectFit: "contain",
+              height: { xs: "100px", sm: "200px" },
+              width: { xs: "70px", sm: "170px" },
               borderRadius: 0,
             }}
             aria-label="recipe"
-            src={""}
+            src={imageURL ?? ""}
           />
         </Box>
       </Box>
