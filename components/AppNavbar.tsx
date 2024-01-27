@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IRoute, isRoutesIncludesPath } from "@/routes/data";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
@@ -34,8 +34,11 @@ import ScrollToTopFab from "./ScrollToTopFab";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import SchoolIcon from "@mui/icons-material/School";
-import { useMediaQuery } from "@mui/material";
+import { CircularProgress, useMediaQuery } from "@mui/material";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import useInstructionStore from "@/stores/instruction";
+import useFetch from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 const DrawerListItems = ({
   routes,
@@ -146,13 +149,40 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
   const theme = useTheme();
   const router = useRouter();
   const t = useTranslations();
-
   const [open, setOpen] = useState(false);
+  const [videoURL, setVideoURL] = useState<string | null>(null);
+
+  const step = useInstructionStore((state) => state.step);
+
+  const { data, loading, update } = useFetch<Response>("", "GET", { returnResponse: true });
+
+  const getRoutePath = () => {
+    const applicationRoute = ["create", "edit"].some((route) => router.pathname.includes(route));
+    if (applicationRoute) {
+      return step;
+    }
+    return router.pathname;
+  };
+
+  useEffectOnce(async () => {
+    const binaryData = await data?.text();
+    if (!!binaryData) {
+      setVideoURL(binaryData);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    setVideoURL(null);
+  }, [router.pathname]);
 
   const handleDrawerToggle = (e?: any, v?: boolean) => {
     if (e?.stopPropagation != null) e.stopPropagation();
     setOpen((open) => v ?? !open);
   };
+
+  const fetchVideo = useCallback(async () => {
+    await update("/api/files/instruction?path=" + getRoutePath());
+  }, [getRoutePath, update, videoURL]);
 
   return (
     <Box display="flex" flexDirection="column" height="100%">
@@ -241,20 +271,36 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
               justifyContent: isMobileMedia ? "space-between" : "unset",
             }}
           >
-            {/*<ConfirmationModal*/}
-            {/*  title="Learning"*/}
-            {/*  isHintShown={false}*/}
-            {/*  slots={{*/}
-            {/*    button: () => <></>,*/}
-            {/*    body: () => <></>,*/}
-            {/*  }}*/}
-            {/*>*/}
-            {/*  <Tooltip title={t("Learning")}>*/}
-            {/*    <IconButton sx={{ color: "inherit" }}>*/}
-            {/*      <SchoolIcon />*/}
-            {/*    </IconButton>*/}
-            {/*  </Tooltip>*/}
-            {/*</ConfirmationModal>*/}
+            <ConfirmationModal
+              title="Learning"
+              isCloseIconShown={true}
+              isHintShown={false}
+              slots={{
+                button: () => <></>,
+                body: () => (
+                  <Box width="100%" height="300px">
+                    {videoURL ? (
+                      <video width="100%" height="100%" src={`data:video/mp4;base64,${videoURL}`} controls></video>
+                    ) : (
+                      <Box height="100%">
+                        <Typography align="center" color="info.main" variant="h5">
+                          {t("Wait, it's loading")}...
+                        </Typography>
+                        <Box height="100%" display="flex" alignItems="center" justifyContent="center">
+                          <CircularProgress size={80} color="info" />
+                        </Box>
+                      </Box>
+                    )}
+                  </Box>
+                ),
+              }}
+            >
+              <Tooltip title={t("Learning")}>
+                <IconButton onClick={fetchVideo} sx={{ color: "inherit" }}>
+                  <SchoolIcon />
+                </IconButton>
+              </Tooltip>
+            </ConfirmationModal>
             <LocaleSwitcher />
             <PopupNotifications />
             <ProfileDropdownButton />
