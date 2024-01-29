@@ -27,6 +27,7 @@ export interface IApplication {
     id: number;
   }[];
   notaryReason?: string;
+  notaryReasonDate?: string;
   cancelReasonStr?: string;
   notaryCancelledDate?: string;
   documentInfo: {

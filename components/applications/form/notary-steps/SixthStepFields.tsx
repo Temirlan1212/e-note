@@ -38,7 +38,6 @@ export interface IStepFieldsProps {
 
 export default function SixthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
-  const router = useRouter();
   const convert = useConvert();
   const profile = useProfileStore((state) => state.getUserData());
   const { trigger, control, watch, setValue } = form;
@@ -56,9 +55,6 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
   const [hash, setHash] = useState<string | null>(null);
   const [signTime, setSignTime] = useState<string | null>(null);
-  const [editReason, setEditReason] = useState<string | null>(null);
-  const [file, setFile] = useState<File | File[] | null>();
-  const [fileError, setFileError] = useState<boolean>(false);
   // const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<null | HTMLElement>(null);
 
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
@@ -69,7 +65,6 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     id != null ? `/api/applications/${id}` : "",
     "POST"
   );
-  const { update: scanDoc, loading: scannedDocLoading } = useFetch("", "POST");
 
   useEffectOnce(async () => {
     const applicationData = application?.data?.[0];
@@ -169,36 +164,6 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     }
 
     if (callback) callback(false);
-  };
-
-  const handleEditReason = async (callback: Dispatch<SetStateAction<boolean>>) => {
-    if (editReason && file) {
-      const formData = new FormData();
-      if ("name" in file) {
-        formData.append("id", application?.data?.[0]?.id);
-        formData.append("editReason", editReason);
-        formData.append("fileName", file.name);
-        formData.append("file", file as File);
-
-        await scanDoc("/api/applications/edit-scan", formData).then((res) => {
-          if (res.status === 0) {
-            router.push("/applications");
-          }
-        });
-      }
-      callback(false);
-    }
-    if (!editReason) {
-      setEditReason("");
-    }
-    if (!fileError) {
-      setFileError(true);
-    }
-  };
-
-  const handleFileChange = (file: File | File[] | null) => {
-    setFile(file);
-    setFileError(false);
   };
 
   useEffectOnce(async () => {
@@ -325,50 +290,6 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
             )}
           </Box>
         )}
-
-        {application?.data?.[0]?.statusSelect === 1 &&
-          !applicationLoading &&
-          !prepareLoading &&
-          !pdfLoading &&
-          !syncLoading && (
-            <ConfirmationModal
-              hintTitle="Do you really want to edit the document?"
-              title="Edit document"
-              confirmLoading={scannedDocLoading}
-              onConfirm={(callback) => handleEditReason(callback)}
-              handleReject={() => {
-                setEditReason(null);
-                setFileError(false);
-              }}
-              slots={{
-                body: () => (
-                  <Box>
-                    <Box width="100%" height="90px">
-                      <InputLabel>{t("Enter the reason for editing the document")}</InputLabel>
-                      <Input
-                        onChange={(e) => setEditReason(e.target.value)}
-                        inputType={editReason === "" ? "error" : "secondary"}
-                        helperText={editReason === "" && t("This field is required!")}
-                      />
-                    </Box>
-                    <Box width="100%" height="90px">
-                      <InputLabel>{t("Attach a scanned copy of the edited document")}</InputLabel>
-                      <FileInput
-                        value={file}
-                        onChange={handleFileChange}
-                        inputType={fileError ? "error" : "secondary"}
-                        helperText={fileError && t("This field is required!")}
-                      />
-                    </Box>
-                  </Box>
-                ),
-              }}
-            >
-              <Button startIcon={<DocumentScannerIcon />} sx={{ flexGrow: "1", height: "100%" }}>
-                {t("Edit")}
-              </Button>
-            </ConfirmationModal>
-          )}
       </Box>
 
       <Box sx={{ width: 0, height: 0, overflow: "hidden" }}>

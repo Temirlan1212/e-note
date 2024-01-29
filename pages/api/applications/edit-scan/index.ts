@@ -27,8 +27,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json(null);
   }
 
-  const scan = (await readFileSync(fileInfo.filepath)) as any;
-  console.log(fileInfo);
+  const arrayBuffer = await readFileSync(fileInfo.filepath);
+
+  const scan = new File([arrayBuffer], fileName, { type: "application/pdf" });
 
   const formData = new FormData();
   formData.append("id", id);
@@ -39,12 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/file/editSignedDoc", {
     method: "POST",
     headers: {
-      // "Content-Type": "application/octet-stream",
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
-      "X-File-Name": fileInfo?.originalFilename ?? "",
-      "X-File-Offset": "0",
-      "X-File-Size": fileInfo?.size?.toString() ?? "",
-      "X-File-Type": fileInfo?.mimetype ?? "",
     },
     body: formData,
   });

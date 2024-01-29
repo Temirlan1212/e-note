@@ -20,26 +20,34 @@ const ApplicationStatusView: FC<IApplicationStatusViewProps> = (props) => {
   const { data } = props;
 
   const [docUrl, setDocUrl] = useState<string>();
+  const [scanUrls, setScanUrls] = useState<string[]>();
 
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
   const { loading: scanLoading, update: getScan } = useFetch<Response>("", "GET", { returnResponse: true });
 
   useEffectOnce(async () => {
-    if (data.scan) {
-      const lastScanId = data.scan[data.scan.length - 1].id;
-      const pdfResponse = await getScan(`/api/files/download/${lastScanId}`);
+    if (data.scan && data.scan.length > 0) {
+      const lastScanIds = data.scan.map(async (scan) => {
+        const pdfResponse = await getScan(`/api/files/download/${scan.id}`);
+        const blob = await pdfResponse?.blob();
+        if (blob == null) return;
 
-      const binary = await pdfResponse?.text();
-      const pdfBlob = new Blob([binary], { type: "application/pdf" });
+        return URL.createObjectURL(blob);
+      });
+      const scansUrl = await Promise.all(lastScanIds);
 
-      // Создайте URL из Blob и установите его в состояние
-      const blobUrl = URL.createObjectURL(pdfBlob);
+      setScanUrls(scansUrl as string[]);
+    } else if (data?.documentInfo?.pdfLink != null && data?.documentInfo?.token != null) {
+      const pdfResponse = await getPdf(
+        `/api/adapter?url=${data.documentInfo.pdfLink}&token=${data.documentInfo.token}`
+      );
 
-      setDocUrl(blobUrl);
+      const blob = await pdfResponse?.blob();
+      if (blob == null) return;
+
+      setDocUrl(URL.createObjectURL(blob));
     }
   }, [data]);
-
-  console.log(docUrl);
 
   return (
     <Box display="flex" flexDirection="column" gap="25px">
@@ -54,6 +62,14 @@ const ApplicationStatusView: FC<IApplicationStatusViewProps> = (props) => {
           {t("Viewing a document")}
         </Typography>
       </Box>
+
+      {!scanLoading ? (
+        scanUrls && scanUrls.reverse().map((scanUrl, idx) => <PDFViewer key={idx} fileUrl={scanUrl} />)
+      ) : (
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <CircularProgress color="success" />
+        </Box>
+      )}
 
       {!pdfLoading ? (
         docUrl && <PDFViewer fileUrl={docUrl} />

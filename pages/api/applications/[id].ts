@@ -31,6 +31,7 @@ const fields: string[] = [
   "currency",
   "scan",
   "notaryReason",
+  "notaryReasonDate",
   "notaryDocumentSignDate",
 ];
 
