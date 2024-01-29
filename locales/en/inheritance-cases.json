@@ -13,5 +13,6 @@
   "Information about the testator": "Information about the testator",
   "Creation of an inheritance case": "Creation of an inheritance case",
   "Go into an inheritance case": "Go into an inheritance case",
-  "Such a inheritance case already exists": "Such a inheritance case already exists"
+  "Such a inheritance case already exists": "Such a inheritance case already exists",
+  "TestatorFullName": "Testator's name"
 }

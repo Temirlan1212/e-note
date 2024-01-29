@@ -95,7 +95,7 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
         sortable: false,
         valueGetter: (params: GridValueGetterParams) => {
           const nameKey = locale !== "en" ? "$t:name" : "name";
-          return params.row?.["company.notaryDistrict"]?.[nameKey];
+          return params.value?.[nameKey];
         },
       },
       {

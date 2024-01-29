@@ -13,5 +13,6 @@
   "Information about the testator": "Мурас калтыруучу жөнүндө маалымат",
   "Creation of an inheritance case": "Мурас ишин түзүү",
   "Go into an inheritance case": "Мурас ишине өтүү",
-  "Such a inheritance case already exists": "Мындай мурас иши бар"
+  "Such a inheritance case already exists": "Мындай мурас иши бар",
+  "TestatorFullName": "Мурас калтыруучунун толук аты-жөнү"
 }

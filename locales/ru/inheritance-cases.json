@@ -13,5 +13,6 @@
   "Information about the testator": "Информация о завещателе",
   "Creation of an inheritance case": "Создание наследственного дела",
   "Go into an inheritance case": "Перейти в наследственное дело",
-  "Such a inheritance case already exists": "Такое наследственное дело уже существует"
+  "Such a inheritance case already exists": "Такое наследственное дело уже существует",
+  "TestatorFullName": "ФИО Завещателя"
 }
