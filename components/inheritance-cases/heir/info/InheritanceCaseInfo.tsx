@@ -1,42 +1,41 @@
-import { Alert, Avatar, Box, CircularProgress, Collapse, Typography, List, ListItem, IconButton } from "@mui/material";
-import Image from "next/image";
-import Button from "@/components/ui/Button";
-import Rating from "@/components/ui/Rating";
-import Link from "@/components/ui/Link";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import PhoneEnabledOutlinedIcon from "@mui/icons-material/PhoneEnabledOutlined";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
-import LicenseIcon from "@/public/icons/license.svg";
-import ContentPlusIcon from "@/public/icons/content-plus.svg";
-import CloudMessageIcon from "@/public/icons/cloud-message.svg";
-import { useTranslations } from "next-intl";
-import { useTheme } from "@mui/material/styles";
-import ExpandingFields from "@/components/fields/ExpandingFields";
-import SearchBar from "@/components/ui/SearchBar";
-import ClearIcon from "@mui/icons-material/Clear";
-import ExcelIcon from "@/public/icons/excel.svg";
-import { GridValueGetterParams } from "@mui/x-data-grid";
-import { GridTable } from "@/components/ui/GridTable";
 import { FC } from "react";
-import { IInheritanceCasesListSearchBarForm } from "@/validator-schemas/inheritance-cases";
-import { useForm } from "react-hook-form";
+import { format } from "date-fns";
+import { useTranslations } from "next-intl";
+import Button from "@/components/ui/Button";
+import { Box, Typography, List, ListItem } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { IApplication } from "@/models/application";
 
-interface IHeirInfoProps {
-  titles?: any;
+interface IInheritanceCaseInfoProps {
+  inheritanceCaseInfo?: IApplication;
 }
 
-const HeirInfo: FC<IHeirInfoProps> = ({ titles }) => {
+const InheritanceCaseInfo: FC<IInheritanceCaseInfoProps> = ({ inheritanceCaseInfo }) => {
   const t = useTranslations();
 
   const theme = useTheme();
 
+  const titles = [
+    {
+      title: "Number",
+      value: inheritanceCaseInfo?.notaryUniqNumber ? inheritanceCaseInfo?.notaryUniqNumber : t("absent"),
+    },
+    {
+      title: "Opening date",
+      value: inheritanceCaseInfo?.createdOn
+        ? format(new Date(inheritanceCaseInfo?.createdOn!), "dd.MM.yyyy HH:mm:ss")
+        : t("absent"),
+    },
+    {
+      title: "Created by",
+      value: inheritanceCaseInfo?.company?.name ? inheritanceCaseInfo?.company?.name : t("absent"),
+    },
+  ].filter(Boolean);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "25px" }}>
-      <Typography variant="h4" pl="16px">
-        {t("Information about the heir")}
+      <Typography variant="h4" color="success.main" pl="16px">
+        {t("Inheritance case")}
       </Typography>
       <Box
         sx={{
@@ -53,8 +52,6 @@ const HeirInfo: FC<IHeirInfoProps> = ({ titles }) => {
       >
         <Box
           sx={{
-            border: "1px solid #CDCDCD",
-            padding: "25px 15px",
             display: "flex",
             gap: "25px",
           }}
@@ -86,11 +83,11 @@ const HeirInfo: FC<IHeirInfoProps> = ({ titles }) => {
                       fontWeight: "600",
                       width: "100%",
                       minWidth: "260px",
-                      maxWidth: { xs: "100%", md: "380px" },
+                      maxWidth: { md: "280px", xs: "260px" },
                       [theme.breakpoints.down("sm")]: {
                         maxWidth: "unset",
                       },
-                      overflowWrap: "break-word",
+                      wordBreak: "break-word",
                     }}
                   >
                     {t(el?.title)}
@@ -101,12 +98,12 @@ const HeirInfo: FC<IHeirInfoProps> = ({ titles }) => {
                       fontWeight: "500",
                       width: "100%",
                       minWidth: "260px",
-                      maxWidth: { xs: "100%", md: "380px" },
+                      maxWidth: { md: "280px", xs: "260px" },
                       color: "#687C9B",
                       [theme.breakpoints.down("sm")]: {
                         maxWidth: "unset",
                       },
-                      overflowWrap: "break-word",
+                      wordBreak: "break-all",
                     }}
                   >
                     {el?.value != null && el?.value !== "" ? el?.value : t("absent")}
@@ -120,30 +117,45 @@ const HeirInfo: FC<IHeirInfoProps> = ({ titles }) => {
           sx={{
             display: "flex",
             flexDirection: "column",
+            justifyContent: "center",
             gap: "30px",
             marginTop: { xs: "30px", sm: "30px", md: "unset", lg: "unset" },
-            pr: "50px",
           }}
         >
-          <Avatar
-            sizes="194"
+          <Button
+            onClick={() => {}}
+            color="success"
             sx={{
-              bgcolor: "success.main",
-              width: "194px",
-              height: "194px",
-              borderRadius: 0,
+              width: {
+                sx: "100%",
+                md: "320px",
+              },
+              padding: "10px 0",
             }}
-            aria-label="recipe"
-            src={""}
-          />
+          >
+            {t("Save")}
+          </Button>
+          <Button
+            onClick={() => {}}
+            buttonType="secondary"
+            loading={false}
+            sx={{
+              width: {
+                sx: "100%",
+                md: "320px",
+              },
+              padding: "10px 0",
+              ":hover": {
+                backgroundColor: "#3F5984",
+              },
+            }}
+          >
+            {t("Edit")}
+          </Button>
         </Box>
       </Box>
-
-      <ExpandingFields title="Дополнительные данные" permanentExpand={false}>
-        Дополнительные данные
-      </ExpandingFields>
     </Box>
   );
 };
 
-export default HeirInfo;
+export default InheritanceCaseInfo;

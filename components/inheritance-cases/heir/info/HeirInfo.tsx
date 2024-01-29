@@ -6,18 +6,12 @@ import { Avatar, Box, Typography, List, ListItem } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { IPartner } from "@/models/user";
 
-export interface InfoItem {
-  title: string;
-  value: string;
+interface IHeirInfoProps {
+  heirInfo: FetchResponseBody | null;
 }
 
-interface ITestatorInfoProps {
-  testatorInfo: FetchResponseBody | null;
-}
-
-const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
+const HeirInfo: FC<IHeirInfoProps> = ({ heirInfo }) => {
   const t = useTranslations();
-  const locale = useLocale();
   const theme = useTheme();
 
   const [imageURL, setImageURL] = useState<string | null>(null);
@@ -27,11 +21,11 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
   });
 
   useEffectOnce(() => {
-    const pictureId = testatorInfo?.data?.[0]?.requester?.[0]?.picture?.id;
+    const pictureId = heirInfo?.data?.[0]?.picture?.id;
     if (pictureId) {
       getImage(`/api/user/image/` + pictureId);
     }
-  }, [testatorInfo]);
+  }, [heirInfo]);
 
   useEffectOnce(async () => {
     const base64String = await imageData?.text();
@@ -40,73 +34,38 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
     }
   }, [imageData]);
 
-  const getAddressFullName = (data: IPartner) => {
-    const { mainAddress } = data || {};
-    const { region, district, city, addressL4, addressL3, addressL2 } = mainAddress || {};
-
-    const key = locale !== "en" ? "$t:name" : "name";
-    const fallbackKey = locale !== "en" ? "name" : "$t:name";
-    const formatAddressPart = (part: any) => part?.[key] || part?.[fallbackKey] || "";
-
-    const formattedRegion = formatAddressPart(region);
-    const formattedDistrict = formatAddressPart(district);
-    const formattedCity = formatAddressPart(city);
-
-    const addressParts = [
-      [formattedRegion, formattedDistrict, formattedCity].filter(Boolean).join(", "),
-      [addressL4, addressL3, addressL2].filter(Boolean).join(" "),
-    ];
-
-    return addressParts.filter(Boolean).join(", ");
-  };
-
   const titles = [
     {
       title: "PIN",
-      value: testatorInfo?.data?.[0]?.requester?.[0]?.personalNumber
-        ? testatorInfo?.data?.[0]?.requester?.[0]?.personalNumber
-        : t("absent"),
+      value: heirInfo?.data?.[0]?.personalNumber ? heirInfo?.data?.[0]?.personalNumber : t("absent"),
     },
     {
       title: "Last name",
-      value: testatorInfo?.data?.[0]?.requester?.[0]?.lastName
-        ? testatorInfo?.data?.[0]?.requester?.[0]?.lastName
-        : t("absent"),
+      value: heirInfo?.data?.[0]?.lastName ? heirInfo?.data?.[0]?.lastName : t("absent"),
     },
     {
-      title: "Имя",
-      value: testatorInfo?.data?.[0]?.requester?.[0]?.firstName
-        ? testatorInfo?.data?.[0]?.requester?.[0]?.firstName
-        : t("absent"),
+      title: "First name",
+      value: heirInfo?.data?.[0]?.firstName ? heirInfo?.data?.[0]?.firstName : t("absent"),
     },
     {
       title: "Middle name",
-      value: testatorInfo?.data?.[0]?.requester?.[0]?.middleName
-        ? testatorInfo?.data?.[0]?.requester?.[0]?.middleName
-        : t("absent"),
-    },
-    {
-      title: "Date of birth",
-      value: testatorInfo?.data?.[0]?.requester?.[0]?.birthDate
-        ? testatorInfo?.data?.[0]?.requester?.[0]?.birthDate
-        : t("absent"),
-    },
-    {
-      title: "Place of residence",
-      value: getAddressFullName(testatorInfo?.data?.[0]),
-    },
-    {
-      title: "Date of will",
-      value: testatorInfo?.data?.[0]?.requester?.[0]?.willData
-        ? testatorInfo?.data?.[0]?.requester?.[0]?.willData
-        : t("absent"),
+      value: heirInfo?.data?.[0]?.middleName ? heirInfo?.data?.[0]?.middleName : t("absent"),
     },
   ].filter(Boolean);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "25px" }}>
-      <Typography variant="h4" pl="16px">
-        {t("Information about the testator")}
+      <Typography variant="h4" color="">
+        {t("Information about the heir")}
+      </Typography>
+      <Typography
+        sx={{
+          fontSize: "14px",
+          fontWeight: "600",
+          color: "#687C9B",
+        }}
+      >
+        {t("Personal data")}
       </Typography>
       <Box
         sx={{
@@ -123,8 +82,11 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
       >
         <Box
           sx={{
+            border: "1px solid #CDCDCD",
+            padding: "25px 15px",
             display: "flex",
             gap: "25px",
+            width: { xs: "100%", md: "70%" },
           }}
         >
           <List
@@ -135,7 +97,7 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
               width: "100%",
             }}
           >
-            {titles.map((el: InfoItem, idx: number) => {
+            {titles.map((el: any, idx: any) => {
               return (
                 <ListItem
                   key={idx}
@@ -211,4 +173,4 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
   );
 };
 
-export default TestatorInfo;
+export default HeirInfo;

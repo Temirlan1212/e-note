@@ -1,21 +1,21 @@
 import Head from "next/head";
-import { Container } from "@mui/material";
+import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import InheritorInfoContent from "@/components/inheritance-cases/inheritance-case/InheritanceCaseInfoContent";
-import { useRouter } from "next/router";
-import InProcess from "@/components/in-process/InProcess";
+import { Container } from "@mui/material";
+import HeirInfoContent from "@/components/inheritance-cases/heir/HeirInfoContent";
 
-export default function InheritorDetailPage() {
+export default function HeirDetailPage() {
   const t = useTranslations();
 
   const router = useRouter();
-  const { id } = router.query;
+
+  const { parentId, id } = router.query;
 
   return (
     <>
       <Head>
-        <title>{t("Register of inheritance cases")}</title>
+        <title>{t("Информация о наследнике")}</title>
       </Head>
       <Container
         sx={{
@@ -26,8 +26,7 @@ export default function InheritorDetailPage() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        {/* <InheritorInfoContent /> */}
-        <InProcess />
+        <HeirInfoContent heirId={id} inheritanceCaseId={parentId} />
       </Container>
     </>
   );

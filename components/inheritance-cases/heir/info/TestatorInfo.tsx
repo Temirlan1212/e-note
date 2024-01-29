@@ -6,11 +6,6 @@ import { Avatar, Box, Typography, List, ListItem } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { IPartner } from "@/models/user";
 
-export interface InfoItem {
-  title: string;
-  value: string;
-}
-
 interface ITestatorInfoProps {
   testatorInfo: FetchResponseBody | null;
 }
@@ -74,7 +69,7 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
         : t("absent"),
     },
     {
-      title: "Имя",
+      title: "First name",
       value: testatorInfo?.data?.[0]?.requester?.[0]?.firstName
         ? testatorInfo?.data?.[0]?.requester?.[0]?.firstName
         : t("absent"),
@@ -92,21 +87,27 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
         : t("absent"),
     },
     {
-      title: "Place of residence",
+      title: "Date of death",
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.deathDate
+        ? testatorInfo?.data?.[0]?.requester?.[0]?.deathDate
+        : t("absent"),
+    },
+    {
+      title: "Place of last residence",
       value: getAddressFullName(testatorInfo?.data?.[0]),
     },
     {
-      title: "Date of will",
-      value: testatorInfo?.data?.[0]?.requester?.[0]?.willData
-        ? testatorInfo?.data?.[0]?.requester?.[0]?.willData
-        : t("absent"),
+      title: "End date of inheritance",
+      value: testatorInfo?.data?.[0]?.notaryInheritanceEndDate
+        ? testatorInfo?.data?.[0]?.notaryInheritanceEndDate
+        : "---",
     },
   ].filter(Boolean);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "25px" }}>
       <Typography variant="h4" pl="16px">
-        {t("Information about the testator")}
+        {t("Information about the deceased")}
       </Typography>
       <Box
         sx={{
@@ -135,7 +136,7 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
               width: "100%",
             }}
           >
-            {titles.map((el: InfoItem, idx: number) => {
+            {titles.map((el: any, idx: any) => {
               return (
                 <ListItem
                   key={idx}

@@ -13,11 +13,10 @@ export default function InheritorDetailPage() {
 
   const { id } = router.query;
 
-  const {
-    data: inheritanceCaseInfo,
-    loading: loadingInheritanceCaseInfo,
-    update: getInheritanceCase,
-  } = useFetch(id != null ? "/api/inheritance-cases/" + id : "", "POST");
+  const { data: inheritanceCaseInfo, loading: loadingInheritanceCaseInfo } = useFetch(
+    id != null ? "/api/inheritance-cases/" + id : "",
+    "POST"
+  );
 
   return (
     <>

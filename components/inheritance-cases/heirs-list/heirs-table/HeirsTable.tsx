@@ -3,7 +3,6 @@ import { GridTable, IGridColDef, IGridTableProps } from "@/components/ui/GridTab
 import { GridValueGetterParams } from "@mui/x-data-grid";
 import { useTranslations } from "next-intl";
 import { format, isValid } from "date-fns";
-import { QrMenu } from "@/components/qr-menu/QrMenu";
 import { useMediaQuery } from "@mui/material";
 import { TableActions } from "./components/ActionsTable";
 import { ActualResidenceAddress } from "./components/ActualResidenceAddress";
