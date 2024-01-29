@@ -1,16 +1,20 @@
 import React from "react";
 import { GridTable, IFilterSubmitParams, IGridColDef, IGridTableProps } from "@/components/ui/GridTable";
 import { Box, useMediaQuery } from "@mui/material";
-import { GridSortModel } from "@mui/x-data-grid";
+import { GridSortModel, GridValueGetterParams } from "@mui/x-data-grid";
 import { TableActions } from "./components/TableActions";
 import { useFetchListParams } from "@/contexts/fetch-list-params";
 import { InheritanceCasesFilterValuesProps } from "@/models/inheritance-cases";
 import { QrMenu } from "@/components/qr-menu/QrMenu";
+import { useLocale } from "next-intl";
 
 interface WillsTableProps extends Omit<IGridTableProps, "columns"> {}
 
 const WillsTable = React.forwardRef<HTMLDivElement, WillsTableProps>(({ className, ...props }, ref) => {
+  const locale = useLocale();
+
   const isMobileMedia = useMediaQuery("(max-width:800px)");
+
   const {
     updateFilterValues,
     updateParams,
@@ -83,17 +87,21 @@ const WillsTable = React.forwardRef<HTMLDivElement, WillsTableProps>(({ classNam
       sortable: true,
     },
     {
-      field: "createdBy.fullName",
+      field: "company.name",
       headerName: "Created by",
       width: 200,
       sortable: false,
     },
     {
-      field: "company.name",
-      headerName: "Executor",
+      field: "company.notaryDistrict",
+      headerName: "Notary district",
       cellClassName: "executor-column",
       width: 200,
       sortable: false,
+      valueGetter: (params: GridValueGetterParams) => {
+        const nameKey = locale !== "en" ? "$t:name" : "name";
+        return params.value?.[nameKey];
+      },
     },
     {
       field: "actions",
