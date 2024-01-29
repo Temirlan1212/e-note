@@ -25,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
           "middleName",
           "birthDate",
           "deathDate",
+          "createdOn",
           "mainAddress.region",
           "mainAddress.district",
           "mainAddress.city.name",

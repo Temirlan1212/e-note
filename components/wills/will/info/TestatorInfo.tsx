@@ -5,6 +5,7 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import { Avatar, Box, Typography, List, ListItem } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { IPartner } from "@/models/user";
+import { format } from "date-fns";
 
 export interface InfoItem {
   title: string;
@@ -93,12 +94,12 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
     },
     {
       title: "Place of residence",
-      value: getAddressFullName(testatorInfo?.data?.[0]),
+      value: getAddressFullName(testatorInfo?.data?.[0]?.requester?.[0]),
     },
     {
       title: "Date of will",
-      value: testatorInfo?.data?.[0]?.requester?.[0]?.willData
-        ? testatorInfo?.data?.[0]?.requester?.[0]?.willData
+      value: testatorInfo?.data?.[0]?.requester?.[0]?.createdOn
+        ? format(new Date(testatorInfo?.data?.[0]?.requester?.[0]?.createdOn), "dd.MM.yyyy HH:mm:ss")
         : t("absent"),
     },
   ].filter(Boolean);
