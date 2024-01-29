@@ -62,7 +62,7 @@ const WillsTable = React.forwardRef<HTMLDivElement, WillsTableProps>(({ classNam
     },
     {
       field: "requester.fullName",
-      headerName: "Full name",
+      headerName: "TestatorFullName",
       width: 270,
       sortable: false,
       filter: {
