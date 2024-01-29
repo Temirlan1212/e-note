@@ -1,11 +1,11 @@
-import { Box, CircularProgress } from "@mui/material";
-import { useTranslations } from "next-intl";
-import ExpandingFields from "@/components/fields/ExpandingFields";
 import { FC } from "react";
-import InheritanceCaseInfo from "./info/InheritanceCaseInfo";
-import TestatorInfo from "./info/TestatorInfo";
+import { useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
-import HeirsList from "../heirs-list/HeirsList";
+import { Box, CircularProgress } from "@mui/material";
+import ExpandingFields from "@/components/fields/ExpandingFields";
+import InheritanceCaseInfo from "@/components/inheritance-cases/inheritance-case/info/InheritanceCaseInfo";
+import TestatorInfo from "@/components/inheritance-cases/inheritance-case/info/TestatorInfo";
+import HeirsList from "@/components/inheritance-cases/heirs-list/HeirsList";
 import { FetchListParamsContextProvider } from "@/contexts/fetch-list-params";
 import { IApplication } from "@/models/application";
 
