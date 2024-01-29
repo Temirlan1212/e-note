@@ -81,7 +81,29 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
       ]),
     },
     { title: "StatusApplication", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
-    { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
+    {
+      title: "Signature status",
+      value: (
+        <>
+          {translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus)}
+          {data?.notaryReason && (
+            <Typography
+              component="span"
+              sx={{
+                fontSize: "14px",
+                fontWeight: "500",
+                color: "#ff5555",
+                wordBreak: "break-all",
+              }}
+            >
+              {" "}
+              ({t("After editing")})
+            </Typography>
+          )}
+        </>
+      ),
+    },
+    data?.notaryReason ? { title: "Reason for correction", value: data.notaryReason } : null,
     {
       title: "Date of the action",
       value: data?.createdOn ? format(new Date(data?.createdOn!), "dd.MM.yyyy HH:mm:ss") : "",
@@ -109,142 +131,158 @@ const ApplicationStatusRead: FC<IApplicationStatusReadProps> = (props) => {
       title: "Date of signing",
       value: data?.notaryDocumentSignDate ? format(new Date(data?.notaryDocumentSignDate), "dd.MM.yyyy HH:mm:ss") : "",
     },
+    {
+      title: "Date of correction",
+      value: data?.notaryReasonDate ? format(new Date(data?.notaryReasonDate), "dd.MM.yyyy HH:mm:ss") : "",
+    },
   ].filter(Boolean);
 
   const members = data?.requester.concat(data.members);
 
-  return (
+  return !loading && !statusDataLoading && !actionTypeDataLoading && !signatureStatusDataLoading ? (
     <>
-      {!loading && !statusDataLoading && !actionTypeDataLoading && !signatureStatusDataLoading ? (
+      {data?.notaryReason && (
         <Box
           sx={{
+            background: "#f56666",
+            padding: "10px",
             border: "1px solid #CDCDCD",
-            padding: "25px 15px",
-            display: "flex",
-            gap: "25px",
+            boxShadow: "0px 0px 10px 2px rgba(34, 60, 80, 0.3)",
           }}
         >
-          <List
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-              width: "100%",
-            }}
-          >
-            {titles.map((el, idx) => {
-              return (
-                <ListItem
-                  key={idx}
+          <Typography align="center" color="primary.contrastText" variant="h4">
+            {t("Edited after signing")}
+          </Typography>
+        </Box>
+      )}
+      <Box
+        sx={{
+          border: "1px solid #CDCDCD",
+          padding: "25px 15px",
+          display: "flex",
+          gap: "25px",
+        }}
+      >
+        <List
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            width: "100%",
+          }}
+        >
+          {titles.map((el, idx) => {
+            return (
+              <ListItem
+                key={idx}
+                sx={{
+                  gap: "10px",
+                  display: "flex",
+                  [theme.breakpoints.down("sm")]: {
+                    flexDirection: "column",
+                  },
+                  alignItems: "start",
+                }}
+              >
+                <Typography
                   sx={{
-                    gap: "10px",
-                    display: "flex",
+                    fontSize: "14px",
+                    fontWeight: "600",
+                    width: "100%",
+                    minWidth: "260px",
+                    maxWidth: { md: "280px", xs: "260px" },
                     [theme.breakpoints.down("sm")]: {
-                      flexDirection: "column",
+                      maxWidth: "unset",
                     },
-                    alignItems: "start",
+                    wordBreak: "break-word",
                   }}
                 >
+                  {t(el?.title)}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    color: "#687C9B",
+                    wordBreak: "break-all",
+                  }}
+                >
+                  {el?.value != null && el?.value !== "" ? el?.value : t("absent")}
+                </Typography>
+              </ListItem>
+            );
+          })}
+          <ListItem
+            sx={{
+              gap: "10px",
+              display: "flex",
+              [theme.breakpoints.down("sm")]: {
+                flexDirection: "column",
+              },
+              alignItems: "start",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "14px",
+                fontWeight: "600",
+                width: "100%",
+                minWidth: "260px",
+                maxWidth: { md: "280px", xs: "260px" },
+                [theme.breakpoints.down("sm")]: {
+                  maxWidth: "unset",
+                },
+                wordBreak: "break-word",
+              }}
+            >
+              {t("Sides")}
+            </Typography>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              }}
+            >
+              {members?.map((member, idx) => (
+                <Box key={idx}>
                   <Typography
                     sx={{
                       fontSize: "14px",
                       fontWeight: "600",
-                      width: "100%",
-                      minWidth: "260px",
-                      maxWidth: { md: "280px", xs: "260px" },
-                      [theme.breakpoints.down("sm")]: {
-                        maxWidth: "unset",
-                      },
-                      wordBreak: "break-word",
                     }}
                   >
-                    {t(el?.title)}
+                    {t("Participant")}-{idx + 1}:
                   </Typography>
                   <Typography
                     sx={{
                       fontSize: "14px",
                       fontWeight: "500",
                       color: "#687C9B",
-                      wordBreak: "break-all",
                     }}
                   >
-                    {el?.value != null && el?.value !== "" ? el?.value : t("absent")}
+                    {member?.lastName} {member?.firstName} {member?.middleName}
                   </Typography>
-                </ListItem>
-              );
-            })}
-            <ListItem
-              sx={{
-                gap: "10px",
-                display: "flex",
-                [theme.breakpoints.down("sm")]: {
-                  flexDirection: "column",
-                },
-                alignItems: "start",
-              }}
-            >
-              <Typography
-                sx={{
-                  fontSize: "14px",
-                  fontWeight: "600",
-                  width: "100%",
-                  minWidth: "260px",
-                  maxWidth: { md: "280px", xs: "260px" },
-                  [theme.breakpoints.down("sm")]: {
-                    maxWidth: "unset",
-                  },
-                  wordBreak: "break-word",
-                }}
-              >
-                {t("Sides")}
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "10px",
-                }}
-              >
-                {members?.map((member, idx) => (
-                  <Box key={idx}>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: "600",
-                      }}
-                    >
-                      {t("Participant")}-{idx + 1}:
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        color: "#687C9B",
-                      }}
-                    >
-                      {member?.lastName} {member?.firstName} {member?.middleName}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        color: "#687C9B",
-                      }}
-                    >
-                      {getAddressFullName(member)}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            </ListItem>
-          </List>
-        </Box>
-      ) : (
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <CircularProgress color="success" />
-        </Box>
-      )}
+                  <Typography
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: "500",
+                      color: "#687C9B",
+                    }}
+                  >
+                    {getAddressFullName(member)}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </ListItem>
+        </List>
+      </Box>
     </>
+  ) : (
+    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <CircularProgress color="success" />
+    </Box>
   );
 };
 

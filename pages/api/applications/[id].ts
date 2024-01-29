@@ -29,6 +29,9 @@ const fields: string[] = [
   "isToPrintLineSubTotal",
   "orderNumber",
   "currency",
+  "scan",
+  "notaryReason",
+  "notaryReasonDate",
   "notaryDocumentSignDate",
 ];
 

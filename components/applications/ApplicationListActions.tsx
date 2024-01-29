@@ -19,6 +19,7 @@ import { IChatUser, IFetchByIdData, IFetchNotaryChat, IRequester, IUser } from "
 import CancelIcon from "@mui/icons-material/Cancel";
 import KeyIcon from "@mui/icons-material/Key";
 import VideocamIcon from "@mui/icons-material/Videocam";
+import DocumentScannerIcon from "@mui/icons-material/DocumentScanner";
 import Input from "@/components/ui/Input";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
@@ -46,6 +47,9 @@ export const ApplicationListActions = ({
   const [userData, setUserData] = useState<IUserData | null>();
   const [hash, setHash] = useState<string | null>(null);
   const [signTime, setSignTime] = useState<string | null>(null);
+  const [editReason, setEditReason] = useState<string | null>(null);
+  const [file, setFile] = useState<File | File[] | null>();
+  const [fileError, setFileError] = useState<boolean>(false);
   const htmlSignRef = useRef<HTMLDivElement | null>(null);
   const profile = useProfileStore((state) => state);
 
@@ -66,22 +70,34 @@ export const ApplicationListActions = ({
   const { update: downloadUpdate } = useFetch<FetchResponseBody | null>("", "POST");
   const { update: cancelUpdate } = useFetch<FetchResponseBody | null>("", "PUT");
   const { update: getCopy } = useFetch<IFetchByIdData>("", "GET");
+  const { update: getScan } = useFetch<Response>("", "GET", { returnResponse: true });
   const { data: copyData, update: updateCopyData } = useFetch("", "POST");
   const { update: getApplication, loading: applicationLoading } = useFetch("", "POST");
+  const { update: scanDoc, loading: scannedDocLoading } = useFetch("", "POST");
 
   const handleDownloadClick = async () => {
+    const lastScanPdf = params.row.scan[params.row.scan.length - 1];
     const pdfResponse = await downloadUpdate(`/api/applications/download/${params.row.id}`);
     handlePdfDownload(
-      pdfResponse?.data[0]?.documentInfo?.pdfLink,
-      pdfResponse?.data[0]?.documentInfo?.token,
-      pdfResponse?.data[0]?.documentInfo?.name
+      {
+        pdfLink: pdfResponse?.data[0]?.documentInfo?.pdfLink,
+        token: pdfResponse?.data[0]?.documentInfo?.token,
+        fileName: pdfResponse?.data[0]?.documentInfo?.name,
+      },
+      lastScanPdf
     );
   };
 
-  const handlePdfDownload = async (pdfLink: string, token: string, fileName: string) => {
+  const handlePdfDownload = async (
+    originalPdfLink: { pdfLink: string; token: string; fileName: string },
+    scanPdf?: { fileName: string; id: number }
+  ) => {
+    const { pdfLink, token, fileName } = originalPdfLink;
     if (!pdfLink || !token) return;
 
-    const response = await getPdf(`/api/adapter?url=${pdfLink}&token=${token}`);
+    const response = scanPdf
+      ? await getScan(`/api/files/download/${scanPdf.id}`)
+      : await getPdf(`/api/adapter?url=${pdfLink}&token=${token}`);
     const blob = await response?.blob();
     if (blob == null) return;
 
@@ -91,7 +107,7 @@ export const ApplicationListActions = ({
     const a = document.createElement("a");
     a.style.display = "none";
     a.href = url;
-    a.download = formattedFileName || "document.pdf";
+    a.download = scanPdf ? scanPdf.fileName : formattedFileName || "document.pdf";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -210,6 +226,9 @@ export const ApplicationListActions = ({
           notaryUniqNumber: null,
           isToPrintLineSubTotal: true,
           documentInfo: null,
+          scan: null,
+          notaryReason: null,
+          notaryReasonDate: null,
         },
       });
     });
@@ -252,6 +271,41 @@ export const ApplicationListActions = ({
     } else {
       router.push(`/applications/edit/${rowId}`);
     }
+  };
+
+  const handleEditReason = async (callback: Dispatch<SetStateAction<boolean>>) => {
+    if (editReason && file) {
+      const formData = new FormData();
+      if ("name" in file) {
+        formData.append("id", String(params.id));
+        formData.append("editReason", editReason);
+        formData.append("fileName", file.name);
+        formData.append("file", file as File);
+
+        await scanDoc("/api/applications/edit-scan", formData);
+      }
+      callback(false);
+      handleResetScanForm();
+    }
+    if (!editReason) {
+      setEditReason("");
+    }
+    if (!file) {
+      setFileError(true);
+    }
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const elem = event.target;
+    if (!elem.files) return;
+    setFile(elem.files[0]);
+    setFileError(false);
+  };
+
+  const handleResetScanForm = () => {
+    setEditReason(null);
+    setFile(null);
+    setFileError(false);
   };
 
   return (
@@ -404,6 +458,50 @@ export const ApplicationListActions = ({
           </ConfirmationModal>
         </>
       )}
+
+      {params.row.statusSelect === 1 && (
+        <ConfirmationModal
+          hintTitle="Do you really want to correct the document?"
+          title="Document correction"
+          confirmLoading={scannedDocLoading}
+          onConfirm={(callback) => handleEditReason(callback)}
+          handleReject={handleResetScanForm}
+          slots={{
+            body: () => (
+              <Box display="flex" flexDirection="column" gap="20px">
+                <Box>
+                  <InputLabel sx={{ whiteSpace: "pre-wrap" }}>
+                    {t("Enter the reason for correcting the document")}
+                  </InputLabel>
+                  <Input
+                    onChange={(e) => setEditReason(e.target.value)}
+                    inputType={editReason === "" ? "error" : "secondary"}
+                    helperText={editReason === "" && t("This field is required!")}
+                  />
+                </Box>
+                <Box>
+                  <InputLabel sx={{ whiteSpace: "pre-wrap" }}>
+                    {t("Attach a scanned copy of the corrected document")}
+                  </InputLabel>
+                  <Input
+                    type="file"
+                    onChange={handleFileChange}
+                    inputType={fileError ? "error" : "secondary"}
+                    helperText={fileError && t("This field is required!")}
+                  />
+                </Box>
+              </Box>
+            ),
+          }}
+        >
+          <Tooltip title={t("Document correction")} arrow>
+            <IconButton>
+              <DocumentScannerIcon />
+            </IconButton>
+          </Tooltip>
+        </ConfirmationModal>
+      )}
+
       <Box sx={{ width: 0, height: 0, overflow: "hidden" }}>
         <Box
           ref={htmlSignRef}

@@ -2,12 +2,12 @@ import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "
 import { useTranslations } from "next-intl";
 import { UseFormReturn } from "react-hook-form";
 import html2canvas from "html2canvas";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import useConvert from "@/hooks/useConvert";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Backdrop, IconButton, Menu } from "@mui/material";
+import { Box, Backdrop, IconButton, Menu, InputLabel, Tooltip } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import EditIcon from "@mui/icons-material/Edit";
@@ -22,8 +22,12 @@ import DeclVideoRecordModal from "@/components/decl-video-record/DeclVideoRecord
 import KeyIcon from "@mui/icons-material/Key";
 import VideocamIcon from "@mui/icons-material/Videocam";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DocumentScannerIcon from "@mui/icons-material/DocumentScanner";
 import { useProfileStore } from "@/stores/profile";
 import EmblemIcon from "@/public/icons/emblem.svg";
+import Input from "@/components/ui/Input";
+import FileInput from "@/components/ui/FileInput";
+import { useRouter } from "next/router";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -41,6 +45,8 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const id = watch("id");
   const version = watch("version");
 
+  const htmlSignRef = useRef<HTMLDivElement | null>(null);
+
   const [base64Doc, setBase64Doc] = useState<string>();
   const [docUrl, setDocUrl] = useState<string>();
   const [token, setToken] = useState<string>();
@@ -49,7 +55,6 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const [isBackdropOpen, setIsBackdropOpen] = useState(false);
   const [hash, setHash] = useState<string | null>(null);
   const [signTime, setSignTime] = useState<string | null>(null);
-  const htmlSignRef = useRef<HTMLDivElement | null>(null);
   // const [isMoreMenuOpen, setIsMoreMenuOpen] = useState<null | HTMLElement>(null);
 
   const { loading: pdfLoading, update: getPdf } = useFetch<Response>("", "GET", { returnResponse: true });
