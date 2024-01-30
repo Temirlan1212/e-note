@@ -139,7 +139,14 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     const dynamicFormValues = dynamicForm.getValues();
     const formValues = form.getValues();
 
-    const { notaryIsBenefit, notaryAmountStateTax, notaryWithDeparture } = dynamicFormValues;
+    const {
+      notaryIsBenefit,
+      notaryAmountStateTax,
+      notaryWithDeparture,
+      notaryGovernmentDeparture,
+      notaryIsDiscount,
+      notaryDiscount,
+    } = dynamicFormValues;
     const { members, requester, currency } = formValues;
 
     const mapSubjectRole = (item: any) => ({ subjectRole: item?.subjectRole });
@@ -152,6 +159,9 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
         notaryIsBenefit: notaryIsBenefit,
         notaryAmountStateTax: notaryAmountStateTax,
         notaryWithDeparture: notaryWithDeparture,
+        notaryIsDiscount: notaryIsDiscount,
+        notaryDiscount: notaryIsDiscount ? notaryDiscount : 0,
+        notaryGovernmentDeparture: notaryGovernmentDeparture,
         requester: requester?.map(mapSubjectRole),
         members: members?.map(mapSubjectRole),
       };
@@ -366,8 +376,14 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
                           maxLength={item?.maxLength}
                           pattern={item?.pattern}
                           onClick={() => {
-                            if (item?.actionType?.toLowerCase() === "calculate" && handleCalculateSumOfTax)
+                            if (item?.fieldName === "notaryGovernmentDeparture") {
+                              dynamicForm.setValue("notaryWithDeparture", false);
+                            } else if (item?.fieldName === "notaryWithDeparture") {
+                              dynamicForm.setValue("notaryGovernmentDeparture", false);
+                            }
+                            if (item?.actionType?.toLowerCase() === "calculate" && handleCalculateSumOfTax) {
                               handleCalculateSumOfTax();
+                            }
                           }}
                         />
                       )}
