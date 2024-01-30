@@ -1,7 +1,8 @@
 import { FC } from "react";
 import { useTranslations } from "next-intl";
-import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import useFetch from "@/hooks/useFetch";
+import { Box, CircularProgress } from "@mui/material";
+import DocumentsTable from "@/components/inheritance-cases/inheritance-case/documents/DocumentsTable";
 import ExpandingFields from "@/components/fields/ExpandingFields";
 import HeirInfo from "@/components/inheritance-cases/heir/info/HeirInfo";
 import AdditionalInfo from "./info/AdditionalInfo";
@@ -61,7 +62,7 @@ const HeirInfoContent: FC<IHeirInfoContentProps> = ({ heirId, inheritanceCaseId 
         </ExpandingFields>
 
         <ExpandingFields title="Document" permanentExpand={false}>
-          {t("Document")}
+          <DocumentsTable caseId={inheritanceCaseInfo?.data?.[0]?.id} />
         </ExpandingFields>
       </Box>
       {loadingHeirInfo ? <CircularProgress /> : <HeirInfo heirInfo={heirInfo} />}

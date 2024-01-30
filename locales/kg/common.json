@@ -154,6 +154,7 @@
   "Address": "Дареги",
   "Contacts": "Байланыштар",
   "Document": "Документ",
+  "Documents": "Документтер",
   "Citizenship": "Жарандык",
   "Series": "Сериясы",
   "Organ": "Орган",
@@ -304,5 +305,7 @@
   "The person not alive on this PIN": "Бул ПИН боюнча адам каза болду",
   "Wait, it's loading": "Күтө туруңуз, жүктөлүүдө",
   "The number of the inheritance case": "Пробациялык иштин номери",
-  "invalidDateErrorText": "Сураныч, КК.АА.ЖЖЖЖ форматында жарактуу күндү киргизиңиз"
+  "invalidDateErrorText": "Сураныч, КК.АА.ЖЖЖЖ форматында жарактуу күндү киргизиңиз",
+  "Upload file": "Файл жүктөө",
+  "Upload date": "Жүктөлгөн убактысы"
 }
