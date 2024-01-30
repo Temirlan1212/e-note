@@ -226,6 +226,7 @@ export const ApplicationListActions = ({
           notaryUniqNumber: null,
           isToPrintLineSubTotal: true,
           documentInfo: null,
+          notaryPlaceHandWritten: null,
           scan: null,
           notaryReason: null,
           notaryReasonDate: null,
