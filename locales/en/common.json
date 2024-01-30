@@ -154,6 +154,7 @@
   "Address": "Address",
   "Contacts": "Contacts",
   "Document": "Document",
+  "Documents": "Documents",
   "Citizenship": "Citizenship",
   "Series": "Series",
   "Organ": "Organ",
@@ -304,5 +305,7 @@
   "The person not alive on this PIN": "The person on this PIN died",
   "Wait, it's loading": "Wait, it's loading",
   "The number of the inheritance case": "The number of the inheritance case",
-  "invalidDateErrorText": "Please enter a valid date in the format DD.MM.YYYY"
+  "invalidDateErrorText": "Please enter a valid date in the format DD.MM.YYYY",
+  "Upload file": "Upload file",
+  "Upload date": "Upload date"
 }

@@ -154,6 +154,7 @@
   "Address": "Адрес",
   "Contacts": "Контакты",
   "Document": "Документ",
+  "Documents": "Документы",
   "Citizenship": "Гражданство",
   "Series": "Серия",
   "Organ": "Орган",
@@ -304,5 +305,7 @@
   "The person not alive on this PIN": "Человек по этому ПИНу умер",
   "Wait, it's loading": "Подождите, идет загрузка",
   "The number of the inheritance case": "Номер наследст. дела",
-  "invalidDateErrorText": "Пожалуйста, введите дату в формате ДД.ММ.ГГГГ"
+  "invalidDateErrorText": "Пожалуйста, введите дату в формате ДД.ММ.ГГГГ",
+  "Upload file": "Загрузить файл",
+  "Upload date": "Дата загрузки"
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
@@ -8,9 +8,9 @@ import { GridSortModel } from "@mui/x-data-grid";
 import UploadIcon from "@mui/icons-material/Upload";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Button from "../ui/Button";
-import { GridTable } from "../ui/GridTable";
-import Pagination from "../ui/Pagination";
+import Button from "@/components/ui/Button";
+import { GridTable } from "@/components/ui/GridTable";
+import Pagination from "@/components/ui/Pagination";
 
 function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onDelete: Function }) {
   const { data: downloadData, update: downloadUpdate } = useFetch<Response>("", "GET", {

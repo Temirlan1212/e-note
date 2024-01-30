@@ -2,6 +2,7 @@ import { FC } from "react";
 import { useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
 import { Box, CircularProgress } from "@mui/material";
+import DocumentsTable from "@/components/inheritance-cases/inheritance-case/documents/DocumentsTable";
 import ExpandingFields from "@/components/fields/ExpandingFields";
 import InheritanceCaseInfo from "@/components/inheritance-cases/inheritance-case/info/InheritanceCaseInfo";
 import TestatorInfo from "@/components/inheritance-cases/inheritance-case/info/TestatorInfo";
@@ -51,8 +52,8 @@ const InheritanceCaseInfoContent: FC<IInheritanceCaseInfoContentProps> = ({
           {t("Will")}
         </ExpandingFields>
 
-        <ExpandingFields title="Document" permanentExpand={false}>
-          {t("Document")}
+        <ExpandingFields title="Documents" permanentExpand={false}>
+          <DocumentsTable caseId={inheritanceCaseInfo?.id} />
         </ExpandingFields>
       </Box>
 
