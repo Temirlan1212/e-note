@@ -7,12 +7,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 export const TableActions = ({
   params,
-  onDelete,
+  refreshData,
 }: {
   params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>;
-  onDelete: Function;
+  refreshData: Function;
 }) => {
-  const { data: downloadData, update: downloadUpdate } = useFetch<Response>("", "GET", {
+  const { data: downloadedData, update: downloadUpdate } = useFetch<Response>("", "GET", {
     returnResponse: true,
   });
 
@@ -32,14 +32,14 @@ export const TableActions = ({
   };
 
   useEffectOnce(async () => {
-    if (downloadData == null || downloadData.body == null || downloadData.blob == null) return;
+    if (downloadedData == null || downloadedData.body == null || downloadedData.blob == null) return;
 
-    const blob = await downloadData.blob();
+    const blob = await downloadedData.blob();
 
     if (blob != null) {
       download(blob, params.row.fileName);
     }
-  }, [downloadData]);
+  }, [downloadedData]);
 
   const download = (blob: Blob, fileName: string) => {
     const url = window.URL.createObjectURL(blob);
@@ -55,7 +55,7 @@ export const TableActions = ({
 
   useEffectOnce(() => {
     if (deletedData == null || deletedData.body == null) return;
-    onDelete();
+    refreshData();
   }, [deletedData]);
 
   return (

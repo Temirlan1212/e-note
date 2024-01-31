@@ -80,7 +80,7 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, any>(({ className
       sortable: false,
       type: isMobileMedia ? "actions" : "string",
       cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
-      renderCell: (params) => <TableActions params={params} onDelete={getDocuments} />,
+      renderCell: (params) => <TableActions params={params} refreshData={getDocuments} />,
     },
   ];
 
