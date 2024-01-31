@@ -1,10 +1,13 @@
 import { FC } from "react";
 import { format } from "date-fns";
+import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
+import Link from "@/components/ui/Link";
 import Button from "@/components/ui/Button";
 import { Box, Typography, List, ListItem } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { IApplication } from "@/models/application";
+import KeyboardBackspaceOutlinedIcon from "@mui/icons-material/KeyboardBackspaceOutlined";
 
 interface IInheritanceCaseInfoProps {
   inheritanceCaseInfo?: IApplication;
@@ -12,6 +15,10 @@ interface IInheritanceCaseInfoProps {
 
 const InheritanceCaseInfo: FC<IInheritanceCaseInfoProps> = ({ inheritanceCaseInfo }) => {
   const t = useTranslations();
+
+  const router = useRouter();
+
+  const { parentId } = router.query;
 
   const theme = useTheme();
 
@@ -34,9 +41,29 @@ const InheritanceCaseInfo: FC<IInheritanceCaseInfoProps> = ({ inheritanceCaseInf
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "25px" }}>
-      <Typography variant="h4" color="success.main" pl="16px">
-        {t("Inheritance case")}
-      </Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography variant="h4" color="success.main" pl="16px">
+          {t("Inheritance case")}
+        </Typography>
+
+        <Link href={`/inheritance-cases/${parentId}`}>
+          <Button
+            variant="text"
+            sx={{
+              backgroundColor: "none",
+              color: "#1BAA75",
+              fontSize: "16px",
+              width: "auto",
+              ":hover": {
+                backgroundColor: "transparent !important",
+              },
+            }}
+            startIcon={<KeyboardBackspaceOutlinedIcon />}
+          >
+            {t("Back")}
+          </Button>
+        </Link>
+      </Box>
       <Box
         sx={{
           display: "flex",
