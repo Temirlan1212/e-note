@@ -30,9 +30,9 @@ export const useCheckIsPersonAlive = () => {
           onError && onError(name);
           return false;
         }
-        return true;
       }
     }
+    return true;
   };
 
   const check = async (pin: string, notify?: CheckProps["notify"]) => {
