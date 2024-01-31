@@ -39,7 +39,7 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, city, user
       const notaryLicenseTermUntil = new Date(licenseTermUntil);
       const currentDate = new Date();
 
-      return notaryLicenseTermUntil > currentDate ? "License has expired or is invalid" : undefined;
+      return notaryLicenseTermUntil < currentDate ? "License has expired or is invalid" : undefined;
     }
   };
 
