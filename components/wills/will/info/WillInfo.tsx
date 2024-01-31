@@ -37,7 +37,7 @@ const WillInfo: FC<IWillInfoProps> = ({ willInfo }) => {
     <Box sx={{ display: "flex", flexDirection: "column", gap: "25px" }}>
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Typography variant="h4" color="success.main" pl="16px">
-          {t("Завещание")}
+          {t("Will")}
         </Typography>
         <Link href="/wills">
           <Button
