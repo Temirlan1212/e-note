@@ -334,14 +334,12 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
   };
 
   const handleNextClick = async (targetStep?: number) => {
-    const values = getValues("requester");
-    const pinValues = values?.map((item, index) => {
-      return { [`requester.${index}.personalNumber`]: item?.personalNumber };
-    })?.[0];
-
+    const values = getValues("members");
+    let pinValues: Record<string, any> = {};
+    values?.map((item, index) => (pinValues[`members.${index}.personalNumber`] = item?.personalNumber));
     const isAlive = await checkIsPersonAlive({
       onError: (name) => form.setError(name as any, { message: "The person not alive on this PIN" }),
-      values: pinValues ? pinValues : {},
+      values: pinValues,
     });
 
     if (!isAlive) return focusToFieldOnError();
