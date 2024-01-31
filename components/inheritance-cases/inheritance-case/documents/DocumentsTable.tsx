@@ -1,12 +1,14 @@
 import React from "react";
+import { format, isValid } from "date-fns";
+import { useTranslations } from "next-intl";
+import { GridValueGetterParams } from "@mui/x-data-grid";
 import { GridTable, IGridColDef } from "@/components/ui/GridTable";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import { TableActions } from "./components/TableActions";
-import { useTranslations } from "next-intl";
 import UploadIcon from "@mui/icons-material/Upload";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 
 const InheritanceCasesTable = React.forwardRef<HTMLDivElement, any>(({ className, caseId, ...props }, ref) => {
   const isMobileMedia = useMediaQuery("(max-width:800px)");
@@ -16,7 +18,7 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, any>(({ className
     data: documentsInfo,
     loading: documentsLoading,
     update: getDocuments,
-  } = useFetch<FetchResponseBody | null>(caseId ? "/api/inheritance-cases/documents/" + caseId : "", "GET");
+  } = useFetch<FetchResponseBody | null>(caseId ? "/api/inheritance-cases/documents/" + caseId : "", "POST");
 
   const { loading: uploadLoading, update: uploadDocument } = useFetch("", "POST");
 
@@ -52,9 +54,14 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, any>(({ className
       field: "createdOn",
       headerName: "Upload date",
       width: 200,
+      valueGetter: (params: GridValueGetterParams) => {
+        if (!params.value) return t("absent");
+        const date = new Date(params.value);
+        return isValid(date) ? format(date, "dd.MM.yyyy HH:mm") : t("absent");
+      },
     },
     {
-      field: "sizeText",
+      field: "metaFile.sizeText",
       headerName: "Size",
       width: 200,
       sortable: false,
@@ -69,11 +76,11 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, any>(({ className
       field: "actions",
       headerName: "Actions",
       headerClassName: "pinnable",
-      width: isMobileMedia ? 250 : 350,
+      width: isMobileMedia ? 250 : 120,
       sortable: false,
       type: isMobileMedia ? "actions" : "string",
       cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
-      renderCell: (params) => <TableActions params={params} />,
+      renderCell: (params) => <TableActions params={params} onDelete={getDocuments} />,
     },
   ];
 
