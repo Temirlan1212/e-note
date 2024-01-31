@@ -3,7 +3,6 @@ import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import DatePickerFormField from "../components/form-fields/DatePickerFormField";
 import Address from "@/components/fields/Address";
-import NotarySelection from "../../fields/NotarySelection";
 import { getAddressNames } from "./lib/const";
 
 interface ICreateFormProps extends BoxProps {
@@ -42,8 +41,6 @@ const CreateFormFields = React.forwardRef<HTMLDivElement, ICreateFormProps>((pro
             }}
           />
         </Box>
-
-        <NotarySelection form={form} />
       </Box>
     </Box>
   );
