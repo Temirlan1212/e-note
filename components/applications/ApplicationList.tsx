@@ -389,7 +389,9 @@ export default function ApplicationList() {
             filter: isSearchedData
               ? undefined
               : {
-                  data: documentTypeData?.data?.filter((item: any) => item.isSystem === true) ?? [],
+                  data: Array.isArray(documentTypeData?.data)
+                    ? documentTypeData?.data?.filter((item: any) => item.isSystem === true) ?? []
+                    : [],
                   labelField: locale !== "en" ? "$t:name" : "name",
                   valueField: "id",
                   type: "dictionary",
