@@ -126,12 +126,13 @@ const WillsTable = React.forwardRef<HTMLDivElement, WillsTableProps>(({ classNam
         rowHeight={65}
         autoHeight
         sx={{
+          height: "100%",
           ".executor-column": {
             color: "success.main",
           },
           ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": {
             padding: "10px 16px",
-            whiteSpace: "normal",
+            // whiteSpace: "normal",
           },
           ".MuiDataGrid-columnHeader": { padding: "16px" },
           ...(props.sx || {}),

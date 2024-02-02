@@ -121,9 +121,9 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
           rowHeight={65}
           autoHeight
           sx={{
+            height: "100%",
             ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": {
               padding: "10px 16px",
-              whiteSpace: "normal",
             },
             ".MuiDataGrid-columnHeader": { padding: "16px" },
             ...(props.sx || {}),

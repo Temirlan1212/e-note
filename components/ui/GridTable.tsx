@@ -137,14 +137,14 @@ export const GridTable: React.FC<IGridTableProps> = ({
       outline: "none",
     },
     ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": {
-      whiteSpace: "normal",
+      // whiteSpace: "normal",
       maxHeight: "100% !important",
       padding: "10px",
       ".MuiDataGrid-cellContent": {
-        overflow: "auto",
+        // overflow: "auto",
         display: "block",
         alignItems: "center",
-        overflowWrap: "break-word",
+        // overflowWrap: "break-word",
       },
     },
     ".MuiDataGrid-cell:focus-within": {

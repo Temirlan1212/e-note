@@ -143,56 +143,59 @@ export default function FileList() {
           </Button>
         </Box>
       </Box>
-
-      <GridTable
-        columns={[
-          {
-            field: "id",
-            headerName: "ID",
-            width: 70,
-          },
-          {
-            field: "fileName",
-            headerName: "Name",
-            width: 500,
-          },
-          {
-            field: "createdOn",
-            headerName: "Upload date",
-            width: 200,
-            renderCell: ({ value }) => new Date(value).toLocaleDateString(locale),
-          },
-          {
-            field: "sizeText",
-            headerName: "Size",
-            width: 100,
-            sortable: false,
-          },
-          {
-            field: "fileType",
-            headerName: "Format",
-            width: 200,
-            sortable: false,
-          },
-          {
-            field: "Actions",
-            headerName: "Actions",
-            width: 120,
-            sortable: false,
-            headerClassName: "pinnable",
-            type: isMobileMedia ? "actions" : "string",
-            cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
-            renderCell: ({ row }) => <GridTableActionsCell row={row} onDelete={update} />,
-          },
-        ]}
-        rows={data?.data ?? []}
-        loading={loading}
-        sortingMode="server"
-        onSortModelChange={handleSortChange}
-        rowHeight={65}
-        autoHeight
-        props={{ wrapper: { height: `${94 * data?.data?.length ?? 1}px` } }}
-      ></GridTable>
+      <Box sx={{ height: { xs: "760px", sm: "710px" } }}>
+        <GridTable
+          columns={[
+            {
+              field: "id",
+              headerName: "ID",
+              width: 70,
+            },
+            {
+              field: "fileName",
+              headerName: "Name",
+              width: 500,
+            },
+            {
+              field: "createdOn",
+              headerName: "Upload date",
+              width: 200,
+              renderCell: ({ value }) => new Date(value).toLocaleDateString(locale),
+            },
+            {
+              field: "sizeText",
+              headerName: "Size",
+              width: 100,
+              sortable: false,
+            },
+            {
+              field: "fileType",
+              headerName: "Format",
+              width: 200,
+              sortable: false,
+            },
+            {
+              field: "Actions",
+              headerName: "Actions",
+              width: 120,
+              sortable: false,
+              headerClassName: "pinnable",
+              type: isMobileMedia ? "actions" : "string",
+              cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
+              renderCell: ({ row }) => <GridTableActionsCell row={row} onDelete={update} />,
+            },
+          ]}
+          sx={{
+            height: "100%",
+          }}
+          rows={data?.data ?? []}
+          loading={loading}
+          sortingMode="server"
+          onSortModelChange={handleSortChange}
+          rowHeight={65}
+          autoHeight
+        ></GridTable>
+      </Box>
 
       <Pagination
         sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
