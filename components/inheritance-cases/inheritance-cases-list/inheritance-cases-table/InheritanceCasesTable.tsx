@@ -111,7 +111,7 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
     ];
 
     return (
-      <Box ref={ref} sx={{ height: { xs: "760px", sm: "710px" } }}>
+      <Box ref={ref}>
         <GridTable
           {...props}
           loading={props.loading}
@@ -124,7 +124,6 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
             height: "100%",
             ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": {
               padding: "10px 16px",
-              whiteSpace: "normal",
             },
             ".MuiDataGrid-columnHeader": { padding: "16px" },
             ...(props.sx || {}),

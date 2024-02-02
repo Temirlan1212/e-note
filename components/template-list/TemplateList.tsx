@@ -300,7 +300,7 @@ export default function TemplateList() {
             ),
           }}
         />
-        <Box sx={{ height: { xs: "760px", sm: "710px" } }}>
+        <Box>
           <GridTable
             columns={[
               {

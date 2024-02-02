@@ -314,7 +314,7 @@ export default function ApplicationList() {
         />
       </Box>
 
-      <Box sx={{ height: { xs: "760px", sm: "710px" } }}>
+      <Box>
         <GridTable
           columns={[
             {

@@ -116,7 +116,7 @@ const WillsTable = React.forwardRef<HTMLDivElement, WillsTableProps>(({ classNam
   ];
 
   return (
-    <Box ref={ref} sx={{ height: { xs: "760px", sm: "710px" } }}>
+    <Box ref={ref}>
       <GridTable
         {...props}
         loading={props.loading}
@@ -132,7 +132,7 @@ const WillsTable = React.forwardRef<HTMLDivElement, WillsTableProps>(({ classNam
           },
           ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": {
             padding: "10px 16px",
-            whiteSpace: "normal",
+            // whiteSpace: "normal",
           },
           ".MuiDataGrid-columnHeader": { padding: "16px" },
           ...(props.sx || {}),
