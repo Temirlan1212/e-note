@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const arrayBuffer = await readFileSync(fileInfo.filepath);
 
-  const scan = new File([arrayBuffer], fileName, { type: "application/pdf" });
+  const scan = new Blob([arrayBuffer], { type: "application/pdf" });
 
   const formData = new FormData();
   formData.append("id", id);

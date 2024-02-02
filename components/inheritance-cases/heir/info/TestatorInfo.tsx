@@ -94,7 +94,7 @@ const TestatorInfo: FC<ITestatorInfoProps> = ({ testatorInfo }) => {
     },
     {
       title: "Place of last residence",
-      value: getAddressFullName(testatorInfo?.data?.[0]),
+      value: getAddressFullName(testatorInfo?.data?.[0]?.requester?.[0]),
     },
     {
       title: "End date of inheritance",

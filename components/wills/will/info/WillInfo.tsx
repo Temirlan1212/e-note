@@ -5,6 +5,9 @@ import { useTheme } from "@mui/material/styles";
 import { Box, Typography, List, ListItem } from "@mui/material";
 import { IApplication } from "@/models/application";
 import { InfoItem } from "./TestatorInfo";
+import Link from "@/components/ui/Link";
+import Button from "@/components/ui/Button";
+import KeyboardBackspaceOutlinedIcon from "@mui/icons-material/KeyboardBackspaceOutlined";
 
 interface IWillInfoProps {
   willInfo: IApplication;
@@ -32,9 +35,29 @@ const WillInfo: FC<IWillInfoProps> = ({ willInfo }) => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "25px" }}>
-      <Typography variant="h4" color="success.main" pl="16px">
-        {t("Завещание")}
-      </Typography>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography variant="h4" color="success.main" pl="16px">
+          {t("Will")}
+        </Typography>
+        <Link href="/wills">
+          <Button
+            variant="text"
+            sx={{
+              backgroundColor: "none",
+              color: "#1BAA75",
+              fontSize: "16px",
+              width: "auto",
+              pr: "50px",
+              ":hover": {
+                backgroundColor: "transparent !important",
+              },
+            }}
+            startIcon={<KeyboardBackspaceOutlinedIcon />}
+          >
+            {t("Back")}
+          </Button>
+        </Link>
+      </Box>
       <Box
         sx={{
           display: "flex",

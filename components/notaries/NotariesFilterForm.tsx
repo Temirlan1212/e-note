@@ -94,6 +94,7 @@ export default function NotariesFilterForm({ form, onFormSubmit, onFormReset }: 
             city: t("All cities and villages"),
           }}
           form={form}
+          withoutFieldBinding={true}
           names={{ region: "region", district: "district", city: "city" }}
           skipField={{ skip: { field: "district" }, when: { field: "region", id: 8 } }}
         />

@@ -82,7 +82,7 @@ const InheritanceCasesTable = React.forwardRef<HTMLDivElement, InheritanceCasesT
         sortable: false,
       },
       {
-        field: "createdBy.fullName",
+        field: "company.name",
         headerName: "Created by",
         width: 250,
         sortable: false,

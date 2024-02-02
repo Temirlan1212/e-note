@@ -1,5 +1,6 @@
 import { Alert, Box, Collapse, Typography } from "@mui/material";
 import { useTranslations } from "next-intl";
+import { useProfileStore } from "@/stores/profile";
 import { IInheritanceCaseCreateSchema, inheritanceCaseCreateSchema } from "@/validator-schemas/inheritance-cases";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -16,6 +17,7 @@ import { format } from "date-fns";
 import CancelIcon from "@mui/icons-material/Cancel";
 
 export default function InheritanceCaseCreate() {
+  const userData = useProfileStore((state) => state.userData);
   const [error, setError] = useState<{ message: string; link?: string }>({ message: "" });
   const { update: update, loading } = useFetch("", "POST");
   const t = useTranslations();
@@ -43,6 +45,7 @@ export default function InheritanceCaseCreate() {
 
     const res = await update("/api/applications/create", {
       ...data,
+      company: { id: userData?.activeCompany?.id },
       creationDate: format(new Date(), "yyyy-MM-dd"),
       notaryIsInheritance: true,
     });
