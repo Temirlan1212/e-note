@@ -314,204 +314,205 @@ export default function ApplicationList() {
         />
       </Box>
 
-      <GridTable
-        columns={[
-          {
-            field: "QR",
-            headerName: "QR",
-            width: 70,
-            sortable: false,
-            renderCell: (params: any) => <QrMenu params={params} />,
-          },
-          {
-            field: "notaryUniqNumber",
-            headerName: "Unique number",
-            width: 200,
-            sortable: isSearchedData ? false : true,
-            valueGetter: (params: GridValueGetterParams) => {
-              return params.row?.notaryUniqNumber || t("not assigned");
-            },
-          },
-          {
-            field: "requester",
-            headerName: "Requested persons-1",
-            width: 200,
-            sortable: false,
-            cellClassName: "requestersColumn",
-            valueGetter: (params: GridValueGetterParams) => {
-              const requesters = params.value.map((requester: any) => requester.fullName).join(", ");
-              return isSearchedData ? params.row?.requester?.[0]?.fullName : requesters || t("not assigned");
-            },
-          },
-          {
-            field: "members",
-            headerName: "Requested persons-2",
-            width: 200,
-            sortable: false,
-            cellClassName: "membersColumn",
-            valueGetter: (params: GridValueGetterParams) => {
-              const members = params.value.map((member: any) => member.fullName).join(", ");
-              return isSearchedData ? params.row?.member?.[0]?.fullName : members || t("not assigned");
-            },
-          },
-          // {
-          //   field: "typeNotarialAction",
-          //   headerName: "Type of action",
-          //   width: 200,
-          //   editable: false,
-          //   sortable: false,
-          //   filter: isSearchedData
-          //     ? undefined
-          //     : {
-          //         data: actionTypeData?.data ?? [],
-          //         labelField: "title_" + locale,
-          //         valueField: "value",
-          //         type: "dictionary",
-          //         field: "typeNotarialAction",
-          //       },
-          //   valueGetter: (params: GridValueGetterParams) => {
-          //     if (actionTypeData?.data != null) {
-          //       const matchedItem = actionTypeData?.data.find(
-          //         (item: IActionType) => item.value == (isSearchedData ? params.row.typeNotarialAction : params.value)
-          //       );
-          //       const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
-          //       return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
-          //     }
-          //     return params.value;
-          //   },
-          // },
-          {
-            field: "productName",
-            headerName: "Type of document",
-            width: 250,
-            editable: false,
-            sortable: false,
-            filter: isSearchedData
-              ? undefined
-              : {
-                  data: Array.isArray(documentTypeData?.data)
-                    ? documentTypeData?.data?.filter((item: any) => item.isSystem === true) ?? []
-                    : [],
-                  labelField: locale !== "en" ? "$t:name" : "name",
-                  valueField: "id",
-                  type: "dictionary",
-                  field: "product.id",
-                },
-            valueGetter: (params: GridValueGetterParams) => {
-              const nameKey = locale !== "en" ? "$t:name" : "name";
-              const fullNameKey = locale !== "en" ? "$t:fullName" : "fullName";
-              return isSearchedData
-                ? params.row?.product?.[fullNameKey]
-                : params.value?.[nameKey] || params.value?.["name"] || t("not assigned");
-            },
-          },
-          {
-            field: "statusSelect",
-            headerName: "Status",
-            description: "statusSelect",
-            width: 200,
-            editable: false,
-            sortable: false,
-            filter: isSearchedData
-              ? undefined
-              : {
-                  data: statusData?.data ?? [],
-                  labelField: "title_" + locale,
-                  valueField: "value",
-                  type: "dictionary",
-                  field: "statusSelect",
-                },
-            valueGetter: (params: GridValueGetterParams) => {
-              if (statusData != null) {
-                const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(params.value));
-                const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
-                return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
-              }
-              return params.value;
-            },
-          },
-          {
-            field: "createdOn",
-            headerName: "Date of creation",
-            width: 190,
-            sortable: isSearchedData ? false : true,
-            valueGetter: (params: GridValueGetterParams) => {
-              if (!params.value) return t("absent");
-              const date = new Date(params.value);
-              return isValid(date) ? format(date, "dd.MM.yyyy HH:mm") : t("absent");
-            },
-          },
-          {
-            field: "notaryDocumentSignDate",
-            headerName: "Date of signing",
-            width: 190,
-            sortable: false,
-            valueGetter: (params: GridValueGetterParams) => {
-              if (!params.value) return t("absent");
-              const date = new Date(params.value);
-              return isValid(date) ? format(date, "dd.MM.yyyy HH:mm") : t("absent");
-            },
-          },
-          {
-            field: "description",
-            headerName: "Description",
-            width: 190,
-            sortable: false,
-            cellClassName: "descriptionColumn",
-            valueGetter: (params: GridValueGetterParams) => {
-              return params.value || t("absent");
-            },
-          },
-          {
-            field: "companyName",
-            headerName: "Executor",
-            width: 200,
-            sortable: false,
-            cellClassName: "executorColumn",
-            valueGetter: (params: GridValueGetterParams) => {
-              return isSearchedData ? params.row?.createdBy?.fullName : params.value || t("not assigned");
-            },
-          },
-          {
-            field: "actions",
-            headerName: "Actions",
-            headerClassName: "pinnable",
-            width: isMobileMedia ? 250 : 350,
-            sortable: false,
-            type: isMobileMedia ? "actions" : "string",
-            cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
-            renderCell: (params) => (
-              <ApplicationListActions
-                params={params}
-                onDelete={handleDelete}
-                checkNotaryLicense={handleCheckLicenseDate}
-                setAlertOpen={setAlertOpen}
-              />
-            ),
-          },
-        ]}
-        rows={filteredData ?? []}
-        onFilterSubmit={handleFilterSubmit}
-        onSortModelChange={handleSortByDate}
-        cellMaxHeight="200px"
-        loading={loading || searchLoading}
-        sx={{
-          height: "100%",
-          ".executorColumn": {
-            color: "success.main",
-          },
-          ".descriptionColumn .MuiDataGrid-cellContent, .requestersColumn .MuiDataGrid-cellContent, .membersColumn .MuiDataGrid-cellContent":
+      <Box sx={{ height: { xs: "760px", sm: "710px" } }}>
+        <GridTable
+          columns={[
             {
-              display: "-webkit-box !important",
-              WebkitLineClamp: "2",
-              WebkitBoxOrient: "vertical !important",
-              overflow: "hidden !important",
+              field: "QR",
+              headerName: "QR",
+              width: 70,
+              sortable: false,
+              renderCell: (params: any) => <QrMenu params={params} />,
             },
-        }}
-        rowHeight={65}
-        autoHeight
-        props={{ wrapper: { height: `${100 * filteredData?.length ?? 1}px` } }}
-      />
+            {
+              field: "notaryUniqNumber",
+              headerName: "Unique number",
+              width: 200,
+              sortable: isSearchedData ? false : true,
+              valueGetter: (params: GridValueGetterParams) => {
+                return params.row?.notaryUniqNumber || t("not assigned");
+              },
+            },
+            {
+              field: "requester",
+              headerName: "Requested persons-1",
+              width: 200,
+              sortable: false,
+              cellClassName: "requestersColumn",
+              valueGetter: (params: GridValueGetterParams) => {
+                const requesters = params.value.map((requester: any) => requester.fullName).join(", ");
+                return isSearchedData ? params.row?.requester?.[0]?.fullName : requesters || t("not assigned");
+              },
+            },
+            {
+              field: "members",
+              headerName: "Requested persons-2",
+              width: 200,
+              sortable: false,
+              cellClassName: "membersColumn",
+              valueGetter: (params: GridValueGetterParams) => {
+                const members = params.value.map((member: any) => member.fullName).join(", ");
+                return isSearchedData ? params.row?.member?.[0]?.fullName : members || t("not assigned");
+              },
+            },
+            // {
+            //   field: "typeNotarialAction",
+            //   headerName: "Type of action",
+            //   width: 200,
+            //   editable: false,
+            //   sortable: false,
+            //   filter: isSearchedData
+            //     ? undefined
+            //     : {
+            //         data: actionTypeData?.data ?? [],
+            //         labelField: "title_" + locale,
+            //         valueField: "value",
+            //         type: "dictionary",
+            //         field: "typeNotarialAction",
+            //       },
+            //   valueGetter: (params: GridValueGetterParams) => {
+            //     if (actionTypeData?.data != null) {
+            //       const matchedItem = actionTypeData?.data.find(
+            //         (item: IActionType) => item.value == (isSearchedData ? params.row.typeNotarialAction : params.value)
+            //       );
+            //       const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
+            //       return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
+            //     }
+            //     return params.value;
+            //   },
+            // },
+            {
+              field: "productName",
+              headerName: "Type of document",
+              width: 250,
+              editable: false,
+              sortable: false,
+              filter: isSearchedData
+                ? undefined
+                : {
+                    data: Array.isArray(documentTypeData?.data)
+                      ? documentTypeData?.data?.filter((item: any) => item.isSystem === true) ?? []
+                      : [],
+                    labelField: locale !== "en" ? "$t:name" : "name",
+                    valueField: "id",
+                    type: "dictionary",
+                    field: "product.id",
+                  },
+              valueGetter: (params: GridValueGetterParams) => {
+                const nameKey = locale !== "en" ? "$t:name" : "name";
+                const fullNameKey = locale !== "en" ? "$t:fullName" : "fullName";
+                return isSearchedData
+                  ? params.row?.product?.[fullNameKey]
+                  : params.value?.[nameKey] || params.value?.["name"] || t("not assigned");
+              },
+            },
+            {
+              field: "statusSelect",
+              headerName: "Status",
+              description: "statusSelect",
+              width: 200,
+              editable: false,
+              sortable: false,
+              filter: isSearchedData
+                ? undefined
+                : {
+                    data: statusData?.data ?? [],
+                    labelField: "title_" + locale,
+                    valueField: "value",
+                    type: "dictionary",
+                    field: "statusSelect",
+                  },
+              valueGetter: (params: GridValueGetterParams) => {
+                if (statusData != null) {
+                  const matchedItem = statusData?.data?.find((item: IStatus) => item.value == String(params.value));
+                  const translatedTitle = matchedItem?.[("title_" + locale) as keyof IActionType];
+                  return !!translatedTitle ? translatedTitle : matchedItem?.["title" as keyof IActionType] ?? "";
+                }
+                return params.value;
+              },
+            },
+            {
+              field: "createdOn",
+              headerName: "Date of creation",
+              width: 190,
+              sortable: isSearchedData ? false : true,
+              valueGetter: (params: GridValueGetterParams) => {
+                if (!params.value) return t("absent");
+                const date = new Date(params.value);
+                return isValid(date) ? format(date, "dd.MM.yyyy HH:mm") : t("absent");
+              },
+            },
+            {
+              field: "notaryDocumentSignDate",
+              headerName: "Date of signing",
+              width: 190,
+              sortable: false,
+              valueGetter: (params: GridValueGetterParams) => {
+                if (!params.value) return t("absent");
+                const date = new Date(params.value);
+                return isValid(date) ? format(date, "dd.MM.yyyy HH:mm") : t("absent");
+              },
+            },
+            {
+              field: "description",
+              headerName: "Description",
+              width: 190,
+              sortable: false,
+              cellClassName: "descriptionColumn",
+              valueGetter: (params: GridValueGetterParams) => {
+                return params.value || t("absent");
+              },
+            },
+            {
+              field: "companyName",
+              headerName: "Executor",
+              width: 200,
+              sortable: false,
+              cellClassName: "executorColumn",
+              valueGetter: (params: GridValueGetterParams) => {
+                return isSearchedData ? params.row?.createdBy?.fullName : params.value || t("not assigned");
+              },
+            },
+            {
+              field: "actions",
+              headerName: "Actions",
+              headerClassName: "pinnable",
+              width: isMobileMedia ? 250 : 350,
+              sortable: false,
+              type: isMobileMedia ? "actions" : "string",
+              cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
+              renderCell: (params) => (
+                <ApplicationListActions
+                  params={params}
+                  onDelete={handleDelete}
+                  checkNotaryLicense={handleCheckLicenseDate}
+                  setAlertOpen={setAlertOpen}
+                />
+              ),
+            },
+          ]}
+          rows={filteredData ?? []}
+          onFilterSubmit={handleFilterSubmit}
+          onSortModelChange={handleSortByDate}
+          cellMaxHeight="200px"
+          loading={loading || searchLoading}
+          sx={{
+            height: "100%",
+            ".executorColumn": {
+              color: "success.main",
+            },
+            ".descriptionColumn .MuiDataGrid-cellContent, .requestersColumn .MuiDataGrid-cellContent, .membersColumn .MuiDataGrid-cellContent":
+              {
+                display: "-webkit-box !important",
+                WebkitLineClamp: "2",
+                WebkitBoxOrient: "vertical !important",
+                overflow: "hidden !important",
+              },
+          }}
+          rowHeight={65}
+          autoHeight
+        />
+      </Box>
 
       <Pagination
         sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}
