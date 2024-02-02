@@ -7,7 +7,7 @@ import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { useState } from "react";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IMarker } from "@/components/ui/LeafletMap";
-import NotaryRegistry from "@/components/notary-registry/NotaryRegistry";
+import NotaryRegistry from "@/components/registry-of-notaries/NotaryRegistry";
 
 export default function Notaries() {
   const t = useTranslations();

@@ -12,7 +12,7 @@ import Button from "@/components/ui/Button";
 import FilterAltOffOutlinedIcon from "@mui/icons-material/FilterAltOffOutlined";
 import ClearIcon from "@mui/icons-material/Clear";
 import NotariesFilterForm from "@/components/notaries/NotariesFilterForm";
-import NotaryRegistryList from "@/components/notary-registry/NotaryRegistryList";
+import NotaryRegistryList from "@/components/registry-of-notaries/NotaryRegistryList";
 
 export interface INotariesQueryParams {
   pageSize: number;

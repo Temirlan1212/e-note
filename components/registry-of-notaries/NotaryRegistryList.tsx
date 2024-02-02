@@ -3,7 +3,7 @@ import { Box, CircularProgress, Grid } from "@mui/material";
 import { INotary } from "@/models/notaries";
 import Link from "next/link";
 import Pagination from "../ui/Pagination";
-import { INotariesQueryParams } from "@/components/notary-registry/NotaryRegistry";
+import { INotariesQueryParams } from "@/components/registry-of-notaries/NotaryRegistry";
 import NotariesCard from "@/components/notaries/NotariesCard";
 import { FetchResponseBody } from "@/hooks/useFetch";
 import { useRouter } from "next/router";
