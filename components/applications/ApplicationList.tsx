@@ -501,13 +501,6 @@ export default function ApplicationList() {
             ".executorColumn": {
               color: "success.main",
             },
-            ".descriptionColumn .MuiDataGrid-cellContent, .requestersColumn .MuiDataGrid-cellContent, .membersColumn .MuiDataGrid-cellContent":
-              {
-                display: "-webkit-box !important",
-                WebkitLineClamp: "2",
-                WebkitBoxOrient: "vertical !important",
-                overflow: "hidden !important",
-              },
           }}
           rowHeight={65}
           autoHeight
