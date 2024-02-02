@@ -52,7 +52,7 @@ export const routes: IRoute[] = [
       },
       {
         title: "Register of Notaries of the KR",
-        link: "/notary-registry",
+        link: "/registry-of-notaries",
         type: "menu",
         icon: "ListAlt",
       },

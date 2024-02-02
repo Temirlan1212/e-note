@@ -106,14 +106,14 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
         {!applicationLoading && !prepareLoading && !pdfLoading && (
           <ConfirmationModal
-            title="Rebuild the document"
+            title="Generate from template"
             type="hint"
             hintTitle=""
             hintText={"All changes made earlier in the document will be lost"}
             onConfirm={handlePrepareDocument}
           >
             <Button startIcon={<SyncIcon />} sx={{ width: "auto" }}>
-              {t("Rebuild the document")}
+              {t("Generate from template")}
             </Button>
           </ConfirmationModal>
         )}
