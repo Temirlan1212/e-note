@@ -116,7 +116,7 @@ const WillsTable = React.forwardRef<HTMLDivElement, WillsTableProps>(({ classNam
   ];
 
   return (
-    <Box ref={ref}>
+    <Box ref={ref} sx={{ height: { xs: "760px", sm: "710px" } }}>
       <GridTable
         {...props}
         loading={props.loading}
@@ -126,6 +126,7 @@ const WillsTable = React.forwardRef<HTMLDivElement, WillsTableProps>(({ classNam
         rowHeight={65}
         autoHeight
         sx={{
+          height: "100%",
           ".executor-column": {
             color: "success.main",
           },
