@@ -210,18 +210,20 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
           title={t("View document")}
           loading={applicationLoading || prepareLoading || pdfLoading || syncLoading}
         />
-        <ConfirmationModal
-          title="Rebuild the document"
-          type="hint"
-          hintTitle=""
-          hintText={"All changes made earlier in the document will be lost"}
-          onConfirm={(callback) => handlePrepareDocument(callback)}
-          confirmLoading={prepareLoading}
-        >
-          <Button startIcon={<SyncIcon />} sx={{ flexGrow: "1" }}>
-            {t("Rebuild the document")}
-          </Button>
-        </ConfirmationModal>
+        {!isSigned && (
+          <ConfirmationModal
+            title="Rebuild the document"
+            type="hint"
+            hintTitle=""
+            hintText={"All changes made earlier in the document will be lost"}
+            onConfirm={(callback) => handlePrepareDocument(callback)}
+            confirmLoading={prepareLoading}
+          >
+            <Button startIcon={<SyncIcon />} sx={{ flexGrow: "1" }}>
+              {t("Rebuild the document")}
+            </Button>
+          </ConfirmationModal>
+        )}
       </Box>
 
       {docUrl && <PDFViewer fileUrl={docUrl} />}
