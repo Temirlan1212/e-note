@@ -144,12 +144,11 @@ export default function SignModal({
               </Button>
             )}
 
-            {!faceIdScanner ||
-              (profile?.["activeCompany.typeOfNotary"] === "private" && (
-                <Button onClick={() => setFaceIdScanner(true)} loading={signLoading}>
-                  {t("Without Face ID")}
-                </Button>
-              ))}
+            {!faceIdScanner && profile?.["activeCompany.typeOfNotary"] !== "private" && (
+              <Button onClick={() => setFaceIdScanner(true)} loading={signLoading}>
+                {t("Without Face ID")}
+              </Button>
+            )}
           </Box>
         ),
       }}
