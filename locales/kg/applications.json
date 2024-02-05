@@ -130,6 +130,8 @@
   "Save to draft": "Сомоого сактоо",
   "To begin the Face ID verification process, you must submit a personal photo by setting it as your avatar in the Personal Area section of your personal account": "Face ID текшерүү процессин баштоо үчүн, сиз аны Жеке аккаунт бөлүмүндө аватар катары коюу менен жеке сүрөтүңүздү беришиңиз керек",
   "The notarial action has not been prepared for signing": "Нотариалдык иш-аракет кол коюуга даярдалган эмес",
+  "javaxxmlwsWebServiceException comaxelornotaryintegrationstundukexceptionTundukException": "Тундук иштебейт",
+  "Invalid content type text/html": "Тундук иштебейт",
   "javaxxmlwsWebServiceException comaxelornotaryintegrationstundukexceptionTundukException No subject found": "Юридикалык жак табылган жок",
   "NOT FOUND INDIVIDUAL": "Жеке адам табылган жок",
   "NOT FOUND TRANSPORTS": "Транспорт табылган жок",
