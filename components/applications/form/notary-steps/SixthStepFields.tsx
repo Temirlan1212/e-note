@@ -61,6 +61,8 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
   const { data: prepare, loading: prepareLoading, update: getPrepare } = useFetch("", "GET");
   const { loading: syncLoading, update: getSync } = useFetch("", "GET");
   const { data: signedDoc, update: signDocument, loading } = useFetch("", "POST");
+  const { update: changeStatus, loading: statusLoading } = useFetch("", "POST");
+  const { update: espCheck, loading: espCheckLoading } = useFetch("", "POST");
   const { data: application, loading: applicationLoading } = useFetch(
     id != null ? `/api/applications/${id}` : "",
     "POST"
@@ -137,17 +139,43 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     const dataUrl = canvas.toDataURL("image/png");
     const base64String = dataUrl?.split(",")[1];
 
-    const signedPdf = await signDocument(`/api/files/sign/${id}`, {
-      hash: sign === "sign" ? hashWithoutESP : sign,
-      haveESP: sign !== "sign",
-      seal: base64String,
-    });
+    if (sign === "sign") {
+      const signStatus = await changeStatus(`/api/files/sign/status/${id}`);
+      if (signStatus?.status === 0) {
+        const signedPdf = await signDocument(`/api/files/sign/${id}`, {
+          hash: sign === "sign" ? hashWithoutESP : sign,
+          haveESP: sign !== "sign",
+          seal: base64String,
+        });
 
-    if (signedPdf?.data?.pdfLink != null && token != null) {
-      await handlePdfDownload(signedPdf.data.pdfLink, token);
-      callback(true);
-      return true;
+        if (signedPdf?.data?.pdfLink != null && token != null) {
+          await handlePdfDownload(signedPdf.data.pdfLink, token);
+          callback(true);
+          return true;
+        }
+      }
     }
+
+    await espCheck(`/api/files/sign/esp-check/${id}`, {
+      hash: sign === "sign" ? hashWithoutESP : sign,
+    }).then(async (res) => {
+      if (res?.status === 0) {
+        const signStatus = await changeStatus(`/api/files/sign/status/${id}`);
+        if (signStatus?.status === 0) {
+          const signedPdf = await signDocument(`/api/files/sign/${id}`, {
+            hash: sign === "sign" ? hashWithoutESP : sign,
+            haveESP: sign !== "sign",
+            seal: base64String,
+          });
+
+          if (signedPdf?.data?.pdfLink != null && token != null) {
+            await handlePdfDownload(signedPdf.data.pdfLink, token);
+            callback(true);
+            return true;
+          }
+        }
+      }
+    });
 
     return false;
   };
@@ -247,7 +275,11 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
           </Button>
         )}
         {!isSigned && base64Doc != null && !showSign && (
-          <SignModal signLoading={loading} base64Doc={base64Doc} onSign={(sign) => handleSign(sign, setIsSigned)} />
+          <SignModal
+            signLoading={loading || statusLoading || espCheckLoading}
+            base64Doc={base64Doc}
+            onSign={(sign) => handleSign(sign, setIsSigned)}
+          />
         )}
         {!isSigned && token && (application?.data?.[0]?.documentInfo?.editUrl || prepare?.data?.editUrl != null) && (
           <Link
