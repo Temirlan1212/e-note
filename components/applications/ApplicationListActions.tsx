@@ -267,7 +267,7 @@ export const ApplicationListActions = ({
         const license = await checkNotaryLicense();
         // !!license && isActiveNotary ? router.push(`/applications/edit/${rowId}`) : setAlertOpen(true);
         router.push(`/applications/edit/${rowId}`);
-      } else if (isStateNotary) {
+      } else {
         // isActiveNotary ? router.push(`/applications/edit/${rowId}`) : setAlertOpen(true);
         router.push(`/applications/edit/${rowId}`);
       }
