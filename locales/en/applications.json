@@ -130,6 +130,8 @@
   "Save to draft": "Save to draft",
   "To begin the Face ID verification process, you must submit a personal photo by setting it as your avatar in the Personal Area section of your personal account": "To begin the Face ID verification process, you must submit a personal photo by setting it as your avatar in the Personal Area section of your personal account",
   "The notarial action has not been prepared for signing": "The notarial action has not been prepared for signing",
+  "Invalid content type text/html": "Tunduk doesn't work",
+  "javaxxmlwsWebServiceException comaxelornotaryintegrationstundukexceptionTundukException": "Tunduk doesn't work",
   "javaxxmlwsWebServiceException comaxelornotaryintegrationstundukexceptionTundukException No subject found": "Legal entity not found",
   "NOT FOUND INDIVIDUAL": "Individual not found",
   "NOT FOUND TRANSPORTS": "Transport not found",

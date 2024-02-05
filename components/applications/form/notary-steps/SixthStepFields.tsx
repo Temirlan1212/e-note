@@ -276,9 +276,10 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
         )}
         {!isSigned && base64Doc != null && !showSign && (
           <SignModal
-            signLoading={loading || statusLoading || espCheckLoading}
+            signLoading={loading}
             base64Doc={base64Doc}
             onSign={(sign) => handleSign(sign, setIsSigned)}
+            disabled={!!hash}
           />
         )}
         {!isSigned && token && (application?.data?.[0]?.documentInfo?.editUrl || prepare?.data?.editUrl != null) && (
