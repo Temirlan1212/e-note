@@ -80,13 +80,6 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
   };
 
   const titles = [
-    {
-      title: "Name",
-      value: removeWords(locale !== "en" ? data?.product?.["$t:name"] || data?.product?.name : data?.product?.name, [
-        "универсал",
-        "universal",
-      ]),
-    },
     { title: "Status", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
     { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
     {
@@ -223,15 +216,6 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
                       }}
                     >
                       {member?.lastName} {member?.firstName} {member?.middleName}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        color: "#687C9B",
-                      }}
-                    >
-                      {getAddressFullName(member)}
                     </Typography>
                   </Box>
                 ))}

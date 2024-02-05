@@ -9,7 +9,7 @@ import JacartaSign, { IJacartaSignRef } from "./JacartaSign";
 import RutokenSign, { IRutokenSignRef } from "./RutokenSign";
 import FaceIdScanner from "@/components/face-id/FaceId";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
-// import { useProfileStore } from "@/stores/profile";
+import { useProfileStore } from "@/stores/profile";
 
 enum SignType {
   Jacarta = "jacarta",
@@ -35,7 +35,7 @@ export default function SignModal({
   const [alertOpen, setAlertOpen] = useState(false);
   const [signType, setSignType] = useState<SignType>();
   const [faceIdScanner, setFaceIdScanner] = useState(false);
-  // const profile = useProfileStore.getState()?.userData;
+  const profile = useProfileStore.getState()?.userData;
 
   const jcRef = useRef<IJacartaSignRef>(null);
   const rtRef = useRef<IRutokenSignRef>(null);
@@ -146,7 +146,7 @@ export default function SignModal({
               </Button>
             )}
 
-            {!faceIdScanner && (
+            {!faceIdScanner && profile?.["activeCompany.typeOfNotary"] !== "private" && (
               <Button onClick={() => setFaceIdScanner(true)} loading={signLoading}>
                 {t("Without Face ID")}
               </Button>

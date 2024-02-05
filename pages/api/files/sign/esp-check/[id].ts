@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(400).json(null);
   }
 
-  const response = await fetch(`${process.env.BACKEND_API_URL}/ws/files/sign/${id}`, {
+  const response = await fetch(`${process.env.BACKEND_API_URL}/ws/files/esp-check/${id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
