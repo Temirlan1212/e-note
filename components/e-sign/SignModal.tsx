@@ -23,12 +23,10 @@ export default function SignModal({
   onSign,
   children,
   signLoading,
-  disabled,
 }: PropsWithChildren<{
   base64Doc: string;
   onSign: (sign: string) => Promise<boolean>;
   signLoading?: boolean;
-  disabled?: boolean;
 }>) {
   const t = useTranslations();
   const [isSigned, setIsSigned] = useState(false);
@@ -82,7 +80,7 @@ export default function SignModal({
       slots={{
         button: (callback) => (
           <Box width="100%">
-            <Button loading={signLoading} disabled={!faceIdScanner || disabled} onClick={() => handleSign(callback)}>
+            <Button loading={signLoading} disabled={!faceIdScanner} onClick={() => handleSign(callback)}>
               {t("Sign")}
             </Button>
           </Box>
@@ -141,7 +139,7 @@ export default function SignModal({
 
             {faceIdScanner && (
               // profile?.["activeCompany.typeOfNotary"] === "state" &&
-              <Button onClick={() => onSign("sign")} loading={signLoading} disabled={disabled}>
+              <Button onClick={() => onSign("sign")} loading={signLoading}>
                 {t("Without EDS")}
               </Button>
             )}
