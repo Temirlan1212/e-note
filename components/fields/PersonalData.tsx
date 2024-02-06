@@ -7,7 +7,6 @@ import Select from "@/components/ui/Select";
 import DatePicker from "@/components/ui/DatePicker";
 import Checkbox from "@/components/ui/Checkbox";
 import Radio from "@/components/ui/Radio";
-import Autocomplete from "@/components/ui/Autocomplete";
 import Button from "@/components/ui/Button";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import { MouseEventHandler, useEffect, useState } from "react";
@@ -124,17 +123,6 @@ export default function PersonalData({
   const firstName = watch(names?.firstName ?? "");
   const name = watch(names?.nameOfCompanyOfficial ?? "");
 
-  const { data: imageData, update } = useFetch<Response>("", "GET", {
-    returnResponse: true,
-  });
-
-  useEffectOnce(async () => {
-    const base64String = await imageData?.text();
-    if (base64String) {
-      setImageURL(`data:image/jpeg;base64,${base64String}`);
-    }
-  }, [imageData]);
-
   const { data: citizenshipDictionary, loading: citizenshipDictionaryLoading } = useFetch(
     `/api/dictionaries/citizenship`,
     "GET"
@@ -151,10 +139,10 @@ export default function PersonalData({
   );
 
   useEffect(() => {
-    if (names?.picture! && picture?.id) {
-      update(`/api/user/image/` + picture?.id);
+    if (names?.picture! && picture) {
+      setImageURL(`data:image/jpeg;base64,${picture}`);
     }
-  }, [picture?.id]);
+  }, [picture]);
 
   useEffect(() => {
     if (firstName && names?.name) form.setValue(names?.name, firstName);
