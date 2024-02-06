@@ -352,9 +352,13 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
 
       const values = getValues();
       let newMembers: IPersonSchema[] = [];
-      if (isEditableCopy && values.members) {
+      const members = values.members?.map((members: any) => {
+        return { ...members, picture: null };
+      });
+
+      if (isEditableCopy && members) {
         newMembers = await Promise.all(
-          values.members.map(async (value) => {
+          members.map(async (value) => {
             const { id, version, emailAddress, ...rest } = value;
             return await partnerUpdate("/api/user/partners/create", rest).then((res) => res?.data?.[0]);
           })
@@ -363,7 +367,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
       const data: Partial<IApplicationSchema> = {
         id: values.id,
         version: values.version,
-        members: newMembers.length > 0 ? newMembers : values.members,
+        members: newMembers.length > 0 ? newMembers : members,
       };
 
       const result = await applicationUpdate(`/api/applications/update/${values.id}`, data);
