@@ -65,6 +65,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
   const [base64Image, setBase64Image] = useState<string | null>(null);
   const [userIsNotary, setUserIsNotary] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [alertText, setAlertText] = useState<string | null | undefined>(null);
 
   const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
     returnResponse: true,
@@ -166,6 +167,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
         const isFaceDetected = res?.data?.message_en === "Face detected";
 
         setImagePreview(isFaceDetected ? URL.createObjectURL(file) : null);
+        setAlertText(res?.status !== 0 ? t("Something went wrong") : res?.data?.["message_" + locale]);
         setAlertOpen(true);
       }
     }
@@ -230,6 +232,8 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     setSelectedImage(null);
     setBase64Image(null);
     setImagePreview(null);
+    setAlertOpen(false);
+    setAlertText(null);
   };
 
   const formatLicenseDate = () => {
@@ -264,7 +268,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           severity={checkFaceData?.data?.message_en === "Face detected" ? "success" : "warning"}
           onClose={() => setAlertOpen(false)}
         >
-          {checkFaceData?.data?.["message_" + locale]}
+          {alertText}
         </Alert>
       </Collapse>
       <Box
