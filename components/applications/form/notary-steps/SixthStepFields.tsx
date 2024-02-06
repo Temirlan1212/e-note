@@ -295,7 +295,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
             </Button>
           </Link>
         )}
-        {!signedDoc?.data?.success && !applicationLoading && !prepareLoading && !pdfLoading && !syncLoading && (
+        {!applicationLoading && !prepareLoading && !pdfLoading && !syncLoading && (
           <Box
             width="fit-content"
             position="sticky"
@@ -304,7 +304,7 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
             gap="20px"
             flexDirection={{ xs: "column", md: "row" }}
           >
-            {!isDeclSigned && base64Doc != null && !showSign && (
+            {!signedDoc?.data?.success && !isDeclSigned && base64Doc != null && !showSign && (
               <SignModal
                 base64Doc={base64Doc}
                 signLoading={loading}
