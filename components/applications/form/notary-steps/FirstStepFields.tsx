@@ -385,9 +385,13 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
       if (!!saleOrderRef && !isNaN(saleOrderRef)) setValue("saleOrderRef", { id: saleOrderRef });
       const values = getValues();
       let newRequesters: IPersonSchema[] = [];
-      if (isEditableCopy && values.requester) {
+      const requesters = values.requester?.map((requester: any) => {
+        return { ...requester, picture: null };
+      });
+
+      if (isEditableCopy && requesters) {
         newRequesters = await Promise.all(
-          values.requester.map(async (value) => {
+          requesters.map(async (value) => {
             const { id, version, emailAddress, ...rest } = value;
             return await partnerUpdate("/api/user/partners/create", rest).then((res) => res?.data?.[0]);
           })
@@ -398,7 +402,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         version: values.version,
         creationDate: format(new Date(), "yyyy-MM-dd"),
         company: { id: userData?.activeCompany?.id },
-        requester: newRequesters.length > 0 ? newRequesters : values.requester,
+        requester: newRequesters.length > 0 ? newRequesters : requesters,
         statusSelect: 2,
         notarySignatureStatus: !!values?.notarySignatureStatus ? undefined : 2,
         saleOrderRef: !!saleOrderRef ? { id: saleOrderRef } : null,
