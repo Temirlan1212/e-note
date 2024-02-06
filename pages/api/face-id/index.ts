@@ -5,9 +5,7 @@ import PersistentFile from "formidable/PersistentFile";
 
 export const config = {
   api: {
-    bodyParser: {
-      sizeLimit: "400mb",
-    },
+    bodyParser: false,
   },
 };
 
