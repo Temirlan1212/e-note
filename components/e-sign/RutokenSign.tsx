@@ -4,6 +4,7 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import { Box, InputLabel, SelectChangeEvent } from "@mui/material";
 import Select from "@/components/ui/Select";
 import Input from "@/components/ui/Input";
+import { SignType, getRutokenErrorReason } from "./_helpers";
 
 export interface IRutokenSignProps {
   base64Doc: string;
@@ -33,8 +34,8 @@ export default forwardRef(function RutokenSign({ base64Doc }: IRutokenSignProps,
     const tmpDevices = await Promise.all(
       devices.map(async (item: number) => {
         const certificates = [
-          ...await lib.enumerateCertificates(item, lib.CERT_CATEGORY_UNSPEC),
-          ...await lib.enumerateCertificates(item, lib.CERT_CATEGORY_USER),
+          ...(await lib.enumerateCertificates(item, lib.CERT_CATEGORY_UNSPEC)),
+          ...(await lib.enumerateCertificates(item, lib.CERT_CATEGORY_USER)),
         ];
 
         return {
@@ -66,17 +67,24 @@ export default forwardRef(function RutokenSign({ base64Doc }: IRutokenSignProps,
   const handleSign: IRutokenSignRef["handleSign"] = async (callback) => {
     if (lib == null) return false;
 
-    const authState = await lib.getDeviceInfo(device, lib.TOKEN_INFO_IS_LOGGED_IN);
-    if (!authState) await lib.login(device, pin);
+    try {
+      const authState = await lib.getDeviceInfo(device, lib.TOKEN_INFO_IS_LOGGED_IN);
+      if (!authState) await lib.login(device, pin);
 
-    const sign: string | null = await lib.sign(device, certificate, base64Doc, lib.DATA_FORMAT_BASE64, {
-      detached: true,
-      addSignTime: true,
-    });
+      const sign: string | null = await lib.sign(device, certificate, base64Doc, lib.DATA_FORMAT_BASE64, {
+        detached: true,
+        addSignTime: true,
+      });
 
-    if (authState) await lib.logout(device);
+      if (authState) await lib.logout(device);
 
-    if (callback != null && sign != null) return await callback(sign);
+      if (callback != null && sign != null) return await callback(sign);
+    } catch (error: any) {
+      const code = Number(error?.message);
+      if (!isNaN(code) && lib.errorCodes) {
+        throw { ...getRutokenErrorReason(code, lib.errorCodes), type: SignType.Rutoken };
+      }
+    }
 
     return false;
   };

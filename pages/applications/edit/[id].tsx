@@ -48,6 +48,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
         ...(await import(`locales/${context.locale}/common.json`)).default,
         ...(await import(`locales/${context.locale}/validator.json`)).default,
         ...(await import(`locales/${context.locale}/applications.json`)).default,
+        ...(await import(`locales/${context.locale}/ecp-errors.json`)).default,
       },
     },
   };
