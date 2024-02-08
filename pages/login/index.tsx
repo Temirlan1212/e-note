@@ -14,7 +14,7 @@ export default function Login() {
       </Head>
 
       <Container>
-        <LoginAccordion role={"notary"} />
+        <LoginAccordion />
       </Container>
     </>
   );

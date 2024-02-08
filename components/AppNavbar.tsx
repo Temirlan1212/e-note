@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IRoute, isRoutesIncludesPath } from "@/routes/data";
 import { useRouter } from "next/router";
 import { useTranslations } from "next-intl";
@@ -30,6 +30,15 @@ import DynamicIcon from "./DynamicIcon";
 import ProfileDropdownButton from "./ProfileDropdownButton";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PopupNotifications from "./PopupNotifications";
+import ScrollToTopFab from "./ScrollToTopFab";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import SchoolIcon from "@mui/icons-material/School";
+import { CircularProgress, useMediaQuery } from "@mui/material";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
+import useInstructionStore from "@/stores/instruction";
+import useFetch from "@/hooks/useFetch";
+import useEffectOnce from "@/hooks/useEffectOnce";
 
 const DrawerListItems = ({
   routes,
@@ -136,16 +145,44 @@ interface IAppNavbarProps extends DrawerProps {
 }
 
 export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
+  const isMobileMedia = useMediaQuery("(max-width:500px)");
   const theme = useTheme();
   const router = useRouter();
   const t = useTranslations();
-
   const [open, setOpen] = useState(false);
+  const [videoURL, setVideoURL] = useState<string | null>(null);
+
+  const step = useInstructionStore((state) => state.step);
+
+  const { data, loading, update } = useFetch<Response>("", "GET", { returnResponse: true });
+
+  const getRoutePath = () => {
+    const applicationRoute = ["create", "edit"].some((route) => router.pathname.includes(route));
+    if (applicationRoute) {
+      return step;
+    }
+    return router.pathname;
+  };
+
+  useEffectOnce(async () => {
+    const binaryData = await data?.text();
+    if (!!binaryData) {
+      setVideoURL(binaryData);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    setVideoURL(null);
+  }, [router.pathname]);
 
   const handleDrawerToggle = (e?: any, v?: boolean) => {
     if (e?.stopPropagation != null) e.stopPropagation();
     setOpen((open) => v ?? !open);
   };
+
+  const fetchVideo = useCallback(async () => {
+    await update("/api/files/instruction?path=" + getRoutePath());
+  }, [getRoutePath, update, videoURL]);
 
   return (
     <Box display="flex" flexDirection="column" height="100%">
@@ -162,6 +199,7 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
           sx={{
             gap: "15px",
             justifyContent: "space-between",
+            flexWrap: isMobileMedia ? "wrap" : "unset",
             backgroundColor: "white",
             pl: { xs: 2, sm: 3, md: type === "private" ? 10 : 3 },
             transition: theme.transitions.create("margin", {
@@ -177,12 +215,34 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
             }),
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              width: isMobileMedia ? "100%" : "unset",
+              justifyContent: isMobileMedia ? "space-between" : "unset",
+            }}
+          >
             <Link href="/" sx={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <Image src="/images/logo.png" alt="E-notariat" width={48} height={48} />
               <Typography variant="h6" color="text.primary" fontWeight={600} whiteSpace="nowrap">
                 E-NOTARIAT
               </Typography>
+            </Link>
+            <Link href="https://wa.me/+996503291223" target="_blank">
+              <Tooltip title={t("Technical support (WhatsApp)")}>
+                <IconButton sx={{ color: "inherit" }}>
+                  <WhatsAppIcon />
+                </IconButton>
+              </Tooltip>
+            </Link>
+            <Link href="https://b10.okuukeremet.com/b/abd-cmd-vqe-ck9" target="_blank">
+              <Tooltip title={t("Technical support (video call)")}>
+                <IconButton sx={{ color: "inherit" }}>
+                  <SupportAgentIcon />
+                </IconButton>
+              </Tooltip>
             </Link>
           </Box>
 
@@ -202,7 +262,45 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
             </Box>
           )}
 
-          <Box sx={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+              width: isMobileMedia ? "100%" : "unset",
+              justifyContent: isMobileMedia ? "space-between" : "unset",
+            }}
+          >
+            <ConfirmationModal
+              title="Learning"
+              isCloseIconShown={true}
+              isHintShown={false}
+              slots={{
+                button: () => <></>,
+                body: () => (
+                  <Box width="100%" height="300px">
+                    {videoURL ? (
+                      <video width="100%" height="100%" src={`data:video/mp4;base64,${videoURL}`} controls></video>
+                    ) : (
+                      <Box height="100%">
+                        <Typography align="center" color="info.main" variant="h5">
+                          {t("Wait, it's loading")}...
+                        </Typography>
+                        <Box height="100%" display="flex" alignItems="center" justifyContent="center">
+                          <CircularProgress size={80} color="info" />
+                        </Box>
+                      </Box>
+                    )}
+                  </Box>
+                ),
+              }}
+            >
+              <Tooltip title={t("Learning")}>
+                <IconButton onClick={fetchVideo} sx={{ color: "inherit" }}>
+                  <SchoolIcon />
+                </IconButton>
+              </Tooltip>
+            </ConfirmationModal>
             <LocaleSwitcher />
             <PopupNotifications />
             <ProfileDropdownButton />
@@ -296,6 +394,8 @@ export default function AppNavbar({ children, type, routes }: IAppNavbarProps) {
       >
         {children}
       </Box>
+
+      <ScrollToTopFab />
     </Box>
   );
 }

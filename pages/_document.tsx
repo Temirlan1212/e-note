@@ -10,25 +10,34 @@ export default function Document(props: DocumentProps) {
         <Main />
         <NextScript />
 
-        <Script id="JCWebClient" strategy="afterInteractive">
-          {`(function (url = "https://localhost:24738/JCWebClient.js") {
-              var parent = document.getElementsByTagName("body")[0];
-              var script = document.createElement("script");
-              script.type = "text/javascript";
-              script.src = url;
-              parent.appendChild(script);
-            })();`}
+        <Script
+          id="GoogleTags"
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_KEY}`}
+        />
+        <Script id="GoogleAnalytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_KEY}');
+          `}
         </Script>
 
         <Script id="YandexMetrika" strategy="afterInteractive">
-          {`(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-            m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+          {`
+            (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
             (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-            ym(94733774, "init", {
+            ym(${process.env.NEXT_PUBLIC_YANDEX_METRIKA_KEY}, "init", {
               clickmap:true,
               trackLinks:true,
-              accurateTrackBounce:true
-            });`}
+              accurateTrackBounce:true,
+              webvisor:true
+            });
+          `}
         </Script>
       </body>
     </Html>

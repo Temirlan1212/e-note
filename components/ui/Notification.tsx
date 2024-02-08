@@ -38,7 +38,12 @@ const Notification = ({
       // TransitionComponent={SlideTransition}
       {...rest}
     >
-      <Alert severity={severity} variant={variant} onClose={onCloseAlert}>
+      <Alert
+        severity={severity}
+        variant={variant}
+        onClose={onCloseAlert}
+        sx={{ alignItems: "center", color: "white", fontSize: { md: "1.25rem" } }}
+      >
         {title}
       </Alert>
     </Snackbar>

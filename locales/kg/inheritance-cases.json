@@ -1,5 +1,18 @@
 {
   "PIN of the deceased": "Маркумдун ПИН номери",
   "Full name of the deceased": "Маркумдун толук аты-жөнү",
-  "Place of last residence": "Акыркы жашаган жери"
+  "Place of last residence": "Акыркы жашаган жери",
+  "End date of inheritance": "Мурастын аяктоочу датасы",
+  "List of heirs": "Мураскорлордун тизмеси",
+  "Create an heir": "Мураскор түзүү",
+  "Family relationships": "Үй-бүлөлүк мамилелер",
+  "Revoke the will": "Керээзди жокко чыгаруу",
+  "When a will is revoked, a 'Statement of Revocation of Will' must be made": "Керээзди жокко чыгарууда 'Керээзди жокко чыгаруу жөнүндө арыз' түзүлүшү керек",
+  "Information about the deceased": "Маркум тууралуу маалымат",
+  "Information about the heir": "Мураскор жөнүндө маалымат",
+  "Information about the testator": "Мурас калтыруучу жөнүндө маалымат",
+  "Creation of an inheritance case": "Мурас ишин түзүү",
+  "Go into an inheritance case": "Мурас ишине өтүү",
+  "Such a inheritance case already exists": "Мындай мурас иши бар",
+  "TestatorFullName": "Мурас калтыруучунун толук аты-жөнү"
 }

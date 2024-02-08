@@ -2,6 +2,12 @@ import { NextRequest } from "next/server";
 
 export const config = {
   runtime: "edge",
+  api: {
+    bodyParser: {
+      sizeLimit: "400mb",
+    },
+    responseLimit: "400mb",
+  },
 };
 
 export default async function handler(req: NextRequest) {
@@ -12,10 +18,7 @@ export default async function handler(req: NextRequest) {
   }
 
   const response = await fetch(
-    process.env.BACKEND_API_URL +
-      `/ws/rest/com.axelor.auth.db.User/` +
-      searchParams.get("id") +
-      `/image/download?v=20&image=true`,
+    process.env.BACKEND_API_URL + `/ws/rest/com.axelor.auth.db.User/` + searchParams.get("id") + `/image/download`,
     {
       method: "GET",
       headers: {

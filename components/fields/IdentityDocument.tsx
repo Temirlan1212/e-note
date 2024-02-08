@@ -6,6 +6,8 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import Select from "@/components/ui/Select";
 import Input from "@/components/ui/Input";
 import DatePicker from "@/components/ui/DatePicker";
+import Checkbox from "@/components/ui/Checkbox";
+import Autocomplete from "@/components/ui/Autocomplete";
 
 export interface IIdentityDocumentProps {
   form: UseFormReturn<any>;
@@ -16,25 +18,59 @@ export interface IIdentityDocumentProps {
     organType: string;
     organNumber: string;
     issueDate: string;
+    foreigner: string;
+    birthDate: string;
+    citizenship: string;
+    nationality?: string;
+    maritalStatus?: string;
+    subjectRole?: string;
+    familyStatus?: string;
+    passportStatus?: string;
   };
   defaultValues?: {
+    foreigner?: boolean | null;
+    birthDate?: Date;
+    citizenship?: number | null;
+    nationality?: string | null;
+    maritalStatus?: string;
     documentType?: number | null;
     documentSeries?: number | null;
     documentNumber?: number | null;
     organType?: string;
     organNumber?: number | null;
     issueDate?: Date;
+    subjectRole?: string | null;
+    familyStatus?: boolean | null;
+    passportStatus?: boolean | null;
   };
+  fields?: {
+    nationality?: boolean;
+    maritalStatus?: boolean;
+  };
+  disableFields?: boolean;
 }
 
-export default function IdentityDocument({ form, names, defaultValues }: IIdentityDocumentProps) {
+export default function IdentityDocument({
+  form,
+  names,
+  fields,
+  defaultValues,
+  disableFields,
+}: IIdentityDocumentProps) {
   const t = useTranslations();
   const locale = useLocale();
 
   const { trigger, control, watch, resetField } = form;
 
+  const subjectRole = watch(names.subjectRole as string);
+  const isAnAdult = subjectRole === "notAnAdult";
   const documentType = watch(names.documentType);
+  const foreigner = watch(names.foreigner);
 
+  const { data: citizenshipDictionary, loading: citizenshipDictionaryLoading } = useFetch(
+    `/api/dictionaries/citizenship`,
+    "GET"
+  );
   const { data: identityDocumentDictionary, loading: identityDocumentDictionaryLoading } = useFetch(
     `/api/dictionaries/identity-document`,
     "GET"
@@ -46,6 +82,108 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
+      <Box display="flex" gap="20px" alignItems="center" flexDirection={{ xs: "column", md: "row" }}>
+        <Controller
+          control={control}
+          name={names.birthDate}
+          defaultValue={defaultValues?.birthDate ?? null}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Birth date")}</InputLabel>
+              <DatePicker
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
+                disabled={disableFields}
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                value={field.value != null ? new Date(field.value) : null}
+                onChange={(...event: any[]) => {
+                  field.onChange(...event);
+                  trigger(field.name);
+                }}
+                ref={field.ref}
+              />
+            </Box>
+          )}
+        />
+
+        <Controller
+          control={control}
+          name={names.citizenship}
+          defaultValue={defaultValues?.citizenship ?? null}
+          render={({ field, fieldState }) => (
+            <Box display="flex" flexDirection="column" width="100%">
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Citizenship")}</InputLabel>
+              <Autocomplete
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
+                disabled={disableFields}
+                labelField={locale === "ru" || locale === "kg" ? "$t:name" : "name"}
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                options={
+                  citizenshipDictionary?.status === 0
+                    ? (citizenshipDictionary?.data as Record<string, any>[]) ?? []
+                    : []
+                }
+                loading={citizenshipDictionaryLoading}
+                value={
+                  field.value != null
+                    ? (citizenshipDictionary?.data ?? []).find(
+                        (item: Record<string, any>) => item.id == field.value.id
+                      ) ?? null
+                    : null
+                }
+                onBlur={field.onBlur}
+                onChange={(event, value) => {
+                  field.onChange(value?.id != null ? { id: value.id } : null);
+                  trigger(field.name);
+                }}
+                ref={field.ref}
+              />
+            </Box>
+          )}
+        />
+
+        {Boolean(fields?.nationality) && Boolean(names?.nationality) && (
+          <Controller
+            control={control}
+            name={names.nationality ?? ""}
+            defaultValue={defaultValues?.nationality ?? ""}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel sx={{ fontWeight: 600 }}>{t("Nationality")}</InputLabel>
+                <Input
+                  sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
+                  disabled={disableFields}
+                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  {...field}
+                />
+              </Box>
+            )}
+          />
+        )}
+
+        {Boolean(fields?.maritalStatus) && Boolean(names?.maritalStatus) && (
+          <Controller
+            control={control}
+            name={names.maritalStatus ?? ""}
+            defaultValue={defaultValues?.maritalStatus ?? ""}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" width="100%">
+                <InputLabel sx={{ fontWeight: 600 }}>{t("Marital status")}</InputLabel>
+                <Input
+                  sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
+                  disabled={disableFields}
+                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  {...field}
+                />
+              </Box>
+            )}
+          />
+        )}
+      </Box>
+
       <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
         <Controller
           control={control}
@@ -54,8 +192,10 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
           render={({ field, fieldState }) => {
             return (
               <Box display="flex" flexDirection="column" width="100%">
-                <InputLabel>{t("Document")}</InputLabel>
+                <InputLabel sx={{ fontWeight: 600 }}>{t("Document")}</InputLabel>
                 <Select
+                  sx={{ fontWeight: 500 }}
+                  disabled={disableFields}
                   labelField={
                     identityDocumentDictionary?.data?.length > 0 &&
                     identityDocumentDictionary?.data[0][`title_${locale}`]
@@ -91,25 +231,36 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
           defaultValue={defaultValues?.documentSeries ?? null}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Series")}</InputLabel>
-              <Select
-                labelField={
-                  identityDocumentSeriesDictionary?.data?.length > 0 &&
-                  identityDocumentSeriesDictionary?.data[0][`title_${locale}`]
-                    ? `title_${locale}`
-                    : "title"
-                }
-                valueField="value"
-                selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!documentType}
-                data={
-                  identityDocumentSeriesDictionary?.status === 0 ? identityDocumentSeriesDictionary?.data ?? [] : []
-                }
-                loading={identityDocumentSeriesDictionaryLoading}
-                {...field}
-                value={field.value != null ? field.value : ""}
-              />
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Series")}</InputLabel>
+              {foreigner || isAnAdult ? (
+                <Input
+                  sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
+                  inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  disabled={!documentType || disableFields}
+                  {...field}
+                />
+              ) : (
+                <Select
+                  sx={{ fontWeight: 500 }}
+                  labelField={
+                    identityDocumentSeriesDictionary?.data?.length > 0 &&
+                    identityDocumentSeriesDictionary?.data[0][`title_${locale}`]
+                      ? `title_${locale}`
+                      : "title"
+                  }
+                  valueField="value"
+                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  disabled={!documentType || disableFields}
+                  data={
+                    identityDocumentSeriesDictionary?.status === 0 ? identityDocumentSeriesDictionary?.data ?? [] : []
+                  }
+                  loading={identityDocumentSeriesDictionaryLoading}
+                  {...field}
+                  value={field.value != null ? field.value : ""}
+                />
+              )}
             </Box>
           )}
         />
@@ -119,11 +270,12 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
           defaultValue={defaultValues?.documentNumber ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Number")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Number")}</InputLabel>
               <Input
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!documentType}
+                disabled={!documentType || disableFields}
                 {...field}
               />
             </Box>
@@ -138,11 +290,12 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
           defaultValue={defaultValues?.organType ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Organ")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Organ")}</InputLabel>
               <Input
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!documentType}
+                disabled={!documentType || disableFields}
                 {...field}
               />
             </Box>
@@ -154,11 +307,12 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
           defaultValue={defaultValues?.organNumber ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Organ number")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Organ number")}</InputLabel>
               <Input
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!documentType}
+                disabled={!documentType || disableFields}
                 {...field}
               />
             </Box>
@@ -170,20 +324,44 @@ export default function IdentityDocument({ form, names, defaultValues }: IIdenti
           defaultValue={defaultValues?.issueDate ?? null}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Date of issue")}</InputLabel>
+              <InputLabel sx={{ fontWeight: 600 }}>{t("Date of issue")}</InputLabel>
               <DatePicker
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                 type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!documentType}
+                disabled={!documentType || disableFields}
                 value={field.value != null ? new Date(field.value) : null}
                 onChange={(...event: any[]) => {
                   field.onChange(...event);
                   trigger(field.name);
                 }}
+                ref={field.ref}
               />
             </Box>
           )}
         />
+
+        {Boolean(names?.passportStatus) && (
+          <Controller
+            control={control}
+            name={names.passportStatus ?? ""}
+            defaultValue={defaultValues?.passportStatus ?? false}
+            render={({ field, fieldState }) => (
+              <Box display="flex" flexDirection="column" justifyContent="center">
+                <InputLabel sx={{ fontWeight: 600 }}>{t("Validity status")}</InputLabel>
+
+                <Checkbox
+                  label={field.value ? t("Valid") : t("Invalid")}
+                  disabled={true}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                  {...field}
+                  checked={!!field.value}
+                />
+              </Box>
+            )}
+          />
+        )}
       </Box>
     </Box>
   );

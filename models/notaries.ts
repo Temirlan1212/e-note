@@ -10,40 +10,14 @@ export interface INotary {
   "address.district": INotaryGeo;
   "address.city": INotaryGeo;
   "address.region": INotaryGeo;
+  "$t:address.city.name": string;
+  "address.city.name": string;
   id: number;
   "partner.simpleFullName": string;
+  "partner.fullName": string;
+  "partner.linkedUser.id": number;
   name: string;
-}
-
-export interface INotaryData {
-  data: INotary[];
-  total: number;
-}
-
-export interface INotarySelections {
-  status: number;
-  offset: number;
-  total: number;
-  data: INotarySelectionsData[];
-}
-
-export interface INotarySelectionsData {
-  name: string;
-  id: number;
-  version: number;
-}
-
-export interface INotaryTypeSelections {
-  status: number;
-  data: INotaryTypeSelectionsData[];
-}
-
-export interface INotaryTypeSelectionsData {
-  order_seq: number;
-  title_fr: string;
-  title_en: string;
-  title: string;
-  value: string;
+  licenseTermUntil: string;
 }
 
 export interface INotaryInfoData {
@@ -56,26 +30,33 @@ export interface INotaryInfoData {
   licenseNo: string;
   address: {
     city: {
+      "$t:name": string;
       fullName: string;
       id: number;
       $version: number;
     };
     district: {
+      "$t:name": string;
       code: string;
       name: string;
       id: number;
       $version: number;
     };
+    "$t:fullName": string;
     fullName: string;
     id: number;
     $version: number;
     region: {
+      "$t:name": string;
       fullName: string;
       code: string;
       name: string;
       id: number;
       $version: number;
     };
+    addressL4: string;
+    addressL3: string;
+    addressL2: string;
   };
   $attachments: number;
   licenseTermUntil: string;
@@ -90,6 +71,7 @@ export interface INotaryInfoData {
   $processInstanceId: any;
   id: number;
   typeOfNotary: string;
+  statusOfNotary: string;
   longitude: string;
   latitude: string;
 }
@@ -106,4 +88,6 @@ export interface INotaryFilterData {
   region: number | null;
   typeOfNotary: string | null;
   workingDay: string | null;
+  roundClock?: boolean;
+  departure?: boolean;
 }

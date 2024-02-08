@@ -15,6 +15,7 @@ import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { useProfileStore } from "@/stores/profile";
+import ExpandingFields from "@/components/fields/ExpandingFields";
 
 interface IBaseEntityFields {
   id?: number;
@@ -34,7 +35,13 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
   const profile = useProfileStore((state) => state);
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
 
-  const { trigger, watch, getValues, setValue } = form;
+  const {
+    trigger,
+    watch,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = form;
 
   const requesterId = watch("requester.0.id");
   const partnerType = watch("requester.0.partnerTypeSelect");
@@ -42,22 +49,28 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
   const [loading, setLoading] = useState(false);
   const [partnerId, setPartnerId] = useState<number>();
 
-  const { data: requesterData } = useFetch(
+  const { data: requesterData, loading: requesterDataLoading } = useFetch(
     partnerId != null && requesterId == null ? `/api/profile/partner/${partnerId}` : "",
     "POST"
   );
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
 
+  const getTundukParamsFields = (index: number) =>
+    ({
+      tundukDocumentSeries: `requester.${index}.passportSeries`,
+      tundukDocumentNumber: `requester.${index}.passportNumber`,
+    }) as const;
+
   const getPersonalDataNames = (index: number) => ({
     type: `requester.${index}.partnerTypeSelect`,
     foreigner: `requester.${index}.foreigner`,
+    validatePassport: `requester.${index}.validatePassport`,
     lastName: `requester.${index}.lastName`,
-    firstName: `requester.${index}.name`,
+    firstName: `requester.${index}.firstName`,
+    name: `requester.${index}.name`,
     middleName: `requester.${index}.middleName`,
     pin: `requester.${index}.personalNumber`,
-    birthDate: `requester.${index}.birthDate`,
-    citizenship: `requester.${index}.citizenship`,
     nameOfCompanyOfficial: `requester.${index}.nameOfCompanyOfficial`,
     nameOfCompanyGov: `requester.${index}.nameOfCompanyGov`,
     representativesName: `requester.${index}.representativesName`,
@@ -75,6 +88,9 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
     documentNumber: `requester.${index}.passportNumber`,
     organType: `requester.${index}.authority`,
     organNumber: `requester.${index}.authorityNumber`,
+    foreigner: `requester.${index}.foreigner`,
+    birthDate: `requester.${index}.birthDate`,
+    citizenship: `requester.${index}.citizenship`,
     issueDate: `requester.${index}.dateOfIssue`,
   });
 
@@ -118,8 +134,23 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
     if (onPrev != null) onPrev();
   };
 
+  const focusToFieldOnError = () => {
+    const entity = "requester" as const;
+    if (errors != null && Array.isArray(errors?.[entity])) {
+      for (var i = 0; i < errors[entity].length; i++) {
+        const name = Object.keys(errors[entity][i] ?? {})[0];
+        if (!!name) {
+          form.setFocus(`${entity}.${i}.${name}` as any);
+          break;
+        }
+      }
+    }
+  };
+
   const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
+
+    if (!validated) focusToFieldOnError();
 
     if (validated) {
       setLoading(true);
@@ -224,32 +255,82 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
       <StepperContentStep step={3} title={t("fourth-step-title")} />
 
       <Typography variant="h5">{t("Personal data")}</Typography>
-      <PersonalData form={form} names={getPersonalDataNames(0)} />
+      <PersonalData
+        form={form}
+        names={{ ...getPersonalDataNames(0), ...getTundukParamsFields(0) }}
+        isRequester={true}
+        validatePassport={true}
+      />
 
-      {partnerType != 1 && (
-        <>
-          <Typography variant="h5">{t("Identity document")}</Typography>
-          <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
-        </>
-      )}
+      <ExpandingFields title="Additional information" permanentExpand={false}>
+        <Box display="flex" gap="20px" flexDirection="column">
+          {partnerType != 1 && (
+            <>
+              <Typography variant="h5">{t("Identity document")}</Typography>
+              <IdentityDocument form={form} names={getIdentityDocumentNames(0)} />
+            </>
+          )}
 
-      <Typography variant="h5">{t("Place of residence")}</Typography>
-      <Address form={form} names={getAddressNames(0)} />
+          <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
+          <Address
+            form={form}
+            names={getAddressNames(0)}
+            sx={{
+              labelsSx: { fontWeight: 600 },
+              inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+            }}
+          />
 
-      {partnerType != 1 && (
-        <>
-          <Typography variant="h5">{t("Actual place of residence")}</Typography>
-          <Address form={form} names={getActualAddressNames(0)} />
-        </>
-      )}
+          {partnerType != 1 && (
+            <>
+              <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap="10px">
+                <Typography variant="h5">{t("Actual place of residence")}</Typography>
+                <Button
+                  sx={{ width: "fit-content" }}
+                  onClick={() => {
+                    Object.entries(getAddressNames(0) ?? {})?.map(([key, name]) => {
+                      setValue((getActualAddressNames(0) as any)[key], getValues(name as any));
+                    });
+                  }}
+                >
+                  {t("Copy the place of residence")}
+                </Button>
+              </Box>
 
-      <Typography variant="h5">{t("Contacts")}</Typography>
-      <Contact form={form} names={getContactNames(0)} />
+              <Address
+                form={form}
+                names={getActualAddressNames(0)}
+                sx={{
+                  labelsSx: { fontWeight: 600 },
+                  inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                }}
+              />
+            </>
+          )}
 
-      <Typography variant="h5">{t("Files to upload")}</Typography>
-      <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={0} />
+          <Typography variant="h5">{t("Contacts")}</Typography>
+          <Contact
+            sx={{
+              labelsSx: { fontWeight: 600 },
+              inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+            }}
+            form={form}
+            names={getContactNames(0)}
+          />
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+          <Typography variant="h5">{t("Files to upload")}</Typography>
+          <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={0} />
+        </Box>
+      </ExpandingFields>
+
+      <Box
+        width="fit-content"
+        position="sticky"
+        bottom="30px"
+        display="flex"
+        gap="20px"
+        flexDirection={{ xs: "column", md: "row" }}
+      >
         {onPrev != null && (
           <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
@@ -261,6 +342,7 @@ export default function ThirdStepFields({ form, onPrev, onNext, handleStepNextCl
             onClick={() => handleNextClick()}
             endIcon={<ArrowForwardIcon />}
             sx={{ width: "auto" }}
+            disabled={!!errors?.requester?.length || requesterDataLoading}
           >
             {t("Next")}
           </Button>

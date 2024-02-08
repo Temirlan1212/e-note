@@ -10,6 +10,8 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Button from "@/components/ui/Button";
 import PDFViewer from "@/components/PDFViewer";
 import StepperContentStep from "@/components/ui/StepperContentStep";
+import SyncIcon from "@mui/icons-material/Sync";
+import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -37,9 +39,11 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
 
   useEffectOnce(async () => {
     const applicationData = application?.data?.[0];
+    let initialLoad = true;
 
     if (applicationData?.documentInfo?.pdfLink != null && applicationData?.documentInfo?.token != null) {
       handlePdfDownload(applicationData.documentInfo.pdfLink, applicationData.documentInfo.token);
+      initialLoad = false;
     }
 
     switch (applicationData?.statusSelect) {
@@ -47,14 +51,8 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
         setIsSigned(true);
         break;
       case 2:
-        const prepareData = await getPrepare(`/api/files/prepare/${id}`);
-        if (prepareData?.data?.saleOrderVersion != null) {
-          setValue("version", prepareData.data.saleOrderVersion);
-        }
-
-        if (prepareData?.data?.pdfLink != null && prepareData?.data?.token != null) {
-          handlePdfDownload(prepareData.data.pdfLink, prepareData.data.token);
-        }
+        if (!initialLoad) break;
+        handlePrepareDocument();
         break;
     }
   }, [application]);
@@ -82,22 +80,56 @@ export default function SixthStepFields({ form, onPrev, onNext, handleStepNextCl
     setDocUrl(URL.createObjectURL(blob));
   };
 
+  const handlePrepareDocument = async () => {
+    const prepareData = await getPrepare(`/api/files/prepare/${id}`);
+    if (prepareData?.data?.saleOrderVersion != null) {
+      setValue("version", prepareData.data.saleOrderVersion);
+    }
+
+    if (prepareData?.data?.pdfLink != null && prepareData?.data?.token != null) {
+      handlePdfDownload(prepareData.data.pdfLink, prepareData.data.token);
+    }
+  };
+
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
-      <StepperContentStep
-        step={6}
-        title={t("View document")}
-        loading={applicationLoading || prepareLoading || pdfLoading}
-      />
+      <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap="20px">
+        <StepperContentStep
+          step={6}
+          title={t("View document")}
+          loading={applicationLoading || prepareLoading || pdfLoading}
+        />
+
+        {!applicationLoading && !prepareLoading && !pdfLoading && (
+          <ConfirmationModal
+            title="Generate from template"
+            type="hint"
+            hintTitle=""
+            hintText={"All changes made earlier in the document will be lost"}
+            onConfirm={handlePrepareDocument}
+          >
+            <Button startIcon={<SyncIcon />} sx={{ width: "auto" }}>
+              {t("Generate from template")}
+            </Button>
+          </ConfirmationModal>
+        )}
+      </Box>
 
       {docUrl && <PDFViewer fileUrl={docUrl} />}
 
       {!applicationLoading && !prepareLoading && !pdfLoading && (
-        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+        <Box
+          width="fit-content"
+          position="sticky"
+          bottom="30px"
+          display="flex"
+          gap="20px"
+          flexDirection={{ xs: "column", md: "row" }}
+        >
           {!isSigned && onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
               {t("Prev")}

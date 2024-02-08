@@ -6,7 +6,7 @@ import useFetch from "@/hooks/useFetch";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { Box, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
-import Tabs from "@/components/ui/Tabs";
+import Tabs, { ITabsRef } from "@/components/ui/Tabs";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import AddIcon from "@mui/icons-material/Add";
@@ -17,6 +17,7 @@ import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
+import ExpandingFields from "@/components/fields/ExpandingFields";
 
 interface IBaseEntityFields {
   id?: number;
@@ -38,6 +39,7 @@ export interface IStepFieldsProps {
 export default function FourthStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
+  const tabsRef = useRef<ITabsRef>(null);
 
   const {
     control,
@@ -63,31 +65,63 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
         return (
           <Box display="flex" gap="20px" flexDirection="column">
             <Typography variant="h5">{t("Personal data")}</Typography>
-            <PersonalData form={form} names={getPersonalDataNames(index)} />
+            <PersonalData
+              form={form}
+              names={getPersonalDataNames(index)}
+              fields={{
+                tundukDocumentSeries: index === 0,
+                tundukDocumentNumber: index === 0,
+              }}
+            />
 
-            {partnerType != 1 && (
-              <>
-                <Typography variant="h5">{t("Identity document")}</Typography>
-                <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
-              </>
-            )}
+            <ExpandingFields title="Additional information" permanentExpand={false}>
+              <Box display="flex" gap="20px" flexDirection="column">
+                {partnerType != 1 && (
+                  <>
+                    <Typography variant="h5">{t("Identity document")}</Typography>
+                    <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
+                  </>
+                )}
 
-            <Typography variant="h5">{t("Place of residence")}</Typography>
-            <Address form={form} names={getAddressNames(index)} />
+                <Typography variant="h5">{partnerType != 1 ? t("Place of residence") : t("Address")}</Typography>
+                <Address
+                  form={form}
+                  names={getAddressNames(index)}
+                  sx={{
+                    labelsSx: { fontWeight: 600 },
+                    inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                  }}
+                />
 
-            {partnerType != 1 && (
-              <>
-                <Typography variant="h5">{t("Actual place of residence")}</Typography>
-                <Address form={form} names={getActualAddressNames(index)} />
-              </>
-            )}
+                {partnerType != 1 && (
+                  <>
+                    <Typography variant="h5">{t("Actual place of residence")}</Typography>
+                    <Address
+                      form={form}
+                      names={getActualAddressNames(index)}
+                      sx={{
+                        labelsSx: { fontWeight: 600 },
+                        inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                      }}
+                    />
+                  </>
+                )}
 
-            <Typography variant="h5">{t("Contacts")}</Typography>
-            <Contact form={form} names={getContactNames(index)} />
+                <Typography variant="h5">{t("Contacts")}</Typography>
+                <Contact
+                  form={form}
+                  names={getContactNames(index)}
+                  sx={{
+                    labelsSx: { fontWeight: 600 },
+                    inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                  }}
+                />
 
-            <Typography variant="h5">{t("Files to upload")}</Typography>
+                <Typography variant="h5">{t("Files to upload")}</Typography>
 
-            <AttachedFiles form={form} ref={attachedFilesRef} name="members" index={index} />
+                <AttachedFiles form={form} ref={attachedFilesRef} name="members" index={index} />
+              </Box>
+            </ExpandingFields>
           </Box>
         );
       },
@@ -101,11 +135,10 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     type: `members.${index}.partnerTypeSelect`,
     foreigner: `members.${index}.foreigner`,
     lastName: `members.${index}.lastName`,
-    firstName: `members.${index}.name`,
+    firstName: `members.${index}.firstName`,
+    name: `members.${index}.name`,
     middleName: `members.${index}.middleName`,
     pin: `members.${index}.personalNumber`,
-    birthDate: `members.${index}.birthDate`,
-    citizenship: `members.${index}.citizenship`,
     nameOfCompanyOfficial: `members.${index}.nameOfCompanyOfficial`,
     nameOfCompanyGov: `members.${index}.nameOfCompanyGov`,
     representativesName: `members.${index}.representativesName`,
@@ -123,6 +156,9 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     documentNumber: `members.${index}.passportNumber`,
     organType: `members.${index}.authority`,
     organNumber: `members.${index}.authorityNumber`,
+    foreigner: `members.${index}.foreigner`,
+    birthDate: `members.${index}.birthDate`,
+    citizenship: `members.${index}.citizenship`,
     issueDate: `members.${index}.dateOfIssue`,
   });
 
@@ -194,8 +230,24 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
     if (onPrev != null) onPrev();
   };
 
+  const focusToFieldOnError = async () => {
+    const entity = "members" as const;
+    if (errors != null && Array.isArray(errors?.[entity])) {
+      for (var i = 0; i < errors[entity].length; i++) {
+        const name = Object.keys(errors[entity][i] ?? {})[0];
+        if (!!name) {
+          await tabsRef.current?.handleTabChange(i);
+          form.setFocus(`${entity}.${i}.${name}` as any);
+          break;
+        }
+      }
+    }
+  };
+
   const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
+
+    if (!validated) focusToFieldOnError();
 
     if (validated) {
       setLoading(true);
@@ -326,9 +378,17 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
           </>
         }
         onTabChange={(index) => attachedFilesRef.current?.tabChange(index)}
+        ref={tabsRef}
       />
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+      <Box
+        width="fit-content"
+        position="sticky"
+        bottom="30px"
+        display="flex"
+        gap="20px"
+        flexDirection={{ xs: "column", md: "row" }}
+      >
         {onPrev != null && (
           <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
@@ -340,6 +400,7 @@ export default function FourthStepFields({ form, onPrev, onNext, handleStepNextC
             onClick={() => handleNextClick()}
             endIcon={<ArrowForwardIcon />}
             sx={{ width: "auto" }}
+            disabled={!!errors?.members?.length}
           >
             {t("Next")}
           </Button>

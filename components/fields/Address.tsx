@@ -1,8 +1,9 @@
 import { useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
-import { InputLabel, Box } from "@mui/material";
+import { InputLabel, Box, SxProps, Theme } from "@mui/material";
 import Input from "@/components/ui/Input";
 import Area, { IAreaProps } from "./Area";
+import { useEffect } from "react";
 
 export interface IAddressProps extends IAreaProps {
   form: UseFormReturn<any>;
@@ -13,6 +14,7 @@ export interface IAddressProps extends IAreaProps {
     street: string;
     house: string;
     apartment: string;
+    foreignAddress?: string;
   };
   defaultValues?: {
     region?: { id: number } | null;
@@ -21,70 +23,129 @@ export interface IAddressProps extends IAreaProps {
     street?: string;
     house?: string;
     apartment?: string;
+    foreignAddress?: string;
   };
+  disableFields?: boolean;
+  withNotaryDistrict?: boolean;
+  getAllNotaryDistricts?: boolean;
+  sx?: {
+    labelsSx?: SxProps<Theme>;
+    inputSx?: SxProps<Theme>;
+    boxSx?: SxProps<Theme>;
+  };
+  isForeigner?: boolean;
 }
 
-export default function Address({ form, names, defaultValues }: IAddressProps) {
+export default function Address({
+  form,
+  names,
+  isForeigner,
+  defaultValues,
+  disableFields,
+  withNotaryDistrict,
+  getAllNotaryDistricts,
+  sx,
+}: IAddressProps) {
   const t = useTranslations();
 
   const { trigger, control, watch, resetField } = form;
 
-  const city = watch(names.city);
+  const street = watch(names.street);
+  const house = watch(names.house);
+  const apartment = watch(names.apartment);
+
+  useEffect(() => {
+    if (street == null) form.setValue(names?.street, "");
+    if (house == null) form.setValue(names?.house, "");
+    if (apartment == null) form.setValue(names?.apartment, "");
+  }, [street, house, apartment]);
 
   return (
-    <Box display="flex" gap="20px" flexDirection="column">
-      <Area form={form} names={names} defaultValues={defaultValues} />
-
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+    <Box sx={sx?.boxSx} display="flex" gap="20px" flexDirection="column">
+      {isForeigner ? (
         <Controller
           control={control}
-          name={names.street}
-          defaultValue={defaultValues?.street ?? ""}
+          name={names.foreignAddress ?? ""}
+          defaultValue={defaultValues?.foreignAddress ?? ""}
           render={({ field, fieldState }) => (
             <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Street")}</InputLabel>
+              <InputLabel sx={sx?.labelsSx}>{t("Address")}</InputLabel>
               <Input
+                sx={sx?.inputSx}
                 inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
                 helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!city}
+                disabled={disableFields}
                 {...field}
               />
             </Box>
           )}
         />
-        <Controller
-          control={control}
-          name={names.house}
-          defaultValue={defaultValues?.house ?? ""}
-          render={({ field, fieldState }) => (
-            <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("House")}</InputLabel>
-              <Input
-                inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!city}
-                {...field}
-              />
-            </Box>
-          )}
-        />
-        <Controller
-          control={control}
-          name={names.apartment}
-          defaultValue={defaultValues?.apartment ?? ""}
-          render={({ field, fieldState }) => (
-            <Box display="flex" flexDirection="column" width="100%">
-              <InputLabel>{t("Apartment")}</InputLabel>
-              <Input
-                inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                disabled={!city}
-                {...field}
-              />
-            </Box>
-          )}
-        />
-      </Box>
+      ) : (
+        <>
+          <Area
+            form={form}
+            disableFields={disableFields}
+            names={names}
+            defaultValues={defaultValues}
+            withNotaryDistrict={withNotaryDistrict}
+            getAllNotaryDistricts={getAllNotaryDistricts}
+            sx={sx}
+          />
+          <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+            <Controller
+              control={control}
+              name={names.street}
+              defaultValue={defaultValues?.street ?? ""}
+              render={({ field, fieldState }) => (
+                <Box display="flex" flexDirection="column" width="100%">
+                  <InputLabel sx={sx?.labelsSx}>{t("Street")}</InputLabel>
+                  <Input
+                    sx={sx?.inputSx}
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    disabled={disableFields}
+                    {...field}
+                  />
+                </Box>
+              )}
+            />
+            <Controller
+              control={control}
+              name={names.house}
+              defaultValue={defaultValues?.house ?? ""}
+              render={({ field, fieldState }) => (
+                <Box display="flex" flexDirection="column" width="100%">
+                  <InputLabel sx={sx?.labelsSx}>{t("House")}</InputLabel>
+                  <Input
+                    sx={sx?.inputSx}
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    disabled={disableFields}
+                    {...field}
+                  />
+                </Box>
+              )}
+            />
+            <Controller
+              control={control}
+              name={names.apartment}
+              defaultValue={defaultValues?.apartment ?? ""}
+              render={({ field, fieldState }) => (
+                <Box display="flex" flexDirection="column" width="100%">
+                  <InputLabel sx={sx?.labelsSx}>{t("Apartment")}</InputLabel>
+                  <Input
+                    sx={sx?.inputSx}
+                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                    disabled={disableFields}
+                    {...field}
+                  />
+                </Box>
+              )}
+            />
+          </Box>
+        </>
+      )}
     </Box>
   );
 }

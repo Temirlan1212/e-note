@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 
 import { Box, Typography, InputLabel } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -11,18 +11,11 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 
-import Button from "../ui/Button";
-import Input from "../ui/Input";
-import Pagination from "../ui/Pagination";
-import SearchBar from "../ui/SearchBar";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import Pagination from "@/components/ui/Pagination";
+import SearchBar from "@/components/ui/SearchBar";
 import { GridTable, IFilterSubmitParams, IGridColDef } from "../ui/GridTable";
-
-interface IRowData {
-  status?: number;
-  offset?: number;
-  total?: number;
-  data: Array<Record<string, any>>;
-}
 
 interface IRequestBody {
   searchType: string | null;
@@ -113,7 +106,7 @@ export default function BlackList() {
   const [reasonValue, setReasonValue] = useState<string>("");
   const [pinValue, setPinValue] = useState<string>("");
   const [fullNameValue, setFullNameValue] = useState<string>("");
-  const [rowData, setRowData] = useState<IRowData | null>(null);
+  const [rowData, setRowData] = useState<FetchResponseBody | null>(null);
   const t = useTranslations();
   const locale = useLocale();
 
@@ -141,7 +134,7 @@ export default function BlackList() {
     },
     {
       field: "createdBy.fullName",
-      headerName: "Who created",
+      headerName: "Created by",
       width: 320,
     },
     {

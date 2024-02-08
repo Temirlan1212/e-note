@@ -34,7 +34,7 @@ export default function UniqueQrCode() {
       </Head>
 
       <Container maxWidth="xl">
-        <DocumentInfoContent id={data?.data[0]?.id} />
+        <DocumentInfoContent id={data?.data?.[0]?.id} />
       </Container>
     </>
   );

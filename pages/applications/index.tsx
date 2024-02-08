@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Box, Container } from "@mui/material";
+import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 import ApplicationList from "@/components/applications/ApplicationList";
@@ -13,9 +13,9 @@ export default function Applications() {
         <title>{t("Notarial actions")}</title>
       </Head>
 
-      <Container maxWidth="xl" sx={{ py: "30px" }}>
+      <Box sx={{ py: "30px", px: "30px" }}>
         <ApplicationList />
-      </Container>
+      </Box>
     </>
   );
 }
@@ -26,6 +26,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       messages: {
         ...(await import(`locales/${context.locale}/common.json`)).default,
         ...(await import(`locales/${context.locale}/applications.json`)).default,
+        ...(await import(`locales/${context.locale}/validator.json`)).default,
       },
     },
   };

@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { Container } from "@mui/material";
+import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 
@@ -14,9 +14,9 @@ export default function ForeignInstitutionsOfficials() {
         <title>{t("ForeignInstitutions")}</title>
       </Head>
 
-      <Container maxWidth="xl" sx={{ py: "30px" }}>
+      <Box sx={{ py: "30px", px: "30px" }}>
         <ForeignInstitutionsOfficialsContent />
-      </Container>
+      </Box>
     </>
   );
 }

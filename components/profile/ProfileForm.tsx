@@ -1,8 +1,21 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { PermIdentity } from "@mui/icons-material";
-import { Avatar, Box, CircularProgress, Divider, FormControl, InputLabel, Typography } from "@mui/material";
+import {
+  Alert,
+  Avatar,
+  Box,
+  CircularProgress,
+  Collapse,
+  Divider,
+  FormControl,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from "@mui/material";
 import { useForm } from "react-hook-form";
 
 import Button from "@/components/ui/Button";
@@ -12,85 +25,151 @@ import ProfilePasswordForm from "./ProfilePasswordForm";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { IUserProfileSchema, userProfileSchema } from "@/validator-schemas/profile";
 import { IProfileState, useProfileStore } from "@/stores/profile";
-import { IUserData } from "@/models/user";
+import useNotificationStore from "@/stores/notification";
+import { IEmail, IUserData } from "@/models/user";
 
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
-import { Controller } from "react-hook-form";
-import dynamic from "next/dynamic";
-
-const UserTelInput = dynamic(() => import("@/components/ui/TelInput"), {
-  ssr: false,
-});
+import useConvert from "@/hooks/useConvert";
+import Address from "@/components/fields/Address";
+import License from "@/components/fields/License";
+import Hint from "@/components/ui/Hint";
+import Contact from "@/components/fields/Contact";
+import FullName from "@/components/fields/FullName";
+import Coordinates from "@/components/fields/Coordinates";
+import ExpandingFields from "../fields/ExpandingFields";
+import ProfileWorkingDays from "./ProfileWorkingDays";
+import { format } from "date-fns";
 
 interface IProfileFormProps {}
 
 interface IExtendedUserData extends IUserData {
   "partner.mobilePhone"?: string;
-}
-
-async function blobToFile(blob: Blob, fileName: string): Promise<File> {
-  return new File([blob], fileName, { type: blob?.type });
+  "partner.emailAddress"?: IEmail;
 }
 
 const ProfileForm: React.FC<IProfileFormProps> = (props) => {
+  const t = useTranslations();
+  const locale = useLocale();
+  const convert = useConvert();
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const profile = useProfileStore<IProfileState>((state) => state);
-  const userData: IExtendedUserData | null = profile.getUserData();
+  const profileData: IExtendedUserData | null = profile.getUserData();
+  const setNotification = useNotificationStore((state) => state.setNotification);
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [userData, setUserData] = useState<FetchResponseBody | null>();
+  const [base64Image, setBase64Image] = useState<string | null>(null);
+  const [userIsNotary, setUserIsNotary] = useState(false);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertText, setAlertText] = useState<string | null | undefined>(null);
 
   const { loading: isDataLoading, update } = useFetch<Response>("", "POST", {
     returnResponse: true,
+  });
+
+  const { update: getUserData, loading: userDataLoading } = useFetch("", "POST");
+  const { data: checkFaceData, update: checkFace, loading: checkFaceLoading } = useFetch("", "POST");
+
+  useEffectOnce(async () => {
+    setUserIsNotary(Boolean(profileData?.activeCompany));
+
+    const res = await getUserData(profileData?.id != null ? "/api/profile/user/" + profileData?.id : "", {
+      userRole: profileData?.activeCompany ? "notary" : "declarant",
+    });
+
+    if (Array.isArray(res?.data) && res?.data.length > 0) {
+      setUserData(res);
+    }
   });
 
   const {
     data: imageData,
     loading: isImageLoading,
     update: getImage,
-  } = useFetch<Response>(userData?.id != null ? "/api/profile/download-image/" + userData?.id : "", "GET", {
+  } = useFetch<Response>(profileData?.id != null ? "/api/profile/download-image/" + profileData?.id : "", "GET", {
     returnResponse: true,
   });
 
   useEffectOnce(async () => {
-    const image: any = await imageData?.blob();
-
-    const convertedFile = await blobToFile(image, "avatar-image.png");
-    const url = URL.createObjectURL(convertedFile);
-
-    setImagePreview(url);
-    setSelectedImage(convertedFile);
+    const base64String = await imageData?.text();
+    if (base64String) {
+      setBase64Image(base64String);
+    }
   }, [imageData]);
 
   const form = useForm<IUserProfileSchema>({
     resolver: yupResolver(userProfileSchema),
-    defaultValues: {
-      fullName: userData?.name,
-      login: userData?.code,
-      email: userData?.email,
-      partner: {
-        mobilePhone: userData?.["partner.mobilePhone"],
-      },
-    },
+    values: userData?.data?.[0] != null ? userData?.data?.[0] : null,
   });
-
-  const t = useTranslations();
 
   const {
     formState: { errors },
-    setError,
     reset,
+    control,
+    trigger,
+    getValues,
+    setValue,
+    resetField,
   } = form;
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const addressNames = {
+    region: "activeCompany.address.region",
+    district: "activeCompany.address.district",
+    city: "activeCompany.address.city",
+    street: "activeCompany.address.addressL4",
+    house: "activeCompany.address.addressL3",
+    apartment: "activeCompany.address.addressL2",
+    notaryDistrict: "activeCompany.notaryDistrict",
+  };
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const licenseNames = {
+    licenseNo: "activeCompany.licenseNo",
+    licenseStatus: "activeCompany.licenseStatus",
+    licenseTermFrom: "activeCompany.licenseTermFrom",
+    licenseTermUntil: "activeCompany.licenseTermUntil",
+  };
+
+  const coordinateNames = {
+    latitude: "activeCompany.latitude",
+    longitude: "activeCompany.longitude",
+  };
+
+  const contactNames = {
+    phone: "partner.mobilePhone",
+    email: "partner.emailAddress.address",
+  };
+
+  const workModeNames = {
+    roundClock: "activeCompany.roundClock",
+    departure: "activeCompany.departure",
+  };
+
+  const personalDataNames = {
+    firstName: "partner.firstName",
+    lastName: "partner.lastName",
+    middleName: "partner.middleName",
+    code: "code",
+  };
+
+  const handleImageChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     setSelectedImage(file);
+
     if (file) {
-      setImagePreview(URL.createObjectURL(file));
-    } else {
-      setImagePreview(null);
+      const blob = new Blob([file], { type: file.type });
+      const res = await checkFace("/api/check-face", { image: await convert.blob.toBase64Async(blob) });
+
+      if (res) {
+        const isFaceDetected = res?.data?.message_en === "Face detected";
+
+        setImagePreview(isFaceDetected ? URL.createObjectURL(file) : null);
+        setAlertText(res?.status !== 0 ? t("Something went wrong") : res?.data?.["message_" + locale]);
+        setAlertOpen(true);
+      }
     }
   };
 
@@ -98,24 +177,22 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
     if (selectedImage) {
       const reader = new FileReader();
       reader.onload = async () => {
-        if (userData?.id != null && reader.result) {
-          await update("/api/profile/update/" + userData?.id, {
-            id: userData?.id,
-            version: userData?.version,
-            email: data.email,
-            name: data.fullName,
-            image: reader.result.toString(),
-            partner: {
-              id: userData?.partner?.id,
-              version: userData?.partner?.$version,
-              mobilePhone: data?.partner?.mobilePhone,
-            },
+        if (profileData?.id != null && reader.result) {
+          const params = {
+            userRole: profileData?.activeCompany ? "notary" : "declarant",
+            userData: userData,
+            submitData: data,
+            imageBase64: reader.result.toString(),
+          };
+          await update("/api/profile/update/" + profileData?.id, {
+            body: params,
           }).then((res) => {
             if (res && res.ok) {
               profile.loadUserData({
-                username: userData.code,
+                username: userData?.data?.[0]?.code,
               });
               getImage();
+              setNotification(t("Profile saved successfully"), "success");
             }
           });
         }
@@ -123,24 +200,22 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
       reader.readAsDataURL(selectedImage);
     }
     if (!imagePreview) {
-      if (userData?.id != null) {
-        await update("/api/profile/update/" + userData?.id, {
-          id: userData?.id,
-          version: userData?.version,
-          email: data.email,
-          name: data.fullName,
-          image: null,
-          partner: {
-            id: userData?.partner?.id,
-            version: userData?.partner?.$version,
-            mobilePhone: data?.partner?.mobilePhone,
-          },
+      if (profileData?.id != null) {
+        const params = {
+          userRole: profileData?.activeCompany ? "notary" : "declarant",
+          userData: userData,
+          submitData: data,
+          imageBase64: base64Image,
+        };
+        await update("/api/profile/update/" + profileData?.id, {
+          body: params,
         }).then((res) => {
           if (res && res.ok) {
             profile.loadUserData({
-              username: userData.code,
+              username: userData?.data?.[0]?.code,
             });
             getImage();
+            setNotification(t("Profile saved successfully"), "success");
           }
         });
       }
@@ -155,11 +230,47 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
 
   const handleDeleteClick = () => {
     setSelectedImage(null);
+    setBase64Image(null);
     setImagePreview(null);
+    setAlertOpen(false);
+    setAlertText(null);
   };
 
-  return (
+  const formatLicenseDate = () => {
+    const formValues = getValues("activeCompany");
+    if (formValues) {
+      const { licenseTermFrom, licenseTermUntil } = formValues;
+      const formattedLicenseTermFrom = licenseTermFrom ? format(new Date(licenseTermFrom), "dd.MM.yyyy") : null;
+      const formattedLicenseTermUntil = licenseTermUntil ? format(new Date(licenseTermUntil), "dd.MM.yyyy") : null;
+
+      setValue("activeCompany.licenseTermFrom", formattedLicenseTermFrom);
+      setValue("activeCompany.licenseTermUntil", formattedLicenseTermUntil);
+    }
+  };
+
+  const handleFormReset = () => {
+    reset();
+    formatLicenseDate();
+  };
+
+  useEffectOnce(() => {
+    formatLicenseDate();
+  }, [userData]);
+
+  return userDataLoading ? (
+    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <CircularProgress />
+    </Box>
+  ) : (
     <Box display="flex" flexDirection="column" gap="30px">
+      <Collapse in={alertOpen}>
+        <Alert
+          severity={checkFaceData?.data?.message_en === "Face detected" ? "success" : "warning"}
+          onClose={() => setAlertOpen(false)}
+        >
+          {alertText}
+        </Alert>
+      </Collapse>
       <Box
         display="flex"
         gap="30px"
@@ -170,38 +281,28 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           },
         }}
       >
-        {imagePreview ? (
-          <Avatar
-            sizes="100"
-            src={imagePreview}
-            sx={{
-              width: "100px",
-              height: "100px",
-            }}
-            aria-label="recipe"
-          />
+        {isImageLoading || checkFaceLoading ? (
+          <CircularProgress color="inherit" style={{ width: "28px", height: "28px" }} />
         ) : (
           <Avatar
             sizes="100"
+            src={imagePreview || base64Image || undefined}
             sx={{
-              bgcolor: "success.main",
+              bgcolor: imagePreview || base64Image ? "transparent" : "success.main",
               width: "100px",
               height: "100px",
             }}
             aria-label="recipe"
           >
-            {isImageLoading ? (
-              <CircularProgress color="inherit" style={{ width: "28px", height: "28px" }} />
-            ) : (
-              <PermIdentity
-                sx={{
-                  width: "50px",
-                  height: "50px",
-                }}
-              />
-            )}
+            <PermIdentity
+              sx={{
+                width: "50px",
+                height: "50px",
+              }}
+            />
           </Avatar>
         )}
+
         <Box display="flex" gap="20px" alignItems="center">
           <input ref={inputRef} accept="image/*" type="file" onChange={handleImageChange} style={{ display: "none" }} />
           <Button color="success" sx={{ width: "150px", boxShadow: "0" }} onClick={handleButtonClick}>
@@ -247,54 +348,24 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
           </Typography>
           <Box
             display="flex"
+            flexWrap="wrap"
             gap="20px"
             sx={{
               flexDirection: {
                 xs: "column",
                 sm: "row",
               },
+              justifyContent: "space-between",
             }}
           >
-            <FormControl sx={{ width: "100%" }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Fullname")}
-              </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.fullName?.message ?? false}
-                helperText={errors.fullName?.message ? t(errors.fullName?.message) : ""}
-                register={form.register}
-                name="fullName"
-              />
-            </FormControl>
-            <FormControl sx={{ width: "100%" }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Username")}
-              </InputLabel>
-              <Input fullWidth register={form.register} name="login" disabled />
-            </FormControl>
+            <FullName
+              form={form}
+              names={personalDataNames}
+              sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
+            />
           </Box>
         </Box>
+
         <Box
           sx={{
             display: "flex",
@@ -321,61 +392,149 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               },
             }}
           >
-            <FormControl sx={{ width: "100%" }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                E-mail
-              </InputLabel>
-              <Input
-                fullWidth
-                error={!!errors.email?.message ?? false}
-                helperText={errors.email?.message ? t(errors.email?.message) : ""}
-                register={form.register}
-                name="email"
-                type="email"
-              />
-            </FormControl>
-            <FormControl sx={{ width: "100%" }}>
-              <InputLabel
-                sx={{
-                  color: "#24334B",
-                  fontSize: "18px",
-                  top: "10px",
-                  left: "-14px",
-                  fontWeight: "500",
-                  position: "inherit",
-                }}
-                shrink
-              >
-                {t("Phone number")}
-              </InputLabel>
-              <Controller
-                name="partner.mobilePhone"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <UserTelInput
-                    inputType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                    helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
-                    {...field}
-                  />
-                )}
-              />
-            </FormControl>
+            <Contact
+              form={form}
+              names={contactNames}
+              sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
+            />
           </Box>
         </Box>
+
+        {!userIsNotary ? undefined : (
+          <ExpandingFields title="Additional information" permanentExpand={true}>
+            <Box display="flex" flexDirection="column" gap="30px">
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "15px",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "#687C9B",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                  }}
+                >
+                  {t("Address")}
+                </Typography>
+                <Box
+                  display="flex"
+                  gap="20px"
+                  sx={{
+                    flexDirection: {
+                      xs: "column",
+                      sm: "row",
+                    },
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Address
+                    form={form}
+                    names={addressNames}
+                    withNotaryDistrict={true}
+                    getAllNotaryDistricts={true}
+                    sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
+                  />
+                </Box>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "15px",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    justifyContent: "space-between",
+                    gap: "10px",
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      color: "#687C9B",
+                      fontSize: "16px",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {t("Coordinates on the map")}
+                  </Typography>
+                  <Hint type="hint" defaultActive={false}>
+                    {t("Specify coordinates to display them on the map")}
+                  </Hint>
+                </Box>
+                <Box
+                  display="flex"
+                  gap="20px"
+                  sx={{
+                    flexDirection: {
+                      xs: "column",
+                      sm: "row",
+                    },
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Coordinates
+                    form={form}
+                    names={coordinateNames}
+                    withMap={true}
+                    sx={{ boxSx: { width: "100%" }, labelsSx: { fontWeight: "600" } }}
+                  />
+                </Box>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "15px",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "#687C9B",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                  }}
+                >
+                  {t("License information")}
+                </Typography>
+                <Box
+                  display="flex"
+                  flexWrap="wrap"
+                  gap="20px"
+                  sx={{
+                    flexDirection: {
+                      xs: "column",
+                      sm: "row",
+                    },
+                  }}
+                >
+                  <License
+                    form={form}
+                    names={licenseNames}
+                    disableFields={true}
+                    sx={{ labelsSx: { fontWeight: "600" } }}
+                  />
+                </Box>
+              </Box>
+
+              <ProfileWorkingDays profileForm={form} names={userIsNotary ? workModeNames : undefined} />
+            </Box>
+          </ExpandingFields>
+        )}
+
         <Box
           display="flex"
           gap="30px"
           sx={{
+            position: "sticky",
+            bottom: "20px",
             flexDirection: {
               xs: "column",
               md: "row",
@@ -401,6 +560,7 @@ const ProfileForm: React.FC<IProfileFormProps> = (props) => {
               },
             }}
             loading={isDataLoading}
+            onClick={handleFormReset}
           >
             {t("Cancel")}
           </Button>

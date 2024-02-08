@@ -2,7 +2,8 @@ import Head from "next/head";
 import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
-import InheritanceCasesList from "@/components/inheritance-cases/InheritanceCasesList";
+import InheritanceCasesList from "@/components/inheritance-cases/inheritance-cases-list/InheritanceCasesList";
+import { FetchListParamsContextProvider } from "@/contexts/fetch-list-params";
 
 export default function InheritanceCases() {
   const t = useTranslations();
@@ -21,7 +22,9 @@ export default function InheritanceCases() {
           maxWidth: { xs: "unset", sm: "unset", md: "unset", lg: "unset" },
         }}
       >
-        <InheritanceCasesList />
+        <FetchListParamsContextProvider>
+          <InheritanceCasesList />
+        </FetchListParamsContextProvider>
       </Container>
     </>
   );
@@ -33,6 +36,8 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       messages: {
         ...(await import(`locales/${context.locale}/common.json`)).default,
         ...(await import(`locales/${context.locale}/inheritance-cases.json`)).default,
+        ...(await import(`locales/${context.locale}/404.json`)).default,
+        ...(await import(`locales/${context.locale}/validator.json`)).default,
       },
     },
   };

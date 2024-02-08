@@ -1,19 +1,23 @@
 import { FC } from "react";
 import { Box, CircularProgress, Grid } from "@mui/material";
 import NotariesCard from "./NotariesCard";
-import { INotary, INotaryData } from "@/models/notaries";
+import { INotary } from "@/models/notaries";
 import Link from "next/link";
 import Pagination from "../ui/Pagination";
 import { INotariesQueryParams } from "./NotariesContent";
+import { FetchResponseBody } from "@/hooks/useFetch";
+import { useRouter } from "next/router";
 
 interface INotaryListProps {
   handlePageChange: (val: any) => void;
   loading: boolean;
-  data: INotaryData | null;
+  data: FetchResponseBody | null;
   notariesQueryParams: INotariesQueryParams;
 }
 
 const NotariesList: FC<INotaryListProps> = ({ loading, data, notariesQueryParams, handlePageChange }) => {
+  const { locale } = useRouter();
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: "50px", alignItems: "center" }}>
       {loading ? (
@@ -37,22 +41,31 @@ const NotariesList: FC<INotaryListProps> = ({ loading, data, notariesQueryParams
             }}
             container
           >
-            {data?.data?.map((notary: INotary) => (
-              <Box width={{ xs: "100%", md: "initial" }} key={notary?.id}>
-                <Link href={`/notaries/${encodeURIComponent(notary?.id)}`} style={{ textDecoration: "none" }}>
-                  <Grid item key={notary?.id} xs={12} sm={12} md={3}>
-                    <NotariesCard
-                      fullName={notary.name}
-                      image={notary["logo.fileName"]}
-                      rating={notary["partner.rating"]}
-                      region={notary["address.region"]}
-                      area={notary["address.district"]}
-                      location={notary["address.city"]?.fullName}
-                    />
-                  </Grid>
-                </Link>
-              </Box>
-            ))}
+            {data?.data?.map((notary: INotary) => {
+              const city = locale != "en" ? notary["$t:address.city.name"] : notary["address.city.name"];
+              return (
+                <Box width={{ xs: "100%", md: "initial" }} key={notary?.id}>
+                  <Link
+                    href={{
+                      pathname: `/notaries/${encodeURIComponent(notary.id)}`,
+                    }}
+                    style={{ textDecoration: "none" }}
+                  >
+                    <Grid item key={notary?.id} xs={12} sm={12} md={3}>
+                      <NotariesCard
+                        id={notary?.id}
+                        userId={notary["partner.linkedUser.id"]}
+                        fullName={notary["partner.fullName"]}
+                        region={notary["address.region"]}
+                        area={notary["address.district"]}
+                        city={city}
+                        licenseTermUntil={notary?.licenseTermUntil}
+                      />
+                    </Grid>
+                  </Link>
+                </Box>
+              );
+            })}
           </Grid>
           {data?.data && (
             <Pagination

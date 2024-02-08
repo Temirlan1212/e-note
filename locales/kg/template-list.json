@@ -9,7 +9,6 @@
   "Document type": "Документтин түрү",
   "Object type": "Объект түрү",
   "Object": "Объект",
-  "Actions": "Аракетти аткаруу",
   "In my templates": "Менин шаблондорума",
   "New application": "Жаңы колдонмо",
   "Movable property": "Кыймылдуу мүлк",
@@ -27,5 +26,9 @@
   "Residential building": "Турак үй",
   "Select action": "Аракет тандаңыз",
   "Create new template": "Жаңы шаблон түзүү",
-  "Hand templates": "Rол шаблондору"
+  "Hand templates": "Rол шаблондору",
+  "Purpose of action": "Аракеттин максаты",
+  "To my templates": "\"Менин калыптарыма\" кошуу",
+  "Do you really want to add to the My Templates section?": "\"Менин калыптарым\" бөлүмүнө чын эле кошкуңуз келеби?",
+  "Enter a template name": "Үлгү атын киргизиңиз"
 }

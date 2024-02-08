@@ -9,14 +9,16 @@ export default async function handler(req: NextRequest) {
   const url = searchParams?.get("url") as string;
   const token = searchParams?.get("token") as string;
 
-  if (req.method !== "GET" || !url || !token) {
+  if (req.method !== "GET" || !url) {
     return new Response(null, { status: 400 });
   }
 
   return await fetch(url, {
     method: "GET",
-    headers: {
-      Authorization: token,
-    },
+    headers: !!token
+      ? {
+          Authorization: token,
+        }
+      : {},
   });
 }

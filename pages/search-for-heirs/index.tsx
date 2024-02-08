@@ -3,16 +3,12 @@ import { GetStaticPropsContext } from "next";
 import { useTranslations } from "next-intl";
 import Head from "next/head";
 
-import SearchForm from "@/components/search-for-heirs/HeirSearchForm";
-import HeirNotFoundData from "@/components/search-for-heirs/HeirNotFoundData";
-import HeirFoundedData from "@/components/search-for-heirs/HeirFoundedData";
+import HeirSearchContent from "@/components/search-for-heirs/HeirSearchContent";
 
-type ISearchForHeirsProps = {};
-
-const SearchForHeirs = (props: ISearchForHeirsProps) => {
+export default function SearchForHeirs() {
   const t = useTranslations();
 
-  const data = [2];
+  const data = [0];
 
   return (
     <>
@@ -33,14 +29,11 @@ const SearchForHeirs = (props: ISearchForHeirsProps) => {
         >
           {t("Search for heirs")}
         </Typography>
-        <SearchForm />
-        {data.length ? <HeirFoundedData /> : <HeirNotFoundData />}
+        <HeirSearchContent />
       </Container>
     </>
   );
-};
-
-export default SearchForHeirs;
+}
 
 export async function getStaticProps(context: GetStaticPropsContext) {
   return {
@@ -48,6 +41,7 @@ export async function getStaticProps(context: GetStaticPropsContext) {
       messages: {
         ...(await import(`locales/${context.locale}/common.json`)).default,
         ...(await import(`locales/${context.locale}/search-for-heirs.json`)).default,
+        ...(await import(`locales/${context.locale}/404.json`)).default,
       },
     },
   };

@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Box, InputLabel, Collapse, Alert } from "@mui/material";
 import { useTranslations } from "next-intl";
-import { SearchOutlined } from "@mui/icons-material";
-
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { useRouter } from "next/router";
 import Hint from "@/components/ui/Hint";
 import { IApplication } from "@/models/application";
 import { Controller, useForm } from "react-hook-form";
-import { checkDocumentById, ICheckDocumentById } from "@/validator-schemas/check-document-byId";
+import { checkDocumentById, ICheckDocumentById } from "@/validator-schemas/check-document-by-id";
 import { yupResolver } from "@hookform/resolvers/yup";
 import SearchBar from "@/components/ui/SearchBar";
 
@@ -26,7 +22,7 @@ export default function CheckByID() {
   const { handleSubmit, formState, control } = useForm<ICheckDocumentById>({
     resolver: yupResolver<ICheckDocumentById>(checkDocumentById),
   });
-  const { data, update, error } = useFetch<ICheckedDocument>("", "POST");
+  const { data, loading, update, error } = useFetch<ICheckedDocument>("", "POST");
 
   const onSubmit = (data: { keyword?: string }) => {
     if (!data?.keyword || data.keyword?.trim() === "") {
@@ -75,6 +71,7 @@ export default function CheckByID() {
                     height: "43px",
                   },
                 }}
+                loading={loading}
                 id="search-field"
                 {...field}
                 error={!!formState.errors.keyword?.message}

@@ -1,27 +1,18 @@
 import { useTranslations } from "next-intl";
-import {
-  Controller,
-  ControllerFieldState,
-  ControllerRenderProps,
-  UseFormReturn,
-  UseFormTrigger,
-} from "react-hook-form";
-import useFetch from "@/hooks/useFetch";
+import { UseFormReturn } from "react-hook-form";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
-import { Box, Grid, Typography } from "@mui/material";
+import { Alert, Box, Collapse, Grid, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import Select from "@/components/ui/Select";
 import { useRouter } from "next/router";
-import DatePicker from "@/components/ui/DatePicker";
-import CheckBox from "@/components/ui/Checkbox";
-import TimePicker from "@/components/ui/TimePicker";
-import DateTimePicker from "@/components/ui/DateTimePicker";
-import { useState } from "react";
 import StepperContentStep from "@/components/ui/StepperContentStep";
+import RequestDynamicField from "@/components/fields/RequestDynamicField";
+import DynamicFormElement, { getName as getTemplateDocName } from "@/components/ui/DynamicFormElement";
+import { useState } from "react";
+import { useProfileStore } from "@/stores/profile";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -31,183 +22,36 @@ export interface IStepFieldsProps {
   handleStepNextClick?: Function;
 }
 
-interface IDynamicComponentProps {
-  field: ControllerRenderProps<any, any>;
-  fieldState?: ControllerFieldState;
-  locale: string;
-  data?: Record<string, any>[];
-  errorMessage?: string;
-  trigger: UseFormTrigger<any>;
+enum PartnerType {
+  LegalEntity = 1,
+  Individual = 2,
 }
 
-const isEmptyOrNull = (value: string | null) => value === "" || value == null;
-
-const getDynamicComponent = (type: keyof typeof types, props: IDynamicComponentProps) => {
-  const { locale, field, data, errorMessage, fieldState, trigger } = props;
-  const types = {
-    String: (
-      <Input
-        inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        helperText={errorMessage}
-        onBlur={field.onBlur}
-        value={getDynamicValue("String", field.value)}
-        onChange={(e) => field.onChange(String(e.target.value))}
-      />
-    ),
-    Float: (
-      <Input
-        inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        type="number"
-        helperText={errorMessage}
-        onBlur={field.onBlur}
-        value={getDynamicValue("Float", field.value)}
-        onChange={(e) => field.onChange(parseInt(e.target.value))}
-      />
-    ),
-    Decimal: (
-      <Input
-        inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        type="number"
-        helperText={errorMessage}
-        onBlur={field.onBlur}
-        value={getDynamicValue("Decimal", field.value)}
-        onChange={(e) => field.onChange(parseInt(e.target.value))}
-      />
-    ),
-    Integer: (
-      <Input
-        inputType={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        type="number"
-        helperText={errorMessage}
-        onBlur={field.onBlur}
-        value={getDynamicValue("Integer", field.value)}
-        onChange={(e) => field.onChange(parseInt(e.target.value))}
-      />
-    ),
-    Selection: (
-      <Select
-        fullWidth
-        selectType={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        data={data ?? []}
-        labelField={"title_" + locale}
-        valueField="value"
-        helperText={errorMessage}
-        value={field.value == null ? "" : field.value}
-        onBlur={field.onBlur}
-        onChange={(...event: any[]) => {
-          field.onChange(...event);
-          trigger(field.name);
-        }}
-      />
-    ),
-    Date: (
-      <DatePicker
-        type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={getDynamicValue("Date", field.value)}
-        helperText={errorMessage}
-        onChange={(...event: any[]) => {
-          field.onChange(...event);
-          trigger(field.name);
-        }}
-      />
-    ),
-    Boolean: <CheckBox checked={!!field.value} {...field} />,
-    Time: (
-      <TimePicker
-        type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={getDynamicValue("Time", field.value)}
-        helperText={errorMessage}
-        onChange={(...event: any[]) => {
-          field.onChange(...event);
-          trigger(field.name);
-        }}
-      />
-    ),
-    DateTime: (
-      <DateTimePicker
-        type={errorMessage ? "error" : field.value ? "success" : "secondary"}
-        value={getDynamicValue("DateTime", field.value)}
-        helperText={errorMessage}
-        onChange={(...event: any[]) => {
-          field.onChange(...event);
-          trigger(field.name);
-        }}
-      />
-    ),
-  };
-
-  return types[type];
-};
-
-const getDynamicValue = (field: keyof typeof types, value: any) => {
-  const isDate = value instanceof Date;
-  const isInvalidDate = isNaN(new Date(String(value)).getDate());
-
-  const types = {
-    Boolean: value,
-    Selection: isEmptyOrNull(value) ? null : value,
-    Float: isEmptyOrNull(value) ? "" : parseInt(value),
-    Decimal: isEmptyOrNull(value) ? "" : parseInt(value),
-    Integer: isEmptyOrNull(value) ? "" : parseInt(value),
-    String: isEmptyOrNull(value) ? "" : value,
-    Date: isDate ? value : isInvalidDate ? null : new Date(String(value)),
-    Time: isDate ? value : isInvalidDate ? null : new Date(Date.parse(value)),
-    DateTime: isDate ? value : isInvalidDate ? null : new Date(String(value)),
-  };
-
-  return types[field];
-};
-
-const getDynamicGroupName = (group: Record<string, any>, locale: string | undefined) => {
+const getTemplateDocGroupName = (group: Record<string, any>, locale: string | undefined) => {
   const groupName = group?.groupName === "null" ? "" : group?.groupName ?? "";
   const groupNameLocale = group?.["groupName_" + locale];
 
   return groupNameLocale ? groupNameLocale : groupName;
 };
 
-const getDynamicName = (path: string | null, name: string | null) => {
-  if (path != null && name != null) {
-    const regex = /\b(movable|immovable|notaryOtherPerson|notaryAdditionalPerson|relationships)(?:\.|$)/;
-    if (regex.test(path)) {
-      const index = 0;
-      return `${path}.${index}.${name}`;
-    }
-
-    return `${path}.${name}`;
-  }
-
-  return name ?? "";
-};
-
 export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const t = useTranslations();
   const { locale } = useRouter();
   const productId = form.watch("product.id");
+  const applicationId = form.watch("id");
+  const isFieldsOpen = form.watch("openFields") as boolean;
 
-  const { trigger, control } = dynamicForm;
+  const notaryPowerAttorneyTerm = dynamicForm.watch("notaryPowerAttorneyTerm");
+  const relationshipType = dynamicForm.watch("notaryRelationships.0.relationshipType");
 
-  const [selectDatas, setSelectDatas] = useState<Record<string, any[]>>({});
+  const [alertOpen, setAlertOpen] = useState(false);
+  const activeCompanyId = useProfileStore((state) => state.userData?.activeCompany?.id);
 
   const { update: applicationUpdate, loading } = useFetch("", "PUT");
-
-  const { loading: selectionLoading, update: selectionUpdate } = useFetch("", "POST");
-
-  const getSelectData = async (data: any) => {
-    if (Array.isArray(data) && data.length > 0) {
-      const fieldsProps = data.map((group: Record<string, any>) => group?.fields).flat();
-      fieldsProps.map(async (item: Record<string, any>) => {
-        const fieldName = getDynamicName(item?.path, item?.fieldName);
-        const model = item?.selection;
-
-        if (!isEmptyOrNull(fieldName) && !isEmptyOrNull(model)) {
-          const { data } = await selectionUpdate(`/api/dictionaries/selection/${model}`);
-          setSelectDatas((prev) => {
-            return { ...prev, [fieldName]: data };
-          });
-        }
-      });
-    }
-  };
+  const { update: applicationFetch } = useFetch<FetchResponseBody | null>("", "POST");
+  const { data: tundukData, update: tundukVehicleDataFetch, loading: tundukVehicleDataLoading } = useFetch("", "POST");
+  const { update: getAmountStateTax } = useFetch("", "POST");
+  const { update: getSumOfTax, loading: sumOfTaxLoading } = useFetch<FetchResponseBody | null>("", "POST");
 
   const {
     update: getDocumentTemplateData,
@@ -215,19 +59,58 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     loading: documentTemplateLoading,
   } = useFetch("", "GET");
 
-  const triggerFields = async () => {
-    return await trigger();
+  const triggerFields = async (names: string[]) => {
+    return await dynamicForm.trigger(names);
   };
 
   useEffectOnce(async () => {
     if (productId != null) {
-      const { data } = await getDocumentTemplateData("/api/dictionaries/document-type/template/" + productId);
-      getSelectData(data);
+      await getDocumentTemplateData("/api/dictionaries/document-type/template/" + productId);
     }
   }, [productId]);
 
+  useEffectOnce(async () => {
+    if (applicationId != null) {
+      const applicationData = await applicationFetch(`/api/applications/${applicationId}`, {
+        fields: ["currency"],
+      });
+
+      const currency = applicationData?.data?.[0]?.currency;
+      currency != null && form.setValue("currency", currency);
+    }
+  }, [applicationId]);
+
+  const getNames = (data: any[]) => {
+    const names: string[] = [];
+    data.map((group) => {
+      group.fields.map((item: Record<string, any>) => {
+        if (String(item?.fieldType).toLocaleLowerCase() === "request") {
+          item?.responseFields?.map((field: Record<string, any>) => {
+            const name = getTemplateDocName(item?.path ?? field?.path, field?.fieldName);
+            if (!!name) names.push(name);
+          });
+        }
+        const name = getTemplateDocName(item?.path, item?.fieldName);
+        if (!!name) names.push(name);
+      });
+    });
+
+    return names;
+  };
+
+  const focusToFieldOnError = (fields: string[]) => {
+    for (let i = 0; i < fields.length; i++) {
+      if (dynamicForm.formState.errors != null && dynamicForm.formState.errors?.[fields[i]]) {
+        dynamicForm.setFocus(fields[i]);
+        break;
+      }
+    }
+  };
+
   const handleNextClick = async (targetStep?: number) => {
-    const validated = await triggerFields();
+    const names = getNames(documentTemplateData?.data ?? []);
+    const validated = await triggerFields(names);
+    if (!validated) focusToFieldOnError(names);
     const { setValue, getValues } = form;
 
     if (validated && onNext) {
@@ -252,71 +135,258 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
     if (onPrev != null) onPrev();
   };
 
+  const handleCalculateSumOfTax = () => {
+    const dynamicFormValues = dynamicForm.getValues();
+    const formValues = form.getValues();
+
+    const {
+      notaryIsBenefit,
+      notaryAmountStateTax,
+      notaryWithDeparture,
+      notaryGovernmentDeparture,
+      notaryIsDiscount,
+      notaryDiscount,
+    } = dynamicFormValues;
+    const { members, requester, currency } = formValues;
+
+    const mapSubjectRole = (item: any) => ({ subjectRole: item?.subjectRole });
+
+    if (currency) {
+      const { code, name, id }: any = currency;
+
+      const params = {
+        currency: { code, name, id },
+        notaryIsBenefit: notaryIsBenefit,
+        notaryAmountStateTax: notaryAmountStateTax,
+        notaryWithDeparture: notaryWithDeparture,
+        notaryIsDiscount: notaryIsDiscount,
+        notaryDiscount: notaryIsDiscount ? notaryDiscount : 0,
+        notaryGovernmentDeparture: notaryGovernmentDeparture,
+        requester: requester?.map(mapSubjectRole),
+        members: members?.map(mapSubjectRole),
+      };
+
+      getSumOfTax(`/api/applications/calculate-tax`, {
+        params,
+      }).then((res) => dynamicForm.setValue("notarySumOfStateAmountTax", res?.data?.sum.toString() ?? ""));
+    }
+  };
+
+  const handlePinCheck = async (
+    url: string | null,
+    paramsValue: Record<string, any>,
+    responsefields: Record<string, any>[]
+  ) => {
+    if (!url) return;
+
+    const tundukUrl = url.replace(/\${(.*?)}/g, (match, placeholder) => {
+      return paramsValue[placeholder] || match;
+    });
+
+    const vehicleData = await tundukVehicleDataFetch(`/api/tunduk`, { model: tundukUrl });
+    if (vehicleData?.status !== 0 || vehicleData?.data == null) {
+      setAlertOpen(true);
+      return;
+    }
+
+    responsefields?.map((field) => {
+      const formName = getTemplateDocName(field?.path, field?.fieldName);
+      const fieldName = field?.fieldName;
+      const value = vehicleData?.data?.[0]?.[fieldName] ?? vehicleData?.data?.[0]?.notaryPartner?.[0]?.[fieldName];
+      if (value != null && value !== "") dynamicForm.setValue(formName, value);
+    });
+
+    setAlertOpen(false);
+    handleDisabled(responsefields, true);
+  };
+
+  const handlePinReset = async (fields: Record<string, any>[]) => {
+    fields?.map((field) => {
+      const name = getTemplateDocName(field?.path, field?.fieldName);
+      const value = dynamicForm.getValues(name);
+      const isBoolean = typeof value === "boolean";
+      const isString = typeof value === "string";
+
+      if (isBoolean) {
+        dynamicForm.resetField(name as any, { defaultValue: false });
+      } else if (!isString) {
+        dynamicForm.resetField(name as any, { defaultValue: null });
+      } else if (isString) {
+        dynamicForm.resetField(name as any, { defaultValue: "" });
+      }
+    });
+
+    handleDisabled(fields, false);
+  };
+
+  const handleDisabled = (fields: Record<string, any>[], value: boolean) => {
+    const disabledField = fields?.find((field) => field?.fieldName === "disabled");
+    if (disabledField == null) return;
+    dynamicForm.setValue(getTemplateDocName(disabledField?.path, disabledField?.fieldName), value);
+  };
+
   useEffectOnce(async () => {
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
 
+  useEffectOnce(() => {
+    dynamicForm.setValue("isActiveCompanyId", !!activeCompanyId);
+  }, [activeCompanyId]);
+
+  useEffectOnce(() => {
+    if (!relationshipType) {
+      dynamicForm.setValue("notaryRelationships.0.relationshipType", "Other individuals");
+    }
+
+    const orderNumber = form.getValues("orderNumber");
+
+    if (!!orderNumber && documentTemplateData) {
+      dynamicForm.setValue("notaryAmountStateTax", "0");
+    }
+  }, [documentTemplateData]);
+
+  useEffectOnce(async () => {
+    const formValues = form.getValues();
+    const dynamicFormValues = dynamicForm.getValues();
+
+    const { typeNotarialAction, product, requester, members, orderNumber, currency } = formValues;
+    const { notaryPowerAttorneyTerm } = dynamicFormValues;
+
+    if (!notaryPowerAttorneyTerm || !relationshipType || !!orderNumber) return;
+
+    let partnerType: PartnerType = PartnerType.LegalEntity;
+
+    const isLegalEntity = (value: string | number) =>
+      value === PartnerType.LegalEntity || value === String(PartnerType.LegalEntity);
+
+    if (typeNotarialAction === 41) {
+      if (requester?.some((requester: any) => isLegalEntity(requester?.partnerTypeSelect))) {
+        partnerType = PartnerType.Individual;
+      }
+    } else if (
+      requester?.some((requester: any) => isLegalEntity(requester?.partnerTypeSelect)) ||
+      members?.some((member: any) => isLegalEntity(member?.partnerTypeSelect))
+    ) {
+      partnerType = PartnerType.Individual;
+    }
+
+    const isValid = !!product?.id && !!currency?.id && !!relationshipType && !!partnerType && !!notaryPowerAttorneyTerm;
+
+    if (isValid) {
+      const params = {
+        currencyId: currency.id,
+        notaryProductId: product.id,
+        relationshipType: relationshipType,
+        partnerType: partnerType,
+        notaryPowerAttorneyTerm: String(notaryPowerAttorneyTerm),
+      };
+
+      getAmountStateTax("/api/applications/amount-of-state-tax", {
+        body: params,
+      }).then((res) => dynamicForm.setValue("notaryAmountStateTax", res?.data?.[0]?.reward ?? ""));
+    } else {
+      dynamicForm.setValue("notaryAmountStateTax", "");
+    }
+  }, [relationshipType, notaryPowerAttorneyTerm]);
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
-      <StepperContentStep
-        step={5}
-        title={t("Additional information")}
-        loading={documentTemplateLoading || selectionLoading}
-      />
+      <StepperContentStep step={5} title={t("Additional information")} loading={documentTemplateLoading} />
+
+      <Collapse in={alertOpen}>
+        <Alert severity="warning" onClose={() => setAlertOpen(false)}>
+          {t(tundukData?.data?.message || "Something went wrong")}
+        </Alert>
+      </Collapse>
 
       <Box display="flex" flexDirection="column" gap="30px">
         {documentTemplateData?.data &&
           documentTemplateData?.data.map((group: Record<string, any>, index: number) => (
             <Box display="flex" flexDirection="column" gap="20px" key={index}>
-              <Typography variant="h4">{getDynamicGroupName(group, locale)}</Typography>
+              <Typography variant="h4">{getTemplateDocGroupName(group, locale)}</Typography>
 
               <Grid key={index} container spacing={2}>
                 {group?.fields
                   ?.sort((a: any, b: any) => Number(a?.sequence ?? 0) - Number(b?.sequence ?? 0))
                   .map((item: Record<string, any>, index: number) => (
                     <Grid
+                      key={index}
                       item
                       md={item?.elementWidth ?? 12}
-                      key={index}
                       width="100%"
                       display="flex"
                       flexDirection="column"
                       justifyContent="end"
+                      gap="50px"
                     >
-                      <Controller
-                        control={control}
-                        name={getDynamicName(item?.path, item?.fieldName)}
-                        defaultValue={getDynamicValue(item?.fieldType, item?.defaultValue)}
-                        rules={{ required: !!item?.required ? "required" : false }}
-                        render={({ field, fieldState }) => {
-                          let errorMessage = fieldState.error?.message
-                            ? t(fieldState.error.message)
-                            : fieldState.error?.message;
+                      {String(item?.fieldType).toLocaleLowerCase() === "request" ? (
+                        <RequestDynamicField
+                          disabled={isFieldsOpen || item?.readonly}
+                          isPermanentDisabled={isFieldsOpen}
+                          required={item?.required}
+                          hidden={item?.hidden}
+                          conditions={item?.conditions}
+                          loading={tundukVehicleDataLoading}
+                          form={dynamicForm}
+                          fields={item?.fields}
+                          responseFields={item?.responseFields}
+                          onPinReset={() => {
+                            handlePinReset([...(item?.responseFields ?? {}), ...(item?.fields ?? {})]);
+                          }}
+                          onPinCheck={async ({ getValues }) => {
+                            let values = {};
+                            const names: string[] = [];
+                            item?.fields?.map((field: Record<string, any>) => {
+                              const name = getTemplateDocName(item?.path ?? field?.path, field?.fieldName);
+                              const key = getTemplateDocName(undefined, field?.fieldName);
+                              const value = getValues(getTemplateDocName(item?.path ?? field?.path, field?.fieldName));
 
-                          if (["Date", "DateTime", "Time"].includes(item.fieldType)) {
-                            if (typeof field.value === "object" && field.value == "Invalid Date") {
-                              errorMessage = t("invalid format");
+                              if (!!name) names.push(name);
+
+                              if (!!key) {
+                                values = {
+                                  ...values,
+                                  [key]: value,
+                                };
+                              }
+                            });
+
+                            const validated = await dynamicForm.trigger(names);
+                            if (validated) handlePinCheck(item?.url, values, item?.responseFields);
+                          }}
+                        />
+                      ) : (
+                        <DynamicFormElement
+                          disabled={item?.readonly || item?.fieldName === "notarySumOfStateAmountTax"}
+                          hidden={item?.hidden}
+                          required={!!item?.required}
+                          conditions={item?.conditions}
+                          loading={item?.actionType?.toLowerCase() === "calculate" && sumOfTaxLoading}
+                          type={item?.fieldType}
+                          form={dynamicForm}
+                          label={item?.fieldLabels?.[locale ?? ""] ?? ""}
+                          title={item?.fieldTitles?.[locale ?? ""] ?? ""}
+                          defaultValue={item?.defaultValue}
+                          fieldName={item?.fieldName}
+                          path={item?.path}
+                          selectionName={item?.selection ?? ""}
+                          objectName={item?.object ?? ""}
+                          options={item?.options}
+                          minLength={item?.minLength}
+                          maxLength={item?.maxLength}
+                          pattern={item?.pattern}
+                          onClick={() => {
+                            if (item?.fieldName === "notaryGovernmentDeparture") {
+                              dynamicForm.setValue("notaryWithDeparture", false);
+                            } else if (item?.fieldName === "notaryWithDeparture") {
+                              dynamicForm.setValue("notaryGovernmentDeparture", false);
                             }
-                          }
-                          const data = Array.isArray(selectDatas[getDynamicName(item?.path, item?.fieldName)])
-                            ? selectDatas[getDynamicName(item?.path, item?.fieldName)]
-                            : [];
-
-                          return (
-                            <Box display="flex" flexDirection="column" gap="10px">
-                              <Typography>{item?.fieldTitles?.[locale ?? ""] ?? ""}</Typography>
-                              {getDynamicComponent(item.fieldType, {
-                                locale: locale ?? "ru",
-                                field,
-                                fieldState,
-                                errorMessage,
-                                data,
-                                trigger,
-                              })}
-                            </Box>
-                          );
-                        }}
-                      />
+                            if (item?.actionType?.toLowerCase() === "calculate" && handleCalculateSumOfTax) {
+                              handleCalculateSumOfTax();
+                            }
+                          }}
+                        />
+                      )}
                     </Grid>
                   ))}
               </Grid>
@@ -324,8 +394,8 @@ export default function FifthStepFields({ form, dynamicForm, onPrev, onNext, han
           ))}
       </Box>
 
-      {!documentTemplateLoading && !selectionLoading && (
-        <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+      {!documentTemplateLoading && (
+        <Box position="sticky" bottom="30px" width="fit-content" display="flex" gap="20px" flexDirection="row">
           {onPrev != null && (
             <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
               {t("Prev")}

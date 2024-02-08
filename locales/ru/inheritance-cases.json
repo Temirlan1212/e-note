@@ -1,5 +1,18 @@
 {
   "PIN of the deceased": "ПИН умершего",
   "Full name of the deceased": "ФИО умершего",
-  "Place of last residence": "Место последнего проживания"
+  "Place of last residence": "Место последнего проживания",
+  "End date of inheritance": "Дата окончания наследственного дела",
+  "List of heirs": "Список наследников",
+  "Create an heir": "Создать наследника",
+  "Family relationships": "Родственные отношения",
+  "Revoke the will": "Отменить завещание",
+  "When a will is revoked, a 'Statement of Revocation of Will' must be made": "При отмене завещания должно быть составлено 'Заявление об отмене завещания'",
+  "Information about the deceased": "Информация об умершем",
+  "Information about the heir": "Информация о наследнике",
+  "Information about the testator": "Информация о завещателе",
+  "Creation of an inheritance case": "Создание наследственного дела",
+  "Go into an inheritance case": "Перейти в наследственное дело",
+  "Such a inheritance case already exists": "Такое наследственное дело уже существует",
+  "TestatorFullName": "ФИО Завещателя"
 }

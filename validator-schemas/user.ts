@@ -3,7 +3,7 @@ import { number, object, InferType, string, date, boolean } from "yup";
 export type IUserRegistrySchema = InferType<typeof userRegistrySchema>;
 export type IUserRegistryFiltrationSchema = InferType<typeof userRegistryFiltrationSchema>;
 
-const userAddressSchema = object().shape({
+export const userAddressSchema = object().shape({
   id: number().integer().positive().nullable(),
   version: number().integer().positive().nullable(),
   region: object({
@@ -43,14 +43,14 @@ export const userRegistrySchema = object()
     lastName: string()
       .trim()
       .required("required")
-      .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
+      .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s\-]*$/, "onlyLetters"),
     firstName: string()
       .trim()
       .required("required")
-      .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
+      .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s\-]*$/, "onlyLetters"),
     middleName: string()
       .trim()
-      .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
+      .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s\-]*$/, "onlyLetters"),
     personalNumber: string()
       .trim()
       .when("foreigner", {
@@ -72,7 +72,7 @@ export const userRegistrySchema = object()
     authority: string().trim().required("required"),
     authorityNumber: string()
       .trim()
-      .matches(/^[0-9]*$/, "onlyNumbers")
+      .matches(/^[0-9\s]*$/, "onlyNumbers")
       .required("required"),
     dateOfIssue: date().required("required"),
     foreigner: boolean(),
@@ -87,6 +87,11 @@ export const userRegistrySchema = object()
       version: number().integer().positive().nullable(),
       address: string().trim().email("email").required("required"),
     }),
+    tundukPassportSeries: string().required("required"),
+    tundukPassportNumber: string()
+      .trim()
+      .matches(/^[0-9]*$/, "onlyNumbers")
+      .required("required"),
   })
   .concat(userAddressSchema.pick(["region", "district", "city"]));
 

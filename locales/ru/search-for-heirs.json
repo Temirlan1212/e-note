@@ -9,5 +9,6 @@
   "Enter your full name": "Введите ФИО",
   "Enter INN": "Введите ИНН",
   "According to your query,": "По вашему запросу найдено",
-  "inheritors": "{count, plural, =0 {No followers yet} =1 {наследодатель} other {наследодателя} }"
+  "inheritors": "{count, plural, =0 {No followers yet} =1 {наследодатель} other {наследодателя} }",
+  "Opened by a notary": "Открыто нотариусом"
 }

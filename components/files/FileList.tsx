@@ -3,20 +3,22 @@ import { useLocale, useTranslations } from "next-intl";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { useProfileStore } from "@/stores/profile";
-import { Box, IconButton, Input, Typography } from "@mui/material";
+import { Box, IconButton, Input, Typography, useMediaQuery } from "@mui/material";
 import { GridSortModel } from "@mui/x-data-grid";
 import UploadIcon from "@mui/icons-material/Upload";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Button from "../ui/Button";
-import { GridTable } from "../ui/GridTable";
-import Pagination from "../ui/Pagination";
+import Button from "@/components/ui/Button";
+import { GridTable } from "@/components/ui/GridTable";
+import Pagination from "@/components/ui/Pagination";
 
 function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onDelete: Function }) {
   const { data: downloadData, update: downloadUpdate } = useFetch<Response>("", "GET", {
     returnResponse: true,
   });
-  const { update: deleteUpdate } = useFetch<Response>("", "DELETE");
+  const { data: deletedData, update: deleteUpdate } = useFetch<Response>("", "POST", {
+    returnResponse: true,
+  });
 
   useEffectOnce(async () => {
     if (downloadData == null || downloadData.body == null || downloadData.blob == null) return;
@@ -41,13 +43,20 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
   };
 
   const handleDownloadClick = () => {
-    downloadUpdate(`/api/files/download/${row.id}`);
+    downloadUpdate("/api/files/download/" + row.id);
   };
 
-  const handleDeleteClick = async () => {
-    await deleteUpdate(`/api/files/delete/${row.id}`);
-    onDelete();
+  const handleDeleteClick = () => {
+    deleteUpdate("/api/files/delete/" + row.id, {
+      id: row.id,
+      version: row.version,
+    });
   };
+
+  useEffectOnce(() => {
+    if (deletedData == null || deletedData.body == null) return;
+    onDelete();
+  }, [deletedData]);
 
   return (
     <Box>
@@ -62,6 +71,7 @@ function GridTableActionsCell({ row, onDelete }: { row: Record<string, any>; onD
 }
 
 export default function FileList() {
+  const isMobileMedia = useMediaQuery("(max-width:800px)");
   const t = useTranslations();
   const locale = useLocale();
   const profile = useProfileStore((state) => state);
@@ -121,7 +131,7 @@ export default function FileList() {
   };
 
   return (
-    <Box height={{ xs: "600px", md: "700px" }}>
+    <Box>
       <Box display="flex" alignItems="center" justifyContent="space-between" marginBottom="20px">
         <Typography variant="h4" color="primary">
           {t("Files")}
@@ -133,51 +143,59 @@ export default function FileList() {
           </Button>
         </Box>
       </Box>
-
-      <GridTable
-        columns={[
-          {
-            field: "id",
-            headerName: "ID",
-            width: 70,
-          },
-          {
-            field: "fileName",
-            headerName: "Name",
-            width: 500,
-          },
-          {
-            field: "metaFile.createdOn",
-            headerName: "Upload date",
-            width: 200,
-            renderCell: ({ value }) => new Date(value).toLocaleDateString(locale),
-          },
-          {
-            field: "metaFile.sizeText",
-            headerName: "Size",
-            width: 100,
-            sortable: false,
-          },
-          {
-            field: "metaFile.fileType",
-            headerName: "Format",
-            width: 200,
-            sortable: false,
-          },
-          {
-            field: "Actions",
-            type: "actions",
-            headerName: "",
-            width: 100,
-            sortable: false,
-            renderCell: ({ row }) => <GridTableActionsCell row={row} onDelete={update} />,
-          },
-        ]}
-        rows={data?.data ?? []}
-        loading={loading}
-        sortingMode="server"
-        onSortModelChange={handleSortChange}
-      ></GridTable>
+      <Box sx={{ height: { xs: "760px", sm: "710px" } }}>
+        <GridTable
+          columns={[
+            {
+              field: "id",
+              headerName: "ID",
+              width: 70,
+            },
+            {
+              field: "fileName",
+              headerName: "Name",
+              width: 500,
+            },
+            {
+              field: "createdOn",
+              headerName: "Upload date",
+              width: 200,
+              renderCell: ({ value }) => new Date(value).toLocaleDateString(locale),
+            },
+            {
+              field: "sizeText",
+              headerName: "Size",
+              width: 100,
+              sortable: false,
+            },
+            {
+              field: "fileType",
+              headerName: "Format",
+              width: 200,
+              sortable: false,
+            },
+            {
+              field: "Actions",
+              headerName: "Actions",
+              width: 120,
+              sortable: false,
+              headerClassName: "pinnable",
+              type: isMobileMedia ? "actions" : "string",
+              cellClassName: isMobileMedia ? "actions-pinnable" : "actions-on-hover",
+              renderCell: ({ row }) => <GridTableActionsCell row={row} onDelete={update} />,
+            },
+          ]}
+          sx={{
+            height: "100%",
+          }}
+          rows={data?.data ?? []}
+          loading={loading}
+          sortingMode="server"
+          onSortModelChange={handleSortChange}
+          rowHeight={65}
+          autoHeight
+        ></GridTable>
+      </Box>
 
       <Pagination
         sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}

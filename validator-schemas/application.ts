@@ -24,36 +24,55 @@ export const applicationSchema = object()
     object: number()
       .integer()
       .transform((value) => (isNaN(value) ? null : value))
-      .nullable()
-      .test("nullable-required", "required", (v) => v != null),
+      .nullable(),
     objectType: number()
       .integer()
       .transform((value) => (isNaN(value) ? null : value))
-      .nullable()
-      .test("nullable-required", "required", (v) => v != null),
+      .nullable(),
     notarialAction: number()
       .integer()
       .transform((value) => (isNaN(value) ? null : value))
-      .nullable()
-      .test("nullable-required", "required", (v) => v != null),
+      .nullable(),
     typeNotarialAction: number()
       .integer()
       .transform((value) => (isNaN(value) ? null : value))
-      .nullable()
-      .test("nullable-required", "required", (v) => v != null),
+      .nullable(),
+    isToPrintLineSubTotal: boolean().nullable(),
     action: number()
       .integer()
       .transform((value) => (isNaN(value) ? null : value))
-      .nullable()
-      .test("nullable-required", "required", (v) => v != null),
+      .nullable(),
     product: object({
-      id: number()
-        .integer()
-        .transform((value) => (isNaN(value) ? null : value))
-        .nullable()
-        .test("nullable-required", "required", (v) => v != null),
-    }),
+      id: number().integer().positive(),
+      oneSideAction: boolean(),
+      idProductCancelled: boolean(),
+    })
+      .nullable()
+      .default(null)
+      .test("nullable-required", "required", (v) => v != null),
+
     requester: array().of(personSchema),
-    members: array().of(personSchema),
+    members: array().of(
+      personSchema.concat(
+        object({
+          tundukPassportSeries: string().transform((value) => (value == null ? "" : value)),
+          tundukPassportNumber: string()
+            .trim()
+            .matches(/^[0-9]*$/, "onlyNumbers"),
+          subjectRole: string(),
+        })
+      )
+    ),
+    openFields: boolean(),
+    selectTemplateFromMade: boolean(),
+    orderNumber: mixed().nullable(),
+    currency: object({
+      id: number().integer().positive().nullable(),
+      code: string().nullable(),
+      name: string().nullable(),
+    }).nullable(),
+    saleOrderRef: object({
+      id: number().integer().nullable(),
+    }).nullable(),
   })
   .concat(addressSchema.pick(["region", "district", "city"]));

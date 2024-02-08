@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { INotaryData, INotaryFilterData } from "@/models/notaries";
+import { INotaryFilterData } from "@/models/notaries";
+import { FetchResponseBody } from "@/hooks/useFetch";
 
 interface Criteria {
   value: any;
@@ -8,7 +9,7 @@ interface Criteria {
   operator: string;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<INotaryData | null>) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<FetchResponseBody | null>) {
   if (req.method !== "POST" && req.body == null) {
     return res.status(400).json(null);
   }
@@ -16,7 +17,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const pageSize = Number.isInteger(Number(req.body["pageSize"])) ? Number(req.body["pageSize"]) : 8;
   const page = Number.isInteger(Number(req.body["page"])) ? (Number(req.body["page"]) - 1) * pageSize : 0;
 
-  const radioValue = req.body["radioValue"];
   const searchValue = req.body["searchValue"];
   const filterData = req.body["filterData"];
   const sortBy = req.body["sortBy"];
@@ -31,11 +31,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         region: "address.region.id",
         workingDay: "workingDay.weekDayNumber",
         typeOfNotary: "typeOfNotary",
+        roundClock: "roundClock",
+        departure: "departure",
       };
 
       for (const field in fieldsMap) {
         const key = field as keyof typeof fieldsMap;
-        if (filterData[key] !== null) {
+        if (filterData[key] != null && filterData[key]) {
           criteria.push({
             fieldName: fieldsMap[key],
             operator: "=",
@@ -44,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         }
       }
 
-      if (filterData.workingDay !== null) {
+      if (filterData?.workingDay != null) {
         criteria.push({
           fieldName: "workingDay.weekDayNumber",
           operator: "in",
@@ -53,22 +55,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       }
     }
     return criteria;
-  };
-
-  const radioChecked = () => {
-    if (radioValue === "roundClock") {
-      return [
-        { fieldName: "roundClock", operator: "=", value: true },
-        { fieldName: "checkOut", operator: "=", value: false },
-      ];
-    } else if (radioValue === "checkOut") {
-      return [
-        { fieldName: "roundClock", operator: "=", value: false },
-        { fieldName: "checkOut", operator: "=", value: true },
-      ];
-    } else {
-      return [];
-    }
   };
 
   const response = await fetch(process.env.BACKEND_OPEN_API_URL + "/search/com.axelor.apps.base.db.Company", {
@@ -82,20 +68,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       sortBy: sortBy ?? [],
       fields: [
         "partner.simpleFullName",
+        "partner.fullName",
+        "licenseTermUntil",
         "partner.rating",
         "logo.fileName",
         "address.region",
         "address.district",
         "address.city",
+        "address.city.name",
+        "$t:address.city.name",
         "address.fullName",
         "latitude",
         "longitude",
         "name",
+        "roundClock",
+        "departure",
+        "partner.linkedUser.id",
       ],
       data: {
         operator: "and",
         criteria: [
-          { criteria: buildFilterCriteria(filterData).concat(radioChecked()), operator: "and" },
+          { criteria: buildFilterCriteria(filterData), operator: "and" },
           {
             fieldName: "name",
             operator: "like",

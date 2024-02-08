@@ -14,9 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      fields: ["requester"],
+      fields: ["requester", "members"],
       related: {
-        requester: ["user.id"],
+        requester: ["personalNumber"],
+        members: ["personalNumber"],
       },
     }),
   });

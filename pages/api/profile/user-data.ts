@@ -12,7 +12,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       Cookie: req.headers["server-cookie"]?.toString() ?? "",
     },
     body: JSON.stringify({
-      fields: ["email", "name", "partner.mobilePhone", "partner", "group", "code", "image", "roles", "activeCompany"],
+      fields: [
+        "email",
+        "name",
+        "partner.mobilePhone",
+        "partner",
+        "group",
+        "code",
+        "image",
+        "roles",
+        "activeCompany",
+        "activeCompany.typeOfNotary",
+        "activeCompany.statusOfNotary",
+        "partner.emailAddress",
+        "agreementPersonalData",
+        "showPersonalAgreement",
+      ],
       data: {
         criteria: [{ fieldName: "code", operator: "=", value: req.body.username }],
       },

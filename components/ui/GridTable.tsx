@@ -1,6 +1,15 @@
 import * as React from "react";
-import { DataGrid, GridRowsProp, GridColDef, DataGridProps, GridValidRowModel } from "@mui/x-data-grid";
-import { Box, LinearProgress, MenuItem, Typography, lighten } from "@mui/material";
+import {
+  DataGrid,
+  GridRowsProp,
+  GridColDef,
+  DataGridProps,
+  GridValidRowModel,
+  GridRenderCellParams,
+  GridTreeNodeWithRender,
+  GridCellClassNamePropType,
+} from "@mui/x-data-grid";
+import { Box, BoxProps, IconButton, LinearProgress, MenuItem, Typography, lighten } from "@mui/material";
 import Menu from "@mui/material/Menu";
 import Checkbox from "./Checkbox";
 import { useForm } from "react-hook-form";
@@ -14,10 +23,13 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Input from "./Input";
 import { GridStateColDef } from "@mui/x-data-grid/internals";
+import { debounce } from "@mui/material/utils";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 export type IGridColDefSimple = {
   filter?: {
     type: "simple";
+    disabled?: boolean;
   };
 } & GridColDef;
 
@@ -28,6 +40,7 @@ export type IGridColDefDictionary = {
     labelField: string;
     valueField: string;
     field: string | number;
+    disabled?: boolean;
   };
 } & GridColDef;
 
@@ -49,11 +62,20 @@ export interface IGridTableProps extends DataGridProps {
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
   cellMaxHeight?: string | number;
   headerCellMaxHeight?: string | number;
+  props?: {
+    wrapper?: BoxProps;
+  };
 }
 
 export interface IGridTableHeaderProps {
   rowParams: IGridRowParamsHeaderProps;
   onFilterSubmit?: (v: IFilterSubmitParams) => void;
+}
+
+export interface IGridTableActionsCellProps {
+  params: GridRenderCellParams<any, any, any, GridTreeNodeWithRender>;
+  column: IGridColDef;
+  pinnable?: boolean;
 }
 
 export const GridTable: React.FC<IGridTableProps> = ({
@@ -66,6 +88,9 @@ export const GridTable: React.FC<IGridTableProps> = ({
   ...rest
 }) => {
   const t = useTranslations();
+  const containerRef = React.useRef<HTMLDivElement | null>(null);
+  const [isScrolledRight, setIsScrolledRight] = React.useState(false);
+
   const rootStyles = {
     height: "100%",
     ".MuiDataGrid-cell": {
@@ -80,6 +105,11 @@ export const GridTable: React.FC<IGridTableProps> = ({
 
       "&:hover": {
         backgroundColor: lighten("#F6F6F6", 0.7),
+        ".actions-on-hover": {
+          opacity: 1,
+          right: 0,
+          pointerEvents: "initial",
+        },
       },
     },
     ".css-yrdy0g-MuiDataGrid-columnHeaderRow": {
@@ -107,14 +137,14 @@ export const GridTable: React.FC<IGridTableProps> = ({
       outline: "none",
     },
     ".MuiDataGrid-row:not(.MuiDataGrid-row--dynamicHeight)>.MuiDataGrid-cell": {
-      whiteSpace: "normal",
+      // whiteSpace: "normal",
       maxHeight: "100% !important",
       padding: "10px",
       ".MuiDataGrid-cellContent": {
-        overflow: "auto",
+        // overflow: "auto",
         display: "block",
         alignItems: "center",
-        overflowWrap: "break-word",
+        // overflowWrap: "break-word",
       },
     },
     ".MuiDataGrid-cell:focus-within": {
@@ -126,11 +156,28 @@ export const GridTable: React.FC<IGridTableProps> = ({
     ".MuiDataGrid-virtualScrollerContent": {
       margin: "5px 0px",
     },
+    ".actions-pinnable": {
+      position: "sticky",
+      left: "5px",
+      right: 0,
+    },
+    ".actions-on-hover": {
+      position: "sticky",
+      left: "5px",
+      right: "-50px",
+      backgroundColor: isScrolledRight ? "transparent" : lighten("#F6F6F6", 0.7),
+      minWidth: isScrolledRight ? "" : "160px !important",
+      transition: "all 0.3s ease",
+      display: "flex",
+      justifyContent: "flex-end",
+      opacity: isScrolledRight ? 1 : 0,
+      borderTopLeftRadius: "10px",
+      borderBottomLeftRadius: "10px",
+      pointerEvents: "none",
+    },
     border: "none",
     background: "#F6F6F6",
   };
-
-  const containerRef = React.useRef<HTMLDivElement | null>(null);
 
   const handleScrollLeft = () => {
     if (containerRef.current) {
@@ -148,10 +195,41 @@ export const GridTable: React.FC<IGridTableProps> = ({
     }
   };
 
+  const handleScroll = (event: any) => {
+    const { scrollWidth, scrollLeft, clientWidth } = event.target;
+    const isRightEnd = scrollWidth - clientWidth <= scrollLeft + 100;
+
+    const debaunceFunction = debounce(() => {
+      setIsScrolledRight(isRightEnd);
+    }, 100);
+    debaunceFunction();
+    return debaunceFunction;
+  };
+
+  React.useEffect(() => {
+    let debaunceFunction: { clear(): void } | null = null;
+    const container = containerRef.current;
+    const virtualScroller = containerRef.current?.querySelector(".MuiDataGrid-virtualScroller");
+
+    if (!container || !virtualScroller) return;
+
+    const { scrollWidth, clientWidth } = virtualScroller;
+    const isRightEnd = scrollWidth - clientWidth <= 100;
+
+    setIsScrolledRight(isRightEnd);
+
+    virtualScroller.addEventListener("scroll", (e) => (debaunceFunction = handleScroll(e)));
+
+    return () => {
+      if (debaunceFunction != null) debaunceFunction.clear();
+      virtualScroller.removeEventListener("scroll", handleScroll);
+    };
+  }, [containerRef.current]);
+
   const mergedStyles = { ...rootStyles, ...sx };
 
   return (
-    <Box height="100%" display="flex" flexDirection="column">
+    <Box height={"100%"} display="flex" flexDirection="column" {...(rest.props?.wrapper || {})}>
       <Box
         display={{ xs: "flex", md: "none" }}
         justifyContent="space-between"
@@ -181,12 +259,22 @@ export const GridTable: React.FC<IGridTableProps> = ({
       <DataGrid
         ref={containerRef}
         rows={rows}
-        columns={columns?.map((col) => ({
-          ...col,
-          renderHeader: (rowParams: IGridRowParamsHeaderProps) => {
-            return <GridTableHeader rowParams={rowParams} onFilterSubmit={onFilterSubmit} />;
-          },
-        }))}
+        columns={columns?.map((col) => {
+          if (col.type === "actions") {
+            return {
+              ...col,
+              renderCell: (params) => {
+                return <GridTableActionsCell params={params} column={col} pinnable={true} />;
+              },
+            };
+          }
+          return {
+            ...col,
+            renderHeader: (rowParams: IGridRowParamsHeaderProps) => {
+              return <GridTableHeader rowParams={rowParams} onFilterSubmit={onFilterSubmit} />;
+            },
+          };
+        })}
         localeText={{
           toolbarExport: t("Export"),
           toolbarExportCSV: t("Download as CSV"),
@@ -233,6 +321,7 @@ export const GridTable: React.FC<IGridTableProps> = ({
 
 export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, onFilterSubmit }) => {
   const type = rowParams.colDef.filter?.type;
+  const disabled = rowParams.colDef.filter?.disabled;
 
   let dictionaryList: Record<string, any>[] = [];
   let valueField: string = "";
@@ -250,6 +339,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
   const [formValues, setFormValues] = React.useState<Record<string, any> | null>(null);
   const [isClearDisabled, setIsClearDisabled] = React.useState<boolean>(false);
   const [submitFormValues, setSubmitFormValues] = React.useState<Record<string, any> | null>(null);
+  const [badgeCount, setBadgeCount] = React.useState<number>(0);
   const open = !!filterMenu;
 
   const {
@@ -292,6 +382,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
       setSubmitFormValues(null);
       setFilterMenu(null);
       onFilterSubmit && onFilterSubmit({ value: [], rowParams: rowParams });
+      setBadgeCount(0);
     }
   };
 
@@ -306,10 +397,13 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
       setFormValues(data);
       const keysWithTrueValues = Object.keys(data).filter((key) => data[key] === true);
       onFilterSubmit({ value: keysWithTrueValues, rowParams });
+      setBadgeCount(filterSelectionQuantity(data));
     }
 
     if (type === "simple" && onFilterSubmit) {
       onFilterSubmit({ value: data.input, rowParams });
+      if (!!data.input) setBadgeCount(1);
+      else setBadgeCount(0);
     }
 
     setFilterMenu(null);
@@ -342,7 +436,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
         <>
           <Box
             onClick={(e: any) => handleMenuOpen(e)}
-            color="success.main"
+            color={disabled ? "rgba(0, 0, 0, 0.3)" : "success.main"}
             height="fit-content"
             display="flex"
             sx={{
@@ -350,21 +444,21 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
                 opacity: "0.7",
               },
               cursor: "pointer",
+              pointerEvents: disabled ? "none" : "initial",
             }}
           >
-            {open || filterSelectionQuantity(submitFormValues) > 0 ? (
+            {open || badgeCount > 0 ? (
               <Badge
-                badgeContent={filterSelectionQuantity(submitFormValues)}
+                badgeContent={badgeCount}
                 sx={{
                   "& .MuiBadge-badge": {
-                    color: "success.main",
                     border: "1px solid",
                     background: "#fff",
                   },
                 }}
                 max={9}
               >
-                <FilterAltIcon color="success" />
+                <FilterAltIcon />
               </Badge>
             ) : (
               <FilterAltOutlinedIcon />
@@ -379,7 +473,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
           >
             <Box component="form" onSubmit={handleSubmit(onSubmit)} paddingTop="10px" minWidth={250}>
               {type === "simple" && (
-                <Box display="flex" justifyContent="center" mb="10px">
+                <Box display="flex" justifyContent="center" mb="10px" mx="10px">
                   <Input size="small" register={register} name="input" />
                 </Box>
               )}
@@ -388,7 +482,7 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
                 <Box
                   maxHeight={190}
                   overflow="auto"
-                  maxWidth={250}
+                  maxWidth={260}
                   sx={{
                     "::-webkit-scrollbar": { width: "4px" },
                     "::-webkit-scrollbar-thumb": {
@@ -457,6 +551,57 @@ export const GridTableHeader: React.FC<IGridTableHeaderProps> = ({ rowParams, on
           </Menu>
         </>
       )}
+    </Box>
+  );
+};
+
+export const GridTableActionsCell: React.FC<IGridTableActionsCellProps> = ({ params, column, ...rest }) => {
+  const [menu, setMenu] = React.useState<HTMLElement | null>(null);
+
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setMenu(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setMenu(null);
+  };
+
+  return (
+    <Box display="flex" width="100%">
+      <Box width="100%" display={rest.pinnable ? "flex" : "none"} justifyContent="flex-end">
+        <IconButton
+          onClick={(e: any) => handleMenuOpen(e)}
+          sx={{
+            bgcolor: !!menu ? "rgb(246,246,246)" : "rgb(227 227 227)",
+            "&:hover": { bgcolor: "rgb(246,246,246)" },
+          }}
+          color={!!menu ? "success" : "inherit"}
+        >
+          <MoreVertIcon />
+        </IconButton>
+        <Menu
+          slotProps={{
+            paper: {
+              style: {
+                padding: 0,
+                left: "50%",
+              },
+            },
+          }}
+          anchorEl={menu}
+          open={!!menu}
+          onClose={handleMenuClose}
+        >
+          <MenuItem sx={{ "&:hover": { bgcolor: "transparent" } }}>
+            {column?.renderCell && column.renderCell(params)}
+          </MenuItem>
+        </Menu>
+      </Box>
+
+      <Box display={!rest.pinnable ? "flex" : "none"} bgcolor="rgb(246,246,246)" borderRadius="10px">
+        {column?.renderCell && column.renderCell(params)}
+      </Box>
     </Box>
   );
 };

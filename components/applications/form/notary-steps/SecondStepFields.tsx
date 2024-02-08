@@ -1,19 +1,19 @@
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Controller, UseFormReturn } from "react-hook-form";
 import useFetch from "@/hooks/useFetch";
 import useEffectOnce from "@/hooks/useEffectOnce";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { useProfileStore } from "@/stores/profile";
-import { IProduct } from "@/models/product";
-import { Box, InputLabel } from "@mui/material";
+import { Box, InputLabel, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
-import Select from "@/components/ui/Select";
 import Hint from "@/components/ui/Hint";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import { criteriaFieldNames } from "@/pages/api/dictionaries/document-type";
+import Autocomplete from "@/components/ui/Autocomplete";
+import { useRouter } from "next/router";
 
 export interface IStepFieldsProps {
   form: UseFormReturn<IApplicationSchema>;
@@ -22,20 +22,32 @@ export interface IStepFieldsProps {
   handleStepNextClick?: Function;
 }
 
+const fields = ["product"] as const;
+
 export default function SecondStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
+  const router = useRouter();
   const profile = useProfileStore.getState();
   const t = useTranslations();
 
-  const { trigger, control, getValues, setValue, watch } = form;
+  const locale = useLocale();
+
+  const {
+    trigger,
+    control,
+    getValues,
+    setValue,
+    watch,
+    formState: { errors },
+  } = form;
 
   const productId = watch("product.id");
-
   const [loading, setLoading] = useState(false);
   const [selectedInput, setSelectedInput] = useState<"my" | "system" | null>(null);
 
   const { data: myDocuments, loading: myDocumentsLoading, update: getMyDocuments } = useFetch("", "POST");
   const { data: systemDocuments, loading: systemDocumentsLoading, update: getSystemDocuments } = useFetch("", "POST");
   const { update: applicationUpdate } = useFetch("", "PUT");
+  const { update: updateSearchedDocTree } = useFetch("", "POST");
 
   useEffectOnce(async () => {
     const myDocs = await getMyDocuments("/api/dictionaries/document-type", {
@@ -64,7 +76,16 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
   }, [productId, profile]);
 
   const triggerFields = async () => {
-    return await trigger(["product.id"]);
+    return await trigger(fields);
+  };
+
+  const focusToFieldOnError = () => {
+    for (let i = 0; i < fields.length; i++) {
+      if (errors != null && errors?.[fields[i]]) {
+        form.setFocus(fields[i]);
+        break;
+      }
+    }
   };
 
   const handlePrevClick = () => {
@@ -73,6 +94,7 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
 
   const handleNextClick = async (targetStep?: number) => {
     const validated = await triggerFields();
+    if (!validated) focusToFieldOnError();
 
     if (validated) {
       setLoading(true);
@@ -101,71 +123,124 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
     }
   };
 
-  const handleStepByStepClick = () => {
-    if (onNext != null) {
-      onNext({ step: undefined, isStepByStep: true });
-    }
-  };
-
   useEffectOnce(async () => {
+    const productIdQuery = Number(router.query?.productId);
+    if (productIdQuery != null && productId == null) setValue("product", { id: productIdQuery });
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
+
+  useEffectOnce(async () => {
+    if (productId == null) return;
+    const res = await updateSearchedDocTree(`/api/dictionaries/document-type/${productId}`);
+    const data = res?.data?.[0];
+    if (Object.values(data ?? {}).length < 1) return;
+    const value = data?.["typeNotarialAction"]?.id || null;
+    if (value != null) setValue("typeNotarialAction", value);
+  }, [productId]);
 
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <Box display="flex" justifyContent="space-between" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
-        <StepperContentStep step={2} title={t("Choose document from templates")} sx={{ flex: "1 1 100%" }} />
-        <Hint type="hint">{t("Notary form first step hint text")}</Hint>
+        <StepperContentStep step={2} title={t("Choose notarial action")} sx={{ flex: "1 1 100%" }} />
+        {/*<Hint type="hint">{t("Notary form first step hint text")}</Hint>*/}
       </Box>
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+      <Box display="flex" flexWrap={{ xs: "wrap", md: "nowrap" }} gap="50px" alignItems="end">
         <Controller
           control={control}
-          name="product.id"
+          name="product"
           defaultValue={null}
-          render={({ field, fieldState }) => {
-            return (
-              <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                <InputLabel>{t("Select document from system templates")}</InputLabel>
-                <Select
-                  labelField="name"
-                  valueField="id"
-                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
-                  disabled={selectedInput !== "system" && selectedInput !== null}
-                  data={systemDocuments?.status === 0 ? (systemDocuments?.data as IProduct[]) ?? [] : []}
-                  loading={systemDocumentsLoading}
-                  value={field.value == null ? "" : field.value}
-                  onBlur={field.onBlur}
-                  onChange={(...event: any[]) => {
-                    field.onChange(...event);
-                    trigger(field.name);
-                  }}
-                />
-              </Box>
-            );
-          }}
+          render={({ field, fieldState }) => (
+            <Box width="100%" display="flex" flexDirection="column" gap="10px">
+              <InputLabel sx={{ fontWeight: 600, whiteSpace: "normal" }}>
+                {t("Select a notarial act by name")}
+              </InputLabel>
+              <Autocomplete
+                sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
+                labelField={locale !== "en" ? "$t:name" : "name"}
+                type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
+                disabled={selectedInput !== "system" && selectedInput !== null}
+                options={systemDocuments?.status === 0 ? (systemDocuments?.data as Record<string, any>[]) ?? [] : []}
+                loading={systemDocumentsLoading}
+                value={
+                  field.value != null
+                    ? (systemDocuments?.data ?? []).find((item: Record<string, any>) => item.id == field.value?.id) ??
+                      null
+                    : null
+                }
+                onBlur={field.onBlur}
+                onChange={(event, value) => {
+                  field.onChange(
+                    value?.id != null
+                      ? {
+                          id: value.id,
+                          oneSideAction: value.hasOwnProperty("oneSideAction")
+                            ? typeof value.oneSideAction === "boolean"
+                              ? value.oneSideAction
+                              : false
+                            : false,
+                          isProductCancelled: value.hasOwnProperty("isProductCancelled")
+                            ? typeof value.isProductCancelled === "boolean"
+                              ? value.isProductCancelled
+                              : false
+                            : false,
+                        }
+                      : null
+                  );
+                  trigger(field.name);
+                }}
+                ref={field.ref}
+              />
+            </Box>
+          )}
         />
         <Controller
           control={control}
-          name="product.id"
+          name="product"
           defaultValue={null}
           render={({ field, fieldState }) => {
             return (
               <Box width="100%" display="flex" flexDirection="column" gap="10px">
-                <InputLabel>{t("Select document from my templates")}</InputLabel>
-                <Select
+                <InputLabel sx={{ fontWeight: 600, whiteSpace: "normal" }}>
+                  {t("Select document from my templates")}
+                </InputLabel>
+                <Autocomplete
+                  sx={{ ".MuiInputBase-root": { fontWeight: 500 } }}
                   labelField="name"
-                  valueField="id"
-                  selectType={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  type={fieldState.error?.message ? "error" : field.value ? "success" : "secondary"}
+                  helperText={fieldState.error?.message ? t(fieldState.error?.message) : ""}
                   disabled={selectedInput !== "my" && selectedInput !== null}
-                  data={myDocuments?.status === 0 ? (myDocuments?.data as IProduct[]) ?? [] : []}
+                  options={myDocuments?.status === 0 ? (myDocuments?.data as Record<string, any>[]) ?? [] : []}
                   loading={myDocumentsLoading}
-                  value={field.value == null ? "" : field.value}
+                  value={
+                    field.value != null
+                      ? (myDocuments?.data ?? []).find((item: Record<string, any>) => item.id == field.value?.id) ??
+                        null
+                      : null
+                  }
                   onBlur={field.onBlur}
-                  onChange={(...event: any[]) => {
-                    field.onChange(...event);
+                  onChange={(event, value) => {
+                    field.onChange(
+                      value?.id != null
+                        ? {
+                            id: value.id,
+                            oneSideAction: value.hasOwnProperty("oneSideAction")
+                              ? typeof value.oneSideAction === "boolean"
+                                ? value.oneSideAction
+                                : false
+                              : false,
+                            isProductCancelled: value.hasOwnProperty("isProductCancelled")
+                              ? typeof value.isProductCancelled === "boolean"
+                                ? value.isProductCancelled
+                                : false
+                              : false,
+                          }
+                        : null
+                    );
                     trigger(field.name);
                   }}
+                  ref={field.ref}
                 />
               </Box>
             );
@@ -185,18 +260,11 @@ export default function SecondStepFields({ form, onPrev, onNext, handleStepNextC
             onClick={() => handleNextClick()}
             endIcon={<ArrowForwardIcon />}
             sx={{ width: "auto" }}
+            disabled={!!errors?.product?.message}
           >
             {t("Next")}
           </Button>
         )}
-        <Button
-          onClick={handleStepByStepClick}
-          endIcon={<ArrowForwardIcon />}
-          buttonType="secondary"
-          sx={{ width: "auto" }}
-        >
-          {t("Choose step by step")}
-        </Button>
       </Box>
     </Box>
   );

@@ -6,6 +6,8 @@ import {
   AutocompleteRenderInputParams,
   FormHelperText,
   Box,
+  SxProps,
+  Theme,
 } from "@mui/material";
 
 enum types {
@@ -21,12 +23,31 @@ export interface IAutocompleteProps<T = any>
   labelField?: string;
   helperText?: string;
   type?: keyof typeof types;
+  textFieldPlaceholder?: string;
+  noOptionsText?: string;
 }
 
 export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocomplete(
-  { type = "secondary", labelField = "label", helperText, renderInput, options, ...rest }: IAutocompleteProps,
+  {
+    type = "secondary",
+    labelField = "label",
+    helperText,
+    renderInput,
+    textFieldPlaceholder,
+    options,
+    noOptionsText = "",
+    sx,
+    ...rest
+  }: IAutocompleteProps,
   ref
 ) {
+  const placeholderStyles = {
+    "& input::placeholder": {
+      color: "#000",
+      fontWeight: 500,
+    },
+  };
+
   const styles = {
     color: "text.primary",
     width: "100%",
@@ -42,18 +63,24 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
       borderColor: types[type],
     },
     "&:hover .MuiOutlinedInput-notchedOutline": {
-      borderColor: types[type],
+      borderColor: rest.disabled ? "none" : types[type],
     },
   };
 
-  const combineStyles = { ...styles, ...rest.sx };
+  const combineStyles = { ...styles, ...sx };
 
   const defaultRenderInput =
     renderInput != null
       ? renderInput
       : (params: AutocompleteRenderInputParams) => (
           <Box>
-            <TextField {...params} error={type === "error"} />
+            <TextField
+              sx={placeholderStyles}
+              {...params}
+              placeholder={textFieldPlaceholder}
+              error={type === "error"}
+              inputRef={ref}
+            />
             {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
           </Box>
         );
@@ -61,9 +88,9 @@ export default forwardRef<HTMLDivElement, IAutocompleteProps>(function Autocompl
   return (
     <MuiAutocomplete
       options={options ?? []}
+      noOptionsText={noOptionsText}
       getOptionLabel={(option) => option[labelField]}
       sx={combineStyles}
-      ref={ref}
       {...rest}
       renderInput={defaultRenderInput}
     />

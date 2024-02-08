@@ -9,7 +9,6 @@
   "Document type": "Document type",
   "Object type": "Object type",
   "Object": "Объект",
-  "Actions": "Actions",
   "In my templates": "In my templates",
   "New application": "New application",
   "Movable property": "Movable property",
@@ -27,5 +26,9 @@
   "Residential building": "Residential building",
   "Select action": "Select action",
   "Create new template": "Create new template",
-  "Hand templates": "Hand templates"
+  "Hand templates": "Hand templates",
+  "Purpose of action": "Purpose of action",
+  "To my templates": "Add to \"My templates\"",
+  "Do you really want to add to the My Templates section?": "Do you really want to add to the \"My templates\" section?",
+  "Enter a template name": "Enter a template name"
 }

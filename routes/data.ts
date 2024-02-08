@@ -13,7 +13,6 @@ export interface IRoute extends Omit<IChildRoute, "type"> {
 }
 
 export const isRoutesIncludesPath = (routeList: IRoute[], path: string): boolean => {
-  if (path.length <= 1) return false;
   return routeList.filter((r) => r.link.includes(path) || (r.link.length > 1 && path.includes(r.link))).length > 0;
 };
 

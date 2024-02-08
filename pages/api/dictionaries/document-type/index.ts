@@ -3,11 +3,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 export enum criteriaFieldNames {
   isSystem = "isSystem",
   createdBy = "createdBy.id",
-  object = "notaryObject",
-  objectType = "notaryObjectType",
-  notarialAction = "notaryAction",
-  typeNotarialAction = "notaryActionType",
-  action = "notaryRequestAction",
+  object = "object.id",
+  objectType = "objectType.id",
+  notarialAction = "notarialAction.id",
+  typeNotarialAction = "typeNotarialAction.id",
+  action = "notaryAction.id",
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const formValues = req.body?.["formValues"];
-  const criteria: Record<string, string | number>[] = [];
+  const criteria: Record<string, string | number | boolean>[] = [];
 
   if (formValues != null) {
     for (let key in criteriaFieldNames) {
@@ -30,6 +30,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         value: value ? value : null,
       });
     }
+  } else if (formValues == null) {
+    criteria.push({
+      fieldName: "isSystem",
+      operator: "=",
+      value: true,
+    });
   }
 
   const response = await fetch(process.env.BACKEND_API_URL + "/ws/rest/com.axelor.apps.base.db.Product/search", {
@@ -40,8 +46,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     },
     body: JSON.stringify({
       offset: 0,
-      limit: 100,
-      fields: ["name", "fullName", ...Object.values(criteriaFieldNames)],
+      limit: 1000,
+      fields: [
+        "name",
+        "fullName",
+        "$t:name",
+        "$t:fullName",
+        "oneSideAction",
+        "isProductCancelled",
+        ...Object.values(criteriaFieldNames),
+      ],
       translate: true,
       data: {
         operator: "and",

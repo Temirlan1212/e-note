@@ -9,5 +9,6 @@
   "Enter your full name": "Аты-жөнү",
   "Enter INN": "ИННди киргизүү",
   "According to your query,": "Сиздин сурооңуз боюнча",
-  "inheritors": "{count, plural, =0 {No followers yet} =1 {мурас калтыруучу табылды} other {мурас калтыруучу табылды} }"
+  "inheritors": "{count, plural, =0 {No followers yet} =1 {мурас калтыруучу табылды} other {мурас калтыруучу табылды} }",
+  "Opened by a notary": "Ачкан нотариус"
 }

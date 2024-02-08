@@ -8,29 +8,40 @@ import { useTheme } from "@mui/material/styles";
 
 import useFetch from "@/hooks/useFetch";
 import { IApplication } from "@/models/application";
+import { useRouter } from "next/router";
+import useEffectOnce from "@/hooks/useEffectOnce";
+import { INotarialAction } from "@/models/notarial-action";
+import { IPartner } from "@/models/user";
 
 interface IDocumentReadProps {
   data: IApplication;
   loading: boolean;
 }
 
+const capitalize = (str: string) => str?.[0].toUpperCase() + str?.slice(1);
+
 const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
   const theme = useTheme();
-  const locale = useLocale();
+  const { locale } = useRouter();
   const t = useTranslations();
 
+  const { data: notarialActionStatus, update } = useFetch("", "GET");
   const { data: statusData, loading: statusDataLoading } = useFetch(
-    "/api/check-document/dictionaries/application-status",
-    "GET"
+    "/api/check-document/dictionaries/reliability-status",
+    "POST"
   );
   const { data: actionTypeData, loading: actionTypeDataLoading } = useFetch(
     "/api/check-document/dictionaries/action-type",
-    "GET"
+    "POST"
   );
   const { data: signatureStatusData, loading: signatureStatusDataLoading } = useFetch(
     "/api/check-document/dictionaries/notary-signature-status",
-    "GET"
+    "POST"
   );
+
+  useEffectOnce(() => {
+    data?.typeNotarialAction && update("/api/dictionaries/notarial-action/status/" + data?.typeNotarialAction);
+  }, [data]);
 
   const translatedStatusTitle = (data: Record<string, any>[], value?: number) => {
     const matchedStatus = data?.find((item) => item.value == value);
@@ -38,18 +49,60 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
     return !!translatedTitle ? translatedTitle : matchedStatus?.["title" as keyof IActionType] ?? "";
   };
 
+  const getAddressFullName = (member: IPartner) => {
+    const { mainAddress } = member || {};
+    const { region, district, city, addressL4, addressL3, addressL2 } = mainAddress || {};
+
+    const key = locale !== "en" ? "$t:name" : "name";
+    const fallbackKey = locale !== "en" ? "name" : "$t:name";
+    const formatAddressPart = (part: any) => part?.[key] || part?.[fallbackKey] || "";
+
+    const formattedRegion = formatAddressPart(region);
+    const formattedDistrict = formatAddressPart(district);
+    const formattedCity = formatAddressPart(city);
+
+    const addressParts = [
+      [formattedRegion, formattedDistrict, formattedCity].filter(Boolean).join(", "),
+      [addressL4, addressL3, addressL2].filter(Boolean).join(" "),
+    ];
+
+    return addressParts.filter(Boolean).join(", ");
+  };
+
+  const removeWords = (text: string | null, stopwords: string[]) => {
+    if (text) {
+      const words = text.split(" ");
+      const filteredWords = words.filter(
+        (word) => !stopwords.some((sw) => word.toLowerCase().includes(sw.toLowerCase()))
+      );
+      return filteredWords.join(" ");
+    }
+  };
+
   const titles = [
-    { title: "Name", value: data?.product?.fullName },
-    { title: "Type of notarial action", value: translatedStatusTitle(actionTypeData?.data, data?.typeNotarialAction) },
     { title: "Status", value: translatedStatusTitle(statusData?.data, data?.statusSelect) },
     { title: "Signature status", value: translatedStatusTitle(signatureStatusData?.data, data?.notarySignatureStatus) },
     {
       title: "Date of action",
-      value: data?.creationDate ? format(new Date(data?.creationDate!), "dd.MM.yyyy HH:mm:ss") : "",
+      value: data?.createdOn ? format(new Date(data?.createdOn!), "dd.MM.yyyy HH:mm:ss") : "",
     },
-    { title: "Full name of the notary", value: data?.company.name },
-    { title: "Unique registry number", value: data?.notaryUniqNumber },
+    { title: "Full name of the notary", value: data?.company?.partner?.fullName },
+    {
+      title: "Date of signing",
+      value: data?.notaryDocumentSignDate ? format(new Date(data?.notaryDocumentSignDate), "dd.MM.yyyy HH:mm:ss") : "",
+    },
+    { title: "Unique registry number", value: data?.notaryUniqNumber ?? t("not signed") },
   ];
+
+  if (data?.notaryCancelledDate) {
+    titles.push(
+      { title: "Cancel reason str", value: data?.cancelReasonStr },
+      {
+        title: "Cancel date",
+        value: format(new Date(data?.notaryCancelledDate!), "dd.MM.yyyy HH:mm:ss"),
+      }
+    );
+  }
 
   const members = data?.requester?.concat(data.members!);
 
@@ -105,9 +158,10 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
                       fontSize: "14px",
                       fontWeight: "500",
                       color: "#687C9B",
+                      wordBreak: "break-all",
                     }}
                   >
-                    {el.value}
+                    {el.value != null && el.value !== "" ? el.value : t("absent")}
                   </Typography>
                 </ListItem>
               );
@@ -161,16 +215,7 @@ const DocumentRead: FC<IDocumentReadProps> = ({ data, loading }) => {
                         color: "#687C9B",
                       }}
                     >
-                      {member.fullName}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: "14px",
-                        fontWeight: "500",
-                        color: "#687C9B",
-                      }}
-                    >
-                      {member.mainAddress.fullName}
+                      {member?.lastName} {member?.firstName} {member?.middleName}
                     </Typography>
                   </Box>
                 ))}

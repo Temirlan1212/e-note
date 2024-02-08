@@ -9,5 +9,6 @@
   "Enter your full name": "Enter your full name",
   "Enter INN": "Enter INN",
   "According to your query,": "According to your query,",
-  "inheritors": "{count, plural, =0 {No followers yet} =1 {inheritor was found} other {inheritors were found} }"
+  "inheritors": "{count, plural, =0 {No followers yet} =1 {inheritor was found} other {inheritors were found} }",
+  "Opened by a notary": "Opened by a notary"
 }

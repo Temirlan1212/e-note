@@ -1,5 +1,6 @@
 import React, { forwardRef } from "react";
 import {
+  Box,
   FormControl,
   FormHelperText,
   LinearProgress,
@@ -18,7 +19,7 @@ enum types {
   secondary = "secondary.main",
 }
 
-interface ISelectProps extends SelectProps {
+export interface ISelectProps extends SelectProps {
   data: Record<string, any>[];
   labelField?: string;
   valueField?: string;
@@ -43,6 +44,7 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
     helperText,
     loading = false,
     boxSx,
+    sx,
     ...props
   },
   ref
@@ -67,20 +69,27 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
     borderRadius: 0,
   };
 
-  const combineStyles = { ...props.sx, ...inputStyles };
+  const combineStyles = { ...inputStyles, ...sx };
   return (
-    <FormControl sx={boxSx} error={selectType === "error"} ref={ref}>
+    <FormControl sx={boxSx} error={selectType === "error"}>
       <MUISelect
         sx={combineStyles}
         {...(register && name && register(name))}
         {...props}
         defaultValue={defaultValue ?? ""}
-        {...props}
+        displayEmpty
+        renderValue={(value) => {
+          const item = data.find((item) => item?.[valueField] === value);
+          if (value === "") return <Box color="#B4B9C1">{props?.placeholder ? props.placeholder : "----"}</Box>;
+          return item?.[labelField] != null ? item[labelField] : "";
+        }}
+        inputRef={ref}
       >
         {loading && <LinearProgress color={selectType === "secondary" ? "secondary" : "success"} />}
         <MenuItem
           value=""
           sx={{
+            color: "#B4B9C1",
             "&.Mui-selected": {
               backgroundColor: "transparent",
               "&:hover": {
@@ -89,11 +98,12 @@ const Select: React.ForwardRefRenderFunction<HTMLDivElement, ISelectProps> = (
             },
           }}
         >
-          ---
+          <em>{props?.placeholder ? props.placeholder : "----"}</em>
         </MenuItem>
         {data?.map((item) => (
           <MenuItem
             sx={{
+              ...sx,
               "&.Mui-selected": {
                 backgroundColor: "#EFEFEF",
                 "&:hover": {

@@ -1,14 +1,14 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
 import useEffectOnce from "@/hooks/useEffectOnce";
-import useFetch from "@/hooks/useFetch";
+import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { format } from "date-fns";
 import { IApplicationSchema } from "@/validator-schemas/application";
 import { useProfileStore } from "@/stores/profile";
 import { Alert, Box, Collapse, Typography } from "@mui/material";
 import Button from "@/components/ui/Button";
-import Tabs from "@/components/ui/Tabs";
+import Tabs, { ITabsRef } from "@/components/ui/Tabs";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import AddIcon from "@mui/icons-material/Add";
@@ -19,6 +19,10 @@ import Contact from "@/components/fields/Contact";
 import PersonalData from "@/components/fields/PersonalData";
 import StepperContentStep from "@/components/ui/StepperContentStep";
 import AttachedFiles, { IAttachedFilesMethodsProps } from "@/components/fields/AttachedFiles";
+import { IPersonSchema } from "@/validator-schemas/person";
+import ExpandingFields from "@/components/fields/ExpandingFields";
+import { useRouter } from "next/router";
+import { useCheckIsPersonAlive } from "@/hooks/useCheckIsPersonAlive";
 
 enum tundukFieldNames {
   name = "firstName",
@@ -31,7 +35,7 @@ interface IBaseEntityFields {
 }
 
 export interface ITabListItem {
-  getElement: (index: number) => JSX.Element;
+  getElement: (index: number, loading?: boolean, isTundukFieldsOpen?: boolean, expand?: boolean) => JSX.Element;
 }
 
 export interface IStepFieldsProps {
@@ -44,7 +48,10 @@ export interface IStepFieldsProps {
 export default function FirstStepFields({ form, onPrev, onNext, handleStepNextClick }: IStepFieldsProps) {
   const userData = useProfileStore((state) => state.userData);
   const t = useTranslations();
+  const router = useRouter();
   const attachedFilesRef = useRef<IAttachedFilesMethodsProps>(null);
+  const tabsRef = useRef<ITabsRef>(null);
+  const { checkWithFormBind: checkIsPersonAlive, loading: isPersonAliveLoading } = useCheckIsPersonAlive();
 
   const {
     control,
@@ -52,6 +59,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     getValues,
     setValue,
     watch,
+    resetField,
     formState: { errors },
   } = form;
 
@@ -60,58 +68,195 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     name: "requester",
   });
 
+  const {
+    data: licenseInfoData,
+    update: getLicenseInfo,
+    loading: licenseInfoLoading,
+  } = useFetch<FetchResponseBody | null>("", "POST");
+
+  useEffectOnce(async () => {
+    const isNotary = userData?.group?.name === "Notary";
+    const isPrivateNotary = userData?.["activeCompany.typeOfNotary"] === "private";
+    const isStateNotary = userData?.["activeCompany.typeOfNotary"] === "state";
+    const isActiveNotary = userData?.["activeCompany.statusOfNotary"] === "active";
+
+    if (isNotary) {
+      if (isPrivateNotary) {
+        const license = await handleCheckLicenseDate();
+        if (!license || !isActiveNotary) {
+          router.push("/applications");
+        }
+      } else if (isStateNotary && !isActiveNotary) {
+        router.push("/applications");
+      }
+    } else {
+      router.push("/applications");
+    }
+  });
+
+  const handleCheckLicenseDate = async () => {
+    const res = await getLicenseInfo(userData?.id != null ? "/api/applications/license-info/" + userData?.id : "");
+
+    const licenseTermUntil = new Date(res?.data?.[0]?.activeCompany?.licenseTermUntil);
+    const currentDate = new Date();
+
+    return licenseTermUntil > currentDate;
+  };
+
   const [loading, setLoading] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [expandAdditionalFields, setExpandAdditionalFields] = useState(false);
   const [tabsErrorsCounts, setTabsErrorsCounts] = useState<Record<number, number>>({});
   const [items, setItems] = useState<ITabListItem[]>([
     {
-      getElement(index: number) {
+      getElement(index: number, loading?: boolean, isTundukFieldsOpen?: boolean, expand?: boolean) {
         const partnerType = watch(`requester.${index}.partnerTypeSelect`);
+        const isForeigner = watch(`requester.${index}.foreigner`);
 
         return (
           <Box display="flex" gap="20px" flexDirection="column">
             <Typography variant="h5">{t("Personal data")}</Typography>
-            <PersonalData form={form} names={getPersonalDataNames(index)} onPinCheck={() => handlePinCheck(index)} />
+            <PersonalData
+              form={form}
+              loading={loading}
+              names={{
+                ...getPersonalDataNames(index),
+                ...getTundukParamsFields(index),
+              }}
+              disableFields={isTundukFieldsOpen}
+              isTundukRequested={watch(`requester.${index}.disabled`)}
+              fields={{
+                subjectRole: true,
+              }}
+              onPinCheck={() => handlePinCheck(index)}
+              onPinReset={() => handlePinReset(index)}
+              isRequester={true}
+            />
+            <ExpandingFields title="Additional information" permanentExpand={expand}>
+              <Box display="flex" gap="20px" flexDirection="column">
+                {partnerType != 1 && (
+                  <>
+                    <Typography variant="h5">{t("Identity document")}</Typography>
+                    <IdentityDocument
+                      disableFields={isTundukFieldsOpen}
+                      form={form}
+                      fields={{
+                        maritalStatus: true,
+                        nationality: true,
+                      }}
+                      names={getIdentityDocumentNames(index)}
+                    />
+                  </>
+                )}
 
-            {partnerType != 1 && (
-              <>
-                <Typography variant="h5">{t("Identity document")}</Typography>
-                <IdentityDocument form={form} names={getIdentityDocumentNames(index)} />
-              </>
-            )}
+                <Typography variant="h5">
+                  {partnerType == 1 || isForeigner ? t("Address") : t("Place of residence")}
+                </Typography>
+                <Address
+                  form={form}
+                  isForeigner={isForeigner}
+                  names={getAddressNames(index)}
+                  disableFields={isTundukFieldsOpen}
+                  sx={{
+                    labelsSx: { fontWeight: 600 },
+                    inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                  }}
+                />
 
-            <Typography variant="h5">{t("Place of residence")}</Typography>
-            <Address form={form} names={getAddressNames(index)} />
+                {partnerType != 1 && !isForeigner && (
+                  <>
+                    <Box display="flex" justifyContent="space-between" flexWrap="wrap" gap="10px">
+                      <Typography variant="h5">{t("Actual place of residence")}</Typography>
+                      <Button
+                        sx={{ width: "fit-content" }}
+                        onClick={() => {
+                          Object.entries(getAddressNames(index) ?? {})?.map(([key, name]) => {
+                            setValue((getActualAddressNames(index) as any)[key], getValues(name as any));
+                          });
+                        }}
+                      >
+                        {t("Copy the place of residence")}
+                      </Button>
+                    </Box>
 
-            {partnerType != 1 && (
-              <>
-                <Typography variant="h5">{t("Actual place of residence")}</Typography>
-                <Address form={form} names={getActualAddressNames(index)} />
-              </>
-            )}
+                    <Address
+                      form={form}
+                      names={getActualAddressNames(index)}
+                      sx={{
+                        labelsSx: { fontWeight: 600 },
+                        inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                      }}
+                    />
+                  </>
+                )}
 
-            <Typography variant="h5">{t("Contacts")}</Typography>
-            <Contact form={form} names={getContactNames(index)} />
+                <Typography variant="h5">{t("Contacts")}</Typography>
+                <Contact
+                  form={form}
+                  names={getContactNames(index)}
+                  sx={{
+                    labelsSx: { fontWeight: 600 },
+                    inputSx: { ".MuiInputBase-root": { fontWeight: 500 } },
+                  }}
+                />
 
-            <Typography variant="h5">{t("Files to upload")}</Typography>
+                <Typography variant="h5">{t("Files to upload")}</Typography>
 
-            <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={index} />
+                <AttachedFiles form={form} ref={attachedFilesRef} name="requester" index={index} />
+              </Box>
+            </ExpandingFields>
           </Box>
         );
       },
     },
   ]);
 
+  const { update: partnerUpdate } = useFetch("", "PUT");
   const { update: applicationCreate } = useFetch("", "POST");
   const { update: applicationUpdate } = useFetch("", "PUT");
   const { update: applicationFetch } = useFetch("", "POST");
-  const { update: tundukPersonalDataFetch } = useFetch("", "GET");
+  const {
+    data: tundukData,
+    update: tundukPersonalDataFetch,
+    loading: tundukPersonalDataLoading,
+  } = useFetch("", "POST");
+
+  const isEditableCopy = watch("isToPrintLineSubTotal") as boolean;
+  const isFieldsOpen = watch("openFields") as boolean;
+
+  useEffectOnce(async () => {
+    const requesters = getValues("requester");
+
+    const updateSubjectRole = (requesterIndex: number) => {
+      const subjectRole = getValues(`requester.${requesterIndex}.subjectRole`);
+      if (subjectRole === "") {
+        setValue(`requester.${requesterIndex}.subjectRole`, "member");
+      }
+    };
+
+    for (let i = 0; i < (requesters?.length as number) ?? 0; i++) {
+      updateSubjectRole(i);
+    }
+
+    const lastIndex = (requesters?.length as number) - 1;
+    if (lastIndex >= 0) {
+      await tabsRef.current?.handleTabChange(lastIndex);
+    }
+  }, [items]);
+
+  const getTundukParamsFields = (index: number) =>
+    ({
+      tundukDocumentSeries: `requester.${index}.passportSeries`,
+      tundukDocumentNumber: `requester.${index}.passportNumber`,
+    }) as const;
 
   const getPersonalDataNames = (index: number) => ({
     type: `requester.${index}.partnerTypeSelect`,
     foreigner: `requester.${index}.foreigner`,
+    picture: `requester.${index}.picture`,
     lastName: `requester.${index}.lastName`,
-    firstName: `requester.${index}.name`,
+    firstName: `requester.${index}.firstName`,
+    name: `requester.${index}.name`,
     middleName: `requester.${index}.middleName`,
     pin: `requester.${index}.personalNumber`,
     birthDate: `requester.${index}.birthDate`,
@@ -125,6 +270,9 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     notaryLegalParticipantsQty: `requester.${index}.notaryLegalParticipantsQty`,
     notaryTotalParticipantsQty: `requester.${index}.notaryTotalParticipantsQty`,
     notaryDateOfOrder: `requester.${index}.notaryDateOfOrder`,
+    nationality: `requester.${index}.nationality`,
+    maritalStatus: `requester.${index}.maritalStatus`,
+    subjectRole: `requester.${index}.subjectRole`,
   });
 
   const getIdentityDocumentNames = (index: number) => ({
@@ -133,7 +281,15 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     documentNumber: `requester.${index}.passportNumber`,
     organType: `requester.${index}.authority`,
     organNumber: `requester.${index}.authorityNumber`,
+    foreigner: `requester.${index}.foreigner`,
+    birthDate: `requester.${index}.birthDate`,
+    citizenship: `requester.${index}.citizenship`,
+    nationality: `requester.${index}.nationality`,
+    maritalStatus: `requester.${index}.maritalStatus`,
     issueDate: `requester.${index}.dateOfIssue`,
+    familyStatus: `requester.${index}.familyStatus`,
+    passportStatus: `requester.${index}.passportStatus`,
+    subjectRole: `requester.${index}.subjectRole`,
   });
 
   const getAddressNames = (index: number) => ({
@@ -143,6 +299,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     street: `requester.${index}.mainAddress.addressL4`,
     house: `requester.${index}.mainAddress.addressL3`,
     apartment: `requester.${index}.mainAddress.addressL2`,
+    foreignAddress: `requester.${index}.foreignAddress`,
   });
 
   const getActualAddressNames = (index: number) => ({
@@ -205,21 +362,60 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     if (onPrev != null) onPrev();
   };
 
+  const focusToFieldOnError = async () => {
+    const entity = "requester" as const;
+    if (errors != null && Array.isArray(errors?.[entity])) {
+      for (var i = 0; i < errors[entity].length; i++) {
+        const name = Object.keys(errors[entity][i] ?? {})[0];
+        if (!!name) {
+          await tabsRef.current?.handleTabChange(i);
+          form.setFocus(`${entity}.${i}.${name}` as any);
+          break;
+        }
+      }
+    }
+  };
+
   const handleNextClick = async (targetStep?: number) => {
+    const values = getValues("requester");
+    let pinValues: Record<string, any> = {};
+    values?.map((item, index) => (pinValues[`requester.${index}.personalNumber`] = item?.personalNumber));
+    const isAlive = await checkIsPersonAlive({
+      onError: (name) => form.setError(name as any, { message: "The person not alive on this PIN" }),
+      values: pinValues,
+    });
+
+    if (!isAlive) return focusToFieldOnError();
     const validated = await triggerFields();
+    if (!validated) focusToFieldOnError();
 
     if (validated) {
       setLoading(true);
-
+      const saleOrderRef = Number(router.query?.saleOrderRef);
+      if (!!saleOrderRef && !isNaN(saleOrderRef)) setValue("saleOrderRef", { id: saleOrderRef });
       const values = getValues();
+      let newRequesters: IPersonSchema[] = [];
+      const requesters = values.requester?.map((requester: any) => {
+        return { ...requester, picture: null };
+      });
+
+      if (isEditableCopy && requesters) {
+        newRequesters = await Promise.all(
+          requesters.map(async (value) => {
+            const { id, version, emailAddress, ...rest } = value;
+            return await partnerUpdate("/api/user/partners/create", rest).then((res) => res?.data?.[0]);
+          })
+        );
+      }
       const data: Partial<IApplicationSchema> & { creationDate: string } = {
         id: values.id,
         version: values.version,
         creationDate: format(new Date(), "yyyy-MM-dd"),
         company: { id: userData?.activeCompany?.id },
-        requester: values.requester,
+        requester: newRequesters.length > 0 ? newRequesters : requesters,
         statusSelect: 2,
-        notarySignatureStatus: 2,
+        notarySignatureStatus: !!values?.notarySignatureStatus ? undefined : 2,
+        saleOrderRef: !!saleOrderRef ? { id: saleOrderRef } : null,
       };
 
       let result = null;
@@ -315,78 +511,122 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     });
   };
 
+  const resetFields = (index: number, options?: { skip?: (keyof IPersonSchema)[] }) => {
+    const allFields = {
+      ...getPersonalDataNames(index),
+      ...getIdentityDocumentNames(index),
+      ...getAddressNames(index),
+      ...getTundukParamsFields(index),
+    };
+
+    for (const key in allFields) {
+      const name = (allFields as Record<string, any>)?.[key];
+      const value = getValues(name as any);
+      const isBoolean = typeof value === "boolean";
+      const isString = typeof value === "string";
+      const fieldPath = name.split(".");
+      const fieldLastItem = fieldPath[fieldPath.length - 1];
+
+      if (options?.skip?.includes(fieldLastItem)) continue;
+
+      if (isBoolean) {
+        resetField(name as any, { defaultValue: false });
+      } else if (
+        fieldLastItem === "notaryDateOfOrder" ||
+        fieldLastItem === "dateOfIssue" ||
+        fieldLastItem === "birthDate" ||
+        fieldLastItem === "notaryOKPONumber" ||
+        !isString
+      ) {
+        resetField(name as any, { defaultValue: null });
+      } else if (isString) {
+        resetField(name as any, { defaultValue: "" });
+      }
+    }
+  };
+
+  const handlePinReset = async (index: number) => {
+    setValue(`requester.${index}.disabled`, false);
+    resetFields(index, { skip: ["partnerTypeSelect", "subjectRole"] });
+  };
+
   const handlePinCheck = async (index: number) => {
+    const typeName: any = getPersonalDataNames(index).type;
+    const isJuridicalPerson = watch(typeName) == 1;
+
     const values = getValues();
     const entity = "requester";
 
-    setValue(`${entity}.${index}.id`, null);
-    setValue(`${entity}.${index}.version`, null);
-    setValue(`${entity}.${index}.mainAddress.id`, null);
-    setValue(`${entity}.${index}.mainAddress.version`, null);
-    setValue(`${entity}.${index}.actualResidenceAddress.id`, null);
-    setValue(`${entity}.${index}.actualResidenceAddress.version`, null);
-    setValue(`${entity}.${index}.emailAddress.id`, null);
-    setValue(`${entity}.${index}.emailAddress.version`, null);
+    const triggerFields = [getPersonalDataNames(index).pin as any];
+    const validated = await trigger(
+      isJuridicalPerson
+        ? triggerFields
+        : [
+            ...triggerFields,
+            getTundukParamsFields(index).tundukDocumentSeries,
+            getTundukParamsFields(index).tundukDocumentNumber,
+          ]
+    );
 
-    if (values[entity] != null && values[entity][index].personalNumber) {
+    if (!validated) return;
+
+    if (values[entity] != null) {
       const pin = values[entity][index].personalNumber;
-      const personalData = await tundukPersonalDataFetch(`/api/tunduk/personal-data/${pin}`);
+      const series = values[entity][index].passportSeries;
+      const number = values[entity][index].passportNumber;
+
+      const url = isJuridicalPerson ? `company/${pin}` : `individual?pin=${pin}&series=${series}&number=${number}`;
+
+      const personalData: Record<string, any> = await tundukPersonalDataFetch(`/api/tunduk`, {
+        model: `/ws/tunduk/${url}`,
+      });
 
       if (personalData?.status !== 0 || personalData?.data == null) {
         setAlertOpen(true);
         return;
       }
 
-      const partner = personalData.data?.partner;
-      const mainAddress = personalData.data?.mainAddress;
-      const actualAddress = personalData.data?.actualAddress;
-      const emailAddress = personalData.data?.emailAddress;
+      const partner = personalData.data;
 
-      if (partner == null || partner.id == null) {
+      if (partner == null) {
         setAlertOpen(true);
         return;
       }
 
       setAlertOpen(false);
-      setValue(`${entity}.${index}.id`, partner?.id);
-      setValue(`${entity}.${index}.version`, partner?.version);
-      setValue(`${entity}.${index}.mainAddress.id`, mainAddress?.id);
-      setValue(`${entity}.${index}.mainAddress.version`, mainAddress?.version);
-      setValue(`${entity}.${index}.actualResidenceAddress.id`, actualAddress?.id);
-      setValue(`${entity}.${index}.actualResidenceAddress.version`, actualAddress?.version);
-      setValue(`${entity}.${index}.emailAddress.id`, emailAddress?.id);
-      setValue(`${entity}.${index}.emailAddress.version`, emailAddress?.version);
-      setValue(`${entity}.${index}.emailAddress.address`, emailAddress?.address);
+
+      resetFields(index, {
+        skip: [
+          "partnerTypeSelect",
+          "passportNumber",
+          "passportSeries",
+          "personalNumber",
+          "subjectRole",
+          "firstName",
+          "lastName",
+          "middleName",
+        ],
+      });
+      setValue(`requester.${index}.disabled`, true);
+      setExpandAdditionalFields(false);
 
       const baseFields = [
         ...Object.values(getPersonalDataNames(index)),
         ...Object.values(getIdentityDocumentNames(index)),
-        ...Object.values(getContactNames(index)),
+        ...Object.values(getAddressNames(index)),
       ];
+
       baseFields.map((field: any) => {
         const fieldPath = field.split(".");
         const fieldLastItem = fieldPath[fieldPath.length - 1];
         const tundukField = tundukFieldNames[fieldLastItem as keyof typeof tundukFieldNames];
-        if (partner[tundukField ?? fieldLastItem] != null && fieldLastItem !== "personalNumber") {
-          setValue(field, partner[tundukField ?? fieldLastItem]);
+        const value = partner[tundukField ?? fieldLastItem] ?? partner?.mainAddress?.[tundukField ?? fieldLastItem];
+        if (fieldLastItem === "passportStatus" && partner?.voidStatus != null) {
+          setValue(field, partner.voidStatus);
+          return;
         }
-      });
-
-      const mainAddressFields = [...Object.values(getAddressNames(index))];
-      mainAddressFields.map((field: any) => {
-        const fieldPath = field.split(".");
-        const fieldLastItem = fieldPath[fieldPath.length - 1];
-        if (mainAddress[fieldLastItem] != null) {
-          setValue(field, mainAddress[fieldLastItem]);
-        }
-      });
-
-      const actualAddressFields = [...Object.values(getActualAddressNames(index))];
-      actualAddressFields.map((field: any) => {
-        const fieldPath = field.split(".");
-        const fieldLastItem = fieldPath[fieldPath.length - 1];
-        if (actualAddress[fieldLastItem] != null) {
-          setValue(field, actualAddress[fieldLastItem]);
+        if (value != null && fieldLastItem !== "partnerTypeSelect") {
+          setValue(field, value);
         }
       });
     }
@@ -396,13 +636,15 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     if (handleStepNextClick != null) handleStepNextClick(handleNextClick);
   });
 
+  const translatedError = tundukData?.data?.message?.replace(/[.:]/g, "");
+
   return (
     <Box display="flex" gap="20px" flexDirection="column">
       <StepperContentStep step={1} title={t("Choose requester")} />
 
       <Collapse in={alertOpen}>
         <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-          {t("Sorry, such pin not found")}
+          {t(translatedError || "Something went wrong")}
         </Alert>
       </Collapse>
 
@@ -411,31 +653,40 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
           return {
             tabErrorsCount: tabsErrorsCounts[index] ?? 0,
             tabLabel: `${t("Member")} ${index + 1}`,
-            tabPanelContent: getElement(index) ?? <></>,
+            tabPanelContent: getElement(
+              index,
+              tundukPersonalDataLoading,
+              isFieldsOpen,
+              expandAdditionalFields
+              // || watch(`requester.${index}.disabled`)
+            ) ?? <></>,
           };
         })}
         actionsContent={
-          <>
-            <Button
-              buttonType="primary"
-              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-              onClick={handleAddTabClick}
-            >
-              <AddIcon />
-            </Button>
-            <Button
-              buttonType="secondary"
-              sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
-              onClick={handleRemoveTabClick}
-            >
-              <RemoveIcon />
-            </Button>
-          </>
+          !isEditableCopy && (
+            <>
+              <Button
+                buttonType="primary"
+                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+                onClick={handleAddTabClick}
+              >
+                <AddIcon />
+              </Button>
+              <Button
+                buttonType="secondary"
+                sx={{ flex: 0, minWidth: "auto", padding: "10px" }}
+                onClick={handleRemoveTabClick}
+              >
+                <RemoveIcon />
+              </Button>
+            </>
+          )
         }
         onTabChange={(index) => attachedFilesRef.current?.tabChange(index)}
+        ref={tabsRef}
       />
 
-      <Box display="flex" gap="20px" flexDirection={{ xs: "column", md: "row" }}>
+      <Box width="fit-content" position="sticky" bottom="30px" display="flex" gap="20px" flexDirection="row">
         {onPrev != null && (
           <Button onClick={handlePrevClick} startIcon={<ArrowBackIcon />} sx={{ width: "auto" }}>
             {t("Prev")}
@@ -443,10 +694,11 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         )}
         {onNext != null && (
           <Button
-            loading={loading}
+            loading={loading || isPersonAliveLoading}
             onClick={() => handleNextClick()}
             endIcon={<ArrowForwardIcon />}
             sx={{ width: "auto" }}
+            disabled={!!errors?.requester?.length}
           >
             {t("Next")}
           </Button>

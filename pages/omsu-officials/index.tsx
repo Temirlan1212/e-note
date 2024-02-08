@@ -1,9 +1,9 @@
 import Head from "next/head";
-import { Container } from "@mui/material";
 import { useTranslations } from "next-intl";
 import { GetStaticPropsContext } from "next";
 
 import OMSUOfficialsContent from "@/components/omsu/OMSUOfficialsContent";
+import { Box } from "@mui/material";
 
 export default function OMSUOfficials() {
   const t = useTranslations();
@@ -14,9 +14,9 @@ export default function OMSUOfficials() {
         <title>{t("OMSUOfficials")}</title>
       </Head>
 
-      <Container maxWidth="xl" sx={{ py: "30px" }}>
+      <Box sx={{ py: "30px", px: "30px" }}>
         <OMSUOfficialsContent />
-      </Container>
+      </Box>
     </>
   );
 }

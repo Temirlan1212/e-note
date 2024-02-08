@@ -1,4 +1,6 @@
 import { IUser, IUserCredentials, IUserData } from "@/models/user";
+import { isRoutesIncludesPath } from "@/routes/data";
+import { routes as userRoutes } from "@/routes/user";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -6,12 +8,22 @@ export interface IProfileState {
   cookie: string | null;
   user: IUser | null;
   userData: IUserData | null;
+  userRoleSelected: boolean;
+  redirectTo: string | null;
+  agreementPersonalData: boolean | null;
+  isAgreementPersonalDataModalOpen: boolean | null;
   getCookie: () => string | null;
   getUser: () => IUser | null;
   getUserData: () => IUserData | null;
+  setUserRoleSelected: (value: boolean) => void;
+  setRedirectTo: (value: string | null) => void;
   logIn: (credentials: IUserCredentials) => Promise<void>;
+  logInEsi: (code: string) => Promise<void>;
+  logInEds: (hash: string) => Promise<void>;
   logOut: () => void;
   loadUserData: (user: IUser) => Promise<void>;
+  setAgreementPersonalData: (agreement: boolean | null) => void;
+  setIsAgreementPersonalDataModalOpen: (open: boolean | null) => void;
 }
 
 export const useProfileStore = create<IProfileState>()(
@@ -20,6 +32,10 @@ export const useProfileStore = create<IProfileState>()(
       cookie: null,
       user: null,
       userData: null,
+      userRoleSelected: false,
+      redirectTo: "/applications",
+      agreementPersonalData: null,
+      isAgreementPersonalDataModalOpen: null,
       getCookie: () => {
         return get().cookie;
       },
@@ -28,6 +44,19 @@ export const useProfileStore = create<IProfileState>()(
       },
       getUserData: () => {
         return get().userData;
+      },
+      setUserRoleSelected: (value) => {
+        set(() => ({ userRoleSelected: value }));
+      },
+      setRedirectTo: (value) => {
+        const isCorrect = value != null && value.length > 1 && isRoutesIncludesPath(userRoutes, value);
+        set(() => ({ redirectTo: isCorrect ? value : null }));
+      },
+      setAgreementPersonalData: (value) => {
+        set(() => ({ agreementPersonalData: value }));
+      },
+      setIsAgreementPersonalDataModalOpen: (value) => {
+        set(() => ({ isAgreementPersonalDataModalOpen: value }));
       },
       logIn: async (credentials) => {
         let cookie: string | null = null;
@@ -46,13 +75,67 @@ export const useProfileStore = create<IProfileState>()(
 
         cookie = setCookie;
         user = await response.json();
-        if (user == null) return;
+        if (user?.username == null) return;
 
         set(() => ({ cookie, user }));
         get().loadUserData(user);
       },
+      logInEsi: async (code) => {
+        let cookie: string | null = null;
+        let user: IUser | null = null;
+
+        const response = await fetch(`/api/profile/esi-login?code=${code}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) return;
+
+        const setCookie = response.headers.get("cookie");
+        if (setCookie == null) return;
+
+        cookie = setCookie;
+        user = await response.json();
+        if (user?.username == null) return;
+
+        set(() => ({ cookie, user }));
+        get().loadUserData(user);
+      },
+      logInEds: async (hash) => {
+        let cookie: string | null = null;
+        let user: IUser | null = null;
+
+        const response = await fetch(`/api/profile/eds-login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            hash,
+          }),
+        });
+
+        if (!response.ok) return;
+
+        const setCookie = response.headers.get("cookie");
+        if (setCookie == null) return;
+
+        cookie = setCookie;
+        user = await response.json();
+        if (user?.username == null) return;
+
+        set(() => ({ cookie, user, redirectTo: "/applications" }));
+        get().loadUserData(user);
+      },
       logOut: () => {
-        set(() => ({ cookie: null, user: null, userData: null }));
+        const redirectTo = get().redirectTo;
+        set(() => ({
+          cookie: null,
+          user: null,
+          userData: null,
+          userRoleSelected: false,
+          redirectTo: redirectTo != null ? redirectTo : "/applications",
+          agreementPersonalData: null,
+          isAgreementPersonalDataModalOpen: null,
+        }));
       },
       loadUserData: async (user) => {
         const cookie = get().cookie;
@@ -73,6 +156,7 @@ export const useProfileStore = create<IProfileState>()(
         set(() => ({ userData: userData.data[0] }));
       },
     }),
+
     {
       name: "profile",
     }

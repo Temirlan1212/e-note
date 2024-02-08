@@ -16,34 +16,53 @@ export const personSchema = object()
     foreigner: boolean(),
     lastName: string()
       .trim()
-      .when("partnerTypeSelect", {
-        is: 2,
-        then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
+      .when("foreigner", {
+        is: true,
+        then: (schema) => schema.nullable(),
+        otherwise: (schema) =>
+          schema.when("partnerTypeSelect", {
+            is: 2,
+            then: (schema) => schema.required("required").min(2, "minLettersLow"),
+            otherwise: (schema) => schema.nullable(),
+          }),
       })
-      .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
-    name: string()
+
+      .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s\-]*$/, "onlyLetters"),
+    firstName: string()
       .trim()
-      .when("partnerTypeSelect", {
-        is: 2,
-        then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
-      })
-      .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
+      .when("foreigner", {
+        is: true,
+        then: (schema) => schema.nullable(),
+        otherwise: (schema) =>
+          schema.when("partnerTypeSelect", {
+            is: 2,
+            then: (schema) =>
+              schema
+                .required("required")
+                .min(2, "minLettersLow")
+                .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s\-]*$/, "onlyLetters"),
+            otherwise: (schema) => schema.nullable(),
+          }),
+      }),
     middleName: string()
       .trim()
-      .matches(/^[aA-zZаА-яЯөүңӨҮҢ\s]*$/, "onlyLetters"),
+      .matches(/^[aA-zZаА-яЯёЁөүңӨҮҢ\s\-]*$/, "onlyLetters"),
     personalNumber: string()
       .trim()
       .when("foreigner", {
         is: true,
-        then: (schema) => schema.required("required"),
+        then: (schema) => schema.nullable(),
         otherwise: (schema) =>
-          schema
-            .min(14, "minNumbers")
-            .max(14, "maxNumbers")
-            .required("required")
-            .matches(/^[0-9]*$/, "onlyNumbers"),
+          schema.when("subjectRole", {
+            is: "notAnAdult",
+            then: (schema) => schema.nullable(),
+            otherwise: (schema) =>
+              schema
+                .min(14, "minNumbers")
+                .max(14, "maxNumbers")
+                .required("required")
+                .matches(/^[0-9]*$/, "onlyNumbers"),
+          }),
       }),
     birthDate: date().nullable(),
     citizenship: object({
@@ -55,17 +74,27 @@ export const personSchema = object()
       .integer()
       .nullable()
       .transform((value) => (isNaN(value) ? null : value)),
-    passportSeries: number()
-      .integer()
-      .nullable()
-      .transform((value) => (isNaN(value) ? null : value)),
+    passportSeries: string().when("validatePassport", {
+      is: true,
+      then: (schema) => schema.required("This field is required!"),
+      otherwise: (schema) => schema.nullable(),
+    }),
     passportNumber: string()
       .trim()
-      .matches(/^[0-9]*$/, "onlyNumbers"),
+      .when("validatePassport", {
+        is: true,
+        then: (schema) => schema.required("This field is required!"),
+        otherwise: (schema) => schema.matches(/^[0-9]*$/, "onlyNumbers"),
+      })
+      .when("foreigner", {
+        is: true,
+        then: (schema) => schema.trim(),
+        otherwise: (schema) => schema.matches(/^[0-9]*$/, "onlyNumbers"),
+      }),
     authority: string().trim(),
     authorityNumber: string()
       .trim()
-      .matches(/^[0-9]*$/, "onlyNumbers"),
+      .matches(/^[0-9\s]*$/, "onlyNumbers"),
     dateOfIssue: date().nullable(),
     mainAddress: addressSchema,
     actualResidenceAddress: addressSchema,
@@ -76,7 +105,6 @@ export const personSchema = object()
     }),
     mobilePhone: string()
       .trim()
-      .required("required")
       .matches(/^[0-9\+\-\s]*$/, "onlyNumbers"),
     nameOfCompanyOfficial: string()
       .trim()
@@ -104,36 +132,53 @@ export const personSchema = object()
       .when("partnerTypeSelect", {
         is: 1,
         then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
+        otherwise: (schema) => schema.nullable().transform((value) => (isNaN(value) ? null : value)),
       }),
     notaryOKPONumber: number()
       .integer()
       .when("partnerTypeSelect", {
         is: 1,
         then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
+        otherwise: (schema) => schema.nullable().transform((value) => (isNaN(value) ? null : value)),
       }),
     notaryPhysicalParticipantsQty: number()
       .integer()
       .when("partnerTypeSelect", {
         is: 1,
         then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
+        otherwise: (schema) => schema.nullable().transform((value) => (isNaN(value) ? null : value)),
       }),
     notaryLegalParticipantsQty: number()
       .integer()
       .when("partnerTypeSelect", {
         is: 1,
         then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
+        otherwise: (schema) => schema.nullable().transform((value) => (isNaN(value) ? null : value)),
       }),
     notaryTotalParticipantsQty: number()
       .integer()
       .when("partnerTypeSelect", {
         is: 1,
         then: (schema) => schema.required("required"),
-        otherwise: (schema) => schema.nullable(),
+        otherwise: (schema) => schema.nullable().transform((value) => (isNaN(value) ? null : value)),
       }),
     notaryDateOfOrder: date().nullable(),
+    tundukPassportSeries: string()
+      .transform((value) => (value == null ? "" : value))
+      .required("required"),
+    tundukPassportNumber: string()
+      .trim()
+      .matches(/^[0-9]*$/, "onlyNumbers")
+      .required("required"),
+    nationality: string(),
+    familyStatus: boolean(),
+    passportStatus: boolean(),
+    maritalStatus: string(),
+    disabled: boolean(),
+    subjectRole: string().when("foreigner", {
+      is: true,
+      then: (schema) => schema.nullable(),
+      otherwise: (schema) => schema.required("required"),
+    }),
   })
   .concat(filesSchema.pick(["files"]));

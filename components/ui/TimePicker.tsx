@@ -22,7 +22,7 @@ interface ITimePickerProps<T = Date | null> extends Omit<TimePickerProps<T>, "on
 }
 
 const TimePicker: React.ForwardRefRenderFunction<HTMLDivElement, ITimePickerProps> = (props, ref) => {
-  const { onChange, value, placeholder, helperText, type = "secondary", ...rest } = props;
+  const { onChange, value, placeholder, sx, helperText, type = "secondary", ...rest } = props;
 
   const locale = useLocale();
   const theme = useTheme();
@@ -60,7 +60,7 @@ const TimePicker: React.ForwardRefRenderFunction<HTMLDivElement, ITimePickerProp
     },
   };
 
-  const mergedStyles = { ...inputStyles, ...props.sx };
+  const mergedStyles = { ...inputStyles, ...sx };
 
   return (
     <FormControl error={type === "error"}>
@@ -68,10 +68,10 @@ const TimePicker: React.ForwardRefRenderFunction<HTMLDivElement, ITimePickerProp
         <MUITimePicker
           ampm={ampm}
           sx={mergedStyles}
-          ref={ref}
           value={value ?? null}
           onChange={(val) => (onChange ? onChange(val) : null)}
           {...rest}
+          inputRef={ref as any}
         />
         {helperText && <FormHelperText error={type === "error"}>{helperText}</FormHelperText>}
       </LocalizationProvider>

@@ -2,6 +2,12 @@ import { IRoute } from "./data";
 
 export const routes: IRoute[] = [
   {
+    title: "Profile",
+    link: "/profile",
+    type: "link",
+    icon: "PersonOutline",
+  },
+  {
     title: "Notarial actions",
     link: "/applications",
     type: "menu",
@@ -18,6 +24,12 @@ export const routes: IRoute[] = [
     link: "/chat",
     type: "menu",
     icon: "Chat",
+  },
+  {
+    title: "Questions and answers",
+    link: "/faq",
+    type: "menu",
+    icon: "Quiz",
   },
   {
     title: "Registries",
@@ -40,7 +52,7 @@ export const routes: IRoute[] = [
       },
       {
         title: "Register of Notaries of the KR",
-        link: "/notary-registry",
+        link: "/registry-of-notaries",
         type: "menu",
         icon: "ListAlt",
       },
@@ -57,11 +69,17 @@ export const routes: IRoute[] = [
         icon: "ReceiptLong",
       },
       {
-        title: "Black list",
-        link: "/black-list",
+        title: "Register of wills",
+        link: "/wills",
         type: "menu",
-        icon: "Block",
+        icon: "BusinessCenter",
       },
+      // {
+      //   title: "Black list",
+      //   link: "/black-list",
+      //   type: "menu",
+      //   icon: "Block",
+      // },
     ],
   },
   {
@@ -80,15 +98,23 @@ export const routes: IRoute[] = [
         title: "My templates",
         link: "/my-templates",
         type: "menu",
+        role: "notary",
         icon: "CollectionsBookmark",
       },
     ],
   },
   {
-    title: "User registry",
-    link: "/user-registry",
-    role: "notary",
+    title: "Archive of notarial actions",
+    link: "/applications-archive",
     type: "menu",
-    icon: "PersonAddAlt1",
+    role: "notary",
+    icon: "Archive",
   },
+  // {
+  //   title: "User registry",
+  //   link: "/user-registry",
+  //   role: "notary",
+  //   type: "menu",
+  //   icon: "PersonAddAlt1",
+  // },
 ];

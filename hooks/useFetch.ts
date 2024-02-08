@@ -4,18 +4,16 @@ import useEffectOnce from "./useEffectOnce";
 import { useProfileStore } from "@/stores/profile";
 import useNotificationStore from "@/stores/notification";
 
-const cache: Record<string, { date: Date; data: any }> = {};
-
 export interface FetchError {
   status: number;
   message: string;
 }
 
-export interface FetchResponseBody {
+export interface FetchResponseBody<D = any> {
   status: number;
   offset: number;
   total: number;
-  data: any;
+  data?: D;
 }
 
 export default function useFetch<T = FetchResponseBody>(
@@ -32,6 +30,7 @@ export default function useFetch<T = FetchResponseBody>(
   const setNotification = useNotificationStore((state) => state.setNotification);
 
   const [loading, setLoading] = useState<boolean>(false);
+  const [status, setStatus] = useState<"pending" | "finished">("pending");
   const [error, setError] = useState<FetchError | null>(null);
   const [data, setData] = useState<T | null>(null);
 
@@ -48,16 +47,8 @@ export default function useFetch<T = FetchResponseBody>(
       headers["Content-Type"] = "application/json";
     }
 
-    const currentDate = new Date();
-    const cacheDate = cache[url]?.date;
-    const diffMinutes = Math.round((currentDate.getTime() - cacheDate?.getTime()) / 60000);
-
-    if (diffMinutes < 5) {
-      // setData(cache[url].data);
-      // return cache[url].data;
-    }
-
     setLoading(true);
+    setStatus("pending");
     return fetch(fetchUrl, {
       headers: {
         ...headers,
@@ -69,30 +60,37 @@ export default function useFetch<T = FetchResponseBody>(
       .then((res) => {
         if (!res.ok) {
           const error: FetchError = { status: res.status, message: res.statusText };
-          setNotification(error.message);
           throw new Error(JSON.stringify(error));
         }
 
-        return options?.returnResponse != null ? res : res.json();
+        return options?.returnResponse === true ? res : res.json();
       })
       .then((res) => {
         setData(res);
-        cache[url] = { date: new Date(), data: res };
         return res;
       })
       .catch((e: Error) => {
-        const error: FetchError = JSON.parse(e.message);
-        setError(error);
+        let error: FetchError | null = null;
 
-        if (error.status === 401) {
-          profile.logOut();
-          return router.push("/login");
+        try {
+          error = JSON.parse(e?.message);
+        } catch (e: any) {
+          return;
         }
 
-        setNotification(error.message);
+        setError(error);
+
+        if (error?.status === 401) {
+          return profile.logOut();
+        }
+
+        setNotification(error?.message ?? null);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setStatus("finished");
+        setLoading(false);
+      });
   };
 
-  return { data, loading, error, update: handleFetching };
+  return { data, loading, status, error, update: handleFetching };
 }
