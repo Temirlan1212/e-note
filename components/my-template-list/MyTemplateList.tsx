@@ -53,6 +53,7 @@ function GridTableActionsCell({
   const isPrivateNotary = profile?.["activeCompany.typeOfNotary"] === "private";
   const isStateNotary = profile?.["activeCompany.typeOfNotary"] === "state";
   const isActiveNotary = profile?.["activeCompany.statusOfNotary"] === "active";
+  const isForeignInstitution = profile?.roles?.[0]?.name === "Foreign institution official";
 
   const { update: getLicenseInfo } = useFetch<FetchResponseBody | null>("", "POST");
   const { data, update: editTemplate } = useFetch<FetchResponseBody<IMyTemplateData[]>>("", "POST");
@@ -83,7 +84,7 @@ function GridTableActionsCell({
       if (isPrivateNotary) {
         const license = await handleCheckLicenseDate();
         !!license && isActiveNotary ? navigateOnCreateClick() : setAlertOpen(true);
-      } else if (isStateNotary) {
+      } else if (isStateNotary || isForeignInstitution) {
         isActiveNotary ? navigateOnCreateClick() : setAlertOpen(true);
       }
     } else {
