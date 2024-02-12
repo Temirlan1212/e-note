@@ -26,7 +26,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import Link from "./ui/Link";
-import DynamicIcon from "./DynamicIcon";
+// import DynamicIcon from "./DynamicIcon";
 import ProfileDropdownButton from "./ProfileDropdownButton";
 import LocaleSwitcher from "./LocaleSwitcher";
 import PopupNotifications from "./PopupNotifications";
@@ -100,7 +100,7 @@ const DrawerListItems = ({
                     >
                       {route.icon && (
                         <ListItemIcon sx={{ color: "inherit", minWidth: open ? "36px" : "auto" }}>
-                          <DynamicIcon name={route.icon} />
+                          {/* <DynamicIcon name={route.icon} /> */}
                         </ListItemIcon>
                       )}
                       <ListItemText
