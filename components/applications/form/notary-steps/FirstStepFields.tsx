@@ -79,6 +79,7 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
     const isPrivateNotary = userData?.["activeCompany.typeOfNotary"] === "private";
     const isStateNotary = userData?.["activeCompany.typeOfNotary"] === "state";
     const isActiveNotary = userData?.["activeCompany.statusOfNotary"] === "active";
+    const isForeignInstitution = userData?.roles?.[0]?.name === "Foreign institution official";
 
     if (isNotary) {
       if (isPrivateNotary) {
@@ -86,8 +87,8 @@ export default function FirstStepFields({ form, onPrev, onNext, handleStepNextCl
         if (!license || !isActiveNotary) {
           router.push("/applications");
         }
-      } else if (isStateNotary && !isActiveNotary) {
-        router.push("/applications");
+      } else if (isStateNotary || isForeignInstitution) {
+        isActiveNotary && router.push("/applications");
       }
     } else {
       router.push("/applications");
