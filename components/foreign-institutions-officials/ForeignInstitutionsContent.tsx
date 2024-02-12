@@ -3,9 +3,7 @@ import { useTranslations } from "next-intl";
 import { Box, Typography } from "@mui/material";
 import useFetch, { FetchResponseBody } from "@/hooks/useFetch";
 import { GridTable, IFilterSubmitParams } from "@/components/ui/GridTable";
-import Button from "@/components/ui/Button";
 import Pagination from "@/components/ui/Pagination";
-import ExcelIcon from "@/public/icons/excel.svg";
 import { GridSortModel } from "@mui/x-data-grid";
 import { ValueOf } from "next/dist/shared/lib/constants";
 
@@ -22,7 +20,6 @@ interface IRequestBody {
 export default function ForeignInstitutionsOfficialsContent() {
   const t = useTranslations();
   const [rowData, setRowData] = useState<FetchResponseBody | null>(null);
-  const [fileName, setFileName] = useState<string | null>("");
 
   const [requestBody, setRequestBody] = useState<IRequestBody>({
     pageSize: 7,
@@ -34,21 +31,8 @@ export default function ForeignInstitutionsOfficialsContent() {
     filterValues: {},
   });
 
-  const [excelReqBody, setExcelReqBody] = useState<IRequestBody>({
-    roleValue: "Foreign institution official",
-    filterValues: {},
-  });
-
   const { data, loading } = useFetch("/api/officials", "POST", {
     body: requestBody,
-  });
-
-  const { data: exportExcel } = useFetch("/api/officials/export", "POST", {
-    body: excelReqBody,
-  });
-
-  const { update: downloadExcel } = useFetch("", "GET", {
-    returnResponse: true,
   });
 
   const updateRequestBodyParams = (key: keyof IRequestBody, newValue: ValueOf<IRequestBody>) => {
@@ -96,25 +80,9 @@ export default function ForeignInstitutionsOfficialsContent() {
     if (requestBody.page !== page) updateRequestBodyParams("page", page);
   };
 
-  const download = async () => {
-    const response = await downloadExcel(`/api/officials/download/${fileName}`);
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.style.display = "none";
-    a.href = url;
-    a.download = fileName || "exported-data.csv";
-    document.body.appendChild(a);
-    a.click();
-  };
-
   useEffect(() => {
-    if (data && exportExcel?.data) {
-      setRowData(data);
-      setFileName(exportExcel.data.fileName);
-    }
-  }, [data, exportExcel?.data]);
+    data && setRowData(data);
+  }, [data]);
 
   return (
     <Box
@@ -128,21 +96,6 @@ export default function ForeignInstitutionsOfficialsContent() {
         <Typography variant="h4" color="success.main">
           {t("ForeignInstitutions")}
         </Typography>
-        <Box>
-          <Button
-            component="label"
-            endIcon={<ExcelIcon />}
-            color="primary"
-            variant="outlined"
-            sx={{
-              gap: "10px",
-              "&:hover": { color: "#F6F6F6" },
-            }}
-            onClick={download}
-          >
-            {t("Export to excel")}
-          </Button>
-        </Box>
       </Box>
 
       <Box sx={{ display: "flex", flexDirection: "column", gap: "20px" }}>
