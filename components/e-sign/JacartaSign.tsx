@@ -5,6 +5,7 @@ import useEffectOnce from "@/hooks/useEffectOnce";
 import { Box, InputLabel, SelectChangeEvent } from "@mui/material";
 import Select from "@/components/ui/Select";
 import Input from "@/components/ui/Input";
+import { SignType, getJacartaErrorReason } from "./_helpers";
 
 type IWindow = Window &
   typeof globalThis & {
@@ -74,21 +75,28 @@ export default forwardRef(function JacartaSign({ base64Doc }: IJacartaSignProps,
   const handleSign: IJacartaSignRef["handleSign"] = async (callback) => {
     if (lib == null) return false;
 
-    const authState = lib.getLoggedInState();
-    if (authState?.state === 0) lib.bindToken({ args: { tokenID: device, pin } });
+    try {
+      const authState = lib.getLoggedInState();
+      if (authState?.state === 0) lib.bindToken({ args: { tokenID: device, pin } });
 
-    const sign: string | null = lib.signBase64EncodedData({
-      args: {
-        contID: container,
-        data: base64Doc,
-        attachedSignature: false,
-        addSigningTime: true,
-      },
-    });
+      const sign: string | null = lib.signBase64EncodedData({
+        args: {
+          contID: container,
+          data: base64Doc,
+          attachedSignature: false,
+          addSigningTime: true,
+        },
+      });
 
-    if (authState?.state === 1) lib.unbindToken();
+      if (authState?.state === 1) lib.unbindToken();
 
-    if (callback != null && sign != null) return await callback(sign);
+      if (callback != null && sign != null) return await callback(sign);
+    } catch (error: any) {
+      const code = Number(error?.code);
+      if (!isNaN(code)) {
+        throw { ...getJacartaErrorReason(code), type: SignType.Jacarta };
+      }
+    }
 
     return false;
   };

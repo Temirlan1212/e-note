@@ -10,11 +10,7 @@ import RutokenSign, { IRutokenSignRef } from "./RutokenSign";
 import FaceIdScanner from "@/components/face-id/FaceId";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { useProfileStore } from "@/stores/profile";
-
-enum SignType {
-  Jacarta = "jacarta",
-  Rutoken = "rutoken",
-}
+import { SignType } from "./_helpers";
 
 const signTypes = Object.entries(SignType).map(([label, value]) => ({ label, value }));
 
@@ -31,6 +27,7 @@ export default function SignModal({
   const t = useTranslations();
   const [isSigned, setIsSigned] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
+  const [alertText, setAlertText] = useState("");
   const [signType, setSignType] = useState<SignType>();
   const [faceIdScanner, setFaceIdScanner] = useState(false);
   const profile = useProfileStore.getState()?.userData;
@@ -39,6 +36,8 @@ export default function SignModal({
   const rtRef = useRef<IRutokenSignRef>(null);
 
   const handleSign = async (openModal: (open: boolean) => void) => {
+    setAlertText("");
+    setAlertOpen(false);
     const signRefCurrent = jcRef.current ?? rtRef.current;
     if (signRefCurrent == null) return;
 
@@ -53,6 +52,17 @@ export default function SignModal({
       setIsSigned(true);
       openModal(false);
     } catch (e: any) {
+      const type = e?.type;
+      if (type === SignType.Rutoken) {
+        const message = e?.message;
+        if (message) setAlertText(message);
+      }
+
+      if (type === SignType.Jacarta) {
+        const message = e?.message;
+        if (message) setAlertText(message);
+      }
+
       setAlertOpen(true);
     }
   };
@@ -60,6 +70,7 @@ export default function SignModal({
   const handleToggle = () => {
     setIsSigned(false);
     setSignType(undefined);
+    setAlertText("");
     setAlertOpen(false);
     setFaceIdScanner(false);
   };
@@ -114,7 +125,7 @@ export default function SignModal({
             )}
             <Collapse in={alertOpen}>
               <Alert severity="warning" onClose={() => setAlertOpen(false)}>
-                {t("This action failed")}
+                {alertText ? t(alertText) : t("This action failed")}
               </Alert>
             </Collapse>
 
