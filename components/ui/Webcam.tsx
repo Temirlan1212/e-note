@@ -251,10 +251,10 @@ const Webcam: FC<IWebcamProps> = ({
                       borderRadius: "50%",
                       border: `2px solid ${alertOpen ? "#d32f2f" : "#000"}`,
                       objectFit: "cover",
-                      width: "100%",
-                      height: "100%",
                     }}
-                    videoConstraints={{ facingMode: "user", width: 800, height: 600 }}
+                    width="100%"
+                    height="100%"
+                    videoConstraints={{ facingMode: "user" }}
                     ref={webcamRef}
                     {...rest}
                   />
