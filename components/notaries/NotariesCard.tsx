@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Avatar, Box, Card, CardContent, CardHeader, CircularProgress, Typography } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import Rating from "@/components/ui/Rating";
@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { INotaryGeo } from "@/models/notaries";
 import useFetch from "@/hooks/useFetch";
 import { useTranslations } from "next-intl";
-import useEffectOnce from "@/hooks/useEffectOnce";
 
 interface INotaryProps {
   id?: number;
@@ -43,11 +42,15 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, city, user
     }
   };
 
-  useEffectOnce(async () => {
-    const base64String = await imageData?.text();
-    if (base64String) {
-      setBase64Image(base64String);
-    }
+  useEffect(() => {
+    const fetchImage = async () => {
+      const base64String = await imageData?.text();
+      if (base64String) {
+        setBase64Image(base64String);
+      }
+    };
+
+    fetchImage();
   }, [imageData]);
 
   return (
@@ -75,7 +78,7 @@ const NotariesCard: FC<INotaryProps> = ({ id, fullName, region, area, city, user
           avatar={
             <Avatar
               sizes="100"
-              src={base64Image!}
+              src={base64Image ?? ""}
               sx={{
                 bgcolor: "success.main",
                 width: { xs: "50px", md: "100px" },
