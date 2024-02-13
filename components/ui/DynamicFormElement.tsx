@@ -106,9 +106,9 @@ const getValue = (field: Variant, value: any) => {
     Boolean: value,
     Selection: isEmptyOrNull(value) ? null : value,
     Object: isEmptyOrNull(value) ? null : value,
-    Float: isEmptyOrNull(value) ? "" : parseInt(value),
-    Decimal: isEmptyOrNull(value) ? "" : parseInt(value),
-    Integer: isEmptyOrNull(value) ? "" : parseInt(value),
+    Float: value,
+    Decimal: value,
+    Integer: value,
     String: isEmptyOrNull(value) ? "" : value,
     Radio: isEmptyOrNull(value) ? "" : value,
     Date: isDate ? value : isInvalidDate ? null : new Date(String(value)),
@@ -183,7 +183,7 @@ const getField = (
         helperText={errorMessage}
         onBlur={field.onBlur}
         value={getValue("Float", field.value)}
-        onChange={(e) => field.onChange(parseInt(e.target.value))}
+        onChange={(e) => field.onChange(parseFloat(e.target.value))}
         disabled={disabled}
         ref={field.ref}
         inputProps={inputProps}
@@ -198,7 +198,7 @@ const getField = (
         helperText={errorMessage}
         onBlur={field.onBlur}
         value={getValue("Decimal", field.value)}
-        onChange={(e) => field.onChange(parseInt(e.target.value))}
+        onChange={(e) => field.onChange(parseFloat(e.target.value))}
         disabled={disabled}
         ref={field.ref}
         inputProps={inputProps}
